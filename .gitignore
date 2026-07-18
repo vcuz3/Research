@@ -44,3 +44,5 @@ futures/vwap_mean_version/
 futures/data/
 futures/es/
 futures/scripts/
+.vscode
+data/gc
