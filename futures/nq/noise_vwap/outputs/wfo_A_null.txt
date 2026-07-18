@@ -1,0 +1,9 @@
+=== DESIGN A Null-C twin (30 draws) ===
+real uplift (sumR): {'lax': -38.87, 'median': -49.25, 'strict': 0.0}
+  draw 1/30 done  draw 2/30 done  draw 3/30 done  draw 4/30 done  draw 5/30 done  draw 6/30 done  draw 7/30 done  draw 8/30 done  draw 9/30 done  draw 10/30 done  draw 11/30 done  draw 12/30 done  draw 13/30 done  draw 14/30 done  draw 15/30 done  draw 16/30 done  draw 17/30 done  draw 18/30 done  draw 19/30 done  draw 20/30 done  draw 21/30 done  draw 22/30 done  draw 23/30 done  draw 24/30 done  draw 25/30 done  draw 26/30 done  draw 27/30 done  draw 28/30 done  draw 29/30 done  draw 30/30 done
+constraint realUplift  nullMean  nullSD      z null>=real
+lax            -38.87     -8.13   11.38  -2.70       1.00
+median         -49.25     -8.75   11.31  -3.58       1.00
+strict          +0.00     +0.00    0.00   +nan       1.00
+
+VERDICT RULE: real only if z>=2 AND null rarely (<~5%) matches real uplift.

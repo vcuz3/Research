@@ -1,0 +1,7 @@
+=== DESIGN B Null-C twin (30 draws, select=sharpe) ===
+real uplift: sumR=+3.70  dSharpe=+0.005
+  draw 1/30 done  draw 2/30 done  draw 3/30 done  draw 4/30 done  draw 5/30 done  draw 6/30 done  draw 7/30 done  draw 8/30 done  draw 9/30 done  draw 10/30 done  draw 11/30 done  draw 12/30 done  draw 13/30 done  draw 14/30 done  draw 15/30 done  draw 16/30 done  draw 17/30 done  draw 18/30 done  draw 19/30 done  draw 20/30 done  draw 21/30 done  draw 22/30 done  draw 23/30 done  draw 24/30 done  draw 25/30 done  draw 26/30 done  draw 27/30 done  draw 28/30 done  draw 29/30 done  draw 30/30 done
+sumR   : real=+3.70 null=+16.40+/-9.78 z=-1.30 null>=real=1.00
+dSharpe: real=+0.005 null=+0.224+/-0.177 z=-1.24 null>=real=0.97
+
+VERDICT: real only if z>=2 on NET R AND not a shrinkage-only Sharpe gain.

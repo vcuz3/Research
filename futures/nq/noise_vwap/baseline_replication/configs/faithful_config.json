@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "status": "reference-only-not-yet-consumed-by-runner",
+  "instruments": ["NQ", "ES"],
+  "session_timezone": "America/New_York",
+  "session_start": "09:30",
+  "session_end_bar": "15:59",
+  "noise_lookback_sessions": 90,
+  "decision_clock": "concretum_09:59_then_30min",
+  "require_vwap_entry_gate": true,
+  "exit_check": "decision",
+  "fill_mode": "next_open",
+  "forced_flatten": "last_rth_close",
+  "target_daily_volatility": 0.03,
+  "leverage_cap": 8.0,
+  "realized_volatility_sessions": 14,
+  "realized_volatility_lag": 1,
+  "contract_rounding": "floor",
+  "slippage_ticks_per_side": 0.25,
+  "fees_per_side_usd": 2.25
+}

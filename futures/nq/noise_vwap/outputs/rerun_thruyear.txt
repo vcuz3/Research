@@ -1,0 +1,18 @@
+
+=== NQ faithful (concretum+VWAP, lb90, 0.25tick, 3%/8x) by end-year ===
+  thru 2018: CAGR=+31.7% Sh= 1.41 DD=-28.0% n=1411 net=+2.339pt day$t=+3.52
+  thru 2021: CAGR=+29.7% Sh= 1.37 DD=-28.0% n=1953 net=+3.594pt day$t=+3.88
+  thru 2023: CAGR=+32.7% Sh= 1.51 DD=-28.0% n=2400 net=+5.404pt day$t=+5.02
+  thru 2024: CAGR=+33.4% Sh= 1.54 DD=-28.0% n=2602 net=+5.681pt day$t=+5.02
+  thru 2025: CAGR=+29.9% Sh= 1.37 DD=-28.0% n=2802 net=+5.045pt day$t=+3.67
+  thru FULL : CAGR=+28.3% Sh= 1.31 DD=-28.0% n=2923 net=+4.595pt day$t=+3.24
+
+=== ES faithful (concretum+VWAP, lb90, 0.25tick, 3%/8x) by end-year ===
+  thru 2018: CAGR=+12.7% Sh= 0.69 DD=-28.7% n=1530 net=+0.468pt day$t=+2.18
+  thru 2021: CAGR=+13.7% Sh= 0.74 DD=-28.7% n=2051 net=+0.589pt day$t=+2.38
+  thru 2023: CAGR=+16.9% Sh= 0.89 DD=-28.7% n=2478 net=+0.925pt day$t=+3.39
+  thru 2024: CAGR=+17.5% Sh= 0.91 DD=-28.7% n=2698 net=+0.876pt day$t=+3.22
+  thru 2025: CAGR=+17.5% Sh= 0.89 DD=-28.7% n=2886 net=+0.961pt day$t=+3.08
+  thru FULL : CAGR=+15.5% Sh= 0.81 DD=-28.7% n=2996 net=+0.821pt day$t=+2.63
+
+  (Published: NQ 24.3%/1.67, ES 16.8%/1.25 — backtest ~thru 2024)

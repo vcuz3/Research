@@ -1,0 +1,46 @@
+# Secrets and local environment
+*.pem
+.env
+.env.*
+!.env.example
+
+# Agent-local state
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+
+# Python and temporary files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.tmp_pypdf/
+
+# SQLite transient files if MCP-backed memory is added later
+ai_shared_memory/*.sqlite-shm
+ai_shared_memory/*.sqlite-wal
+
+# data files
+*.csv
+*.xlsx
+*.parquet
+*.png
+*.log
+*.ipynb
+*.pdf
+
+# ignore folders
+forex/
+polymarket/
+polymarket_bitcoin/
+polymarket_weather/
+polymarket_weather_project/
+futures/my_research/
+futures/nq/kama/
+futures/nq/magic_hour/
+futures/nq/post_lunch_opening_range/
+futures/nq/vwap_1/
+futures/nq/vwap_std_breakout_1/
+futures/nq/discovery_1/
+futures/vwap_mean_version/
+futures/data/
+futures/es/
+futures/scripts/

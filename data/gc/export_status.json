@@ -1,0 +1,19 @@
+﻿{
+    "id":  "f38c3fcd08884d549affc6947b81097d",
+    "status":  "ready",
+    "dataset":  "futures",
+    "table_name":  "candles_futures_1m",
+    "symbol":  "GC.F",
+    "start":  "2016-05-01",
+    "end":  null,
+    "format":  "parquet",
+    "rows":  3454404,
+    "bytes":  43216230,
+    "sha256":  "174564f677c8bd6d38bf0ae7053e951eee8caf846ec99a898d7b5fb0a5499caf",
+    "error":  null,
+    "created_at":  "2026-07-17T11:50:29.862128+00:00",
+    "updated_at":  "2026-07-17T11:50:32.260112+00:00",
+    "expires_at":  "2026-07-19T11:50:32.260064+00:00",
+    "timeframe":  "1m",
+    "download_url":  "/export/f38c3fcd08884d549affc6947b81097d/download"
+}

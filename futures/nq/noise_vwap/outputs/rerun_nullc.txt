@@ -1,0 +1,18 @@
+########## NULLC clk30ebar ##########
+=== Null-C: clk30ebar (RTH, 30m) draws=30 ===
+real: n=4209 day$net_mean=+129.7 diffusivity=0.2500
+null diffusivity (median over draws)=0.2500  [gate: match real 0.2500]
+null day$net_mean=+28.2 +/- 17.9  (min -3.7 max +77.7)
+real beats null by z=+5.68; null captures +22% of real P&L
+########## NULLC RTH30 base ##########
+=== Null-C: RTH30 (RTH, 30m) draws=30 ===
+real: n=2923 day$net_mean=+131.0 diffusivity=0.2500
+null diffusivity (median over draws)=0.2500  [gate: match real 0.2500]
+null day$net_mean=+46.0 +/- 19.3  (min +17.6 max +95.9)
+real beats null by z=+4.42; null captures +35% of real P&L
+########## NULLC_PAIR ##########
+=== Paired Null-C (RTH, 30 draws) ===
+REAL day$: base=+131.0 thr15=+149.3 (imp +18.3) thr25=+157.6 (imp +26.5)
+thr15: null base=+48.7 null thr15=+35.5 null imp=-13.2+/-16.1 | REAL imp=+18.3 -> z_imp=+1.96  (level z vs null=+5.66)
+thr25: null base=+48.7 null thr25=+31.4 null imp=-17.2+/-22.7 | REAL imp=+26.5 -> z_imp=+1.93  (level z vs null=+5.21)
+base: null=+48.7+/-16.4 REAL=+131.0 z=+5.04

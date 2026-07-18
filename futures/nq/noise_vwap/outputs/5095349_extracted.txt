@@ -1,0 +1,565 @@
+
+
+===== PAGE 1 =====
+Improvements to Intraday Momentum Strategies
+Using Parameter Optimization and Different Exit Strategies
+Ákos Maróy
+akos@maroy.hu
+January 12, 2025
+Abstract
+Building on the results of Zarattini, C., Aziz, A., & Barbon, A. (2024). Beat the market: An
+effective intraday momentum strategy for S&P500 ETF (SPY), we explore improvements to
+noise boundary based intraday momentum strategies by investigating different exit strategies
+and applying parameter optimization to all parameters of the strategies. We show that
+the returns of the momentum strategy can be significantly improved by such an approach.
+The best results are achieved with exits based on VWAP, VWAP & Ladder and Ladder
+exit strategies, with Sharpe ratios over 3.0 and annualized returns of over 50%, which are
+significant improvements against the baseline strategy.
+Keywords Day Trading, Day Trading Systems, Algo Trading, Momentum, Trend-Following, Intraday
+Momentum, Delta-Hedging
+1 Introduction
+This paper builds on the work of Zarattini et al.1, which introduced an intraday momentum strategy using a
+’noise area’ concept to determine if the intraday movement of an asset is beyond the normal daily movements.
+One can interpret this concept so that if the intra-day movement is within the ’noise area’, then it is ’just
+noise’ and not a significant movement, and the strategy should not take a position, while if the movement
+is outside the ’noise area’, then it is a significant movement, and the strategy should take a position. The
+strategy outlined in Zarattini et al.1 explores multiple entry parameters and exit strategies as well as position
+sizing parameters.
+This paper aims to improve on the results of Zarattini et al.1 by exploring additional position exit strategies
+as well as fine-tuning strategy parameters by the use of a hyperparameter optimization approach.
+2 Data & Framework
+To establish a baseline, results from Zarattini et al.1 based on the Python code provided in the paper are
+reproduced using a somewhat different data set and framework, also in Python. The most notable differences
+are:
+• VectorBT Pro[2] is used as the backtesting framework
+• 10 years of data is used instead of 17 years of data, between 1st October 2014 and 1st October 2024
+• 1 second trade bar data resolution is used instead of 1 minute trade bar data resolution
+• To generate entry or exit exit, instead of the close value of each trade bar, the most relevant part of
+the trade bars is used, e.g. high if the trade is a long entry or short exit, low if the trade is a short
+entry or long exit
+• Trade sizing is done using the then-current price instead of the day open price
+
+===== PAGE 2 =====
+Improvements to Intraday Momentum Strategies
+• A more detailed cost structure is used instead of a $0.0035 cost per share to reflect the nuances of
+Interactive Brokers3 stock commissions
+• To reflect realistic margin requirements by popular trading platforms, instead of a 4x leverage for
+both long and short positions, a margin requirement of 25% for long and 30% for short positions is
+used with effective leverages of 4x and 3.33x, respectively.
+• Trades are exited 15 minutes before market close, not at market close. This is to reflect policies
+by popular trading platforms that start to apply overnight margin requirements 10 minutes before
+market close, which are lower than intra-day margin requirements.
+• Dividend adjustments are not applied
+In addition to the above, the Target Volatilityσtarget parameter is treated differently. In Zarattini et al.1 this
+parameter is used assuming a 4x max leverage value and is used together with the max leverage multiplier,
+in effect bounding the leverage to be used. In this paper, the Target Volatilityσtarget parameter is used to
+calculate the position size as a percentage of maximum leverage value. The reason for this change is that
+we’re using different margin requirements for long and short positions, in effect having different leverages in
+the two directions.
+The formula to calculate the number of shares with dynamic position sizing in Zarattini et al.1 is as follows:
+Sharest =
+⌊AUMt−1 × min (4,σ target,aum/σSymbol,t)
+Opent,9:30
+⌋
+, (1)
+• AUMt−1 - Asset Under Management at the end of the previous day
+• 4 - max leverage
+• σtarget,aum - Target Volatility
+• σSymbol,t - 14-day historical volatility of the traded symbol
+• Opent,9:30 - opening price of the asset at 9:30.
+With the historical volatility over 14 days of the traded symbol being calculated as follows:
+σSymbol,t =
+√1
+14
+14∑
+i=1
+(rett−i −µSPY,t)2 and µSPY,t = 1
+14
+14∑
+i=1
+rett−i. (2)
+Whereas for our purposes we’ll be using the following formula:
+Sharest =
+⌊MAt × min (1,σ target/σSymbol,t)
+Pricet
+⌋
+, (3)
+• MAt - Margin Available at the time of entering the trade
+• σtarget - Target Volatility
+• σSymbol,t - historical volatility of the traded symbol for the lookback period used to calculate the
+noise area
+• Pricet - The price of the asset at the time of entering the trade
+With ldays denoting the historical volatility being over the number of days used for the lookback period of
+the noise area calculation:
+σSymbol,t =
+√ 1
+ldays
+ldays∑
+i=1
+(rett−i −µSPY,t)2 and µSPY,t = 1
+ldays
+ldays∑
+i=1
+rett−i. (4)
+The relationship between Asset Under Management and Margin Available being:
+MAlong,t = AUMt/25% and MA short,t = AUMt/30% (5)
+2
+
+===== PAGE 3 =====
+Improvements to Intraday Momentum Strategies
+3 Baseline
+The most promising strategy in Zarattini et al.1 was to use the ’Current Band’ and the VWAP as a stop loss,
+and dynamic sizing with a target volatilityσtarget,aum of 2%, which is roughly equivalent of aσtarget value of
+0.5% in our reproduction. We’re calculating statistics on a per day basis, not on a per trade basis.
+Symbol Look-
+back
+days
+Target
+Vol
+σtarget
+Vol
+Multa
+Replicated results Reference results
+Sharpe Alpha Beta Ann
+Retb
+Ann
+Volc
+Sharpe Alpha Beta Ann
+Retb
+Ann
+Volc
+SPY 14 0.5%d 1.0 0.98 6% -2% 8% 8% 1.33 20% -7% 20% 14%e
+SPY 14 0.5%d 1.3 0.81 4% 1% 6% 7% 1.50 20% f
+SPY 90 0.5%d 1.0 0.68 4% -1% 6% 8% 1.50 22% 14%g
+SPY 90 0.5%d 1.3 0.60 0% 0% 4% 7%
+QQQ 14 0.5%d 1.0 1.11 7% -1% 10% 9%
+QQQ 14 0.5%d 1.3 0.99 6% -2% 8% 8%
+QQQ 90 0.5%d 1.0 1.28 8% -1% 11% 8%
+QQQ 90 0.5%d 1.3 1.22 7% -1% 9% 7%
+a Volatility Multiplier
+b Annualized Return
+c Annualized Volatility
+d σtarget of 0.5% is roughly equivalent toσtarget,aum = 2% in Zarattini et al.1
+e See ’Curr.Band + VWAP’ stop loss and dynamic sizing in Zarattini et al.1, Table 3
+f See Zarattini et al.1, Figure 9
+g See Zarattini et al.1, Q6
+Table 1: Replicating the results of Zarattini et al.1. All strategies have a ’Curr.Band + VWAP’ stop loss and
+dynamic sizing with a target volatilityσtarget of 0.5%
+The differences between our reproduction and the results of Zarattini et al.1 are attributed to the different
+approach and data set noted above.
+As QQQ seems to provide better results, our further investigation will focus on this symbol.
+4 Exit strategies
+The ideal stock movement pattern for a momentum strategy is a quick and strong movement in the direction
+of the trade throughout the day, as shown in the example in Figure 1. In this case, the strategy should hold
+the position until the end of the day to maximize the profit.
+Unfortunately, not all movement is ideal. Figure 2 shows a daily movement with multiple reversals. Using
+the noise boundary and VWAP as stop loss points, the position is stopped out twice during the day, resulting
+in losses. If the algorithm kept the position until the end of the day, the profit would have been higher.
+We’ll explore different exit strategies to improve the performance of the momentum strategy. In call cases,
+entering the position is done in the same manner, when the asset price moves outside the noise boundary and
+only at specified intervals, e.g. every 30 minutes. The exit strategies will aim to allow the price movement to
+move somewhat lower without stopping out. This approach can work better if the price only dips a bit lower
+before continuing the upward movement, at the cost of a bigger loss if the downtrend continues.
+4.1 Time based exit only
+A time based exit strategy would exit the position at a fixed time, e.g. 15 minutes before market close. This
+strategy is proposed in Zarattini et al.1 as a baseline strategy and was found to be not performing well.
+We’re showing this as a reference. See Figure 3a. All our strategies will include a time based exit.
+3
+
+===== PAGE 4 =====
+Improvements to Intraday Momentum Strategies
+Figure 1: Ideal daily momentum asset movement pattern
+QQQ on 8th January 2024, lookback period of 14 days, volatility multiplier 1.0. The noise boundary is depicted in
+grey and as a darker area, VWAP drawn is blue.
+Figure 2: Daily momentum movement with reversals
+QQQ on 2nd July 2024, lookback period of 14 days, volatility multiplier 1.0, stops at the noise boundary and WVAP.
+The position is stopped out twice during the day, resulting in losses.
+4
+
+===== PAGE 5 =====
+Improvements to Intraday Momentum Strategies
+4.2 Exit on hitting VWAP + time
+The position is exited when the asset price hits the VWAP or at a fixed time, whichever comes first, see
+Figure 3b.
+4.3 Different entry & exit boundaries + VWAP + time
+The position is exited when the asset price hits the VWAP, an exit noise boundary or at a fixed time,
+whichever comes first. This differs from the ’Curr.Band + WVAP’ stop loss strategy in Zarattini et al.1 in
+that the exit noise boundary can be narrower compared to the entry noise boundary. This strategy is shown
+in Figure 3c.
+4.4 Different entry & exit boundaries + time
+The position is exited when the asset price hits an exit noise boundary or at a fixed time, whichever comes
+first. It’s the same as the previous strategy, but without the VWAP exit. This strategy is shown in Figure 3d.
+(a) Time based exit only
+ (b) Exit on hitting VWAP + time
+(c) Different entry & exit boundaries + VWAP +
+time
+ (d) Different entry & exit boundaries + time
+Figure 3: Comparison of different exit strategies
+Different exit strategies shown for QQQ on 2nd July 2024. VWAP is drawn in blue, the entry noise boundary is
+depicted in grey and as a darker area, while the exit noise boundary is drawn in red.
+4.5 Ladder stop loss & take profit
+A ladder stop loss & take profit strategy is based on defining a series of stop loss and take profit levels, of
+which only one pair of stop loss and take profit is active at any given time. When the stop loss is hit, the
+5
+
+===== PAGE 6 =====
+Improvements to Intraday Momentum Strategies
+position is exited. When a take profit is hit, a partial exit is made, and the stop loss and take profit levels
+are moved to the next levels for the next ’step’.
+In this paper, we’ll be looking at simple, 2-level ladder stop loss & take profit strategies, with a 50% partial
+exit on hitting the take profit at each level. Each stop is defined as a multiple of some risk parameterr, and
+is interpreted relative to the entry price.
+Stop Loss Take Profit
+Step 0 −1 ×r 2 ×r
+Step 1 0 ×r 5 ×r
+Table 2: An example 2-step ladder
+Stop Loss Take Profit
+Step 0 $100 − 1 × $10 = $90 $100 + 2 × $10 = $120
+Step 1 $100 + 0 × $10 = $100 $100 + 5 × $10 = $150
+Table 3: Sample ladder with entry price $100 andr = $10 / share
+The strategy is always combined with the time-based exit some minutes before the trading day ends and can
+be combined with other exit strategies listed above. Various scenarios for this strategy are shown in Figure 4.
+(a) Ladder stop loss and take profit not hit - exit
+triggered by time
+(b) Ladder stop loss hit on the first position, exiting
+the trade. The the trade is re-entered later
+(c) Ladder take profit hit triggering a partial exit,
+stop loss & take profit moved for the next ladder step
+Figure 4: Comparison of different scenarios for a ladder stop loss & take profit strategy
+Different scenarios shown for a ladder stop loss & take profit strategy for QQQ on 2nd July 2024. VWAP is drawn in
+blue, the entry noise boundary is depicted in grey and as a darker area, stop loss is depicted as dashed lines in red,
+take profit is depicted in green.
+6
+
+===== PAGE 7 =====
+Improvements to Intraday Momentum Strategies
+5 Parameter optimization
+The results of the entry and exit strategies are highly dependent on the parameters used. To find the best
+parameters for the strategies, a Parameter optimization approach is used using the Optuna library[4]. The
+parameters optimized are:
+Boundary
+& VWAP
+Boundary with
+different exit
+Boundary with
+different exit
+& VWAP
+VWAP
+lookback_days ✓ ✓ ✓ ✓
+volatility_multiplier_enter ✓ ✓ ✓ ✓
+volatility_multiplier_exit ✓ ✓
+target_daily_volatilitya ✓ ✓ ✓ ✓
+start_trade_after_open_minutes ✓ ✓ ✓ ✓
+trade_frequency_minutes ✓ ✓ ✓ ✓
+exit_trades_before_close_minutes ✓ ✓ ✓ ✓
+a σtarget, see Section 2
+Table 4: Summary of what parameters are optimized for each strategy without a ladder.
+See Figure 3 for the strategies.
+Boundary
+& Ladder
+VWAP
+& Ladder Ladder
+lookback_days ✓ ✓ ✓
+volatility_multiplier_enter ✓ ✓ ✓
+volatility_multiplier_exit
+target_daily_volatilitya ✓ ✓ ✓
+start_trade_after_open_minutes ✓ ✓ ✓
+trade_frequency_minutes ✓ ✓ ✓
+exit_trades_before_close_minutes ✓ ✓ ✓
+stop_loss_ladder_step_0 ✓ ✓ ✓
+stop_loss_ladder_step_1 ✓ ✓ ✓
+take_profit_ladder_step_0 ✓ ✓ ✓
+take_profit_ladder_step_1 ✓ ✓ ✓
+a σtarget, see Section 2
+Table 5: Summary of what parameters are optimized for each strategy with a ladder.
+See Figures 3 and 4 for the strategies.
+The following parameters have interdependencies between them:
+volatility_multiplier_exit< volatility_multiplier_enter
+stop_loss_ladder_step_1> stop_loss_ladder_step_0
+take_profit_ladder_step_0> stop_loss_ladder_step_1
+take_profit_ladder_step_1> take_profit_ladder_step_0
+(6)
+To ensure these constraints are met, the parameter optimization framework is used to calculate a differential
+value for the dependent parameters and the actual values are calculated based on these:
+volatility_multiplier_exit = volatility_multiplier_enter +volatility_multiplier_exit_diff
+stop_loss_ladder_step_1 = stop_loss_ladder_step_0 +stop_loss_ladder_step_1_diff
+take_profit_ladder_step_0 = stop_loss_ladder_step_1 +take_profit_ladder_step_0_diff_stop_loss_1
+take_profit_ladder_step_1 = take_profit_ladder_step_0 +take_profit_ladder_step_1_diff
+(7)
+7
+
+===== PAGE 8 =====
+Improvements to Intraday Momentum Strategies
+See Table 6 for the parameter ranges used in the optimization.
+type min max step
+lookback_days int 1 60 1
+volatility_multiplier_enter float 0.1 10.0 0.01
+volatility_multiplier_exit_diff float -1.0 0.0 0.01
+target_daily_volatility float 0.001 0.1 0.001
+start_trade_after_open_minutes int 1 90 1
+trade_frequency_minutes int 1 60 1
+exit_trades_before_close_minutes int 11 a 90 1
+stop_loss_ladder_step_0 float -2.0 0.0 0.01
+stop_loss_ladder_step_1_diff float 0.0 5.0 0.01
+take_profit_ladder_step_0_diff_stop_loss_1 float 0.0 10.0 0.01
+take_profit_ladder_step_1_diff float 0.0 100.0 0.01
+a We’re exiting trades at least 11 minutes before market close as most trading
+platforms start to apply overnight margin requirements 10 minutes before market
+close.
+Table 6: Parameter optimization details: minimum and maximum values and step sizes for each parameter
+When a stop loss & take profit ladder is used, a risk parameterr of 2% of the Asset Under Management
+(AUM) is used.
+The optimization framework is asked to simultaneously maximize the Sharpe Ratio and Alpha of each strategy
+over a 10 year period for QQQ, between 1st October 2014 and 1st October 2024 on 1 second trade bars. As
+the maximum value for lookback days is 60 trading days, the first 60 trading days are skipped to ensure the
+lookback period is always valid and that the trading simulation is always run on the same timeframe.
+SPY is used as a benchmark to calculate Alpha and Beta, which is a good representation of the S&P 500
+index.
+8
+
+===== PAGE 9 =====
+Improvements to Intraday Momentum Strategies
+6 Results
+See Table 7 for the best parameter optimization results for each strategy. For most strategies, two different
+parameter sets are considered, providing a balance between the Sharpe Ratio and Alpha. The parameters for
+each strategy are shown in Tables 9, 10 and 11 in Appendix. A plot showing the cumulative returns can be
+found in Figure 5 and Figure 6 plotted on a logarithmic scale.
+Strategy Sharpe
+Ratio
+Alpha Beta Ann
+Reta
+Ann
+Volb
+MDDc MDD
+Periodd
+Boundary & VWAP #1 2.11 26% -4% 37% 17% 18% 54
+Boundary & VWAP #2 2.13 24% -5% 34% 16% 16% 254
+Boundary with different exit #1 2.76 36% -6% 51% 19% 22% 23
+Boundary with different exit #2 2.71 38% -7% 53% 20% 21% 23
+Boundary with different exit & VWAP 2.32 31% -3% 44% 19% 22% 93
+VWAP #1 3.16 39% 1% 58% 18% 15% 107
+VWAP #2 2.98 40% 2% 59% 20% 15% 107
+Boundary & Ladder #1 2.24 34% -6% 47% 21% 20% 174
+Boundary & Ladder #2 2.57 34% -7% 47% 18% 14% 38
+VWAP & Ladder #1 3.08 31% -1% 45% 15% 11% 29
+VWAP & Ladder #2 2.64 35% -3% 50% 19% 21% 38
+Ladder #1 3.34 41% -5% 60% 19% 13% 166
+Ladder #2 3.35 39% -5% 57% 17% 12% 61
+a Annualized Return
+b Annualized Volatility
+c Maximum Drawdown
+d Maximum Drawdown Period in days
+Table 7: Best parameter optimization results for each strategy
+Figure 5: Cumulative returns
+Cumulative returns for the best strategies found, two baseline strategies and SPY as the benchmark.
+9
+
+===== PAGE 10 =====
+Improvements to Intraday Momentum Strategies
+Figure 6: Cumulative returns on a logarithmic scale
+Cumulative returns for the best strategies found, two baseline strategies and SPY as the benchmark.
+7 Discussion
+We have shown that the momentum strategy can be improved by using different exit strategies. The best
+results were achieved with the VWAP, VWAP & Ladder and Ladder strategies, with Sharpe ratios over 3
+in some cases and annualized returns of over 50%, which are significant improvements against the baseline
+strategy presented in 1.
+The low beta values are a good indication that the strategies are not correlated with the market, which is a
+good sign for a momentum strategy. This is also visible in Figure 6, where we can clearly see the significant
+dips in the benchmark at the end of 2018 and in Q2 2020 or 2022, with our strategies not being affected by
+these or even showing significant gains.
+To conintue the example of 2nd July 2024 detailed in Figures 3 and 4, the behaviour of the most successful
+strategies detailed in Table 7 are shown in Figure 7, broken up between two figures. The strategy returns
+are against $100 000 of Asset Under Management. The differences in return stem from the different exit
+strategies as well as the different strategy parameters, like trade entry time after the market open, trade
+frequency time, and the time before market close when the trades are exited, or the stop loss and take profit
+levels in the ladder strategy. For the Ladder strategies shown in Figures 7l and 7m, it may seem that the first
+trade is exited at VWAP, but in fact the stop loss is being hit, similarly to Figure 4b. The reference strategies
+with a 90 day lookback period and volatility multipliers of 1.0 and 1.3 are shown in Figures 7n and 7o.
+All of the successful strategies found through parameter optimization have a lower lookback period than
+the baseline strategy, some as low as 2 days. This suggests that the momentum strategy is more effective
+when it reacts to recent price movement patterns when predicting a breakout of the noise area and entering
+significant daily movement.
+The successful VWAP exit strategies use a volatility multiplier close to or even below 1.0. This can be
+interpreted that the prediction of the algorithm is that the daily movement will be strong even if it hasn’t
+yet reached the average daily volatility for the past few days. The successful VWAP & Ladder and Ladder
+strategies employ a volatility multiplier of 1.33 or 1.28, showing that these strategies only enter a trade when
+the daily movement is 28% or 33% stronger than the average daily movement for the past few days.
+10
+
+===== PAGE 11 =====
+Improvements to Intraday Momentum Strategies
+(a) Bondary & VWAP #1: 4 trades, return -$20
+ (b) Bondary & VWAP #2: 4 trades, return -$177
+(c) Boundary & different exit #1: 2 trades, return
+$1594
+(d) Boundary & different exit #2: 2 trades, return
+$1714
+(e) Boundary with different exit & VWAP:
+2 trades, return $1393
+Figure 7: Behaviour of the performing strategies on the 2nd July 2024.
+Behaviour of the performing strategies listed in Table 7 for the 2nd July 2024. The results are against $100 000 of
+Asset Under Management. Continued on next page.
+11
+
+===== PAGE 12 =====
+Improvements to Intraday Momentum Strategies
+(f) VWAP #1: 2 trades, return $1245
+ (g) VWAP #1: 2 trades, return $1245
+(h) VWAP & Ladder #1: 2 trades, return $1434
+ (i) VWAP & Ladder #2: 2 trades, return $1308
+(j) Boundary & Ladder #1: 2 trades, return $1378
+ (k) Boundary & Ladder #2: 4 trades, return $288
+Figure 7: Behaviour of the performing strategies on the 2nd July 2024, continued.
+Behaviour of the performing strategies listed in Table 7 for the 2nd July 2024. The results are against $100 000 of
+Asset Under Management. Continued from the previous page.
+12
+
+===== PAGE 13 =====
+Improvements to Intraday Momentum Strategies
+(l) Ladder #1: 2 trades, return $1698
+ (m) Ladder #2: 2 trades, return $1698
+(n) Reference lookback 90 days volatility 1.0x:
+2 trades, return $393
+(o) Reference lookback 90 days, volatility 1.3x:
+2 trades, return $87
+Figure 7: Behaviour of the performing strategies on the 2nd July 2024, continued.
+Behaviour of the performing strategies listed in Table 7 for the 2nd July 2024. The results are against $100 000 of
+Asset Under Management. Continued from the previous page.
+For the ladder step exit strategies, the steps are defined as multipliers of 2% of the Assent Under Management
+(AUM). Table 8 shows the steps in relation to the AUM based on the raw parameters in Table 11. We can
+see that most successful strategies have a trade entry stop loss risking less than 1% of the AUM and 2 out of
+4 have a stop loss at step 1 that is still below the entry price per trade. The algorithm may enter multiple
+trades per day risking more each day. The take profit step of the first ladder is not realistically reachable for
+3 out of 4 of the strategies, implying a time based exit.
+Boundary
+& Ladder
+#1
+Boundary
+& Ladder
+#2
+VWAP
+& Ladder
+#1
+VWAP
+& Ladder
+#2
+Ladder
+#1
+Ladder
+#2
+stop_loss_ladder_step_0 -1.08% -1.08% -0.81% -1.30% -0.80% -0.80%
+stop_loss_ladder_step_1 3.46% 4.96% -0.56% 5.68% 0.32% -0.54%
+take_profit_ladder_step_0 6.44% 7.92% 4.40% 23.44% 5.10% 4.24%
+take_profit_ladder_step_1 8.70% 10.18% 74.16% a 43.28%a 7.36% 40.64% a
+a Take profit level not realistically reached, the strategy will exit based on time before market close
+Table 8: Stop loss and take profit levels for each ladder step in relation to Asset Under Management
+Dynamic sizing is introduced in Zarattini et al.1 using a target_daily_volatility orσtarget parameter to
+calculate the entry size in relation to the Available Margin (AM). The impact of this parameter is that in
+some cases it will enter a trade with a smaller position size than the maximum available margin. This would
+allow a smaller trade entry when the result is uncertain, reudcing losses. For the most successful algorithms
+13
+
+===== PAGE 14 =====
+Improvements to Intraday Momentum Strategies
+found through parameter optimization the impact of this parameter is shown in Figure 8, where we can
+see that the most common entry size is 100% of the Available Margin for all strategies, although for some
+strategies it gets as low as 75%. It also seems that losing trades do have not use lower entry sizes somewhat
+more frequently, compared to winning trades, but the difference is not significant.
+Figure 8: Usage frequency of entry size percentage
+Usage frequency of various entry sizes in percentage of Available Margin based onσtarget or target_daily_volatility.
+14
+
+===== PAGE 15 =====
+Improvements to Intraday Momentum Strategies
+8 Conclusion
+We have shown that the momentum strategy can be improved by using different exit strategies and by
+applying a parameter optimization approach. The best results were achieved with the VWAP, VWAP &
+Ladder and Ladder strategies, with Sharpe ratios over 3.0 and annualized returns of over 50%, which are
+significant improvements against the baseline strategy presented in Zarattini et al.1 and listed in Table 1.
+15
+
+===== PAGE 16 =====
+Improvements to Intraday Momentum Strategies
+Appendix
+A selection of parameter sets for the best strategies found through parameter optimization.
+Boundary
+& VWAP
+#1
+Boundary
+& VWAP
+#2
+Boundary with
+different exit
+#1
+Boundary with
+different exit
+#2
+lookback_days 5 8 5 5
+volatility_multiplier_enter 1.05 1.05 1.29 1.29
+volatility_multiplier_exit 0.78 0.78
+target_daily_volatilitya 0.030 0.018 0.016 0.029
+start_trade_after_open_minutes 20 58 7 7
+trade_frequency_minutes 42 45 35 35
+exit_trades_before_close_minutes 12 12 16 22
+a σtarget, see Section 2
+Table 9: Parameters for various strategies, see Table 7
+Boundary with
+different exit
+& VWAP
+VWAP
+#1
+VWAP
+#2
+lookback_days 4 2 2
+volatility_multiplier_enter 1.14 1.03 0.85
+volatility_multiplier_exit 0.35
+target_daily_volatilitya 0.030 0.013 0.014
+start_trade_after_open_minutes 10 12 12
+trade_frequency_minutes 50 45 45
+exit_trades_before_close_minutes 31 13 13
+a σtarget, see Section 2
+Table 10: Parameters for various strategies, see Table 7
+Boundary
+& Ladder
+#1
+Boundary
+& Ladder
+#2
+VWAP
+& Ladder
+#1
+VWAP
+& Ladder
+#2
+Ladder
+#1
+Ladder
+#2
+lookback_days 4 4 4 4 4 4
+volatility_multiplier_enter 0.85 1.08 1.33 1.33 1.28 1.28
+volatility_multiplier_exit
+target_daily_volatilitya 0.024 0.020 0.025 0.020 0.064 0.052
+start_trade_after_open_minutes 23 4 42 13 42 42
+trade_frequency_minutes 18 18 46 15 23 23
+exit_trades_before_close_minutes 30 30 30 30 30 30
+stop_loss_ladder_step_0 -0.54 -0.54 -0.41 -0.65 -0.40 -0.40
+stop_loss_ladder_step_1 1.73 2.47 -0.28 2.87 0.16 -0.27
+take_profit_ladder_step_0 3.22 3.96 2.2 11.72 2.55 2.12
+take_profit_ladder_step_1 4.35 5.09 37.08 21.64 3.68 20.32
+a σtarget, see Section 2
+Table 11: Parameters for each strategy with a stop loss & take profit ladder, see Table 7
+16
+
+===== PAGE 17 =====
+Improvements to Intraday Momentum Strategies
+References
+[1] Carlo Zarattini, Andrew Aziz, and Andrea Barbon. Beat the market an effective intraday momen-
+tum strategy for S&P500 ETF (SPY).Swiss Finance Institute Research Paper , No. 24-97, May 2024.
+doi:10.2139/ssrn.4824172. URL https://ssrn.com/abstract=4824172.
+[2] Oleg Polakow. VectorBT Pro, 2024. URLhttps://vectorbt.pro/.
+[3] Interactive Brokers. Interactive Brokers Stock Commissions, 2024. URL https://www.
+interactivebrokers.com/en/pricing/commissions-stocks.php.
+[4] Takuya Akiba, Shotaro Sano, Toshihiko Yanase, Takeru Ohta, and Masanori Koyama. Optuna: A
+next-generation hyperparameter optimization framework. In Proceedings of the 25th ACM SIGKDD
+International Conference on Knowledge Discovery and Data Mining , 2019.
+17

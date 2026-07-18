@@ -1,0 +1,148 @@
+
+==============================================================================
+NQ  RAW FILE STRUCTURE  (NQ_ohlcv-1m_NQv0_20110801_20260715.parquet)
+==============================================================================
+rows=5,094,910  2011-07-31 20:00:00-04:00 -> 2026-07-14 19:59:00-04:00
+contracts (instrument_id): 61  rolls=60
+monotonic increasing ts: True
+duplicate minute timestamps: 0
+OHLC sanity: high<low=0  high<max(o,c)=0  low>min(o,c)=0  nonpos=0  NaN=0
+
+timezone check — volume share by ET hour, by era (RTH 09:30-16:00 should dominate):
+  2011-2015: RTH(09-15h ET) vol share=84.6%  top-5 ET hours=[9, 10, 11, 14, 15]
+  2016-2020: RTH(09-15h ET) vol share=78.9%  top-5 ET hours=[9, 10, 11, 12, 15]
+  2021-2026: RTH(09-15h ET) vol share=78.6%  top-5 ET hours=[9, 10, 11, 12, 15]
+
+==============================================================================
+NQ  RTH SESSION COMPLETENESS & GAPS  (09:30-16:00 ET)
+==============================================================================
+RTH sessions=3839  2011-08-01 -> 2026-07-14
+median bars/session=390  full(390)=3711  <350 bars=121  <200 bars=12
+total missing RTH minutes (vs 390/session): 22,404
+
+worst 10 sessions by largest single intraday gap (minutes):
+  2020-03-16  max_gap=   15 min  bars=376
+  2020-03-09  max_gap=   14 min  bars=376
+  2020-03-12  max_gap=   14 min  bars=377
+  2020-03-18  max_gap=   14 min  bars=377
+  2014-07-04  max_gap=    5 min  bars=177
+  2014-05-26  max_gap=    3 min  bars=197
+  2016-11-24  max_gap=    3 min  bars=205
+  2016-02-15  max_gap=    3 min  bars=207
+  2014-09-01  max_gap=    3 min  bars=179
+  2015-11-26  max_gap=    3 min  bars=202
+
+top 10 largest 1-min intraday returns (bad-print / gap spikes):
+  2020-03-16 09:45:00-04:00  ret=-4.070%  close=7095.25  prevgap=15min
+  2025-04-09 13:19:00-04:00  ret=+2.667%  close=17977.75  prevgap=1min
+  2020-03-03 10:00:00-05:00  ret=+2.187%  close=8972.00  prevgap=1min
+  2025-04-07 10:18:00-04:00  ret=-1.755%  close=18000.25  prevgap=1min
+  2020-03-18 15:59:00-04:00  ret=+1.736%  close=7206.75  prevgap=1min
+  2025-04-07 10:10:00-04:00  ret=+1.693%  close=17553.00  prevgap=1min
+  2025-04-07 11:14:00-04:00  ret=-1.684%  close=17285.25  prevgap=1min
+  2025-04-09 13:28:00-04:00  ret=-1.620%  close=18427.00  prevgap=1min
+  2022-11-02 14:36:00-04:00  ret=-1.535%  close=11273.50  prevgap=1min
+  2025-04-07 10:13:00-04:00  ret=+1.370%  close=18087.25  prevgap=1min
+
+==============================================================================
+NQ  OLD vs NEW  (per-RTH-session join)
+==============================================================================
+sessions: old=3858  new=3839  only_in_old=23  only_in_new=4
+common sessions=3835  identical 09:30 open=3567/3835
+
+per-year: RTH 09:30-open mismatch rate (old vs new) + mean bars/session:
+        n  open_mismatch_rate  mean_bars_old  mean_bars_new
+yr                                                         
+2011  109               0.239        383.468        383.523
+2012  255               0.086        382.702        382.686
+2013  252               0.016        387.524        388.032
+2014  250               0.016        384.632        384.824
+2015  258               0.019        384.457        384.465
+2016  258               0.019        385.112        385.116
+2017  257               0.070        384.370        384.471
+2018  257               0.245        383.840        383.875
+2019  258               0.089        383.895        383.895
+2020  259               0.062        384.328        381.834
+2021  258               0.047        385.159        385.174
+2022  258               0.050        384.477        384.477
+2023  257               0.070        383.790        383.813
+2024  259               0.069        383.208        383.224
+2025  257               0.051        383.171        383.171
+2026  133               0.083        381.526        383.233
+
+==============================================================================
+ES  RAW FILE STRUCTURE  (ES_ohlcv-1m_ESv0_20110801_20260715.parquet)
+==============================================================================
+rows=5,222,530  2011-07-31 20:00:00-04:00 -> 2026-07-14 19:59:00-04:00
+contracts (instrument_id): 61  rolls=60
+monotonic increasing ts: True
+duplicate minute timestamps: 0
+OHLC sanity: high<low=0  high<max(o,c)=0  low>min(o,c)=0  nonpos=0  NaN=0
+
+timezone check — volume share by ET hour, by era (RTH 09:30-16:00 should dominate):
+  2011-2015: RTH(09-15h ET) vol share=80.5%  top-5 ET hours=[9, 10, 11, 14, 15]
+  2016-2020: RTH(09-15h ET) vol share=79.2%  top-5 ET hours=[9, 10, 11, 14, 15]
+  2021-2026: RTH(09-15h ET) vol share=81.6%  top-5 ET hours=[9, 10, 11, 14, 15]
+
+==============================================================================
+ES  RTH SESSION COMPLETENESS & GAPS  (09:30-16:00 ET)
+==============================================================================
+RTH sessions=3839  2011-08-01 -> 2026-07-14
+median bars/session=390  full(390)=3714  <350 bars=121  <200 bars=10
+total missing RTH minutes (vs 390/session): 22,290
+
+worst 10 sessions by largest single intraday gap (minutes):
+  2020-03-16  max_gap=   15 min  bars=376
+  2020-03-09  max_gap=   14 min  bars=377
+  2020-03-12  max_gap=   14 min  bars=377
+  2020-03-18  max_gap=   14 min  bars=377
+  2014-07-04  max_gap=    3 min  bars=204
+  2014-09-01  max_gap=    3 min  bars=194
+  2017-05-29  max_gap=    2 min  bars=206
+  2018-09-03  max_gap=    2 min  bars=209
+  2016-05-30  max_gap=    2 min  bars=209
+  2017-11-23  max_gap=    2 min  bars=209
+
+top 10 largest 1-min intraday returns (bad-print / gap spikes):
+  2020-03-16 09:45:00-04:00  ret=-5.510%  close=2375.00  prevgap=15min
+  2025-04-09 13:19:00-04:00  ret=+2.579%  close=5179.75  prevgap=1min
+  2020-03-03 10:00:00-05:00  ret=+2.216%  close=3125.50  prevgap=1min
+  2020-03-17 15:59:00-04:00  ret=+1.807%  close=2549.00  prevgap=1min
+  2025-04-07 10:10:00-04:00  ret=+1.596%  close=5075.50  prevgap=1min
+  2025-04-07 11:14:00-04:00  ret=-1.493%  close=5013.50  prevgap=1min
+  2025-04-07 10:18:00-04:00  ret=-1.433%  close=5208.75  prevgap=1min
+  2020-03-09 09:49:00-04:00  ret=-1.404%  close=2720.75  prevgap=14min
+  2020-03-26 15:50:00-04:00  ret=+1.391%  close=2605.00  prevgap=1min
+  2025-04-09 13:20:00-04:00  ret=+1.385%  close=5251.50  prevgap=1min
+
+==============================================================================
+ES  OLD vs NEW  (per-RTH-session join)
+==============================================================================
+sessions: old=3850  new=3839  only_in_old=15  only_in_new=4
+common sessions=3835  identical 09:30 open=2937/3835
+
+per-year: RTH 09:30-open mismatch rate (old vs new) + mean bars/session:
+        n  open_mismatch_rate  mean_bars_old  mean_bars_new
+yr                                                         
+2011  109               0.156        383.486        383.532
+2012  255               0.067        382.769        382.769
+2013  252               0.016        387.512        388.036
+2014  250               0.012        384.924        385.052
+2015  258               0.012        384.527        384.531
+2016  258               0.023        385.163        385.167
+2017  257               0.062        384.397        384.494
+2018  257               0.202        383.868        383.872
+2019  258               0.043        383.891        383.891
+2020  259               0.031        384.336        381.842
+2021  258               0.019        385.171        385.174
+2022  258               0.035        384.477        384.477
+2023  257               0.440        383.790        383.813
+2024  259               1.000        383.208        383.224
+2025  257               1.000        383.163        383.163
+2026  133               0.887        381.120        383.233
+
+==============================================================================
+SUMMARY
+==============================================================================
+NQ: 3839 RTH sessions, 1,474,806 RTH bars, 22,404 missing minutes
+ES: 3839 RTH sessions, 1,474,920 RTH bars, 22,290 missing minutes

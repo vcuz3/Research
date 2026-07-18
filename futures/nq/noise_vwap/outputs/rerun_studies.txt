@@ -1,0 +1,83 @@
+########## CLOCKS ##########
+=== STUDY 2: decision clock (RTH, NQ, lb90, cost=0.25tick) ===
+baseline = 30 min. Faster clock -> more trades, smaller per-trade edge,
+bigger close->next-open gap risk: watch the fill artifact.
+
+clock 5m [next_open]       n= 7332 (2.87/d) gross=+1.875 net=+1.525pt hit=0.261 day$t=+2.48 Sh=0.78
+clock 5m [sig_close]       n= 7332 (2.87/d) gross=+1.855 net=+1.505pt hit=0.260 day$t=+2.45 Sh=0.77
+    -> fill artifact = -0.020pt/trade (-1% of the aggressive edge)  honest_t=+2.48
+
+clock15m [next_open]       n= 4161 (1.83/d) gross=+3.784 net=+3.434pt hit=0.326 day$t=+3.12 Sh=1.04
+clock15m [sig_close]       n= 4161 (1.83/d) gross=+3.783 net=+3.433pt hit=0.328 day$t=+3.11 Sh=1.04
+    -> fill artifact = -0.001pt/trade (-0% of the aggressive edge)  honest_t=+3.12
+
+clock30m [next_open]       n= 2923 (1.43/d) gross=+4.945 net=+4.595pt hit=0.380 day$t=+3.24 Sh=1.14
+clock30m [sig_close]       n= 2923 (1.43/d) gross=+4.941 net=+4.591pt hit=0.381 day$t=+3.23 Sh=1.13
+    -> fill artifact = -0.004pt/trade (-0% of the aggressive edge)  honest_t=+3.24
+
+clock60m [next_open]       n= 2144 (1.20/d) gross=+5.261 net=+4.911pt hit=0.437 day$t=+2.70 Sh=1.02
+clock60m [sig_close]       n= 2144 (1.20/d) gross=+5.292 net=+4.942pt hit=0.435 day$t=+2.72 Sh=1.02
+    -> fill artifact = +0.031pt/trade (+1% of the aggressive edge)  honest_t=+2.70
+
+########## ETH ##########
+=== STUDY 1: ETH vs RTH (NQ, lb90, 30-min clock, cost=0.25tick) ===
+ETH = full Globex session anchored at 18:00 ET open; VWAP+bands over the
+whole session; forced flat at the 16:00 ET RTH close.
+
+RTH-30m [next_open]        n= 2923 (1.43/d) gross=+4.945 net=+4.595pt hit=0.380 day$t=+3.24 Sh=1.14
+RTH-30m [sig_close]        n= 2923 (1.43/d) gross=+4.941 net=+4.591pt hit=0.381 day$t=+3.23 Sh=1.13
+    -> fill artifact = -0.004pt/trade (-0% of the aggressive edge)  honest_t=+3.24
+
+ETH-30m [next_open]        n= 5491 (2.32/d) gross=+1.801 net=+1.451pt hit=0.285 day$t=+1.37 Sh=0.45
+ETH-30m [sig_close]        n= 5491 (2.32/d) gross=+1.732 net=+1.382pt hit=0.284 day$t=+1.30 Sh=0.43
+    -> fill artifact = -0.069pt/trade (-5% of the aggressive edge)  honest_t=+1.37
+
+ETH-30m everybar-exit [next_open] n= 8365 (3.53/d) gross=+1.173 net=+0.823pt hit=0.205 day$t=+1.35 Sh=0.44
+ETH-30m everybar-exit [sig_close] n= 8365 (3.53/d) gross=+1.117 net=+0.767pt hit=0.201 day$t=+1.26 Sh=0.41
+    -> fill artifact = -0.056pt/trade (-7% of the aggressive edge)  honest_t=+1.35
+########## THRESHOLD ##########
+=== STUDY 3: ATR-buffer threshold entry (RTH, NQ, lb90, cost=0.25tick) ===
+Replace the clock: enter at the FIRST bar closing beyond the band by
+X*ATR (ATR = prior-14-session mean RTH range, pts). Exit checked every bar.
+X=0.0 -> continuous touch breakout (no clock).  Watch the fill artifact:
+event-driven every-bar entry is the classic fill-artifact / wick trap.
+
+thr X=0.00 [next_open]     n=16631 (5.78/d) gross=+0.727 net=+0.377pt hit=0.175 day$t=+1.39 Sh=0.41
+thr X=0.00 [sig_close]     n=16631 (5.78/d) gross=+0.693 net=+0.343pt hit=0.172 day$t=+1.26 Sh=0.37
+    -> fill artifact = -0.034pt/trade (-10% of the aggressive edge)  honest_t=+1.39
+
+thr X=0.10 [next_open]     n= 5161 (2.43/d) gross=+2.652 net=+2.302pt hit=0.261 day$t=+2.97 Sh=1.02
+thr X=0.10 [sig_close]     n= 5161 (2.43/d) gross=+2.628 net=+2.278pt hit=0.261 day$t=+2.94 Sh=1.01
+    -> fill artifact = -0.023pt/trade (-1% of the aggressive edge)  honest_t=+2.97
+
+thr X=0.25 [next_open]     n= 2252 (1.61/d) gross=+5.231 net=+4.881pt hit=0.362 day$t=+3.26 Sh=1.39
+thr X=0.25 [sig_close]     n= 2252 (1.61/d) gross=+5.223 net=+4.873pt hit=0.361 day$t=+3.26 Sh=1.38
+    -> fill artifact = -0.007pt/trade (-0% of the aggressive edge)  honest_t=+3.26
+
+thr X=0.50 [next_open]     n=  917 (1.29/d) gross=+5.654 net=+5.304pt hit=0.420 day$t=+1.82 Sh=1.09
+thr X=0.50 [sig_close]     n=  917 (1.29/d) gross=+5.621 net=+5.271pt hit=0.419 day$t=+1.81 Sh=1.08
+    -> fill artifact = -0.032pt/trade (-1% of the aggressive edge)  honest_t=+1.82
+
+########## DECAY ##########
+  yr |               base clock30 |                 thr X=0.15 |                 thr X=0.25
+     |   n   net_pt  day_t   day$ |   n   net_pt  day_t   day$ |   n   net_pt  day_t   day$
+2011 |   12  +1.61 +0.67     +43 |   17  -1.00 -0.60     -42 |    9  -1.49 -0.54     -45
+2012 |  188  +1.97 +2.25     +53 |  254  +0.90 +1.45     +36 |  142  +1.50 +1.57     +44
+2013 |  184  +0.86 +1.10     +23 |  238  +0.27 +0.48     +10 |  145  +0.41 +0.53     +13
+2014 |  193  +1.88 +1.71     +52 |  246  +1.46 +1.80     +59 |  155  +1.34 +1.09     +42
+2015 |  208  +1.56 +1.19     +45 |  264  +0.59 +0.61     +24 |  161  +1.04 +0.72     +32
+2016 |  212  -0.53 -0.36     -15 |  260  +0.97 +0.87     +40 |  159  +1.52 +0.95     +52
+2017 |  188  +0.92 +0.62     +26 |  238  +0.27 +0.22     +11 |  151  +0.35 +0.19     +11
+2018 |  226  +8.87 +2.78    +269 |  279  +7.02 +2.63    +304 |  185  +9.22 +2.62    +313
+2019 |  166  +0.95 +0.42     +26 |  217  +1.82 +1.05     +74 |  145  +1.10 +0.48     +39
+2020 |  183 +10.33 +1.59    +286 |  263  +5.34 +1.43    +230 |  173  +4.32 +0.85    +166
+2021 |  193  +8.66 +1.83    +244 |  251  +3.18 +0.86    +124 |  149  +7.77 +1.46    +234
+2022 |  255 +17.20 +2.70    +519 |  269 +10.20 +1.87    +378 |  145 +19.38 +2.26    +562
+2023 |  192  +8.15 +1.83    +227 |  220  +2.80 +0.72    +103 |  121  +3.07 +0.54     +82
+2024 |  202  +8.97 +1.28    +250 |  252 +12.10 +2.24    +469 |  165 +12.41 +1.75    +383
+2025 |  200  -3.23 -0.26     -99 |  287  +3.11 +0.42    +155 |  166  +1.34 +0.11     +51
+2026 |  121  -5.83 -0.46    -174 |  138  +4.51 +0.46    +180 |   81 +10.38 +0.72    +366
+
+    base clock30: n=2923 days=2050 net/trade=+4.595 day$t=+3.24 Sharpe=1.14 total$=268,624
+      thr X=0.15: n=3693 days=1819 net/trade=+3.678 day$t=+3.63 Sharpe=1.35 total$=271,649
+      thr X=0.25: n=2252 days=1395 net/trade=+4.881 day$t=+3.26 Sharpe=1.39 total$=219,821
