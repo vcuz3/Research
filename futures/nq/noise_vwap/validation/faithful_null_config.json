@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0007",
+  "instruments": ["NQ", "ES"],
+  "noise_lookback_sessions": 90,
+  "decision_clock": "concretum_09:59_then_30min",
+  "require_vwap_entry_gate": true,
+  "exit_check": "decision",
+  "fill_mode": "next_open",
+  "slippage_ticks_per_side": 0.25,
+  "fees_per_side_usd": 2.25,
+  "null": "corrected_path_preserving_return_shuffle",
+  "draws_per_instrument": 30,
+  "seeds": "1000..1029",
+  "daily_metric_includes_zero_trade_eligible_sessions": true,
+  "kill_test": "reject if real daily net P&L is not distinguishable from the instrument-specific null distribution at upper-tail p <= 0.05 or if null captures at least 60% of real P&L"
+}

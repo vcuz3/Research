@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0012",
+  "hypothesis_id": "HYP-0005",
+  "status": "completed",
+  "declared_utc": "2026-07-18T15:24:26.461240+00:00",
+  "config_path": "experiments/configs/hyp_0005_exit_band.json",
+  "data_scope": "NQ primary and ES sibling clean Databento RTH history through 2026 on common post-lookback-90 sample",
+  "code_ref": "scripts/hyp_0005_exit_band.py (exit_band in core/engine2.py)",
+  "run_command": "python -m futures.nq.noise_vwap.scripts.hyp_0005_exit_band <real|null> <NQ|ES> 30",
+  "primary_metric": "max-cell zero-trade-day daily net-ATR-R Sharpe uplift over the both stop across the s x y exit-band grid",
+  "builder": "Claude (Opus 4.8)",
+  "outputs": ["real_nq.txt", "real_es.txt", "null_es.txt", "review.md"],
+  "closed_utc": "2026-07-18T15:57:06.696855+00:00",
+  "result_summary": "REJECT: flipped/looser grid \u2014 NQ best cell s0.75_y1.0 dSharpe +0.090 / dNetR +14.1 FAILS the +0.10 gate (no null run); ES best s0.5_y0.5 dSharpe +0.320 PASSES real gate but Null C family-max mean +0.254 (p=0.2903) reproduces it = variance/selectivity amplifier, same as EXP-0010. Literal/tighter negative-y grid rejected on both markets first. Looser exit is a turnover/capacity lever, not alpha. Retain both stop + tp1.0_50.",
+  "reviewer": "Claude (Opus 4.8)",
+  "review_status": "completed",
+  "review_verdict": "REJECT confirmed — concur with builder; no blocking objections"
+}

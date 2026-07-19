@@ -1,0 +1,41 @@
+=== GC lookback=90 Null-C x30 (slippage=0.25tick + fees, cost=0.0475pt/side) ===
+REAL diffusivity |next_open-close| median = 0.1000 pt
+REAL: n=2641 gross=+0.359pt/trade day$net=+19.6 (t=+1.55)
+  null  0: diff=0.1000 n= 3239 gross=-0.004 day$net=-9.0
+  null  1: diff=0.1000 n= 3147 gross=+0.120 day$net=+2.2
+  null  2: diff=0.1000 n= 3225 gross=+0.204 day$net=+9.9
+  null  3: diff=0.1000 n= 3173 gross=+0.170 day$net=+6.7
+  null  4: diff=0.1000 n= 3190 gross=+0.156 day$net=+5.5
+  null  5: diff=0.1000 n= 3227 gross=+0.137 day$net=+3.8
+  null  6: diff=0.1000 n= 3174 gross=+0.251 day$net=+13.9
+  null  7: diff=0.1000 n= 3179 gross=+0.078 day$net=-1.5
+  null  8: diff=0.1000 n= 3262 gross=+0.191 day$net=+8.8
+  null  9: diff=0.1000 n= 3260 gross=+0.029 day$net=-6.0
+  null 10: diff=0.1000 n= 3316 gross=+0.127 day$net=+3.0
+  null 11: diff=0.1000 n= 3228 gross=+0.143 day$net=+4.3
+  null 12: diff=0.1000 n= 3240 gross=+0.100 day$net=+0.4
+  null 13: diff=0.1000 n= 3244 gross=+0.105 day$net=+0.9
+  null 14: diff=0.1000 n= 3135 gross=+0.176 day$net=+7.2
+  null 15: diff=0.1000 n= 3200 gross=+0.085 day$net=-0.9
+  null 16: diff=0.1000 n= 3195 gross=+0.237 day$net=+12.7
+  null 17: diff=0.1000 n= 3207 gross=+0.291 day$net=+17.7
+  null 18: diff=0.1000 n= 3182 gross=+0.325 day$net=+20.6
+  null 19: diff=0.1000 n= 3196 gross=+0.087 day$net=-0.7
+  null 20: diff=0.1000 n= 3287 gross=+0.108 day$net=+1.2
+  null 21: diff=0.1000 n= 3184 gross=+0.127 day$net=+2.9
+  null 22: diff=0.1000 n= 3230 gross=+0.032 day$net=-5.7
+  null 23: diff=0.1000 n= 3248 gross=+0.081 day$net=-1.2
+  null 24: diff=0.1000 n= 3223 gross=+0.090 day$net=-0.4
+  null 25: diff=0.1000 n= 3154 gross=+0.118 day$net=+2.1
+  null 26: diff=0.1000 n= 3243 gross=+0.115 day$net=+1.9
+  null 27: diff=0.1000 n= 3205 gross=-0.058 day$net=-13.8
+  null 28: diff=0.1000 n= 3191 gross=+0.048 day$net=-4.2
+  null 29: diff=0.1000 n= 3167 gross=+0.178 day$net=+7.4
+
+--- NULL-C SUMMARY ---
+diffusivity gate: real=0.1000 null median=0.1000 (must match within ~1 tick)
+null day$net: mean=+2.98 std=+7.33 [min -13.8, max +20.6]
+real day$net: +19.57
+real beats null by z=+2.26 sigma of the null spread; upper-tail p=0.0645
+null captures 15.2% of the real day$net (machinery share; want < ~60%)
+gross: real=+0.359 null mean=+0.128

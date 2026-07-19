@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0001",
+  "hypothesis_id": null,
+  "phase": "validation",
+  "status": "completed",
+  "declared_utc": "2026-07-19T00:00:00+00:00",
+  "config_path": "baseline_replication/configs/faithful_config.json",
+  "data_scope": "GC clean Databento RTH history 2011-08-01..2026-07-16",
+  "code_ref": "core/nulls.py; scripts/run_nulls.py; scripts/run_portfolio.py",
+  "run_command": "python -m futures.gc.noise_vwap.scripts.run_nulls GC 90 30 0.25 ; python -m futures.gc.noise_vwap.scripts.run_portfolio GC 90 0.03 8",
+  "primary_metric": "Null-C z/p (real vs return-shuffle) and vol-targeted Sharpe/CAGR/maxDD",
+  "builder": "claude",
+  "outputs": ["baseline_nullc.txt", "vol_target_sizing.txt", "review.md"],
+  "result_summary": "Timing edge marginally real (Null-C z=+2.26 p=0.065 at 0.25tick, 15% capture, diffusivity gate passes) but NON-TRADABLE: vol-target CAGR 0.1% / Sharpe 0.07 / maxDD -45.7%, no year persistence.",
+  "reviewer": "unassigned",
+  "review_status": "not-reviewed",
+  "review_verdict": "Builder self-review: genuine-but-tiny non-tradable signal; independent review outstanding"
+}

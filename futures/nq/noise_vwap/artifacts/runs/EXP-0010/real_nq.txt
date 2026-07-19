@@ -1,0 +1,8 @@
+HYP-0003 VWAP-touch exit vs band-or-VWAP stop: NQ
+Common post-lb90 sample; lb90; 30m RTH + VWAP gate; every-bar; next-open
+  stop      n    n/yr    grossR      netR   R/trade     Sh   day-t      23+R   23+Sh
+  both   4209   292.4    +111.2     +91.2   +0.0217   1.29   +4.89     +19.1    1.10
+  vwap   3059   212.5    +112.3     +97.8   +0.0320   1.26   +4.77     +16.2    0.83
+Uplift (vwap - both): dSharpe=-0.031, dNetR=+6.6, dRecentSh=-0.265
+This is descriptive until the null mode passes the kill test.
+Fill sensitivity (vwap arm): signal_close - next_open dSharpe=+0.006, dNetR=+0.5

@@ -1,0 +1,19 @@
+{
+  "instrument": "NQ",
+  "lookback_sessions": 90,
+  "session": "RTH",
+  "entry_clock_minutes": 30,
+  "require_vwap": true,
+  "entry_fill": "next_1m_open",
+  "exit_fill": "first_1s_touch_gap_aware",
+  "stop_activation": "next_second_after_completed_1m_bar",
+  "stop_refresh_modes": ["decision", "every_bar"],
+  "slippage_ticks_per_side_primary": 0.5,
+  "slippage_ticks_per_side_sensitivity": [0.25, 0.5, 1.0],
+  "fees_usd_per_side": 2.25,
+  "data_path": "futures/data/databento/NQ_ohlcv-1s_NQv0_20100606_20260717.parquet",
+  "kill_test": {
+    "max_sharpe_degradation_vs_1m_continuous": 0.15,
+    "require_positive_daily_net_mean": true
+  }
+}

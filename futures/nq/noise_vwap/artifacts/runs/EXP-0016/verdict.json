@@ -1,0 +1,17 @@
+{
+  "vetoed_real_signals": 2041,
+  "trade_retention": 0.8614872891423141,
+  "real_delta_sumR": 3.97145137093932,
+  "real_delta_sharpe": 0.23550449086336434,
+  "null_delta_sumR_mean": 5.18393757118579,
+  "null_delta_sumR_sd": 5.18478993979516,
+  "null_z": -0.23385445009839145,
+  "null_upper_tail_fraction": 0.5333333333333333,
+  "era_delta_sumR": {
+    "2023plus": 2.7690783332116524,
+    "full": 3.97145137093932,
+    "pre2023": 1.2023730377276962
+  },
+  "kill_test_passed": false,
+  "era_stability_weakened": false
+}

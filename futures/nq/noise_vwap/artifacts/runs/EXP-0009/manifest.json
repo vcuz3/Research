@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0009",
+  "hypothesis_id": "HYP-0002",
+  "status": "completed",
+  "declared_utc": "2026-07-18T13:20:08.761923+00:00",
+  "config_path": "experiments/configs/hyp_0002_first_touch.json",
+  "data_scope": "NQ raw Databento one-second RTH history on 3628 eligible post-lookback-90 sessions from 2011-12-08 through 2026-07-14",
+  "code_ref": "core/first_touch.py and scripts/first_touch.py",
+  "run_command": "python -m futures.nq.noise_vwap.scripts.first_touch",
+  "primary_metric": "Zero-eligible-day one-contract daily net Sharpe at 0.5 tick slippage per side plus fees versus the current one-minute continuous stop",
+  "builder": "Codex",
+  "outputs": [
+    "data_audit.json",
+    "zero_day_summary.csv",
+    "vol_target_summary.csv",
+    "trades_1m_baseline_next_open.parquet",
+    "trades_1m_continuous_next_open.parquet",
+    "trades_1s_touch_decision_refresh.parquet",
+    "trades_1s_touch_every_bar_refresh.parquet",
+    "review.md"
+  ],
+  "closed_utc": "2026-07-18T13:30:41.558269+00:00",
+  "result_summary": "PASS preservation: at 0.5 tick/side, zero-day daily Sharpe was 0.883 for causal 1s every-minute first-touch versus 0.923 for current 1m continuous stop (delta -0.040, within -0.15 kill threshold); daily net mean +66.57 USD. Vol-targeted Sharpe 1.090 versus 1.184; touch execution is robust but not an uplift.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

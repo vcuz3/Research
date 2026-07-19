@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "hypothesis_id": "HYP-0007",
+  "instrument": "ES",
+  "lookback": 90,
+  "session": "RTH",
+  "decision_clock_minutes": 30,
+  "require_vwap_entry_gate": true,
+  "fill_mode": "next_open",
+  "baseline_arm": {"stop_ref": "both", "exit_check": "every_bar"},
+  "treatment_arm": {"exit_band_s": 0.5, "exit_vwap_sigma_y": 0.5},
+  "selection_policy": "Frozen EXP-0012 ES operating point; no parameter search",
+  "eras": {"full": 2011, "2020+": 2020, "2023+": 2023, "2025+": 2025},
+  "slippage_ticks_per_side": [0.25, 0.5, 1.0],
+  "fees_per_side_usd": 2.25,
+  "vol_target": {"annualized": 0.03, "lookback_sessions": 14, "leverage_cap": 8.0},
+  "primary_metric": "Joint net-ATR-R and max-drawdown improvement by era",
+  "success_rule": "Treatment improves both net R and max drawdown on full sample and at least 3 of 4 predefined eras",
+  "weakener": "Benefit disappears at 0.5 tick per side or treatment materially worsens worst-day or worst-week net R"
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0017",
+  "hypothesis_id": "HYP-0009",
+  "status": "completed",
+  "declared_utc": "2026-07-19T05:03:44.004469+00:00",
+  "config_path": "experiments/configs/hyp_0009_gap_rvol_sizing.json",
+  "data_scope": "NQ clean Databento RTH history through 2026, post-lookback-90 eligible sessions; historically consumed discovery sample",
+  "code_ref": "scripts/hyp_0009_gap_rvol_sizing.py",
+  "run_command": "python -u -m futures.nq.noise_vwap.scripts.hyp_0009_gap_rvol_sizing 30",
+  "primary_metric": "Zero-eligible-session daily net-ATR-R Sharpe uplift and max-drawdown improvement versus paired Null-C Sharpe uplift distribution",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-07-19T05:12:08.443357+00:00",
+  "result_summary": "REJECT: frozen gap/RVOL sizing improved real zero-day Sharpe 1.288->1.398 (+0.111), net R 91.20->101.97 (+10.78R), and maxDD 4.70->4.42R at 0.957x mean trade weight, with positive net-R deltas pre-2023 (+8.40R) and 2023+ (+2.38R). However, paired Null C reproduced mean Sharpe uplift +0.074 (sd 0.045); real-vs-null z=0.81 and 30% of draws beat real, failing z>=2. Do not adopt as validated alpha; at most retain as a default-off future-shadow sizing candidate.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

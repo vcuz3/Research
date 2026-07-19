@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0008",
+  "hypothesis_id": "HYP-0001",
+  "status": "completed",
+  "declared_utc": "2026-07-18T08:59:36.315971+00:00",
+  "config_path": "experiments/configs/hyp_0001_short_lookback.json",
+  "data_scope": "NQ primary and ES sibling clean Databento RTH history through 2026 on common post-lookback-90 sample",
+  "code_ref": "scripts/paper_5095349_hypothesis_test.py",
+  "run_command": "python -m futures.nq.noise_vwap.scripts.paper_5095349_hypothesis_test <real|null> <NQ|ES> 20",
+  "primary_metric": "full-family maximum zero-trade-day daily net-ATR Sharpe uplift over lookback 90",
+  "builder": "Codex",
+  "outputs": ["real_nq.txt", "real_es.txt", "null_nq.txt", "null_es.txt", "review.md"],
+  "closed_utc": "2026-07-18T09:26:40.614911+00:00",
+  "result_summary": "REJECT: NQ best lookback 30 had dSharpe -0.065, dNetR -3.8, family-wise p=0.8571; ES best lookback 2 had dSharpe +0.026, dNetR +2.3, family-wise p=0.1905. Neither met the +0.10 Sharpe or corrected p<=0.05 gates.",
+  "reviewer": "Claude (Opus 4.8)",
+  "review_status": "completed",
+  "review_verdict": "REJECT confirmed — concur with builder; no blocking objections"
+}

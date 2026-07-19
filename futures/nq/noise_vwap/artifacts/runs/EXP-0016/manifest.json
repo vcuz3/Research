@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0016",
+  "hypothesis_id": "HYP-0008",
+  "status": "completed",
+  "declared_utc": "2026-07-19T04:09:00.080096+00:00",
+  "config_path": "experiments/configs/hyp_0008_gap_rvol_veto.json",
+  "data_scope": "NQ clean Databento RTH history through 2026, post-lookback-90 eligible sessions; historically consumed discovery sample",
+  "code_ref": "scripts/hyp_0008_gap_rvol_veto.py",
+  "run_command": "python -u -m futures.nq.noise_vwap.scripts.hyp_0008_gap_rvol_veto 30",
+  "primary_metric": "Paired full-pipeline net-ATR-R uplift versus paired Null-C distribution, with daily zero-trade-session Sharpe co-primary",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-07-19T04:21:22.474051+00:00",
+  "result_summary": "REJECT: fixed aligned-gap<0 and RVOL90<1.2 veto raised real net R by +3.97R and daily Sharpe by +0.236, with positive net-R deltas pre-2023 and 2023+, but retained only 86.1% of trades (below 90% gate) and paired Null-C reproduced a larger +5.18R average uplift (sd 5.18, z=-0.23, null>=real 53.3%). Treat as selectivity/turnover, not predictive alpha; do not adopt or escalate to XGBoost from this rule.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

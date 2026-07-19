@@ -1,0 +1,23 @@
+=== GC vol-target sizing (target=3% cap=8x, cost=0.073pt/side) ===
+period 2011-08-01 -> 2026-07-16 (15.0 yr)
+CAGR=0.1%  annVol=12.9%  Sharpe=0.07  maxDD=-45.7%
+final equity $101,298 from $100,000
+exposure mult: median=3.43 p90=5.43 capped@8x on 0% of days
+
+per-year strategy return (vol-targeted, compounding):
+  2011:   +2.1%
+  2012:   +5.0%
+  2013:  +26.3%
+  2014:  +21.7%
+  2015:  -10.9%
+  2016:   +8.9%
+  2017:  -25.4%
+  2018:   +2.7%
+  2019:   +0.1%
+  2020:   -5.1%
+  2021:  -20.3%
+  2022:   +8.5%
+  2023:   +2.8%
+  2024:   -0.2%
+  2025:   -1.7%
+  2026:   +0.0%

@@ -1,0 +1,90 @@
+{
+  "picks": [
+    {
+      "fold": 1,
+      "train_end": "2013-11-13",
+      "test_start": "2013-11-14",
+      "anchor": "rth",
+      "lookback": 90,
+      "k": 1.5,
+      "train_sharpe": 1.799
+    },
+    {
+      "fold": 2,
+      "train_end": "2015-10-28",
+      "test_start": "2015-10-29",
+      "anchor": "rth",
+      "lookback": 14,
+      "k": 2.0,
+      "train_sharpe": 1.241
+    },
+    {
+      "fold": 3,
+      "train_end": "2017-10-06",
+      "test_start": "2017-10-09",
+      "anchor": "eth",
+      "lookback": 14,
+      "k": 2.0,
+      "train_sharpe": 0.803
+    },
+    {
+      "fold": 4,
+      "train_end": "2019-09-23",
+      "test_start": "2019-09-24",
+      "anchor": "rth",
+      "lookback": 5,
+      "k": 1.5,
+      "train_sharpe": 0.572
+    },
+    {
+      "fold": 5,
+      "train_end": "2021-09-02",
+      "test_start": "2021-09-03",
+      "anchor": "eth",
+      "lookback": 14,
+      "k": 2.0,
+      "train_sharpe": 0.387
+    }
+  ],
+  "wfo": {
+    "sharpe": -0.4497605384576499,
+    "t": -1.3792889306046474,
+    "mean_ret": -5.3808379388375334e-05,
+    "net_pt": -0.19629589632829575,
+    "day_usd": -7.669620253164643,
+    "n_trades": 926
+  },
+  "baseline": {
+    "sharpe": -0.14506315463287747,
+    "t": -0.44486784925565087,
+    "mean_ret": -2.5113505189128596e-05,
+    "net_pt": -0.05763579188107251,
+    "day_usd": -4.253375527425997,
+    "n_trades": 1749
+  },
+  "best_is": {
+    "anchor": "eth",
+    "lookback": 60,
+    "k": 2.0,
+    "is_sharpe": 0.3794555737074478
+  },
+  "holdout": {
+    "sharpe": 0.6855994985205142,
+    "t": 1.1524184899189205,
+    "mean_ret": 0.00010123174081957246,
+    "net_pt": 1.3729487179486979,
+    "day_usd": 45.12219101123528,
+    "n_trades": 234
+  },
+  "holdout_baseline": {
+    "sharpe": 0.8405003610855354,
+    "t": 1.4127900603613381,
+    "mean_ret": 0.00019102606767967432,
+    "net_pt": 0.9284432234432074,
+    "day_usd": 71.1980337078639,
+    "n_trades": 546
+  },
+  "n_common": 3557,
+  "n_is": 2845,
+  "n_hold": 712
+}

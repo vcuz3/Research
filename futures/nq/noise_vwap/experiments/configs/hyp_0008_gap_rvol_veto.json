@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "hypothesis_id": "HYP-0008",
+  "instrument": "NQ",
+  "lookback": 90,
+  "session": "RTH",
+  "decision_clock_minutes": 30,
+  "require_vwap_entry_gate": true,
+  "fill_mode": "next_open",
+  "exit_check": "every_bar",
+  "rule": {
+    "veto_when_aligned_gap_below": 0.0,
+    "veto_when_rvol_below": 1.2,
+    "rvol_baseline": "strictly prior 90 sessions at the same minute-from-open"
+  },
+  "selection_policy": "One frozen rule from EXP-0015; no threshold search",
+  "null_draws": 30,
+  "null_seed_start": 12000,
+  "success_rule": "Full-sample net R and daily Sharpe improve, at least 90% of trades remain, and paired Null-C net-R uplift z >= 2",
+  "weakener": "Net-R uplift is not positive in both pre-2023 and 2023+ eras"
+}

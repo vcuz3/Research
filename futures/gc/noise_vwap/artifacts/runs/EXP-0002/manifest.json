@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0002",
+  "hypothesis_id": "HYP-0001",
+  "phase": "experiment",
+  "status": "completed",
+  "declared_utc": "2026-07-19T00:00:00+00:00",
+  "config_path": "experiments/hypotheses/HYP-0001.md",
+  "data_scope": "GC 2011-08-01..2026-07-16 (equity 3647 / comex 3763 usable sessions)",
+  "code_ref": "core/session_hours.py; scripts/hyp_0001_comex_hours.py",
+  "run_command": "python -m futures.gc.noise_vwap.scripts.hyp_0001_comex_hours GC 90 20 0.50",
+  "primary_metric": "per-day net Sharpe per window + claim-matched Null-C z/p per window",
+  "builder": "claude",
+  "outputs": ["hyp1_comex_hours.txt", "review.md"],
+  "result_summary": "REJECTED (inverted): COMEX 08:20-13:30 netSh 0.21 vs equity 0.46 (delta -0.25) AND COMEX fails Null-C (z=+0.04 p=0.476, 96% capture). Real timing trace lives only in equity 09:30-16:00 (z=+2.66 p=0.048). Parity guard passed.",
+  "reviewer": "unassigned",
+  "review_status": "rejected",
+  "review_verdict": "REJECT — hypothesis inverted; do not sweep window times on consumed history"
+}

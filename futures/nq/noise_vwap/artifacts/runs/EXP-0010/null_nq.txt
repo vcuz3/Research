@@ -1,0 +1,12 @@
+HYP-0003 VWAP-touch exit vs band-or-VWAP stop: NQ
+Common post-lb90 sample; lb90; 30m RTH + VWAP gate; every-bar; next-open
+  stop      n    n/yr    grossR      netR   R/trade     Sh   day-t      23+R   23+Sh
+  both   4209   292.4    +111.2     +91.2   +0.0217   1.29   +4.89     +19.1    1.10
+  vwap   3059   212.5    +112.3     +97.8   +0.0320   1.26   +4.77     +16.2    0.83
+Uplift (vwap - both): dSharpe=-0.031, dNetR=+6.6, dRecentSh=-0.265
+This is descriptive until the null mode passes the kill test.
+Real diffusivity=0.250000
+Null draw 1 diffusivity=0.250000
+draw 1/30draw 2/30draw 3/30draw 4/30draw 5/30draw 6/30draw 7/30draw 8/30draw 9/30draw 10/30draw 11/30draw 12/30draw 13/30draw 14/30draw 15/30draw 16/30draw 17/30draw 18/30draw 19/30draw 20/30draw 21/30draw 22/30draw 23/30draw 24/30draw 25/30draw 26/30draw 27/30draw 28/30draw 29/30draw 30/30
+Family-wise result: real uplift dSharpe=-0.031; null uplift mean=+0.083, sd=0.123, p=0.8710 (26/30 null uplifts >= real)
+KILL TEST: REJECT

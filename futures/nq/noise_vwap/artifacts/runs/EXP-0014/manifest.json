@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0014",
+  "hypothesis_id": "HYP-0007",
+  "status": "completed",
+  "declared_utc": "2026-07-19T02:17:06.174712+00:00",
+  "config_path": "experiments/configs/hyp_0007_es_exit_band_utility.json",
+  "data_scope": "ES clean Databento RTH history through 2026, common post-lookback-90 sample",
+  "code_ref": "scripts/hyp_0007_es_exit_band_utility.py",
+  "run_command": "python -m futures.nq.noise_vwap.scripts.hyp_0007_es_exit_band_utility",
+  "primary_metric": "Joint net-ATR-R and max-drawdown improvement by era",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-07-19T02:21:47.599201+00:00",
+  "result_summary": "REJECT unconditional ES default: frozen s0.5_y0.5 improves full-sample net R/Sharpe/maxDD (84.3/1.02/6.22R vs 51.5/0.70/7.45R) and cuts trades 37%, but joint return+drawdown improvement passes only 1/4 eras; recent maxDD and worst-week loss worsen, and 2025+ net R falls. Strong cost resilience supports default-off forward shadow as execution machinery, not alpha.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

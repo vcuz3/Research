@@ -1,0 +1,19 @@
+HYP-0001 GC lookback=90 Null-C x20 cost=0.0725pt/side (0.50tick+fees)
+
+=== equity_0930_1600  window ET tod=[570,960)  sessions=3647 decisions=599..959 ===
+REAL: n=2641 (1.41/day) gross=+0.359pt net=+0.214pt hit=0.337 day$net=+30.2 t=+1.25 netSh=0.46 grossSh=0.77
+      diffusivity |next_open-close| median = 0.1000 pt
+  NULL-C x20: diff real=0.1000 null=0.1000 | null day$net mean=-4.06 std=7.48 | real=+15.86
+  -> real beats null z=+2.66  upper-tail p=0.0476  null captures -26% (want <~60%)  gross real=+0.359 null=+0.101
+
+=== comex_0820_1330  window ET tod=[500,810)  sessions=3763 decisions=529..799 ===
+REAL: n=2379 (1.32/day) gross=+0.242pt net=+0.097pt hit=0.349 day$net=+12.7 t=+0.56 netSh=0.21 grossSh=0.53
+      diffusivity |next_open-close| median = 0.1000 pt
+  NULL-C x20: diff real=0.1000 null=0.1000 | null day$net mean=+6.18 std=6.54 | real=+6.42
+  -> real beats null z=+0.04  upper-tail p=0.4762  null captures 96% (want <~60%)  gross real=+0.242 null=+0.225
+
+================ VERDICT ================
+equity  netSh=0.46 t=+1.25 gross=+0.359 Null-C z=+2.66 p=0.048
+comex   netSh=0.21 t=+0.56 gross=+0.242 Null-C z=+0.04 p=0.476
+COMEX - equity net Sharpe delta = -0.250
+HYP-0001 supported only if COMEX materially beats equity net Sharpe AND COMEX gross beats its Null-C (z high, p low).

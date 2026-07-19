@@ -1,0 +1,17 @@
+{
+  "real_delta_sharpe": 0.1105495299904482,
+  "real_delta_net_R": 10.777606725083572,
+  "real_drawdown_improvement_R": 0.28239379062232217,
+  "mean_trade_weight": 0.9572344975053457,
+  "null_delta_sharpe_mean": 0.07425374099536414,
+  "null_delta_sharpe_sd": 0.044954529167603764,
+  "null_z": 0.8073889253686239,
+  "null_upper_tail_fraction": 0.3,
+  "era_delta_net_R": {
+    "2023plus": 2.3804394712608143,
+    "full": 10.777606725083572,
+    "pre2023": 8.397167253822744
+  },
+  "kill_test_passed": false,
+  "era_stability_weakened": false
+}

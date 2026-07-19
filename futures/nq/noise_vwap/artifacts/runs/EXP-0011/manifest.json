@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0011",
+  "hypothesis_id": "HYP-0004",
+  "status": "completed",
+  "declared_utc": "2026-07-18T14:52:16.520757+00:00",
+  "config_path": "experiments/configs/hyp_0004_rr_ladder.json",
+  "data_scope": "NQ primary and ES sibling clean Databento RTH history through 2026 on common post-lookback-90 sample",
+  "code_ref": "scripts/hyp_0004_rr_ladder.py (ladder in core/engine2.py, tests/test_ladder.py)",
+  "run_command": "python -m futures.nq.noise_vwap.scripts.hyp_0004_rr_ladder <real|null> <NQ|ES> 30",
+  "primary_metric": "zero-trade-day daily net-ATR-R Sharpe uplift of the paper Table-2 ladder over the both stop, vs corrected Null C",
+  "builder": "Claude (Opus 4.8)",
+  "outputs": ["real_nq.txt", "real_es.txt", "null_nq.txt", "null_es.txt", "review.md"],
+  "closed_utc": "2026-07-18T15:27:35.681485+00:00",
+  "result_summary": "REJECT: NQ ladder dSharpe -0.075 / dNetR -12.9 vs both (fails +0.10 gate), also loses to tp1.0_50 by -0.131 Sh; Null C p=0.6129. ES dSharpe +0.014 / dNetR -4.2, Null C p=0.3226. Paper Table-2 ladder cuts gross R (111->97): fixed -1R stop + +5R cap discard the trailing stop's edge. Retain both stop; keep tp1.0_50.",
+  "reviewer": "Claude (Opus 4.8)",
+  "review_status": "completed",
+  "review_verdict": "REJECT confirmed — concur with builder; no blocking objections"
+}

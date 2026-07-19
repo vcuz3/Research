@@ -1,0 +1,9 @@
+HYP-0004 RR ladder vs band stop: ES
+Common post-lb90 sample; lb90; 30m RTH + VWAP gate; next-open; 1R=entry band dist
+      arm      n    n/yr    grossR      netR   R/trade     Sh   day-t    p90R      23+R   23+Sh
+     both   4326   300.5     +90.2     +51.5   +0.0119   0.70   +2.65   +0.30     +13.8    0.80
+ tp1.0_50   4326   300.5     +85.6     +46.8   +0.0108   0.69   +2.61   +0.31     +12.6    0.81
+   ladder   4280   297.3     +85.6     +47.3   +0.0110   0.71   +2.70   +0.33     +10.6    0.73
+Ladder uplift vs both: dSharpe=+0.014, dNetR=-4.2; vs tp1.0_50: dSharpe=+0.025
+This is descriptive until the null mode passes the kill test.
+Fill sensitivity (ladder arm): signal_close - next_open dSharpe=-0.027, dNetR=-1.8

@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "status": "faithful-baseline-port-from-nq",
+  "instruments": ["GC"],
+  "contract": {"unit": "100 troy oz", "tick": 0.10, "tick_value_usd": 10.0, "point_value_usd": 100.0},
+  "data_source": "databento GC.v.0 raw continuous 1m, 2011-08-01..2026-07-16",
+  "session_timezone": "America/New_York",
+  "session_start": "09:30",
+  "session_end_bar": "15:59",
+  "session_hours_note": "equity-RTH window inherited from NQ/ES; gold-native session is an open research question",
+  "noise_lookback_sessions": 90,
+  "decision_clock": "concretum_09:59_then_30min",
+  "require_vwap_entry_gate": true,
+  "exit_check": "decision",
+  "fill_mode": "next_open",
+  "forced_flatten": "last_rth_close",
+  "slippage_ticks_per_side": 0.25,
+  "fees_per_side_usd": 2.25
+}

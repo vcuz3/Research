@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "hypothesis_id": "HYP-0009",
+  "instrument": "NQ",
+  "lookback": 90,
+  "session": "RTH",
+  "decision_clock_minutes": 30,
+  "fill_mode": "next_open",
+  "exit_check": "every_bar",
+  "weights": {
+    "gap_against_rvol_below_1_0": 0.5,
+    "gap_against_rvol_1_0_to_1_5": 0.75,
+    "gap_aligned_rvol_above_1_5": 1.25,
+    "otherwise_or_missing": 1.0
+  },
+  "rvol_baseline": "signal-minute volume divided by the strictly prior 90-session same-minute arithmetic mean",
+  "selection_policy": "One frozen four-level schedule; no threshold or weight search",
+  "null_draws": 30,
+  "null_seed_start": 13000,
+  "success_rule": "Daily Sharpe improves, weighted net R is at least baseline, max drawdown improves, and paired Null-C Sharpe-uplift z >= 2",
+  "weakener": "Net-R uplift is not positive in both pre-2023 and 2023+ eras"
+}

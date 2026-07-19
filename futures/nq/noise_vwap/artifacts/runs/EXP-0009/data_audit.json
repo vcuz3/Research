@@ -1,0 +1,14 @@
+{
+  "source": "C:\\Users\\VuDoa\\Research\\futures\\data\\databento\\NQ_ohlcv-1s_NQv0_20100606_20260717.parquet",
+  "parquet_rows": 142481276,
+  "scan": {
+    "eligible_sessions": 3628,
+    "covered_sessions": 3628,
+    "first_covered": "2011-12-08",
+    "last_covered": "2026-07-14",
+    "rth_second_rows": 68265250
+  },
+  "common_first": "2011-12-08",
+  "common_last": "2026-07-14",
+  "common_sessions": 3628
+}

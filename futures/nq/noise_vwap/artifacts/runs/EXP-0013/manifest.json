@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0013",
+  "hypothesis_id": "HYP-0006",
+  "status": "completed",
+  "declared_utc": "2026-07-18T17:14:43.967623+00:00",
+  "config_path": "experiments/configs/hyp_0006_early_flat.json",
+  "data_scope": "NQ primary and ES sibling clean Databento RTH history through 2026 on common post-lookback-90 sample",
+  "code_ref": "scripts/hyp_0006_early_flat.py (flat_before_close in core/engine2.py)",
+  "run_command": "python -m futures.nq.noise_vwap.scripts.hyp_0006_early_flat <real|null> <NQ|ES> 30",
+  "primary_metric": "max-cell zero-trade-day daily net-ATR-R Sharpe uplift over the cutoff-0 baseline across the cutoff family",
+  "builder": "Claude (Opus 4.8)",
+  "outputs": ["real_nq.txt", "real_es.txt", "review.md"],
+  "closed_utc": "2026-07-18T17:19:10.595193+00:00",
+  "result_summary": "REJECT: NQ best cutoff 45 dSharpe +0.101 (clears Sharpe) but net R -0.8 below baseline (fails net-R gate) and maxDD worse; ES all cutoffs hurt (net R 51.5->43-44 Sh best -0.030) so sign does not transfer. No Null C (gate failed). NOT a tail-truncation (p90R preserved) - variance reshaping only. Recent 2023+ NQ Sharpe jumps 1.10->1.54 = forward-shadow watch, not a historical edge. Retain ride-to-close.",
+  "reviewer": "Claude (Opus 4.8)",
+  "review_status": "completed",
+  "review_verdict": "REJECT confirmed — concur with builder; no blocking objections"
+}

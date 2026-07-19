@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0010",
+  "hypothesis_id": "HYP-0003",
+  "status": "completed",
+  "declared_utc": "2026-07-18T14:09:55.182946+00:00",
+  "config_path": "experiments/configs/hyp_0003_vwap_touch_exit.json",
+  "data_scope": "NQ primary and ES sibling clean Databento RTH history through 2026 on common post-lookback-90 sample",
+  "code_ref": "scripts/hyp_0003_vwap_touch_exit.py",
+  "run_command": "python -m futures.nq.noise_vwap.scripts.hyp_0003_vwap_touch_exit <real|null> <NQ|ES> 30",
+  "primary_metric": "zero-trade-day daily net-ATR-R Sharpe uplift of vwap-touch exit over the both stop, vs corrected Null C",
+  "builder": "Claude (Opus 4.8)",
+  "outputs": ["real_nq.txt", "real_es.txt", "null_nq.txt", "null_es.txt", "review.md"],
+  "closed_utc": "2026-07-18T14:28:19.374298+00:00",
+  "result_summary": "REJECT: NQ vwap-touch exit dSharpe -0.031 (fails +0.10 gate), Null C p=0.8710; ES dSharpe +0.258 but Null C p=0.2903 (null uplift mean +0.178). Looser VWAP-only stop is a variance/selectivity dial that lifts Sharpe as much on noise as on signal; net R rises with fewer trades but that is turnover/capacity, not alpha. Retain the both stop.",
+  "reviewer": "Claude (Opus 4.8)",
+  "review_status": "completed",
+  "review_verdict": "REJECT confirmed — concur with builder; no blocking objections"
+}

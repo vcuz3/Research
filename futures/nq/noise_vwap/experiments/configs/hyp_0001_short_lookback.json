@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "hypothesis_id": "HYP-0001",
+  "instruments": ["NQ", "ES"],
+  "lookback_family": [2, 4, 5, 8, 14, 30, 60, 90],
+  "baseline_lookback": 90,
+  "common_sample": "post-lookback-90 eligible sessions",
+  "session": "RTH",
+  "decision_clock_minutes": 30,
+  "require_vwap_entry_gate": true,
+  "exit_check": "every_bar",
+  "fill_mode": "next_open",
+  "slippage_ticks_per_side": 0.25,
+  "fees_per_side_usd": 2.25,
+  "null": "corrected_path_preserving_return_shuffle",
+  "null_draws_per_instrument": 20,
+  "seeds": "5095349..5095368",
+  "primary_metric": "maximum zero-trade-day daily net-ATR Sharpe uplift over lookback 90",
+  "selection_correction": "maximum statistic across the complete lookback family in every null draw",
+  "kill_test": "reject if max Sharpe uplift < 0.10, selected net R < baseline net R, or family-wise upper-tail p > 0.05"
+}

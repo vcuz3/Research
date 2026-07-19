@@ -1,13 +1,17 @@
 {
   "schema_version": 1,
   "experiment_id": "EXP-0007",
-  "status": "planned",
+  "status": "completed",
   "declared_utc": "2026-07-18T00:00:00+00:00",
-  "config_path": "baseline_replication/configs/faithful_config.json",
-  "data_scope": "NQ and ES clean Databento history through 2026",
+  "config_path": "validation/faithful_null_config.json",
+  "data_scope": "NQ and ES clean Databento RTH history through 2026",
   "code_ref": "core/nulls.py",
-  "run_command": "TBD after freezing null configuration",
-  "primary_metric": "null-relative effect and P&L drift",
-  "builder": "unassigned",
-  "outputs": []
+  "run_command": "python -m futures.nq.noise_vwap.scripts.run_nulls <INST> 90 30 0.25",
+  "primary_metric": "instrument-level daily net P&L versus corrected Null C",
+  "builder": "Codex",
+  "outputs": ["null_nq.txt", "null_es.txt", "review.md"],
+  "closed_utc": "2026-07-18T08:56:28.778941+00:00",
+  "result_summary": "PASS: NQ real daily net 74.04 USD vs null 36.31 +/- 13.43 USD, z=2.81, p=0.0323, 49.0% capture; ES real 33.91 USD vs null -11.17 +/- 8.01 USD, z=5.63, p=0.0323. Diffusivity gates exact.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
 }

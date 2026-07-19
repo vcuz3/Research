@@ -1,0 +1,10 @@
+HYP-0005 narrower exit band + VWAP-sigma band: ES
+Common post-lb90; lb90; 30m RTH + VWAP gate; next-open; entries unchanged
+      cell      n    grossR      netR   R/trade     Sh     dSh   day-t   23+Sh
+      both   4326     +90.2     +51.5   +0.0119   0.70  +0.000   +2.65    0.80
+ s0.5_y0.5   2739    +108.2     +84.3   +0.0308   1.02  +0.320   +3.86    0.88
+ s0.5_y1.0   2625    +106.0     +82.9   +0.0316   0.98  +0.287   +3.74    0.84
+s0.75_y0.5   3082     +96.4     +69.3   +0.0225   0.87  +0.173   +3.30    0.96
+s0.75_y1.0   3017     +94.1     +67.5   +0.0224   0.84  +0.140   +3.18    0.95
+Best cell: s0.5_y0.5, dSharpe=+0.320, dNetR=+32.8
+SUCCESS GATE (dSharpe>=+0.10 and netR>=baseline): PASS -> run Null C

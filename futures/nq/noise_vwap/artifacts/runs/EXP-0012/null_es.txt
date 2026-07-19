@@ -1,0 +1,15 @@
+HYP-0005 narrower exit band + VWAP-sigma band: ES
+Common post-lb90; lb90; 30m RTH + VWAP gate; next-open; entries unchanged
+      cell      n    grossR      netR   R/trade     Sh     dSh   day-t   23+Sh
+      both   4326     +90.2     +51.5   +0.0119   0.70  +0.000   +2.65    0.80
+ s0.5_y0.5   2739    +108.2     +84.3   +0.0308   1.02  +0.320   +3.86    0.88
+ s0.5_y1.0   2625    +106.0     +82.9   +0.0316   0.98  +0.287   +3.74    0.84
+s0.75_y0.5   3082     +96.4     +69.3   +0.0225   0.87  +0.173   +3.30    0.96
+s0.75_y1.0   3017     +94.1     +67.5   +0.0224   0.84  +0.140   +3.18    0.95
+Best cell: s0.5_y0.5, dSharpe=+0.320, dNetR=+32.8
+SUCCESS GATE (dSharpe>=+0.10 and netR>=baseline): PASS -> run Null C
+Real diffusivity=0.000000
+Null draw 1 diffusivity=0.000000
+draw 1/30draw 2/30draw 3/30draw 4/30draw 5/30draw 6/30draw 7/30draw 8/30draw 9/30draw 10/30draw 11/30draw 12/30draw 13/30draw 14/30draw 15/30draw 16/30draw 17/30draw 18/30draw 19/30draw 20/30draw 21/30draw 22/30draw 23/30draw 24/30draw 25/30draw 26/30draw 27/30draw 28/30draw 29/30draw 30/30
+Family-wise: real max dSharpe=+0.320; null max mean=+0.254, sd=0.130, p=0.2903
+KILL TEST: REJECT
