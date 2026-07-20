@@ -40,7 +40,8 @@ DECISION_TODS_HH30 = [h * 60 + m for h in range(10, 16) for m in (0, 30)]  # 600
 
 def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
                      decision_tods=DECISION_TODS, fill_mode="next_open",
-                     require_vwap=True, exit_check="decision") -> list[dict]:
+                     require_vwap=True, exit_check="decision",
+                     ext_state: dict | None = None, cond_mode: str | None = None) -> list[dict]:
     """
     Simulate one RTH session.
 
@@ -86,6 +87,16 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
     decision_set = {int(t) for t in decision_tods}
     the_date = b["date"].iloc[0]
 
+    # exit_check controls the STOP-check cadence (entries/flips always stay on the
+    # decision clock). "decision" -> stop checked only at decision tods; "every_bar"
+    # -> every 1-min bar; an int N -> every N minutes from the open. minute-from-open
+    # for tod t is (t - 569) with 09:30 counted as minute 1, so an N-minute cadence
+    # checks tods where (t - 569) % N == 0. Because 5 and 15 divide 30, the decision
+    # tods (multiples of 30) are always a subset, and N=1 reproduces "every_bar".
+    cadence = int(exit_check) if isinstance(exit_check, (int, np.integer)) else None
+    check_set = ({int(t) for t in tod if (int(t) - 569) % cadence == 0}
+                 if cadence is not None else None)
+
     def close_trade(i, reason):
         """Fill the exit at the next bar open; returns False if unfillable."""
         nonlocal pos, entry_px, entry_tod
@@ -119,10 +130,34 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
             elif c < lo and (not require_vwap or c < w):
                 want = -1
 
+            # Cross-market conditioning overlay (HYP-0010). No-op when cond_mode is
+            # None (strict parity with the frozen baseline, asserted by the runner).
+            # ext_state maps this session's decision tod -> the contemporaneous ES
+            # state in {+1,-1,0} (either its noise-VWAP breakout state or its VWAP
+            # side, per what the caller loaded); missing tod -> 0 (ES no-info/flat).
+            if cond_mode is not None:
+                es = ext_state.get(t, 0) if ext_state is not None else 0
+                if cond_mode == "agree":       # take NQ signal only if ES agrees
+                    if want != es:
+                        want = 0
+                elif cond_mode == "gate":      # take NQ signal only if ES in a breakout
+                    if es == 0:
+                        want = 0
+                elif cond_mode == "es_dir":    # enter NQ in ES's direction
+                    want = es
+                elif cond_mode == "es_opp":    # enter NQ OPPOSITE to ES's direction
+                    want = -es
+                elif cond_mode == "disagree":  # take NQ signal only if ES disagrees
+                    if want == es:             # (complement of "agree"; es==0 kept)
+                        want = 0
+                else:
+                    raise ValueError(f"unknown cond_mode {cond_mode!r}")
+
         if pos != 0:
             stop = max(up, w) if pos == 1 else min(lo, w)
             hit = (c < stop) if pos == 1 else (c > stop)
-            check_here = is_decision or exit_check == "every_bar"
+            check_here = (is_decision or exit_check == "every_bar"
+                          or (check_set is not None and t in check_set))
             flip = is_decision and (want == -pos)
             if (hit and check_here) or flip:
                 if close_trade(i, "flip" if flip else "stop") and flip:
@@ -147,14 +182,20 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
 
 def run(bars: pd.DataFrame, bands: pd.DataFrame,
         decision_tods=DECISION_TODS, fill_mode="next_open",
-        require_vwap=True, exit_check="decision") -> pd.DataFrame:
-    """Run all sessions. bars/bands are the full long frames for one instrument."""
+        require_vwap=True, exit_check="decision",
+        ext_state_by_date: dict | None = None, cond_mode: str | None = None) -> pd.DataFrame:
+    """Run all sessions. bars/bands are the full long frames for one instrument.
+
+    ext_state_by_date (HYP-0010): maps date -> {tod: es_state}. Only consulted when
+    cond_mode is not None; None reproduces the frozen baseline exactly.
+    """
     band_by_date = {d: g for d, g in bands.groupby("date", sort=False)}
     out: list[dict] = []
     for d, g in bars.groupby("date", sort=False):
         bd = band_by_date.get(d)
         if bd is None or bd.empty:
             continue
+        es = ext_state_by_date.get(d, {}) if ext_state_by_date is not None else None
         out.extend(simulate_session(g, bd, decision_tods, fill_mode,
-                                    require_vwap, exit_check))
+                                    require_vwap, exit_check, es, cond_mode))
     return pd.DataFrame(out)

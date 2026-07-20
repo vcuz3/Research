@@ -1,0 +1,42 @@
+=== HYP-0010 ES-confirmation NQ lookback=90 cost=0.5tick/side (0.2375pt) ===
+parity check (full, unconditioned): trades=2923 gross=14454.25pt
+NQ dates=3718 ES-state dates=3628 common=3628
+ES breakout-state marginals (n=47073): long=0.141 short=0.119 flat=0.741
+ES vwap-side marginals: above=0.564 below=0.436
+
+--- BASELINE (common date set) ---
+baseline(common)       n= 2923 (1.43/day) gross=+4.945pt net=+4.470pt hit=0.380 | day$net=+127.5 t=+3.15 Sh=1.10 | L=+4.210(1488) S=+4.740(1435)
+
+--- CONDITIONING VARIANTS ---
+cond:agree             n= 2035 (1.30/day) gross=+5.302pt net=+4.827pt hit=0.407 | day$net=+125.1 t=+2.68 Sh=1.07 | L=+6.682(1014) S=+2.985(1021)
+cond:gate              n= 2037 (1.29/day) gross=+5.325pt net=+4.850pt hit=0.407 | day$net=+125.6 t=+2.70 Sh=1.08 | L=+6.675(1015) S=+3.037(1022)
+cond:vwap              n= 2843 (1.40/day) gross=+4.702pt net=+4.227pt hit=0.380 | day$net=+118.3 t=+2.91 Sh=1.03 | L=+4.466(1447) S=+3.979(1396)
+cond:es_dir            n= 3544 (1.75/day) gross=+2.662pt net=+2.187pt hit=0.433 | day$net=+76.4 t=+1.97 Sh=0.70 | L=+3.143(1855) S=+1.138(1689)
+cond:es_opp            n= 6540 (3.22/day) gross=-0.512pt net=-0.987pt hit=0.460 | day$net=-63.6 t=-2.04 Sh=-0.72 | L=-0.745(3030) S=-1.196(3510)
+cond:disagree          n= 1474 (1.28/day) gross=+4.862pt net=+4.387pt hit=0.362 | day$net=+112.3 t=+2.59 Sh=1.21 | L=+1.664(783) S=+7.472(691)
+
+--- UPLIFT vs common-set baseline (net daily Sharpe) + kept-trade gross ---
+  variant    Sharpe  uplift  trades  kept% gross/kept (base gross/kept +4.945)
+  agree      +1.074  -0.029    2035   0.70     +5.302
+  gate       +1.080  -0.024    2037   0.70     +5.325
+  vwap       +1.026  -0.077    2843   0.97     +4.702  <- gross/kept FELL (selecting worse trades = rarity tell)
+  es_dir     +0.696  -0.408    3544   1.21     +2.662
+  es_opp     -0.720  -1.824    6540   2.24     -0.512
+  disagree   +1.209  +0.105    1474   0.50     +4.862  <- gross/kept FELL (selecting worse trades = rarity tell)
+
+PRIMARY variant = agree  uplift = -0.029  (gate = +0.05)
+best variant    = disagree  uplift = +0.105
+
+=== RE-PAIRING NULL on 'disagree' [SECONDARY/post-hoc (family=6, consumed history, holdout-pending)] (Rule 18), 200 draws, year-stratified donors ===
+  draw 50/200  null-uplift mean so far +0.006
+  draw 100/200  null-uplift mean so far +0.004
+  draw 150/200  null-uplift mean so far +0.003
+  draw 200/200  null-uplift mean so far +0.000
+
+real uplift        = +0.1051
+null uplift mean/sd = +0.0001 / 0.0977   (CENTER is the discriminator)
+z = +1.08   frac(null >= real) = 0.140
+  null CENTER ~ 0 => contemporaneous ES pairing carries the uplift = genuine cross-market information.
+
+VERDICT: REJECT (uplift reproduced by unrelated ES days = rarity filter, not cross-market confirmation)
+NOTE: this is a SECONDARY/post-hoc survivor (family of 6, consumed history) — at most a forward-shadow candidate, not the stated thesis.

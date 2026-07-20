@@ -23,7 +23,12 @@ without updating every reference and reproduction command.
 
 ## Data conventions
 
-- The clean Databento path built by `core.build_clean` is the faithful dataset.
+- Shared parquet datasets live in `futures/nq/data/`. The clean Databento files
+  built by `core.build_clean` are the faithful datasets:
+  `../data/NQ_1m_clean.parquet` and `../data/ES_1m_clean.parquet`.
+- Old vendor comparison files are archived under
+  `../data/archive/old_vendor_backup/`; do not recreate project-local parquet
+  copies.
 - Session dates, exchange calendars, time zones, and decision clocks must remain
   explicit. A same-bar signal fill is not a faithful production assumption.
 - All historical periods already inspected are consumed research data. They are

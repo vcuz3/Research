@@ -26,7 +26,7 @@ Timestamps: Databento ships a true UTC `ts_event`, so the ET session clock is
 unambiguous — we convert **UTC → America/New_York directly** (DST handled by the tz
 database), with no lossy Chicago round-trip and no ambiguous-hour NaT drops. This is
 what structurally fixes the "hours" defect. New clean schema
-(`data/<inst>_1m_clean.parquet`): `ts_utc | symbol | open | high | low | close |
+(`../data/<inst>_1m_clean.parquet`): `ts_utc | symbol | open | high | low | close |
 volume | is_roll` (`symbol` = underlying `instrument_id`; `is_roll` = contract change).
 
 ## New data is structurally pristine (NQ & ES, ~5.1–5.2M bars each)

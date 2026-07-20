@@ -23,7 +23,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 
-DATA = Path(__file__).resolve().parents[1] / "data"
+DATA = Path(__file__).resolve().parents[2] / "data"
 PATHS = {
     "NQ": DATA / "NQ_1m_clean.parquet",
     "ES": DATA / "ES_1m_clean.parquet",

@@ -1,0 +1,29 @@
+HYP-0014 asymmetric (per-side) band vs symmetric mean band: NQ
+Common post-lb90; lb90; 30m RTH clock + VWAP gate; every-bar stop; next-open
+Total half-width conserved for every tilt (sig_up+sig_dn==2*sigma): pure up/down redistribution, NOT a width dial.
+       band      n    grossR      netR  net_pt/t     Sh     dSh   maxDD   23+Sh
+ mean(base)   4209    +111.2     +91.2    +3.159   1.29  +0.000     4.7    1.10
+   tilt 0.5   4183    +105.6     +85.8    +3.035   1.22  -0.065     5.1    1.04
+   tilt 1.0   4193    +103.7     +83.7    +3.107   1.19  -0.095     5.5    1.13
+   tilt 1.5   4251    +103.7     +83.4    +3.102   1.18  -0.110     6.3    1.07
+
+Best tilt: 0.5, dSharpe=-0.065, dNetR=-5.4, dMaxDD=+0.4, dTrades=-26
+
+Per-side residual at tilt=1 (sig_up/sigma, sig_dn/sigma by decision slot) — how asymmetric is each slot's tape?
+     sigma  sig_up  sig_dn  up/sig  dn/sig  up/dn
+mfo                                              
+29  0.0031  0.0032  0.0030  1.0336  0.9664 1.0696
+59  0.0039  0.0040  0.0038  1.0231  0.9769 1.0472
+89  0.0046  0.0046  0.0045  1.0010  0.9990 1.0021
+119 0.0050  0.0051  0.0048  1.0213  0.9787 1.0435
+149 0.0053  0.0055  0.0051  1.0306  0.9694 1.0631
+179 0.0055  0.0057  0.0054  1.0255  0.9745 1.0524
+209 0.0056  0.0058  0.0055  1.0262  0.9738 1.0538
+239 0.0058  0.0060  0.0057  1.0285  0.9715 1.0586
+269 0.0061  0.0063  0.0059  1.0312  0.9688 1.0644
+299 0.0064  0.0066  0.0062  1.0322  0.9678 1.0666
+329 0.0066  0.0069  0.0063  1.0434  0.9566 1.0907
+359 0.0069  0.0072  0.0067  1.0383  0.9617 1.0796
+389 0.0073  0.0075  0.0070  1.0351  0.9649 1.0727
+
+GATE (best tilt dSharpe>=+0.10 and netR>=baseline): FAIL -> REJECT from real evidence (no Null C)

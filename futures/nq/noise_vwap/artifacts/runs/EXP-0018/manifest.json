@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0018",
+  "hypothesis_id": "HYP-0010",
+  "status": "completed",
+  "declared_utc": "2026-07-19T17:15:30.852350+00:00",
+  "config_path": "experiments/configs/hyp_0010_es_confirm.json",
+  "data_scope": "NQ primary and ES confirmer, clean Databento RTH history through 2026, common post-lookback-90 date set; consumed discovery sample",
+  "code_ref": "scripts/hyp_0010_es_confirm.py (ext_state/cond_mode overlay in core/engine.py)",
+  "run_command": "python -m futures.nq.noise_vwap.scripts.hyp_0010_es_confirm NQ 90 0.50 200",
+  "primary_metric": "net daily Sharpe uplift of agree over common-set baseline vs re-pairing null",
+  "builder": "Claude (Opus 4.8)",
+  "outputs": [],
+  "closed_utc": "2026-07-19T17:38:03.566897+00:00",
+  "result_summary": "REJECT as deployable alpha: PRIMARY agree (take NQ signal only if ES same-direction breakout) net daily Sharpe 1.074 vs baseline 1.102 (uplift -0.029, fails +0.05 gate) and cuts total net R ~25%. UNLIKE GC, agree is NOT a rarity filter: it RAISES gross/trade (+5.30 vs +4.95), net/trade (+4.83 vs +4.47) and hit-rate (0.407 vs 0.380) - ES confirmation concentrates per-trade quality (user intuition supported at per-trade level) but only as a turnover/capacity lever, not risk-adjusted alpha. gate~=agree (coupling). Soft vwap-side gate inert/harmful (noise-area breakout not VWAP sign carries info). es_dir worse (0.70), es_opp genuinely negative (no mirror trap; ES does not lead NQ). Only Sharpe-beater disagree +0.105 fails re-pairing null (200 draws, null center +0.0001, z=1.08, 14% beat real) - weaker than GC's marginal disagree. Retain unconditioned baseline.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

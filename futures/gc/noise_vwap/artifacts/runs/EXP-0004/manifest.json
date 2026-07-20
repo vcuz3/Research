@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0004",
+  "hypothesis_id": "HYP-0003",
+  "status": "completed",
+  "declared_utc": "2026-07-19T06:16:14.743547+00:00",
+  "config_path": "baseline_replication/configs/faithful_config.json",
+  "data_scope": "GC RTH 2011-08-01..2026-07-16, `data/GC_1m_clean.parquet`, 2641-trade",
+  "code_ref": "working-tree",
+  "run_command": "python -m futures.gc.noise_vwap.scripts.hyp_0003_continuous_stop GC 90",
+  "primary_metric": "per-day-clustered **net daily Sharpe** and **net day-$ t-stat**",
+  "builder": "claude",
+  "outputs": [
+    "trades_decision.parquet",
+    "trades_everybar.parquet",
+    "review.md"
+  ]
+}

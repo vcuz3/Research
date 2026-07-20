@@ -1,0 +1,15 @@
+HYP-0006 early-flat cutoff before close: NQ
+Common post-lb90; lb90; 30m RTH + VWAP gate; every-bar stop; next-open
+ cut      n    grossR      netR   R/trade     Sh     dSh   maxDD   p90R   23+Sh
+   0   4209    +111.2     +91.2   +0.0217   1.29  +0.000     4.7  +0.35    1.10
+  15   4209    +108.6     +88.6   +0.0210   1.29  -0.001     4.2  +0.33    1.33
+  30   3956    +107.9     +89.1   +0.0225   1.34  +0.057     4.9  +0.35    1.52
+  45   3956    +109.2     +90.4   +0.0229   1.39  +0.101     5.4  +0.35    1.54
+  60   3717     +91.6     +74.0   +0.0199   1.18  -0.106     5.4  +0.34    1.24
+Best cell: cutoff=45, dSharpe=+0.101, dNetR=-0.8, dMaxDD=+0.7
+SUCCESS GATE (dSharpe>=+0.10 and netR>=baseline): FAIL -> REJECT from real evidence, no Null C
+Real diffusivity=0.250000
+Null draw 1 diffusivity=0.250000
+draw 1/30draw 2/30draw 3/30draw 4/30draw 5/30draw 6/30draw 7/30draw 8/30draw 9/30draw 10/30draw 11/30draw 12/30draw 13/30draw 14/30draw 15/30draw 16/30draw 17/30draw 18/30draw 19/30draw 20/30draw 21/30draw 22/30draw 23/30draw 24/30draw 25/30draw 26/30draw 27/30draw 28/30draw 29/30draw 30/30
+Family-wise: real max dSharpe=+0.101; null max mean=-0.048, sd=0.058, p=0.0323
+KILL TEST: PASS

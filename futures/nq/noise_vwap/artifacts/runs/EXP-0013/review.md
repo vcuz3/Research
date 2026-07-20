@@ -84,8 +84,54 @@ closes IDEA-0002.
   2. If ever revisited, target daily/close-proximity DRAWDOWN explicitly rather
      than Sharpe, since drawdown did not improve here.
 
+## Follow-up Null C (2026-07-20)
+
+At the user's request — motivated by a structural late-session-noise thesis (3:45 ET
+MOC imbalance reveal, passive-fund close rebalancing, and 0DTE gamma hedging all
+concentrating mechanical, non-fundamental flow into the final 15-30 min) — the
+family-max Null C was run despite the original net-R gate failing. Under a
+variance-avoidance thesis the correct control is net-R PRESERVATION (satisfied:
+NQ −0.8R out of 91), not net-R increase, and the drift-preserving return-shuffle
+null is the right discriminator: it keeps session drift but shuffles intraday
+timing so no minute is special. 30 draws, family-max ΔSharpe over the {15,30,45,60}
+cutoff grid. Evidence: `nullc_nq.txt`, `nullc_es.txt`.
+
+| market | real max ΔSharpe | null max mean (sd) | p | verdict |
+| --- | ---: | ---: | ---: | --- |
+| NQ | +0.101 (cutoff 45) | −0.048 (0.058) | 0.0323 | PASS (0/30 beat real) |
+| ES | −0.030 (all cutoffs hurt) | +0.008 (0.072) | 0.7419 | REJECT (noise beats real) |
+
+Interpretation:
+
+1. **NQ is NOT the looser-stop machinery artifact.** Unlike EXP-0010/0012, whose null
+   reproduced the Sharpe lift POSITIVELY (+0.08 to +0.25 on noise), here the null
+   centers NEGATIVE (−0.048): on drift-preserved, timing-shuffled NQ tape the best of
+   four cutoffs typically HURTS Sharpe. The real +0.101 exceeds every one of 30 null
+   draws. So the NQ early-flat is a genuine late-session-specific timing feature, not a
+   hold-less-time variance amplifier. This is the discriminator that separates it from
+   the other rejected exit tweaks.
+2. **The stated pan-index structural mechanism is falsified by ES.** MOC imbalances,
+   passive rebalancing, and 0DTE gamma all bear at least as heavily on the S&P as on
+   the Nasdaq-100 (SPX 0DTE is the largest 0DTE market; S&P passive AUM exceeds NDX).
+   A pan-index cause therefore predicts ES benefits as much or more. Instead ES INVERTS
+   — early-flat is worse than baseline and worse than its own null (noise beats the real
+   tape, p=0.74). What survives on NQ is NQ-tape-specific, not the general structural
+   close phenomenon.
+3. **The NQ pass buys daily-dispersion Sharpe only.** Net R is preserved not improved
+   (−0.8R), maxDD is WORSE (4.7→5.4R), and the effect concentrates in 2023+ (23+Sh
+   1.10→1.54) on consumed history. 0DTE's post-2022 growth is a plausible-but-
+   unconfirmable story for the recent-era loading.
+
+Revised verdict: the original REJECT for production adoption STANDS (no net-R gain,
+worse drawdown, mechanism falsified cross-market). What CHANGES is that the NQ effect
+is no longer dismissible as machinery — it is a qualified, NQ-specific, forward-shadow
+candidate that cleared the drift-preserving null on consumed data. Watch in shadow; do
+not bank historically; do not attribute it to the MOC/rebalancing/0DTE mechanism, which
+ES contradicts.
+
 ## Promotion decision
 
-- `reports/FINDINGS.md`: not updated (NO-GO)
-- `MEMORY.md`: updated with the rejected hypothesis and the forward-watch note
-- Shared `LEARNINGS.md`: not eligible
+- `reports/FINDINGS.md`: not updated (still NO-GO for adoption; forward-shadow watch only)
+- `MEMORY.md`: updated with the follow-up Null C result and revised forward-watch note
+- Shared `LEARNINGS.md`: eligible — single-market Null C pass does not validate a
+  mechanism that predicts cross-market transfer; the sibling market is the mechanism test

@@ -1,0 +1,28 @@
+HYP-0011 15-min cadence vs 30-min decision-clock stop: NQ
+
+Common post-lb90 sample; lb90; 30m RTH + VWAP gate; both stop; next-open
+
+      arm      n    n/yr    grossR      netR   R/trade    hit     Sh   day-t      23+R   23+Sh
+
+ decision   2923   203.0    +115.2    +101.3   +0.0347  0.387   1.29   +4.90     +14.6    0.74
+
+    cad15   3299   229.1    +116.1    +100.3   +0.0304  0.343   1.33   +5.03     +19.0    1.00
+
+Uplift (cad15 - decision): ATR-R dSharpe=+0.034 (dNetR=-1.0); dollar dSharpe=+0.113; dRecentSh=+0.267
+
+This is descriptive until the null mode passes the kill test.
+
+Real diffusivity=0.250000
+
+Null draw 1 diffusivity=0.250000
+
+
+
+[ATR-R] real uplift dSharpe=+0.034; null mean=-0.025, sd=0.079, p=0.2903 (8/30 null >= real)
+
+[dollar] real uplift dSharpe=+0.113; null mean=-0.051, sd=0.081, p=0.0645 (1/30 null >= real)
+
+KILL TEST (ATR-R primary): REJECT
+
+(dollar-metric Null C p=0.0645, reported for the rule-19 cross-check)
+

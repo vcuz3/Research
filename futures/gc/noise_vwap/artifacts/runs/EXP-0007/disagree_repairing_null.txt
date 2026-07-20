@@ -1,0 +1,8 @@
+RE-PAIRING NULL on disagree (Rule18), 300 year-stratified draws
+baseline netSh=0.494 disagree netSh=0.671 real uplift=+0.1774
+  draw 75/300 null-up mean -0.0218
+  draw 150/300 null-up mean -0.0078
+  draw 225/300 null-up mean -0.0129
+  draw 300/300 null-up mean -0.0134
+
+real uplift=+0.1774  null mean/sd=-0.0134/0.1250  z=+1.53  frac(null>=real)=0.073

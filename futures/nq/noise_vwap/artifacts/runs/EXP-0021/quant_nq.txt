@@ -1,0 +1,40 @@
+HYP-0013 quantile envelope vs mean band: NQ
+Common post-lb90; lb90; 30m RTH clock + VWAP gate; every-bar stop; next-open
+
+-- RAW quantile (scale 1.0; exposes the width/capacity dial) --
+       band      n    grossR      netR  net_pt/t     Sh     dSh   maxDD   23+Sh
+ mean(base)   4209    +111.2     +91.2    +3.159   1.29  +0.000     4.7    1.10
+  raw q0.50   5175    +126.9    +101.9    +3.059   1.34  +0.054     6.1    1.23
+  raw q0.65   3897     +98.3     +79.6    +3.259   1.19  -0.093     6.0    1.16
+  raw q0.80   2464     +67.5     +56.1    +3.823   1.02  -0.269     5.7    0.90
+  raw q0.90   1488     +39.7     +32.8    +3.454   0.82  -0.470     5.1    0.93
+
+-- MATCHED width (median sigma == mean band; isolates SHAPE) --
+matched scales: q0.50=1.272, q0.65=0.896, q0.80=0.632, q0.90=0.475
+       band      n    grossR      netR  net_pt/t     Sh     dSh   maxDD   23+Sh
+ mean(base)   4209    +111.2     +91.2    +3.159   1.29  +0.000     4.7    1.10
+  mat q0.50   4381    +105.9     +84.9    +2.792   1.21  -0.080     6.1    0.90
+  mat q0.65   4354    +106.2     +85.5    +2.804   1.21  -0.078     5.4    0.94
+  mat q0.80   4329    +106.1     +85.5    +3.115   1.21  -0.076     4.9    1.04
+  mat q0.90   4256    +112.5     +92.6    +3.291   1.32  +0.032     4.7    1.22
+
+Best MATCHED cell: q=0.90, dSharpe=+0.032, dNetR=+1.4, dMaxDD=-0.0, dTrades=+47
+
+Residual quant/mean by decision slot (best matched q=0.90) — does the quantile reshape the intraday profile?
+      mean  quant  quant/mean
+mfo                          
+29  0.0031 0.0030      0.9737
+59  0.0039 0.0039      0.9897
+89  0.0046 0.0046      1.0002
+119 0.0050 0.0049      0.9893
+149 0.0053 0.0053      0.9994
+179 0.0055 0.0055      0.9883
+209 0.0056 0.0056      0.9940
+239 0.0058 0.0058      1.0012
+269 0.0061 0.0062      1.0094
+299 0.0064 0.0064      1.0009
+329 0.0066 0.0066      0.9988
+359 0.0069 0.0069      1.0019
+389 0.0073 0.0073      1.0022
+
+GATE (best matched dSharpe>=+0.10 and netR>=baseline): FAIL -> REJECT from real evidence (no Null C)

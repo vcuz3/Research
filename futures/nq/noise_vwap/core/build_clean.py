@@ -25,7 +25,7 @@ Clean schema (one row per 1-min bar, full 24h):
 string) so roll detection and diagnostics still work. `is_roll` flags the first bar
 of a new contract.
 
-Written to futures/nq/noise_vwap/data/<inst>_1m_clean.parquet
+Written to futures/nq/data/<inst>_1m_clean.parquet
 Run:  python -m futures.nq.noise_vwap.core.build_clean
 """
 from __future__ import annotations
@@ -36,7 +36,7 @@ import numpy as np
 import pandas as pd
 
 DB = Path(__file__).resolve().parents[3] / "data" / "databento"
-OUT = Path(__file__).resolve().parents[1] / "data"
+OUT = Path(__file__).resolve().parents[2] / "data"
 RAW = {
     "NQ": DB / "NQ_ohlcv-1m_NQv0_20110801_20260715.parquet",
     "ES": DB / "ES_ohlcv-1m_ESv0_20110801_20260715.parquet",

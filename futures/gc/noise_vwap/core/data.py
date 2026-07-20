@@ -31,9 +31,18 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 
-DATA = Path(__file__).resolve().parents[1] / "data"
+# Shared instrument data lives at the common GC parent (futures/gc/data), per
+# RESEARCH_WORKFLOW: reusable market data is stored once at the instrument parent,
+# not duplicated per project. parents[2] = futures/gc.
+DATA = Path(__file__).resolve().parents[2] / "data"
+# ES lives at the shared NQ instrument parent (Databento clean, same UTC ts + ET
+# convention as GC). It is loaded ONLY to derive the ES noise-VWAP *state* for the
+# cross-asset conditioning study (HYP-0005); GC contract economics below are unused
+# for ES because the study never books ES P&L, only ES direction.
+ES_DATA = Path(__file__).resolve().parents[3] / "nq" / "data"
 PATHS = {
     "GC": DATA / "GC_1m_clean.parquet",
+    "ES": ES_DATA / "ES_1m_clean.parquet",
 }
 
 RTH_START = 9 * 60 + 30   # 09:30 ET
@@ -45,6 +54,15 @@ TICK_VALUE = {"GC": 10.0}       # $ / tick / contract
 POINT_VALUE = {"GC": 100.0}     # $ / point / contract
 
 MIN_BARS = 350   # a session must be near-complete to be usable
+
+# Noise-band coverage tolerance (rule 9a). The same-time-of-day sigma averages the
+# prior `lookback` sessions' excursion at a given minute. Requiring ALL `lookback`
+# of them (min_periods == lookback) means a SINGLE missing minute anywhere in the
+# trailing window nulls the band for that (date, tod) -- a no-op on liquid NQ but on
+# GC's thinner post-floor-close afternoon it silently deleted ~12% of 14:59 and ~28%
+# of 15:29 decisions. Require only this FRACTION of the window populated; the mean is
+# taken over whichever prior sessions are present. See reports/DATA_QUALITY.md.
+BAND_MIN_FRAC = 0.9
 
 
 def load_rth(inst: str) -> pd.DataFrame:
@@ -100,8 +118,12 @@ def noise_bands(df: pd.DataFrame, lookback: int) -> pd.DataFrame:
     cm = cm.reindex(dates)
     o0 = opens.reindex(dates)
     move = (cm.div(o0, axis=0) - 1.0).abs()
-    # sigma = mean of the prior `lookback` sessions' move, strictly prior
-    sigma = move.shift(1).rolling(lookback, min_periods=lookback).mean()
+    # sigma = mean of the prior `lookback` sessions' move, strictly prior. Tolerate up
+    # to (1 - BAND_MIN_FRAC) of the window missing at this minute (rule 9a): rolling
+    # .mean() already averages over only the non-NaN prior sessions, so relaxing
+    # min_periods simply excludes a missing day from the mean instead of nulling it.
+    min_obs = max(1, int(np.ceil(BAND_MIN_FRAC * lookback)))
+    sigma = move.shift(1).rolling(lookback, min_periods=min_obs).mean()
 
     long = sigma.stack().rename("sigma").reset_index()
     long.columns = ["date", "tod", "sigma"]

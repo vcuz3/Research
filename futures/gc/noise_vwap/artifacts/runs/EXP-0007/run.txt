@@ -1,0 +1,21 @@
+=== HYP-0005 ES-conditioning GC lookback=90 cost=0.5tick/side (0.0725pt) ===
+parity check (full, unconditioned): trades=2692 gross=974.60pt
+GC dates=3647 ES-state dates=3637 common=3550
+ES decision-bar state marginals over common set (n=46149): long=0.141 short=0.118 flat=0.741
+
+--- BASELINE (common date set) ---
+baseline(common)       n= 2681 (1.43/day) gross=+0.371pt net=+0.226pt hit=0.336 | day$net=+32.3 t=+1.35 Sh=0.49 | L=+0.336(1374) S=+0.110(1307)
+
+--- CONDITIONING VARIANTS ---
+cond:agree             n=  582 (1.23/day) gross=+0.162pt net=+0.017pt hit=0.352 | day$net=+2.1 t=+0.04 Sh=0.03 | L=+0.034(289) S=+0.001(293)
+cond:gate              n= 1127 (1.26/day) gross=+0.091pt net=-0.054pt hit=0.328 | day$net=-6.7 t=-0.20 Sh=-0.11 | L=+0.339(587) S=-0.481(540)
+cond:es_dir            n= 5834 (2.94/day) gross=+0.039pt net=-0.106pt hit=0.460 | day$net=-31.3 t=-1.58 Sh=-0.56 | L=-0.008(3122) S=-0.219(2712)
+
+--- UPLIFT vs common-set baseline (net daily Sharpe) ---
+  agree    Sharpe +0.028  uplift -0.466  trades 582 (base 2681)
+  gate     Sharpe -0.106  uplift -0.600  trades 1127 (base 2681)
+  es_dir   Sharpe -0.565  uplift -1.059  trades 5834 (base 2681)
+
+best variant = agree  uplift = -0.466  (gate = +0.05)
+
+VERDICT: REJECT — best net-Sharpe uplift -0.466 < +0.05 gate. Re-pairing null NOT spent (real pass fails primary metric; gate-nullc-on-success-metric).

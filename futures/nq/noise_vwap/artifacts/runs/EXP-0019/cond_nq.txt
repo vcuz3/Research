@@ -1,0 +1,28 @@
+HYP-0011 conditional exit cadence (hi-vol->15m / lo-vol->1m): NQ
+
+Common post-lb90; lb90; 30m RTH+VWAP; both stop; next-open; regime=intraday range vs 14-sess same-tod median
+
+      arm      n    hit       net$    Sh$  day-t$  23+Sh$ |     netR    ShR
+
+ decision   2923  0.387    +268624   0.85   +3.23    0.32 |   +101.3   1.29
+
+    cad15   3299  0.343    +291312   0.97   +3.66    0.64 |   +100.3   1.33
+
+ everybar   4209  0.269    +265937   0.96   +3.65    0.71 |    +91.2   1.29
+
+     cond   3573  0.314    +273454   0.92   +3.49    0.57 |    +95.2   1.28
+
+PRIMARY uplift (cond - everybar): dollar dSharpe=-0.042, dNet$=+7517, ATR-R dSharpe=-0.013
+
+Descriptive until the null mode passes the kill test.
+
+Real diffusivity=0.250000
+
+Null draw 1 diffusivity=0.250000
+
+
+
+[dollar] real uplift dSharpe=-0.042; null mean=+0.032, sd=0.086, p=0.7419 (22/30 null >= real)
+
+KILL TEST (dollar primary): REJECT
+

@@ -1,0 +1,28 @@
+{
+  "hypothesis": "HYP-0011",
+  "description": "Volatility-conditional exit-check cadence (hi-vol->15min interval, lo-vol->every-bar continuous) as a fixed-1-contract prop-account vol lever.",
+  "baseline_config": {
+    "lookback": 90,
+    "decision_clock_min": 30,
+    "require_vwap": true,
+    "stop_ref": "both",
+    "fill_mode": "next_open",
+    "cost_per_side": "2.25 USD fees + 0.25 tick"
+  },
+  "regime": {
+    "proxy": "intraday-to-date range cummax(high)-cummin(low) from session open to bar",
+    "baseline": "trailing-14-session median of run_range at the same mfo, strictly prior (shift 1)",
+    "min_periods_frac": 0.7,
+    "hivol_rule": "run_range[mfo] > same-tod trailing median",
+    "hivol_cadence_min": 15,
+    "lovol_cadence_min": 1
+  },
+  "arms_reported": ["decision", "cad15", "everybar", "cond"],
+  "null_contrast": "cond - everybar",
+  "primary_metric": "dollar (fixed-1-contract) zero-eligible-day daily net Sharpe",
+  "secondary_metric": "ATR-normalised net-R daily Sharpe",
+  "null": {"type": "path-preserving Null C (studies._null_c_frame)", "draws": 30, "seeds": "5095349..5095378"},
+  "kill_test": "REJECT unless dollar-Sharpe uplift > 0, treatment net$ >= baseline net$, and upper-tail p <= 0.05 vs Null C",
+  "data_scope": "NQ primary + ES sibling, clean Databento RTH through 2026, common post-lookback-90 date set (consumed)",
+  "code_ref": "scripts/hyp_0011_cond_cadence.py; cond_regime/hivol_cadence/lovol_cadence in core/engine2.py"
+}

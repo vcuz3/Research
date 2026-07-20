@@ -1,0 +1,40 @@
+HYP-0013 quantile envelope vs mean band: ES
+Common post-lb90; lb90; 30m RTH clock + VWAP gate; every-bar stop; next-open
+
+-- RAW quantile (scale 1.0; exposes the width/capacity dial) --
+       band      n    grossR      netR  net_pt/t     Sh     dSh   maxDD   23+Sh
+ mean(base)   4326     +90.2     +51.5    +0.515   0.70  +0.000     7.4    0.80
+  raw q0.50   5516    +103.9     +53.8    +0.443   0.67  -0.026    10.9    0.96
+  raw q0.65   4098     +81.0     +45.0    +0.422   0.63  -0.065     7.7    0.37
+  raw q0.80   2512     +57.3     +36.0    +0.331   0.65  -0.050     7.4   -0.10
+  raw q0.90   1564     +31.6     +18.7    +0.204   0.44  -0.260     6.8   -0.40
+
+-- MATCHED width (median sigma == mean band; isolates SHAPE) --
+matched scales: q0.50=1.318, q0.65=0.923, q0.80=0.629, q0.90=0.465
+       band      n    grossR      netR  net_pt/t     Sh     dSh   maxDD   23+Sh
+ mean(base)   4326     +90.2     +51.5    +0.515   0.70  +0.000     7.4    0.80
+  mat q0.50   4452     +84.5     +44.4    +0.444   0.61  -0.090     7.2    0.61
+  mat q0.65   4435     +88.2     +48.8    +0.474   0.66  -0.033     6.6    0.67
+  mat q0.80   4489     +93.3     +53.4    +0.502   0.72  +0.025     6.7    0.77
+  mat q0.90   4581     +97.5     +56.7    +0.483   0.77  +0.067     6.9    0.65
+
+Best MATCHED cell: q=0.90, dSharpe=+0.067, dNetR=+5.2, dMaxDD=-0.5, dTrades=+255
+
+Residual quant/mean by decision slot (best matched q=0.90) — does the quantile reshape the intraday profile?
+      mean  quant  quant/mean
+mfo                          
+29  0.0020 0.0019      0.9573
+59  0.0027 0.0027      0.9862
+89  0.0032 0.0031      0.9877
+119 0.0035 0.0034      0.9796
+149 0.0037 0.0037      0.9957
+179 0.0039 0.0039      1.0012
+209 0.0040 0.0040      1.0091
+239 0.0042 0.0043      1.0093
+269 0.0044 0.0045      1.0131
+299 0.0047 0.0046      0.9930
+329 0.0049 0.0049      0.9942
+359 0.0051 0.0051      0.9832
+389 0.0055 0.0055      0.9923
+
+GATE (best matched dSharpe>=+0.10 and netR>=baseline): FAIL -> REJECT from real evidence (no Null C)

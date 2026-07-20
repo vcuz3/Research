@@ -1,0 +1,35 @@
+{
+  "strategy": "GC VWAP standard-deviation-band mean-reversion (fade)",
+  "instrument": "GC (COMEX Gold); traded on MGC micro (1/10 notional)",
+  "contract_economics": {"tick": 0.10, "tick_value_usd": 10.0, "point_value_usd": 100.0},
+  "session": {"rth_start_et": "09:30", "rth_end_et": "16:00"},
+  "entry_window_et": {"start": "10:00", "end": "15:00", "note": "stop tracking (no new entries) at 15:00; open positions still managed to 16:00 forced-flat"},
+  "signal": {
+    "vwap": "cumulative causal session VWAP from typical price (H+L+C)/3, volume-weighted, reset at 09:30 open",
+    "sigma": "cumulative causal volume-weighted std of typical price about the running VWAP",
+    "entry_band_k": 2.0,
+    "stop_band_k": 3.0,
+    "target": "frozen VWAP at entry",
+    "stop": "frozen vwap +/- 3*sigma (i.e. entry +/- 1*sigma)",
+    "reward_risk": "reward=2*sigma, risk=1*sigma -> fixed 2:1 RR"
+  },
+  "entry_rule": {
+    "short": "bar HIGH reaches vwap + 2*sigma -> resting SELL limit filled at the band (gap-aware: fill at bar open if it opened above the band)",
+    "long": "bar LOW reaches vwap - 2*sigma -> resting BUY limit filled at the band"
+  },
+  "position_management": {
+    "concurrent_positions": 1,
+    "min_gap_after_exit": "15 minutes",
+    "forced_flat": "last RTH bar close (16:00 ET proxy)"
+  },
+  "fill_model": {
+    "resolution": "1-second bars (futures/gc/data/GC_1s_rth.parquet) for observable intrabar path; 1-minute available for comparison",
+    "entry": "passive limit at the band; touch = fill (queue-optimistic, stressed by a +1 tick trade-through variant)",
+    "exit_path": "adverse resolution (rule 3): if a bar can reach both stop and target, take the STOP",
+    "same_bar": "on the entry bar only an adverse stop may trigger; a same-bar target win requires a later bar (conservative default)",
+    "gap_through": "stop/target/entry that gaps past its level fills at the bar open (rule 5)"
+  },
+  "costs_pts_per_side": {"fees": 0.0225, "grid_ticks": [0.25, 0.50, 1.0]},
+  "accounting": {"risk_unit": "per-session summed net $ over ALL usable sessions (rule 13/22)", "inference": "day-clustered t-stat; Sharpe/Calmar on the daily series"},
+  "reproduce": "python -m futures.gc.vwap_reversion.scripts.run_baseline GC 1s"
+}

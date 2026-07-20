@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0019",
+  "hypothesis_id": "HYP-0011",
+  "status": "completed",
+  "declared_utc": "2026-07-20T03:29:45.068078+00:00",
+  "config_path": "experiments/configs/hyp_0011_cond_cadence.json",
+  "data_scope": "NQ primary + ES sibling, clean Databento RTH through 2026, common post-lookback-90 date set (consumed)",
+  "code_ref": "working-tree",
+  "run_command": "python -m futures.nq.noise_vwap.scripts.hyp_0011_cond_cadence null NQ 30",
+  "primary_metric": "dollar fixed-1-contract zero-day daily net Sharpe uplift vs Null C",
+  "builder": "Claude (Opus 4.8)",
+  "outputs": [],
+  "closed_utc": "2026-07-20T03:30:45.056289+00:00",
+  "result_summary": "REJECT: vol-conditional exit cadence (hi-vol->15m/lo-vol->1m, causal intraday-range regime) does NOT beat a fixed continuous stop for a fixed-1-contract account. cond is DOMINATED by both fixed everybar and fixed cad15 on dollar Sharpe (NQ cond 0.92 vs everybar 0.96 vs cad15 0.97; ES 0.70 vs 0.69 vs 0.81). Null C cond-everybar dollar uplift NQ -0.042 p=0.74 (null CENTERS POSITIVE +0.032, real BELOW null), ES +0.017 p=0.84 (null +0.082, real below). Positive null center = variance amplifier (whipsaw reduction is a vol/path-geometry property the Null C preserves), same signature as EXP-0010/0012. Fixed-15 companion also failed (ATR-R NQ +0.034 p=0.29 ES +0.058 p=0.19; dollar marginal p=0.064/0.097, all vol-era weighting per rule 19). Retain fixed continuous stop.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

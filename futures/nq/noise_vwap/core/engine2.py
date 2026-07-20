@@ -30,7 +30,8 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
                      entry_delay=0, trail_step_atr=0.0, trail_start_atr=0.0,
                      ladder=False, ladder_levels=(-1.0, 2.0, 0.0, 5.0),
                      ladder_frac=0.5, exit_band=None, exit_y=0.0,
-                     flat_before_close=0) -> list[dict]:
+                     flat_before_close=0, cond_regime=None,
+                     hivol_cadence=15, lovol_cadence=1) -> list[dict]:
     """
     Simulate one session.
 
@@ -76,6 +77,15 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
 
     band_map = {int(r.mfo): (r.upper, r.lower) for r in band.itertuples()}
     decision_set = {int(t) for t in decision_mfos}
+
+    # exit_check stop-check cadence (entries/flips stay on the decision clock).
+    # "decision" -> only at decision mfos; "every_bar" -> every 1-min bar; int N ->
+    # every N minutes from the open. minute-from-open is (mfo+1) with the open bar
+    # counted as minute 1, so an N-min cadence checks mfos where (mfo+1) % N == 0.
+    # 5 and 15 divide 30, so decision mfos are always a subset; N=1 == every_bar.
+    cadence = int(exit_check) if isinstance(exit_check, (int, np.integer)) else None
+    check_mfos = ({int(mm) for mm in mfo if (int(mm) + 1) % cadence == 0}
+                  if cadence is not None else None)
 
     # Separate EXIT boundary (paper 5095349 s.4.3/4.4, "different entry & exit
     # boundaries"): entries keep the multiplier-1.0 `band_map`; the stop instead
@@ -316,7 +326,17 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
                     ratchet = entry_px + pos * (k - 1) * step
                     stop = max(stop, ratchet) if pos == 1 else min(stop, ratchet)
             hit = (c < stop) if pos == 1 else (c > stop)
-            check_here = (is_decision or exit_check == "every_bar")
+            if cond_regime is not None:
+                # Conditional cadence (prop-account vol lever): switch the stop-check
+                # frequency by a CAUSAL intraday vol regime. cond_regime is the set of
+                # this session's hi-vol mfos (intraday-to-date range above its same-tod
+                # trailing median). High vol -> check only on the hivol_cadence grid
+                # (fewer checks -> less whipsaw); low vol -> lovol_cadence (1==every bar).
+                cad = hivol_cadence if (m in cond_regime) else lovol_cadence
+                check_here = is_decision or ((m + 1) % cad == 0)
+            else:
+                check_here = (is_decision or exit_check == "every_bar"
+                              or (check_mfos is not None and m in check_mfos))
             flip = (want == -pos) and (is_decision if entry_mode == "clock" else True)
             if (hit and check_here) or flip:
                 if close_trade(i, "flip" if flip else "stop") and flip and gate_ok(m):
@@ -375,16 +395,24 @@ def run(bars: pd.DataFrame, bands: pd.DataFrame, decision_mfos,
         entry_delay=0, trail_step_atr=0.0, trail_start_atr=0.0,
         ladder=False, ladder_levels=(-1.0, 2.0, 0.0, 5.0),
         ladder_frac=0.5, exit_bands=None, exit_y=0.0,
-        flat_before_close=0) -> pd.DataFrame:
+        flat_before_close=0, cond_regime=None,
+        hivol_cadence=15, lovol_cadence=1) -> pd.DataFrame:
     band_by = {d: g for d, g in bands.groupby("sdate", sort=False)}
     exit_band_by = ({d: g for d, g in exit_bands.groupby("sdate", sort=False)}
                     if exit_bands is not None else None)
+    # cond_regime: long frame (sdate, mfo, hivol). Reduce to date -> set of hi-vol
+    # mfos; a missing date/mfo defaults to low-vol (lovol_cadence). None -> off.
+    cond_by = None
+    if cond_regime is not None:
+        cond_by = {d: set(gg.loc[gg["hivol"], "mfo"].astype(int))
+                   for d, gg in cond_regime.groupby("sdate", sort=False)}
     out: list[dict] = []
     for d, g in bars.groupby("sdate", sort=False):
         bd = band_by.get(d)
         if bd is None or bd.empty:
             continue
         ex_bd = exit_band_by.get(d) if exit_band_by is not None else None
+        cr = cond_by.get(d, set()) if cond_by is not None else None
         out.extend(simulate_session(g, bd, decision_mfos, fill_mode, require_vwap,
                                     exit_check, entry_mode, entry_buf_atr, entry_gate,
                                     stop_ref, stop_buf_atr, trend_gate, entry_persist,
@@ -392,7 +420,9 @@ def run(bars: pd.DataFrame, bands: pd.DataFrame, decision_mfos,
                                     trail_step_atr, trail_start_atr,
                                     ladder, ladder_levels, ladder_frac,
                                     exit_band=ex_bd, exit_y=exit_y,
-                                    flat_before_close=flat_before_close))
+                                    flat_before_close=flat_before_close,
+                                    cond_regime=cr, hivol_cadence=hivol_cadence,
+                                    lovol_cadence=lovol_cadence))
     df = pd.DataFrame(out)
     if not df.empty:
         df = df.rename(columns={"sdate": "date"})

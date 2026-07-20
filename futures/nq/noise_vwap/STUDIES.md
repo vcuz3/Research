@@ -152,7 +152,16 @@ real-but-marginal add-on.
 1. **Adopt continuous (every-bar) stop monitoring** as the working config. It is a
    structural, Null-C-robust improvement (Sharpe +0.14, t +0.39, same profit, more
    capacity), arguably *more* realistic than semi-hourly stop checking, and helps the
-   weak recent tape. This is the deliverable.
+   weak recent tape. This is the deliverable. **Caveat — the uplift is NQ-specific
+   (added 2026-07-19).** `studies.py` hardcodes INST=NQ, so the every-bar stop had
+   never been measured on ES. Cross-check (`scripts/es_continuous_stop.py`,
+   @0.25tick): on ES it is a WASH — net Sharpe 0.928 -> 0.920 (-0.008), t 2.63->2.61;
+   gross drops 1.036 -> 0.730 pt/trade (-30%) and the loser tail shrinks (loser mean
+   -$342 -> -$179) but the two exactly offset. So "same profit, higher Sharpe" is an
+   NQ property, not a family property. Every-bar is not HARMFUL on ES (keep it or the
+   decision clock, indifferent), but it INVERTS on gold (GC EXP-0004: Sharpe 0.46 ->
+   -0.06) — the net value scales with the instrument's intraday drift/noise ratio
+   (shared learning 2026-07-19). Re-measure per instrument; do not transfer blind.
 2. **A modest ATR entry buffer (X≈0.15) is optional.** It holds total profit, lifts
    Sharpe further and helps 2025–26, but by rarity-filtering (lower aggregate t) and
    its recent-year help is within noise — tune it, don't rely on it.
@@ -169,6 +178,7 @@ python -m futures.nq.noise_vwap.scripts.studies threshold     # Study 3
 python -m futures.nq.noise_vwap.scripts.decay                 # per-year decay
 python -m futures.nq.noise_vwap.scripts.studies nullc clk30ebar 30
 python -m futures.nq.noise_vwap.scripts.studies nullc_pair 30
+python -m futures.nq.noise_vwap.scripts.es_continuous_stop   # ES + NQ every-bar cross-check
 ```
 
 ---

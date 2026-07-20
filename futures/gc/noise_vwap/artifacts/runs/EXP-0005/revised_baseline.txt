@@ -1,0 +1,16 @@
+=== GC lookback=90 ===
+sessions=3647 2011-08-01->2026-07-16 band_rows=1390739
+
+total trades=2692 reasons={'stop': 1823, 'eod': 864, 'flip': 5}
+fill-feasibility: 0 same-bar fills (all fills at a later bar open) OK
+
+--- STRATEGY (net at cost grid) ---
+strat 0.25tick         n= 2692 (1.43/day) gross=+0.362pt net=+0.267pt hit=0.348 | day$net=+38.2 t=+1.60 Sh=0.58 | L=+0.376(1382) S=+0.152(1310)
+strat 0.50tick         n= 2692 (1.43/day) gross=+0.362pt net=+0.217pt hit=0.336 | day$net=+31.0 t=+1.30 Sh=0.48 | L=+0.326(1382) S=+0.102(1310)
+strat 1.0tick          n= 2692 (1.43/day) gross=+0.362pt net=+0.117pt hit=0.327 | day$net=+16.7 t=+0.70 Sh=0.26 | L=+0.226(1382) S=+0.002(1310)
+
+--- NAIVE ALWAYS-LONG (drift) ---
+always_long            n= 3647 (1.00/day) gross=+0.061pt net=-0.084pt hit=0.498 | day$net=-8.4 t=-0.37 Sh=-0.10 | L=-0.084(3647) S=+nan(0)
+
+--- GROSS (no cost) ---
+strat gross            n= 2692 (1.43/day) gross=+0.362pt net=+0.362pt hit=0.348 | day$net=+51.8 t=+2.17 Sh=0.79 | L=+0.471(1382) S=+0.247(1310)

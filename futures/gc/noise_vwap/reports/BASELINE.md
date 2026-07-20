@@ -13,33 +13,44 @@ contract economics differ.
 - Contract economics: 100 troy oz, tick 0.10 = $10, 1 point = $100.
 - Reproduce: `python -m futures.gc.noise_vwap.scripts.run_baseline GC 90`
 
+> **Revised 2026-07-19 (EXP-0005), data-quality fix.** The noise band originally
+> used `rolling(90, min_periods=90)`, requiring all 90 prior sessions to have a
+> bar at a given minute; a single missing minute nulled the band and the engine
+> skips a band-less decision, silently deleting up to 28% of the 15:29 decisions
+> on GC's thin afternoon (invisible on liquid NQ). Fixed to
+> `min_periods = ceil(0.9 × 90) = 81` (`BAND_MIN_FRAC`, `core/data.py` +
+> `core/session.py`). Numbers below are the **revised** baseline; the old figures
+> are noted inline as *(was …)* and fully superseded. See `reports/DATA_QUALITY.md`
+> and `artifacts/runs/EXP-0005/`. Verdict is unchanged (NO-GO).
+
 ## Per-trade / per-day baseline (before vol-target sizing, rule 12/21)
 
 Honest fills (next-bar open), 1 contract, day-clustered inference. GC 3647 usable
-sessions, 2641 trades (1.41/day), hit 0.35. NQ shown for a direct comparison
-(reproduce: `python -m futures.nq.noise_vwap.scripts.run_baseline NQ 90`).
+sessions, **2692 trades** (1.43/day, *was 2641*), hit 0.34. NQ shown for a direct
+comparison (reproduce: `python -m futures.nq.noise_vwap.scripts.run_baseline NQ 90`).
 
-| Metric (0.50 tick/side) | GC | NQ |
-| --- | ---: | ---: |
-| gross pt/trade | +0.359 | +4.945 |
-| net pt/trade | +0.214 | +4.470 |
-| day $ net (1 contract) | +30.2 | +127.5 |
-| day-net t-stat | +1.25 | +3.15 |
-| net daily Sharpe | 0.46 | 1.10 |
-| gross daily Sharpe | 0.77 | 1.22 |
-| gross day-$ t-stat | +2.11 | +3.49 |
+| Metric (0.50 tick/side) | GC (revised) | GC (was) | NQ |
+| --- | ---: | ---: | ---: |
+| gross pt/trade | +0.362 | +0.359 | +4.945 |
+| net pt/trade | +0.217 | +0.214 | +4.470 |
+| day $ net (1 contract) | +31.0 | +30.2 | +127.5 |
+| day-net t-stat | +1.30 | +1.25 | +3.15 |
+| net daily Sharpe | 0.48 | 0.46 | 1.10 |
+| gross daily Sharpe | 0.79 | 0.77 | 1.22 |
+| gross day-$ t-stat | +2.17 | +2.11 | +3.49 |
 
-Cost sensitivity (net pt/trade → net Sharpe):
+Cost sensitivity (net pt/trade → net Sharpe), revised GC:
 
 | cost/side | GC net pt | GC Sharpe | NQ net pt | NQ Sharpe |
 | --- | ---: | ---: | ---: | ---: |
-| 0.25 tick | +0.264 | 0.57 | +4.595 | 1.14 |
-| 0.50 tick | +0.214 | 0.46 | +4.470 | 1.10 |
-| 1.00 tick | +0.114 | 0.24 | +4.220 | 1.04 |
+| 0.25 tick | +0.267 | 0.58 | +4.595 | 1.14 |
+| 0.50 tick | +0.217 | 0.48 | +4.470 | 1.10 |
+| 1.00 tick | +0.117 | 0.26 | +4.220 | 1.04 |
 
-Long/short split (net pt/trade, 0.50 tick): GC L +0.332 (1359) / S +0.088 (1282);
+Long/short split (net pt/trade, 0.50 tick): GC L +0.326 (1382) / S +0.102 (1310);
 NQ L +4.210 / S +4.740. Both sides positive on GC at low cost; the short side goes
-slightly negative by 1.0 tick.
+to ~0 by 1.0 tick. The recovered decisions (EXP-0005) are afternoon/short-heavy,
+so the short leg improves (+0.088 → +0.102).
 
 ## Findings
 

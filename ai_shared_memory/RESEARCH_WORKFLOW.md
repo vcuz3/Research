@@ -33,6 +33,13 @@ Baseline replication must not silently depend on later strategy improvements.
 Experiment scripts must call the audited engine rather than reimplementing
 fills, costs, P&L, sizing, or metrics.
 
+Reusable market data should live at the common instrument parent whenever
+multiple projects may consume it, for example `futures/gc/data/`, rather than
+inside each strategy project. Project-local `data/` directories are only for
+project-specific derived datasets that cannot sensibly be shared. Reference the
+common data source from loaders, docs, and configs instead of duplicating large
+parquet archives for every new project.
+
 ## Instruction ownership
 
 - Root `AGENTS.md` and `CLAUDE.md` load the shared workspace memory.

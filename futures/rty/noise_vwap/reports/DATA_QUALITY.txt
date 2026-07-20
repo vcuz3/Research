@@ -1,0 +1,28 @@
+=== DATA-QUALITY GATE: RTY lookback=90 (rule 9a) ===
+raw rows=2979412 | RTH bars=874060 | sessions=2242 | 2017-07-14 -> 2026-07-17
+
+[timeline] duplicate (date,tod)=0 | out-of-order within day=0
+[roll] sessions spanning >1 symbol=0
+
+[completeness] full RTH minutes=390 | median present=390 | sessions with >=1 missing minute=37 (1.7%)
+               missing-minute per session: mean=0.14 max=31
+
+[decision-minute band coverage]  strict=all-90  relaxed>=ceil(0.90*90)=81
+  tod   time  raw_cov   strict  relaxed  recovered
+  599  09:59   100.0%    91.9%    96.3%        +99  <== silent-drop
+  629  10:29   100.0%    91.9%    96.3%        +99  <== silent-drop
+  659  10:59   100.0%    91.9%    96.3%        +99  <== silent-drop
+  689  11:29   100.0%    91.9%    96.3%        +99  <== silent-drop
+  719  11:59   100.0%    91.7%    96.3%       +104  <== silent-drop
+  749  12:29    99.9%    90.9%    96.2%       +119  <== silent-drop
+  779  12:59   100.0%    91.8%    96.3%       +101  <== silent-drop
+  809  13:29    99.9%    91.0%    96.3%       +118  <== silent-drop
+  839  13:59   100.0%    91.8%    96.3%       +100  <== silent-drop
+  869  14:29    99.9%    90.2%    96.2%       +135  <== silent-drop
+  899  14:59   100.0%    91.9%    96.3%        +99  <== silent-drop
+  929  15:29   100.0%    91.9%    96.3%        +99  <== silent-drop
+  959  15:59   100.0%    91.9%    96.3%        +99  <== silent-drop
+       TOTAL                                 +1370 decision points recovered
+
+=== ISSUES ===
+  * strict band nulls 10% of 14:29 decisions despite 99.9% raw coverage; relaxed rule recovers 1370 decision points total

@@ -19,7 +19,7 @@ ES does **not** replicate honestly. Do not give it capital; paper/watchlist with
 vol/trend regime filter.
 
 ## What was built
-- `core/build_clean.py` — rebuilt `data/{NQ,ES}_1m_clean.parquet` from the source
+- `core/build_clean.py` — rebuilt `../data/{NQ,ES}_1m_clean.parquet` from the source
   xlsx in `futures/{nq,es}/data/` (the old magic_hour parquets had gaps). Dedupes
   overlapping file boundaries, derives roll flags, validates. **Coverage is now
   essentially gap-free**: NQ 467 missing RTH minutes across 3,858 sessions (median

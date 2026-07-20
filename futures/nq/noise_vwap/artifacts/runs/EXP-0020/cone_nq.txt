@@ -1,0 +1,45 @@
+HYP-0012 diffusion cone vs empirical band: NQ
+Common post-lb90; lb90; 30m RTH decision clock + VWAP gate; every-bar stop; next-open fills
+     band      n    grossR      netR  net_pt/t     Sh   dayT   maxDD   p90R   23+Sh
+ baseline   4209    +111.2     +91.2    +3.159   1.29   4.89     4.7  +0.35    1.10
+     cone   4914    +113.7     +89.8    +2.530   1.19   4.50     5.5  +0.32    0.96
+CONE vs BASELINE: dSharpe=-0.101, dNetR=-1.4, dMaxDD=+0.8, dTrades=+705
+
+Residual m(mfo) = mean_empirical_sigma / mean_cone_sigma (decision slots):
+       emp   cone     n  ratio
+mfo                           
+29  0.0031 0.0020  3628 1.5443
+59  0.0039 0.0028  3628 1.3905
+89  0.0046 0.0035  3628 1.3075
+119 0.0050 0.0040  3628 1.2313
+149 0.0053 0.0045  3628 1.1778
+179 0.0055 0.0049  3628 1.1228
+209 0.0056 0.0052  3538 1.0789
+239 0.0058 0.0057  3628 1.0225
+269 0.0061 0.0061  3628 1.0106
+299 0.0064 0.0064  3628 0.9977
+329 0.0066 0.0067  3628 0.9877
+359 0.0069 0.0070  3628 0.9918
+389 0.0073 0.0073  3628 1.0000
+
+Decision-point coverage (baseline vs cone; dropped = Rule-9a deletions):
+     baseline  cone  dropped_vs_cone
+mfo                                 
+29       3628  3628                0
+59       3628  3628                0
+89       3628  3628                0
+119      3628  3628                0
+149      3628  3628                0
+179      3628  3628                0
+209      3538  3628               90
+239      3628  3628                0
+269      3628  3628                0
+299      3628  3628                0
+329      3628  3628                0
+359      3628  3628                0
+389      3628  3628                0
+total decision points: baseline=47074  cone=47164  cone recovers 90 (0.2% of cone)
+
+ALPHA GATE (dSharpe>=+0.10 and netR>=baseline): FAIL
+SIMPLIFY OUTCOME (|dSharpe|<=0.05, netR~>=baseline, coverage>=): no
+VERDICT: REJECT from real evidence (no Null C).

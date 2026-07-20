@@ -31,7 +31,9 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 
-DATA = Path(__file__).resolve().parents[1] / "data"
+# Shared instrument data lives at the common GC parent (futures/gc/data), per
+# RESEARCH_WORKFLOW; kept identical to core.data.DATA. parents[2] = futures/gc.
+DATA = Path(__file__).resolve().parents[2] / "data"
 PATHS = {"GC": DATA / "GC_1m_clean.parquet"}
 
 RTH_START = 9 * 60 + 30   # 09:30 ET (tod)
@@ -42,6 +44,12 @@ TICK = {"GC": 0.10}
 POINT_VALUE = {"GC": 100.0}
 
 MIN_BARS_RTH = 350
+
+# Noise-band coverage tolerance (rule 9a); kept identical to core.data.BAND_MIN_FRAC
+# so the numba fast path and the audited engine build the SAME bands. Requiring all
+# `lookback` prior sessions at a minute nulls the band whenever one is missing; on GC
+# that silently deleted late-day decisions. See reports/DATA_QUALITY.md.
+BAND_MIN_FRAC = 0.9
 
 
 def _base(inst: str) -> pd.DataFrame:
@@ -184,7 +192,10 @@ def _base_bands(df: pd.DataFrame, lookback: int) -> pd.DataFrame:
     cm = cm.reindex(dates)
     o0 = opens.reindex(dates)
     move = (cm.div(o0, axis=0) - 1.0).abs()
-    sigma = move.shift(1).rolling(lookback, min_periods=lookback).mean()
+    # Tolerate up to (1 - BAND_MIN_FRAC) of the trailing window missing at a minute
+    # (rule 9a): average over the present prior sessions instead of nulling the band.
+    min_obs = max(1, int(np.ceil(BAND_MIN_FRAC * lookback)))
+    sigma = move.shift(1).rolling(lookback, min_periods=min_obs).mean()
 
     long = sigma.stack().rename("sigma").reset_index()
     long.columns = ["sdate", "mfo", "sigma"]

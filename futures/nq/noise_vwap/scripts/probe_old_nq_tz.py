@@ -24,7 +24,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-OLD = Path(__file__).resolve().parents[1] / "data" / "old_vendor_backup"
+OLD = Path(__file__).resolve().parents[2] / "data" / "archive" / "old_vendor_backup"
 DB = Path(__file__).resolve().parents[3] / "data" / "databento"
 RAW_NQ = DB / "NQ_ohlcv-1m_NQv0_20110801_20260715.parquet"
 OLD_NQ = OLD / "NQ_1m_clean.parquet"

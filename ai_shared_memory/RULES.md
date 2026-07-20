@@ -85,6 +85,26 @@ artifact.
    the claim.** Record coverage, missingness, joins, survivorship, timestamp
    alignment, and exclusions before interpreting a feature or result.
 
+9a. **Run an executable data-quality test at every core data-load and
+    feature-construction stage, and report what it finds.** Before any feature
+    or result built on a stage is interpreted, that stage must emit a
+    data-quality report covering at minimum: row/session/bar coverage per
+    period and per time-of-day, missing-bar and gap counts, duplicate and
+    out-of-order timestamps, roll/adjustment boundaries, and — for any rolling
+    or windowed feature — how often the window is under-populated and what the
+    construction does when it is (drop, null, partial-mean). A feature that
+    silently nulls or drops rows because of a coverage rule is a reportable
+    finding, not an implementation detail: quantify how many decision points it
+    removes, per era and per time-of-day, and confirm the exclusion is causal
+    and not a hidden filter. A stage with an unreported known data-quality
+    defect has not passed its gate. Prefer a small committed script/report over
+    an ad-hoc check so the test reruns when the data changes. *(A verbatim
+    NQ→GC port used `rolling(90, min_periods=90)` for the noise band; on GC's
+    thinner post-floor-close afternoon a single missing minute in the trailing
+    90-session window nulled the band, silently deleting ~12% of 14:59 and ~28%
+    of 15:29 decisions — invisible because it never bit on liquid NQ. See
+    `futures/gc/noise_vwap/reports/DATA_QUALITY.md`.)*
+
 10. **Use point-in-time versions of revised or delayed data.** Macro releases,
     fundamentals, classifications, forecasts, corporate actions, and other
     revisable inputs must match the vintage and publication latency available

@@ -143,6 +143,53 @@ decay applies to real money. 50% consistency rule barely binds — this isn't a 
 - MNQ commission drag (§1) not added back.
 - Strategy is **QUALIFIED/paper-only**, never forward-validated. Live-vs-backtest gap unknown.
 
+## 8b. Five shadow-cleared configs compared (EXP-0023, added 2026-07-20)
+
+Comparison of the five deployable configs the user asked to rank for pass probability.
+NOT a new edge test (each config was already accepted/rejected on its own merits); this
+ranks them for *survival against the $2k trailing barrier*, a variance-geometry goal.
+Reproduce: `python -m futures.nq.noise_vwap.scripts.prop_compare save`
+(artifacts `artifacts/runs/EXP-0023/`).
+
+R-metrics (R = ATR; there is **no fixed-1R stop** — entries sit AT the band, so the
+entry-to-stop distance is ~0 and degenerate; the every-bar band/VWAP stop keeps the avg
+loss tiny (~0.1 ATR) and the payoff asymmetric):
+
+| config | era | win% | avgW | avgL | RR | Sharpe | sumR |
+|---|---|---|---|---|---|---|---|
+| 1 tp0.75_67 | full | 26.3% | +0.34R | −0.09R | 3.63 | 1.38 | +86.1 |
+| | **2025+** | 23.6% | +0.33R | −0.10R | 3.28 | **0.08** | +0.5 |
+| 2 tp1.0_50 | full | 26.2% | +0.35R | −0.09R | 3.67 | 1.34 | +88.5 |
+| | **2025+** | 23.6% | +0.33R | −0.10R | 3.27 | **0.05** | +0.3 |
+| 3 tp0.75_67+flat45 | full | 27.8% | +0.32R | −0.09R | 3.46 | 1.47 | +86.7 |
+| | **2025+** | 25.8% | +0.32R | −0.10R | 3.23 | **0.64** | +3.7 |
+| 4 tp0.75_67+gaprvol | full | 26.3% | +0.34R | −0.09R | 3.76 | 1.51 | +96.5 |
+| | **2025+** | 23.6% | +0.34R | −0.10R | 3.43 | **0.32** | +2.0 |
+| 5 tp0.75_67+flat45+gaprvol | full | 27.8% | +0.32R | −0.10R | 3.57 | 1.58 | +95.3 |
+| | **2025+** | 25.8% | +0.32R | −0.10R | 3.36 | **0.85** | +4.9 |
+
+Prop PASS probability (MNQ, causal vol-target ~1.2–1.5 contracts, 20k daily bootstraps,
+trailing $2k DD; @1.0MNQ = realistic micro cost = today's-market number):
+
+| config | 2025+ pass (realistic) | med days | 2024–26 pass (realistic) |
+|---|---|---|---|
+| 1 tp0.75_67 | 21.3% | 46 | 41.5% |
+| 2 tp1.0_50 | 15.3% | 48 | 37.2% |
+| 3 tp0.75_67+flat45 | 41.4% | 56 | 64.8% |
+| 4 tp0.75_67+gaprvol | 29.1% | 45 | 47.6% |
+| **5 tp0.75_67+flat45+gaprvol** | **50.7%** | 55 | **65.7%** |
+
+**Reading:** the 2025+ net edge is ~0 for all five (sumR ≈ 0, Sharpe ≈ 0.05–0.85). The
+pass-rate ranking is a ranking by **daily-variance reduction** against the trailing
+barrier — daily-$ std falls 314→285 as early-flat is added — NOT by edge. Config 5 wins
+raw odds (~51% realistic). Config 3 is the better-*validated* single overlay: early-flat
+PASSED its NQ Null C (EXP-0013), whereas gap/rvol FAILED its Null C as alpha (EXP-0017,
+z=0.81) and is only defensible here as *survival sizing* (cut size when the overnight gap
+opposes the trade, §6). tp1.0_50 is worse than tp0.75_67 for the challenge (banks less,
+later → more variance → more trailing-DD breaches). Per §4, roughly half of even Config
+5's pass probability is pure barrier luck, and the bootstrap is optimistic (§8), so treat
+~51% as a ceiling.
+
 ## 9. Recommendation
 
 If you go: **1–2 MNQ, vol-targeted off a fixed daily-$ risk budget, treat it as a paid
@@ -150,6 +197,13 @@ forward-shadow, not income.** ~30–43% per attempt *optimistically*, in your we
 with ~half the odds being barrier luck. It is a defensible way to get real live fills without
 risking own capital beyond fees (which the strategy still owes per Rule 26) — go in knowing
 the EV is dominated by trailing-DD geometry and the current edge is asleep.
+
+**Config choice (§8b):** for maximum pass odds run **Config 5** (`tp0.75_67` + early-flat45
++ gap/rvol survival-sizing), ~51% realistic in the current regime; the cleaner, better-
+validated single-overlay choice is **Config 3** (`tp0.75_67` + early-flat45), ~41%. Do NOT
+run Config 1/2 bare (~15–21% = coin-flip against the barrier). Read whichever you pick as a
+paid forward-shadow of a dormant edge, not as income, and size off a fixed ~$250–300 daily-$
+risk budget so one stop cannot eat the $1k daily buffer.
 
 ## Reproduce
 Scripts run ad-hoc against `outputs/trades_tp0.75_67.parquet` (per-trade `net_points`,

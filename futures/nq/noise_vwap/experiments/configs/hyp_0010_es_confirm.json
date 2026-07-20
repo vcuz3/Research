@@ -1,0 +1,35 @@
+{
+  "experiment_id": "EXP-0018",
+  "hypothesis_id": "HYP-0010",
+  "title": "ES cross-market breakout confirmation gates NQ noise-VWAP entries",
+  "primary_inst": "NQ",
+  "confirmer_inst": "ES",
+  "lookback": 90,
+  "cost_ticks_per_side": 0.50,
+  "decision_clock": "Concretum :59/:29 (DECISION_TODS)",
+  "fill": "next_open",
+  "stop": "both (band-or-VWAP)",
+  "require_vwap": true,
+  "baseline": "faithful core.engine, run on common NQ-intersect-ES date set",
+  "es_state_source": "ES own bars / ES own cumulative RTH VWAP / ES own 90-session noise bands via core.data.load_rth + noise_bands",
+  "variants": {
+    "agree": "PRIMARY: take NQ signal only if ES broke out the same way (es_break == want)",
+    "gate": "take NQ signal only if ES in any breakout (es_break != 0)",
+    "vwap": "take NQ signal only if ES on same side of its own VWAP (es_vwap == want)",
+    "es_dir": "enter NQ in ES breakout direction (want = es_break)",
+    "es_opp": "enter NQ opposite ES breakout (mirror-trap check, Rule 16)",
+    "disagree": "take NQ signal only if ES disagrees (GC weak-survivor control)"
+  },
+  "primary_metric": "net daily Sharpe uplift of agree over common-set baseline",
+  "gate": 0.05,
+  "rarity_discriminator": "gross-per-trade on KEPT trades vs baseline; re-pairing null CENTER",
+  "null": {
+    "type": "re-pairing (Rule 18)",
+    "pairing": "each NQ session <- random OTHER ES date state series, same tods",
+    "donor_stratification": "calendar year",
+    "seeds": "10000..10000+ndraw-1",
+    "ndraw": 200,
+    "accept": "z>2.0 and frac(null>=real)<0.05"
+  },
+  "run_command": "python -m futures.nq.noise_vwap.scripts.hyp_0010_es_confirm NQ 90 0.50 200"
+}

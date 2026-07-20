@@ -1,0 +1,23 @@
+=== GC VWAP-band fade baseline [1s] (kb=2, ks=3 -> fixed 2RR) ===
+sessions=3964 2010-06-07->2026-07-17 bars=39,358,546
+
+total trades=10673 same-bar(entry==exit)=216 (2.0%) reasons={'stop': 6886, 'target': 2782, 'eod': 1005}
+long=5367 short=5306
+fill-feasibility: OK (all entry/exit fills attainable within their bar)
+
+--- BASELINE (conservative: touch-fill entry, adverse same-bar) ---
+net 0.25tick       n=10673 (2.78/day) win=0.333 payoff=1.89 expR=-0.111 | net=-0.082pt ($-8.2) tot=$-87,731 | Sh=-0.51 t=-2.03 Calmar=-0.04 maxDD=$144,584
+net 0.50tick       n=10673 (2.78/day) win=0.332 payoff=1.83 expR=-0.158 | net=-0.132pt ($-13.2) tot=$-141,096 | Sh=-0.82 t=-3.27 Calmar=-0.05 maxDD=$194,844
+net 1.0tick        n=10673 (2.78/day) win=0.329 payoff=1.72 expR=-0.253 | net=-0.232pt ($-23.2) tot=$-247,826 | Sh=-1.45 t=-5.74 Calmar=-0.05 maxDD=$298,294
+gross              n=10673 (2.78/day) win=0.334 payoff=2.01 expR=-0.021 | net=+0.013pt ($+1.3) tot=$+13,663 | Sh=+0.08 t=+0.32 Calmar=+0.01 maxDD=$64,163
+
+--- SENSITIVITY: strict trade-through entry (+1 tick pierce, queue guard) ---
+strict 0.25tick    n=10108 (2.65/day) win=0.312 payoff=1.99 expR=-0.161 | net=-0.147pt ($-14.7) tot=$-148,755 | Sh=-0.88 t=-3.47 Calmar=-0.05 maxDD=$199,768
+strict 0.50tick    n=10108 (2.65/day) win=0.310 payoff=1.93 expR=-0.209 | net=-0.197pt ($-19.7) tot=$-199,295 | Sh=-1.17 t=-4.65 Calmar=-0.05 maxDD=$248,808
+strict 1.0tick     n=10108 (2.65/day) win=0.307 payoff=1.83 expR=-0.306 | net=-0.297pt ($-29.7) tot=$-300,375 | Sh=-1.76 t=-7.00 Calmar=-0.06 maxDD=$346,888
+
+--- SENSITIVITY: same-bar TARGET allowed (path-optimistic, rule 3) ---
+opt 0.25tick       n=10674 (2.78/day) win=0.334 payoff=1.89 expR=-0.106 | net=-0.074pt ($-7.4) tot=$-78,704 | Sh=-0.46 t=-1.82 Calmar=-0.04 maxDD=$135,558
+opt 0.50tick       n=10674 (2.78/day) win=0.333 payoff=1.83 expR=-0.153 | net=-0.124pt ($-12.4) tot=$-132,074 | Sh=-0.77 t=-3.06 Calmar=-0.05 maxDD=$185,823
+opt 1.0tick        n=10674 (2.78/day) win=0.331 payoff=1.72 expR=-0.247 | net=-0.224pt ($-22.4) tot=$-238,814 | Sh=-1.39 t=-5.52 Calmar=-0.05 maxDD=$289,283
+(optimistic same-bar trades=248, of which target-wins=31)

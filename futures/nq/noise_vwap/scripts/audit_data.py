@@ -28,7 +28,7 @@ import numpy as np
 import pandas as pd
 
 DB = Path(__file__).resolve().parents[3] / "data" / "databento"
-OLD = Path(__file__).resolve().parents[1] / "data"
+OLD = Path(__file__).resolve().parents[2] / "data" / "archive"
 RAW = {
     "NQ": DB / "NQ_ohlcv-1m_NQv0_20110801_20260715.parquet",
     "ES": DB / "ES_ohlcv-1m_ESv0_20110801_20260715.parquet",
