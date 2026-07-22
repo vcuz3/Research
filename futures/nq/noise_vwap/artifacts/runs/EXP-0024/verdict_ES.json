@@ -1,0 +1,24 @@
+{
+  "inst": "ES",
+  "bestT": 2.0,
+  "days_skipped": 17,
+  "real_dSharpe": -0.02956679916212207,
+  "real_dSumR": -1.8570627816811154,
+  "base_sharpe": 0.4891927467472688,
+  "treat_sharpe": 0.45962594758514674,
+  "base_gross": 0.7300046232085067,
+  "treat_gross": 0.725005799118534,
+  "slot_split": {
+    "removed_early_meanR": -0.256832339165563,
+    "removed_late_meanR": 0.3775618685193881,
+    "kept_meanR": 0.005867934967393745,
+    "removed_meanR": 0.12380418544540768,
+    "removed_n": 15
+  },
+  "rand_dSharpe_mean": -0.0004769933953056091,
+  "rand_dSharpe_sd": 0.023168275468353306,
+  "rand_dSumR_mean": -0.1470379538224962,
+  "rand_frac_ge_real_sharpe": 0.875,
+  "rand_frac_ge_real_sumR": 0.87,
+  "real_gate_passed": false
+}

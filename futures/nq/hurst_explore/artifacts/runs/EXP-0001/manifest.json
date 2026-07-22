@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0001",
+  "hypothesis_id": "HYP-0001",
+  "status": "completed",
+  "declared_utc": "2026-07-22T09:47:57.863215+00:00",
+  "config_path": "scripts/a1_measurement_floor.py",
+  "data_scope": "NQ/ES 1m 2011-2026 (3710 sess); NQ 1s 2015-2026 sample",
+  "code_ref": "futures/nq/hurst_explore/scripts/a1_measurement_floor.py",
+  "run_command": "python -u -m futures.nq.hurst_explore.scripts.a1_measurement_floor",
+  "primary_metric": "std(Hhat) vs window/estimator/freq; cross-estimator MAD vs floor",
+  "builder": "Claude",
+  "outputs": [
+    "a1_summary.txt",
+    "meta.json",
+    "real_1m_ES.parquet",
+    "real_1m_NQ.parquet",
+    "real_1s_NQ.parquet",
+    "synthetic_floor.csv"
+  ]
+}

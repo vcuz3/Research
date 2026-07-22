@@ -31,7 +31,9 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
                      ladder=False, ladder_levels=(-1.0, 2.0, 0.0, 5.0),
                      ladder_frac=0.5, exit_band=None, exit_y=0.0,
                      flat_before_close=0, cond_regime=None,
-                     hivol_cadence=15, lovol_cadence=1) -> list[dict]:
+                     hivol_cadence=15, lovol_cadence=1,
+                     init_stop_atr=0.0, tp_gate=None,
+                     stop_gate=None) -> list[dict]:
     """
     Simulate one session.
 
@@ -325,6 +327,21 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
                 if fav_max >= start * atr and k >= 1:
                     ratchet = entry_px + pos * (k - 1) * step
                     stop = max(stop, ratchet) if pos == 1 else min(stop, ratchet)
+            # ---- fixed INITIAL stop (rule 14, entry-frozen): a hard protective line
+            #      init_stop_atr*ATR adverse of the fill, latched at entry. It is a
+            #      CAP: the effective stop is the TIGHTER of the band/VWAP trail and
+            #      this line, so a wide init line only ever binds on a fast adverse
+            #      move the tight band trail has not yet caught (a gap/tail cap). The
+            #      committed per-trade risk for constant-% sizing is init_stop_atr*ATR.
+            #      0.0 -> off (baseline untouched, parity). Close-trigger + next-open
+            #      fill as everywhere (rule 1/2/3).
+            istop_binds = False
+            if init_stop_atr > 0 and np.isfinite(atr) and atr > 0:
+                init_line = entry_px - pos * init_stop_atr * atr
+                if pos == 1 and init_line > stop:
+                    stop, istop_binds = init_line, True
+                elif pos == -1 and init_line < stop:
+                    stop, istop_binds = init_line, True
             hit = (c < stop) if pos == 1 else (c > stop)
             if cond_regime is not None:
                 # Conditional cadence (prop-account vol lever): switch the stop-check
@@ -338,8 +355,15 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
                 check_here = (is_decision or exit_check == "every_bar"
                               or (check_mfos is not None and m in check_mfos))
             flip = (want == -pos) and (is_decision if entry_mode == "clock" else True)
-            if (hit and check_here) or flip:
-                if close_trade(i, "flip" if flip else "stop") and flip and gate_ok(m):
+            # Optional state-dependent hysteresis gate.  A supplied gate contains
+            # (date, mfo, side) keys at which the ordinary band/VWAP stop is armed.
+            # Flips and the daily flat are never suppressed.  None is the exact
+            # historical behaviour (HYP-0021; default-off parity).
+            stop_armed = (stop_gate is None
+                          or (the_date, int(m), int(pos)) in stop_gate)
+            if (hit and check_here and stop_armed) or flip:
+                stop_reason = "istop" if (hit and istop_binds and not flip) else "stop"
+                if close_trade(i, "flip" if flip else stop_reason) and flip and gate_ok(m):
                     px, pmfo = fill(i)
                     if px is not None:
                         open_pos(want, px, pmfo)
@@ -347,7 +371,13 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
             # ---- partial take-profit: bank tp_frac at the next open once price has run
             #      tp_atr in favour (momentum-confirmed close + next-open fill = honest,
             #      conservative vs an intrabar limit; rule 1/2/3). Runner keeps trailing.
-            if tp_atr > 0 and not partial_done and np.isfinite(atr) and fav >= tp_atr * atr:
+            #      tp_gate (HYP-0018, default None -> fire on every trade, parity): the
+            #      partial only fires for trades whose entry key (date, entry_mfo) is in
+            #      the gate, so the exit horizon can be conditioned per-trade (e.g. on
+            #      entry-bar Hurst) without touching entries. entry_mfo is the fill mfo.
+            tp_here = tp_gate is None or (the_date, int(entry_mfo)) in tp_gate
+            if (tp_atr > 0 and tp_here and not partial_done and np.isfinite(atr)
+                    and fav >= tp_atr * atr):
                 px, _ = fill(i)
                 if px is not None:
                     banked = tp_frac * (px - entry_px) * pos
@@ -396,7 +426,8 @@ def run(bars: pd.DataFrame, bands: pd.DataFrame, decision_mfos,
         ladder=False, ladder_levels=(-1.0, 2.0, 0.0, 5.0),
         ladder_frac=0.5, exit_bands=None, exit_y=0.0,
         flat_before_close=0, cond_regime=None,
-        hivol_cadence=15, lovol_cadence=1) -> pd.DataFrame:
+        hivol_cadence=15, lovol_cadence=1,
+        init_stop_atr=0.0, tp_gate=None, stop_gate=None) -> pd.DataFrame:
     band_by = {d: g for d, g in bands.groupby("sdate", sort=False)}
     exit_band_by = ({d: g for d, g in exit_bands.groupby("sdate", sort=False)}
                     if exit_bands is not None else None)
@@ -422,7 +453,9 @@ def run(bars: pd.DataFrame, bands: pd.DataFrame, decision_mfos,
                                     exit_band=ex_bd, exit_y=exit_y,
                                     flat_before_close=flat_before_close,
                                     cond_regime=cr, hivol_cadence=hivol_cadence,
-                                    lovol_cadence=lovol_cadence))
+                                    lovol_cadence=lovol_cadence,
+                                    init_stop_atr=init_stop_atr, tp_gate=tp_gate,
+                                    stop_gate=stop_gate))
     df = pd.DataFrame(out)
     if not df.empty:
         df = df.rename(columns={"sdate": "date"})

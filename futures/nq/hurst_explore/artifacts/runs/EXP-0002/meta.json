@@ -1,0 +1,46 @@
+{
+  "per_year": 30,
+  "n_1s_sessions": 228,
+  "n_1m_NQ": 3710,
+  "n_1m_ES": 3710,
+  "fill_min": 0.9,
+  "era_min": 2015,
+  "elapsed_s": 54.1,
+  "bands": {
+    "NQ 1s micro   tau 1-8s": {
+      "raw": 0.5035,
+      "rw_control": 0.5001,
+      "corrected": 0.5034
+    },
+    "NQ 1s sub-min tau 8-45s": {
+      "raw": 0.4972,
+      "rw_control": 0.5008,
+      "corrected": 0.4963
+    },
+    "NQ 1s meso    tau 2-30m": {
+      "raw": 0.4848,
+      "rw_control": 0.4969,
+      "corrected": 0.488
+    },
+    "NQ 1m meso    tau 2-30m": {
+      "raw": 0.484,
+      "rw_control": 0.493,
+      "corrected": 0.4911
+    },
+    "ES 1m meso    tau 2-30m": {
+      "raw": 0.4743,
+      "rw_control": 0.493,
+      "corrected": 0.4813
+    },
+    "NQ 1m coarse  tau 30-180m": {
+      "raw": 0.4277,
+      "rw_control": 0.4662,
+      "corrected": 0.4615
+    },
+    "ES 1m coarse  tau 30-180m": {
+      "raw": 0.4342,
+      "rw_control": 0.4662,
+      "corrected": 0.468
+    }
+  }
+}

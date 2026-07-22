@@ -1,0 +1,2 @@
+@PROJECT_GUIDE.md
+@MEMORY.md

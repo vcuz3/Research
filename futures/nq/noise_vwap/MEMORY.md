@@ -78,6 +78,162 @@ the linked reports, code, and run artifacts.
 
 ## Invalidated or superseded findings
 
+- `HYP-0020` is rejected (EXP-0029): a LAPLACE recency-weighted noise band is a
+  cross-market NO-GO; no Null C spent. User idea: the flat lb90 mean band beats
+  shorter lookbacks (EXP-0025) but under-weights recent sessions, so keep a long
+  window but tilt the trailing per-slot |move| mean toward recent sessions with a
+  Laplace kernel `sigma[d,mfo] = Σ_k w_k·|move[d-k,mfo]| / Σ w_k`, `w_k =
+  exp(-|k-mu|/b)`. Swept the two shape knobs the user named — center-of-mass
+  `mu∈{1,5,15,30}` and decay half-life `h∈{5,15,40}` (`b=h/ln2`) — with the window
+  DERIVED (`lookback=clip(mu+5b,90,250)`) so slower decay uses a longer lookback
+  ("slow decay for long lookback"); `b→∞,lb90` reduces to the flat baseline bit-exact
+  (`tests/test_bands.py::TestLaplaceBand`). RAW/MATCHED-width split (EXP-0021 control),
+  common post-lb250 same-sample. GATE FAILS on both → no Null C. NQ: EVERY matched cell
+  WORSE (best mu5 h15 dSharpe −0.019; grid −0.019…−0.219; recency tilt strictly
+  degrades, maxDD 4.7→8.2R at mu1 h5). ES: best matched mu1 h5 dSharpe +0.065 (<+0.10
+  gate) is a width/capacity artifact (gross/trade FALLS −0.081, 136 fewer trades) and
+  does NOT transfer (same cell is one of NQ's WORST matched, −0.117). DECISIVE: residual
+  `laplace/flat` by decision slot is FLAT across all 13 slots (NQ ≈1.005, ES ≈1.08) = a
+  uniform rescale, no slot-dependent reshape = the EXP-0021 quantile signature. The
+  per-slot LEVEL is a sufficient statistic and the every-bar continuous stop already
+  supplies recency vol-adaptivity, so a cross-history tilt only adds estimator variance
+  to a well-estimated quantity. Extends the recast programme (EXP-0020/0021/0022) +
+  EXP-0025: the noise band is fully summarized by its per-slot flat symmetric
+  level/width across time-profile, distribution, up/down symmetry, estimator
+  bias/variance, AND cross-history weighting. Band construction axis exhausted. Retain
+  `core/session.py::noise_bands` lb90; `noise_bands_laplace`/`laplace_weights` kept in
+  `core/bands.py` as tested benchmark. Evidence: `artifacts/runs/EXP-0029/`
+  (`review.md`, `laplace_nq.txt`, `laplace_es.txt`); `experiments/hypotheses/HYP-0020.md`.
+  Reproduce: `python -m futures.nq.noise_vwap.scripts.hyp_0020_laplace_band real {NQ|ES}`.
+- `HYP-0019` is rejected (EXP-0028): matched-exposure Hurst risk allocation is a
+  cross-market NO-GO. A single frozen causal schedule weighted entry-H<0.5 at
+  0.75x and H>=0.5 at 1.25x, divided by the expanding PRIOR mean raw weight after
+  100 trades; entries/exits and trade population were unchanged. Net R increased
+  on both markets (NQ 91.20->95.30R; ES 51.47->56.68R), confirming EXP-0026's
+  return-ranking sign, but Sharpe did not: NQ 1.288->1.265, ES 0.698->0.702, and
+  the equal-risk pool 1.082->1.085 (dSharpe +0.002 vs +0.10 gate). MaxDD worsened
+  on both (NQ 4.70->5.15R; ES 7.45->8.65R), as did pooled maxDD 4.36->5.16R.
+  The inverted control was worse on return/Sharpe, so H ranks expectancy but not
+  diversification: overweighting the better-quality trades merely concentrates
+  tail risk. Real gate failed; allocation-label null not spent. Synthesis:
+  selection (EXP-0026), exit management (EXP-0027), and now sizing all fail to
+  monetize Hurst. Historical Hurst branch exhausted; retain equal sizing and use
+  only future shadow data for any revisit. Evidence: `artifacts/runs/EXP-0028/`.
+- `HYP-0018` is rejected (EXP-0027): conditioning the `tp1.0_50` partial-take-profit
+  on entry-bar Hurst is a cross-market NO-GO; no Null-C spent. Follow-on from
+  EXP-0026 — apply the real Hurst continuation signal where it costs no exposure
+  (the EXIT, not a selection gate). Entries/trade population UNCHANGED (4209 NQ /
+  4326 ES every cell); only the partial fires conditionally: bank the +1ATR partial
+  on trades with entry-H ≤ T ("bank chop"), hold the runner on H > T; sweep T over
+  {0.35..0.65}; endpoints = no-tp (continuous-stop baseline) and all-tp
+  (unconditional tp1.0_50); MIRROR control banks high-H. Implemented via a new
+  default-off `tp_gate` on `core/engine2.py` (parity: tp_gate=None==all-tp, empty
+  gate==no-tp, bit-exact). REJECT on both. DECISIVE reads: (1) conditioning adds
+  ~nothing — best conditional uplift over unconditional tp1.0_50 is −0.012 Sharpe
+  (NQ) / +0.023 (ES), noise-level and below the +0.10 gate; at useful thresholds it
+  banks ~95% of trades = collapses to all-tp, i.e. the tp's post-+1ATR
+  mean-reversion capture is NOT Hurst-selective. (2) INVERTED + transfers: the
+  MIRROR (bank high-H) BEATS the conditional (bank low-H) on BOTH markets (NQ 1.354
+  vs 1.332; ES 0.723 vs 0.710) — predicted asymmetry with the OPPOSITE sign, so a
+  tiny real tape property not NQ noise; entry persistence does not predict whether a
+  trade's give-back is worth banking. (3) the tp overlay itself helps NQ (all-tp
+  1.344 vs no-tp 1.288, +0.056) but HURTS ES (0.687 vs 0.698), so no robust exit
+  surface exists for H to improve. Synthesis with EXP-0026: the Hurst exponent is a
+  real per-trade CONTINUATION/quality signal that monetizes NEITHER as selection
+  (EXP-0026 gate = turnover lever) NOR as exit management (this run) — the Hurst
+  lever is exhausted. Retain unconditioned baseline; keep `tp_gate` as tested
+  default-off machinery. Evidence: `artifacts/runs/EXP-0027/` (`review.md`,
+  `conditional_{NQ,ES}.csv`, `mirror_{NQ,ES}.csv`, `verdict_{NQ,ES}.json`);
+  `experiments/hypotheses/HYP-0018.md`. Reproduce:
+  `python -m futures.nq.noise_vwap.scripts.hyp_0018_hurst_exit real {NQ|ES}`.
+- `HYP-0017` is rejected as deployable alpha (EXP-0026): a causal intraday
+  Hurst-exponent trade filter is a cross-market NO-GO, but the LEVEL carries real
+  per-trade QUALITY info. User idea: add the Hurst exponent as a trade filter,
+  test the sensitivity of Sharpe/expected-R to it, and test the raw level H, its
+  ROC (1st derivative dH) and 2nd derivative d2H. Implemented as a per-signal
+  `entry_gate` (rule-18 engine rerun, not a trade drop): at each 30-min decision
+  bar compute the order-1 generalized Hurst exponent (structure function
+  `E|X(t+τ)-X(t)|∝τ^H`, log-log slope over lags {1,2,3,4,5,7,10,15,20}∩[≤n/2]) of
+  the causal session-to-date log-close path (anchored at the same open the band
+  uses; validated trend→0.99, random-walk→0.49); dH/d2H taken along the
+  within-session decision sequence. Real gate FAILS on both → no Null-C.
+  Family-best on BOTH NQ and ES is the SAME un-tuned natural cell **H ≥ 0.5**
+  (random-walk boundary): NQ dSharpe +0.058 / dNetR −10.4R (Sh 1.288→1.346, netR
+  91.2→80.8, retain 0.62, maxDD 4.70→4.17R); ES dSharpe +0.084 / dNetR −2.9R (Sh
+  0.698→0.781, retain 0.56) — both below the +0.10 Sharpe gate AND net R falls.
+  POSITIVE finding: the Hurst LEVEL is a real, cross-market, mechanism-consistent
+  per-trade QUALITY signal — as H≥T rises, gross pts/trade and expected net-R/trade
+  rise MONOTONICALLY (NQ gross/t 3.51→4.59, ES 0.73→1.01; exp netR/t NQ
+  0.022→0.031→0.046), the chop-regime `low` (keep H≤T) direction is worse
+  everywhere (sign confirmed: breakouts want a persistent tape), and H≥0.5 BEATS a
+  200-draw matched-count random-signal-drop null on NQ (frac(rand≥real) Sharpe
+  0.03; ES marginal 0.08) — so it is NOT a pure rarity filter. But it does NOT
+  monetize: it raises per-trade quality (+30% NQ, +38% ES gross/t) while cutting
+  exposure ~40%, so total net R FALLS and Sharpe stays below the gate = a
+  turnover/capacity lever, the same [[nq-es-crossmarket-confirm]] pattern (better
+  selection + less exposure = no risk-adjusted gain). The user's DERIVATIVES
+  (dH ROC, d2H acceleration) are inert-to-harmful: EVERY dH/d2H cell, both
+  directions, both markets, is worse than baseline. Consistent with the project's
+  volatility-INDEPENDENCE and the string of selectivity screens (KAMA regime, gap
+  veto EXP-0024, RVOL veto EXP-0016) that all resolved as levers, not alpha. Retain
+  the unconditioned baseline. Evidence: `artifacts/runs/EXP-0026/` (`review.md`,
+  `sweep_{NQ,ES}.csv`, `random_null_{NQ,ES}.csv`, `verdict_{NQ,ES}.json`);
+  `experiments/hypotheses/HYP-0017.md`. Reproduce:
+  `python -m futures.nq.noise_vwap.scripts.hyp_0017_hurst_filter real {NQ|ES}`.
+- `HYP-0015` is rejected (EXP-0024): a symmetric overnight-gap MAGNITUDE
+  whole-day veto (skip every entry on a day whose `|rth_open - prior_close|/atr`
+  exceeds T, T∈{0.5..2.0} ATR) is a cross-market NO-GO that fails INVERTED. This
+  is the user's "if there's an overnight gap, just don't trade" idea as a hard
+  GATE — distinct from the rejected EXP-0017 gap/RVOL scaling and the EXP-0016
+  directional gap-vs-signal + low-RVOL per-signal veto (this is symmetric, no
+  RVOL, whole-day). Every T degrades BOTH net R and daily Sharpe on NQ AND ES,
+  monotonically (skip more → lose more): NQ T=0.5 skips 26.8% of days, netR
+  91.2→58.2 (−33R), Sh 1.72→1.47; family-best T=2.0 still −1.4R/−0.019 Sh. Real
+  gate fails on both → NO Null-C spent (standing rule). DECISIVE: the removed
+  trades are PROFITABLE (NQ removed meanR +0.206 vs kept +0.021; removed early
+  ≤mfo149 +0.367R = the best slice) — a big overnight gap is a strong directional
+  open the momentum breakout RIDES, not the mis-anchored band/VWAP noise the
+  mechanism predicted; the anchor-contamination thesis is inverted. Matched-count
+  random-day-drop null (200 draws): random dropping is ≈Sharpe-neutral but the
+  real gap-gate sits at frac(random≥real)=0.805 NQ / 0.870 ES = random beats gap
+  dropping ~80–87% of the time = ANTI-selection, worse than a rarity filter.
+  Gross/trade stays flat (3.51→3.51–3.65) while net R collapses = the loss is
+  purely deleting profitable days. Same theme as EXP-0022 (the up/down asymmetry
+  is drift the strategy already monetizes; gating on it double-counts) and the
+  volatility-independence finding. Whole-day skip == drop-day-trades verified
+  trade-for-trade against the engine `entry_gate` path (`_verify_equivalence`),
+  so sweeps/nulls filter the frozen baseline (no per-cell engine re-runs). Retain
+  the unconditioned baseline. Only the gap gate was run (the volume-supported-
+  breakout gate and the 15-min clock were dropped by the user). Evidence:
+  `artifacts/runs/EXP-0024/` (`review.md`, `real_sweep_{NQ,ES}.csv`,
+  `random_day_null_{NQ,ES}.csv`); `experiments/hypotheses/HYP-0015.md`.
+- `HYP-0016` is rejected (EXP-0025): a SURROUND-SMOOTHED, SHORT-HISTORY noise band
+  (user idea) is a cross-market NO-GO. Redefinition: `sigma[d,mfo] = mean over prior
+  `hist` sessions AND a local minute window [mfo-w, mfo+w]` (center-included, `2w+1`
+  min, edge-truncated so the OPEN averages FORWARD-only; forward minutes come only
+  from strictly-prior completed sessions so CAUSAL, no lookahead) of `|move|`. Thesis:
+  neighbour pooling cuts per-slot estimator variance so a short, recency-adaptive
+  history becomes usable (the 90-day average is lagging). Grid w∈{5,14,30} × hist∈
+  {5,14,30} + `plain(hist)` control (surround off ≡ `noise_bands(hist)`), continuous
+  stop, common post-lb90 sample. GATE FAILS on both → no Null C. NQ: EVERY cell worse
+  on Sharpe (baseline Sh 1.29 / net_pt/t 3.159; best surround h30 w30 Sh 1.20 dSharpe
+  −0.083 / net_pt/t 3.152 / netR −4.9R); shortening history is the dominant loss
+  (plain h30/h14/h5 = 1.22/1.04/1.07), surround doesn't recover it. ES: best h14 w30
+  dSharpe +0.029 (≪+0.10) but gross/trade FALLS −0.081 with +179 trades at wRatio 0.93
+  = width dial, doesn't transfer to NQ. DECISIVE: (1) per-trade quality (the user's
+  headline metric) NEVER rises above baseline on either market — baseline net_pt/t
+  3.159 is the grid max. (2) The variance-reduction mechanism IS real but only bites
+  once history is crippled (NQ h5 plain 1.07→h5 w30 1.13; ES h30 plain 0.59→h30 w30
+  0.67) and never climbs back to lb90 = the long history is already the better
+  bias/variance point; the every-bar CONTINUOUS STOP already supplies current-session
+  vol adaptivity, so the band only needs a stable long-run per-slot LEVEL (the "lag"
+  is load-bearing). (3) wRatio 0.89–0.99 = mild capacity dial, not alpha. New AXIS vs
+  the EXP-0020/0021/0022 recast programme: that changed the profile SHAPE, this
+  changed the LEVEL ESTIMATOR (bias/variance via pooling + recency) — still inert.
+  `w=0`-reduction + causality proved in `tests/test_bands.py`. Retain `noise_bands`
+  lb90; `noise_bands_surround` kept as tested benchmark. Evidence:
+  `artifacts/runs/EXP-0025/` (`review.md`, `surround_nq.txt`, `surround_es.txt`);
+  `experiments/hypotheses/HYP-0016.md`.
 - `HYP-0014` is rejected (EXP-0022): recasting the noise area as an ASYMMETRIC
   (per-side) band — separate up/down half-widths from the causal semi-means
   (`up = mean(max(move,0))`, `dn = mean(max(-move,0))`, `up+dn == sigma` identically),

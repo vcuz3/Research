@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0028",
+  "hypothesis_id": "HYP-0019",
+  "status": "completed",
+  "declared_utc": "2026-07-21T17:35:49.694971+00:00",
+  "config_path": "experiments/configs/hyp_0019_hurst_sizing.json",
+  "data_scope": "Consumed 2011-2026 NQ/ES RTH",
+  "code_ref": "futures/nq/noise_vwap/scripts/hyp_0019_hurst_sizing.py",
+  "run_command": "python -u -m futures.nq.noise_vwap.scripts.hyp_0019_hurst_sizing real",
+  "primary_metric": "Matched-exposure equal-risk NQ/ES daily net-ATR-R Sharpe uplift; net R and maxDD co-primary",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-07-21T17:46:11.473080+00:00",
+  "result_summary": "REJECT: fixed causal 0.75/1.25 Hurst sizing raised net R (NQ +4.11R; ES +5.21R) but pooled Sharpe only +0.002 vs +0.10 gate; NQ Sharpe fell and maxDD worsened on both, so no allocation-label null.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

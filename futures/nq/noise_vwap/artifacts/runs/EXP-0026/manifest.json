@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0026",
+  "hypothesis_id": "HYP-0017",
+  "status": "planned",
+  "declared_utc": "2026-07-21T15:58:42.382400+00:00",
+  "config_path": "legacy-not-frozen (signal x direction x threshold grid in scripts/hyp_0017_hurst_filter.py)",
+  "data_scope": "NQ primary + ES sibling, clean Databento RTH history through 2026,",
+  "code_ref": "working-tree",
+  "run_command": "python -m futures.nq.noise_vwap.scripts.hyp_0017_hurst_filter real NQ",
+  "primary_metric": "full-sample zero-trade-session daily net-ATR-R Sharpe uplift",
+  "builder": "Claude (Opus 4.8)",
+  "outputs": []
+}

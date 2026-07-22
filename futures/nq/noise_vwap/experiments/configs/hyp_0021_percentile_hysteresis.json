@@ -1,0 +1,19 @@
+{
+  "instrument": "NQ",
+  "session": "RTH",
+  "noise_lookback": 90,
+  "decision_period_minutes": 30,
+  "fill_mode": "next_open",
+  "exit_check": "every_bar",
+  "momentum_horizons_minutes": [5, 15, 30, 60],
+  "rank_history_sessions": 252,
+  "rank_min_sign_observations": 63,
+  "entry_rank_grid": [0.6, 0.7, 0.8],
+  "exit_rank_grid": [0.2, 0.4, 0.6],
+  "cost_ticks_per_side": 0.5,
+  "primary_metric": "zero-trade-day daily net-ATR-R Sharpe uplift",
+  "sharpe_uplift_gate": 0.1,
+  "require_net_r_not_below_baseline": true,
+  "null_c_draws_if_gate_passes": 30,
+  "null_c_seed_start": 30000
+}

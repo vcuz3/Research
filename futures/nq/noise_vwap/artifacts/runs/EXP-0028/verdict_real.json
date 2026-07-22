@@ -1,0 +1,92 @@
+{
+  "config": {
+    "hurst_threshold": 0.5,
+    "low_weight": 0.75,
+    "high_weight": 1.25,
+    "undefined_weight": 1.0,
+    "normalizer_prior_trades": 100,
+    "inverted_control": true,
+    "permutation_draws": 200,
+    "permutation_seed": 29000,
+    "pooled_sharpe_gate": 0.1,
+    "max_net_r_loss_fraction": 0.01
+  },
+  "instruments": {
+    "NQ": {
+      "instrument": "NQ",
+      "n_trades": 4209,
+      "defined_h_fraction": 1.0,
+      "realized_mean_raw_weight": 1.0343905915894511,
+      "realized_mean_weight": 1.0072923147789048,
+      "baseline": {
+        "sum_net_R": 91.19699305486793,
+        "daily_sharpe": 1.2879021641030817,
+        "max_drawdown_R": 4.7033328438368045,
+        "worst_day_R": -1.170800159235669
+      },
+      "sized": {
+        "sum_net_R": 95.30399400854756,
+        "daily_sharpe": 1.265462828854217,
+        "max_drawdown_R": 5.148796517252833,
+        "worst_day_R": -1.2537594614517236
+      },
+      "inverted": {
+        "sum_net_R": 86.88323093877744,
+        "daily_sharpe": 1.2353944864676754,
+        "max_drawdown_R": 4.545057642725794,
+        "worst_day_R": -1.5166618215739702
+      }
+    },
+    "ES": {
+      "instrument": "ES",
+      "n_trades": 4326,
+      "defined_h_fraction": 1.0,
+      "realized_mean_raw_weight": 1.005663430420712,
+      "realized_mean_weight": 1.024787559416673,
+      "baseline": {
+        "sum_net_R": 51.47253378496096,
+        "daily_sharpe": 0.6977602857863777,
+        "max_drawdown_R": 7.449063658906993,
+        "worst_day_R": -1.5895099337748344
+      },
+      "sized": {
+        "sum_net_R": 56.68103335970901,
+        "daily_sharpe": 0.701568145680528,
+        "max_drawdown_R": 8.652893895729987,
+        "worst_day_R": -2.039496610321633
+      },
+      "inverted": {
+        "sum_net_R": 46.222308829750354,
+        "daily_sharpe": 0.6451911151065642,
+        "max_drawdown_R": 6.506542811831156,
+        "worst_day_R": -1.37005544920909
+      }
+    }
+  },
+  "pooled": {
+    "baseline": {
+      "sum_net_R": 71.33476341991444,
+      "daily_sharpe": 1.0824729387580108,
+      "max_drawdown_R": 4.364626837426359,
+      "worst_day_R": -1.1857412986199625
+    },
+    "sized": {
+      "sum_net_R": 75.99251368412828,
+      "daily_sharpe": 1.0846676270127074,
+      "max_drawdown_R": 5.160107786737356,
+      "worst_day_R": -1.4969087585196625
+    },
+    "inverted": {
+      "sum_net_R": 66.55276988426391,
+      "daily_sharpe": 1.0244843506254513,
+      "max_drawdown_R": 4.305925489336662,
+      "worst_day_R": -1.2835379794012929
+    }
+  },
+  "pooled_delta_sharpe": 0.0021946882546965973,
+  "instrument_sharpe_positive": false,
+  "net_r_gate": true,
+  "drawdown_gate": false,
+  "real_gate_passed": false,
+  "run_null": false
+}

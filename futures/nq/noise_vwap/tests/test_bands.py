@@ -188,5 +188,127 @@ class TestAsymmetricBand(unittest.TestCase):
                                    atol=1e-12)
 
 
+class TestSurroundBand(unittest.TestCase):
+    def test_w0_is_plain_short_history(self):
+        # w=0 (no surround) reduces to the baseline noise_bands at that history.
+        df = build_df()
+        s = B.noise_bands_surround(df, hist=LOOKBACK, w=0)
+        base = S.noise_bands(df, LOOKBACK)
+        m = s.merge(base, on=["sdate", "mfo"], suffixes=("_s", "_b"))
+        self.assertGreater(len(m), 0)
+        np.testing.assert_allclose(m["sigma_s"], m["sigma_b"], atol=1e-12)
+        np.testing.assert_allclose(m["upper_s"], m["upper_b"], atol=1e-12)
+        np.testing.assert_allclose(m["lower_s"], m["lower_b"], atol=1e-12)
+
+    def test_matches_explicit_box_mean(self):
+        # sigma[d,mfo] == mean over prior `hist` days AND j in [mfo-w, mfo+w] of |move|,
+        # with the window edge-truncated (center included).
+        df = build_df()
+        hist, w = 3, 1
+        s = B.noise_bands_surround(df, hist=hist, w=w).set_index(["sdate", "mfo"])["sigma"]
+        cm = df.pivot_table(index="sdate", columns="mfo", values="close", aggfunc="last")
+        o0 = df[df["mfo"] == 0].set_index("sdate")["open"]
+        move = (cm.div(o0, axis=0) - 1.0).abs()
+        dates = sorted(df["sdate"].unique())
+        for di in range(hist, len(dates)):          # first `hist` days undefined
+            d = dates[di]
+            for mfo in range(M + 1):
+                lo, hi = max(0, mfo - w), min(M, mfo + w)
+                vals = [move.loc[dates[p], j]
+                        for p in range(di - hist, di) for j in range(lo, hi + 1)]
+                self.assertAlmostEqual(s.loc[(d, mfo)], float(np.mean(vals)), places=12)
+
+    def test_open_uses_forward_only(self):
+        # at mfo==0 the truncated window is [0, w]: center + forward candles only.
+        df = build_df()
+        hist, w = 3, 2
+        s = B.noise_bands_surround(df, hist=hist, w=w).set_index(["sdate", "mfo"])["sigma"]
+        cm = df.pivot_table(index="sdate", columns="mfo", values="close", aggfunc="last")
+        o0 = df[df["mfo"] == 0].set_index("sdate")["open"]
+        move = (cm.div(o0, axis=0) - 1.0).abs()
+        dates = sorted(df["sdate"].unique())
+        di = hist + 1
+        d = dates[di]
+        vals = [move.loc[dates[p], j]
+                for p in range(di - hist, di) for j in range(0, w + 1)]
+        self.assertAlmostEqual(s.loc[(d, 0)], float(np.mean(vals)), places=12)
+
+    def test_causal(self):
+        base = B.noise_bands_surround(build_df(), hist=3, w=2)
+        pert = B.noise_bands_surround(build_df(mutate={(N_DATES - 1, m): 200.0
+                                                       for m in range(M + 1)}),
+                                      hist=3, w=2)
+        early = pd.Timestamp("2026-01-05") + pd.Timedelta(days=N_DATES - 2)
+        b0 = base[base["sdate"] == early].set_index("mfo")["sigma"]
+        b1 = pert[pert["sdate"] == early].set_index("mfo")["sigma"]
+        np.testing.assert_allclose(b0.to_numpy(), b1.reindex(b0.index).to_numpy(),
+                                   atol=1e-12)
+
+
+class TestLaplaceBand(unittest.TestCase):
+    def test_binf_is_flat_baseline_bitexact(self):
+        # b -> inf gives uniform weights over 1..lookback == the flat mean band.
+        df = build_df()
+        lap = B.noise_bands_laplace(df, mu=1, b=np.inf, lookback=LOOKBACK)
+        base = S.noise_bands(df, LOOKBACK)
+        m = lap.merge(base, on=["sdate", "mfo"], suffixes=("_l", "_b"))
+        self.assertGreater(len(m), 0)
+        np.testing.assert_allclose(m["sigma_l"], m["sigma_b"], atol=1e-12)
+        np.testing.assert_allclose(m["upper_l"], m["upper_b"], atol=1e-12)
+        np.testing.assert_allclose(m["lower_l"], m["lower_b"], atol=1e-12)
+
+    def test_matches_explicit_weighted_mean(self):
+        # sigma[d,mfo] == weighted mean over prior `lookback` days of |move|,
+        # weights w_k = exp(-|k-mu|/b), k=1 the most recent prior session.
+        df = build_df()
+        mu, b = 2.0, 3.0
+        lap = B.noise_bands_laplace(df, mu=mu, b=b, lookback=LOOKBACK
+                                    ).set_index(["sdate", "mfo"])["sigma"]
+        cm = df.pivot_table(index="sdate", columns="mfo", values="close", aggfunc="last")
+        o0 = df[df["mfo"] == 0].set_index("sdate")["open"]
+        move = (cm.div(o0, axis=0) - 1.0).abs()
+        w = np.exp(-np.abs(np.arange(1, LOOKBACK + 1) - mu) / b)
+        dates = sorted(df["sdate"].unique())
+        for di in range(LOOKBACK, len(dates)):          # first `lookback` days undefined
+            d = dates[di]
+            for mfo in range(M + 1):
+                vals = np.array([move.loc[dates[di - k], mfo] for k in range(1, LOOKBACK + 1)])
+                self.assertAlmostEqual(lap.loc[(d, mfo)],
+                                       float((w * vals).sum() / w.sum()), places=12)
+
+    def test_scale_is_linear(self):
+        df = build_df()
+        s1 = B.noise_bands_laplace(df, 1, 5.0, LOOKBACK, scale=1.0).set_index(["sdate", "mfo"])["sigma"]
+        s2 = B.noise_bands_laplace(df, 1, 5.0, LOOKBACK, scale=2.0).set_index(["sdate", "mfo"])["sigma"]
+        np.testing.assert_allclose(s2.to_numpy(), 2.0 * s1.reindex(s2.index).to_numpy(),
+                                   atol=1e-12)
+
+    def test_same_coverage_as_baseline(self):
+        # strict min_periods=lookback (NaN propagation) -> identical (date,mfo) keys.
+        df = build_df(drop={(4, 2)})
+        lap = B.noise_bands_laplace(df, mu=1, b=2.0, lookback=LOOKBACK)
+        base = S.noise_bands(df, LOOKBACK)
+        self.assertEqual(set(map(tuple, lap[["sdate", "mfo"]].to_numpy())),
+                         set(map(tuple, base[["sdate", "mfo"]].to_numpy())))
+
+    def test_recency_tilt_weights_latest_more(self):
+        # a small b puts more weight on k=1 than a mid-lag; check the kernel shape.
+        w = B.laplace_weights(mu=1, b=2.0, lookback=10)
+        self.assertTrue((np.diff(w) < 0).all())          # monotone decreasing from k=1
+        wflat = B.laplace_weights(mu=1, b=np.inf, lookback=10)
+        np.testing.assert_allclose(wflat, np.ones(10), atol=1e-12)
+
+    def test_causal(self):
+        base = B.noise_bands_laplace(build_df(), mu=2, b=3.0, lookback=LOOKBACK)
+        pert = B.noise_bands_laplace(build_df(mutate={(N_DATES - 1, m): 200.0
+                                                      for m in range(M + 1)}),
+                                     mu=2, b=3.0, lookback=LOOKBACK)
+        early = pd.Timestamp("2026-01-05") + pd.Timedelta(days=N_DATES - 2)
+        b0 = base[base["sdate"] == early].set_index("mfo")["sigma"]
+        b1 = pert[pert["sdate"] == early].set_index("mfo")["sigma"]
+        np.testing.assert_allclose(b0.to_numpy(), b1.reindex(b0.index).to_numpy(),
+                                   atol=1e-12)
+
+
 if __name__ == "__main__":
     unittest.main()

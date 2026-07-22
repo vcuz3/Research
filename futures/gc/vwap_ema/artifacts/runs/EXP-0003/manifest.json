@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0003",
+  "hypothesis_id": "HYP-0001",
+  "status": "completed",
+  "declared_utc": "2026-07-21T15:23:12.831530+00:00",
+  "config_path": "baseline_replication/configs/faithful_2024.json",
+  "data_scope": "GC proxy, 2024 primary; 2011-2026 context",
+  "code_ref": "WORKTREE",
+  "run_command": "python -m futures.gc.vwap_ema.scripts.run_baseline futures/gc/vwap_ema/artifacts/runs/EXP-0003",
+  "primary_metric": "2024 gross and net expectancy R",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-07-21T15:27:45.822757+00:00",
+  "result_summary": "STAGE 1 NO-GO: 2024 n=17, gross +0.1176R, net -0.1224R at 0.24R, 1%-risk return -2.14%, Sharpe -0.525; full-history gross -0.0292R",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

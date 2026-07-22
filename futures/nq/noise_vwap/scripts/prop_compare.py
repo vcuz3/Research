@@ -95,6 +95,41 @@ def build(bars, bands, dm, atr_by_date, tp_atr, tp_frac, flat=0, gaprvol=False):
     return tr
 
 
+TAPE_FILES = {
+    "1 tp0.75_67":                "trades_1_tp0.75_67.parquet",
+    "2 tp1.0_50":                 "trades_2_tp1.0_50.parquet",
+    "3 tp0.75_67+flat45":         "trades_3_tp0.75_67_flat45.parquet",
+    "4 tp0.75_67+gaprvol":        "trades_4_tp0.75_67_gaprvol.parquet",
+    "5 tp0.75_67+flat45+gaprvol": "trades_5_tp0.75_67_flat45_gaprvol.parquet",
+}
+
+
+def enrich_for_review(tr, atr_prior14):
+    """Attach both sizing layers + MNQ dollar P&L so the tape is deployment-reviewable.
+
+    Layer 1 (day-level): causal vol-target `contracts` = clip(round(K/(ATR_p14*$2*.6)),1,4),
+      decided at the open from the strictly-prior 14-session ATR.
+    Layer 2 (per-trade): gap/rvol `weight` in {0.5,0.75,1.0,1.25} (1.0 unless gap/rvol on).
+    eff_size = contracts*weight is the effective MNQ risk units carried by the trade.
+    """
+    t = tr.copy()
+    t["atr_prior14"] = t["date"].map(atr_prior14)
+    t["contracts"] = np.clip(
+        np.round(K_BUDGET / (t["atr_prior14"] * POINT_VALUE_MNQ * 0.6)), 1, 4)
+    t["eff_size"] = t["contracts"] * t["weight"]
+    t["gross_pts"] = t["points"]
+    t["wnet_pts"] = t["weight"] * t["net_pts"]          # per-1-contract weighted net pts
+    t["net_atr"] = t["wnet_pts"] / t["atr"]             # weighted net R (R = ATR)
+    t["usd_mnq"] = t["eff_size"] * t["net_pts"] * POINT_VALUE_MNQ
+    t["usd_mnq_realcost"] = t["usd_mnq"] - MNQ_EXTRA_PT * POINT_VALUE_MNQ * t["eff_size"]
+    t["usd_nq"] = t["eff_size"] * t["net_pts"] * POINT_VALUE_NQ
+    cols = ["date", "side", "entry_mfo", "exit_mfo", "entry_px", "exit_px", "reason",
+            "tp_frac", "atr", "atr_prior14", "gross_pts", "net_pts", "weight",
+            "contracts", "eff_size", "wnet_pts", "net_atr",
+            "usd_mnq", "usd_mnq_realcost", "usd_nq"]
+    return t[[c for c in cols if c in t.columns]]
+
+
 def metrics(tr, dates):
     t = tr[tr["date"].isin(dates)].copy()
     t["net_R"] = t["weight"] * t["net_pts"] / t["atr"]
@@ -213,6 +248,11 @@ def main(save=False):
                                  sharpe=m["sharpe"], sumR=m["sumR"],
                                  pass_real_mnq=p1, med_days=d1))
         pd.DataFrame(rows).to_csv(OUT / "summary.csv", index=False)
+        for name, tr in tapes.items():
+            tape = enrich_for_review(tr, atr_prior14)
+            fp = OUT / TAPE_FILES[name]
+            tape.to_parquet(fp, index=False)
+            print(f"  {name:<28} n={len(tape):>5} -> {fp.name}")
         print(f"\nsaved -> {OUT}")
 
 

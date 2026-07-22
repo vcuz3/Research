@@ -1,0 +1,12 @@
+{
+  "hurst_threshold": 0.5,
+  "low_weight": 0.75,
+  "high_weight": 1.25,
+  "undefined_weight": 1.0,
+  "normalizer_prior_trades": 100,
+  "inverted_control": true,
+  "permutation_draws": 200,
+  "permutation_seed": 29000,
+  "pooled_sharpe_gate": 0.10,
+  "max_net_r_loss_fraction": 0.01
+}

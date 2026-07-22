@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0002",
+  "hypothesis_id": "HYP-0001",
+  "status": "completed",
+  "declared_utc": "2026-07-21T15:21:41.998854+00:00",
+  "config_path": "baseline_replication/configs/faithful_2024.json",
+  "data_scope": "GC proxy, 2024 primary; 2011-2026 context",
+  "code_ref": "WORKTREE",
+  "run_command": "python -m futures.gc.vwap_ema.scripts.run_baseline futures/gc/vwap_ema/artifacts/runs/EXP-0002",
+  "primary_metric": "2024 gross and net expectancy R",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-07-21T15:23:12.742832+00:00",
+  "result_summary": "2024 gross +0.1176R/trade but net -0.1224R at 0.24R; 17 trades; report enrichment pending",
+  "reviewer": "Codex",
+  "review_status": "pending"
+}

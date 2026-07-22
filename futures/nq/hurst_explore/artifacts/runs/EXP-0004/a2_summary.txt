@@ -1,0 +1,76 @@
+==============================================================================
+A2  HURST TERM STRUCTURE ACROSS TIMESCALE  H(tau)
+1s sessions used (fill>=0.9, era>=2015): 228   1m sessions NQ=3703 ES=3706   elapsed=73s
+==============================================================================
+
+BAND HURST  raw H  |  RW-control H  |  corrected (real-control, vs 0.5)
+       NQ 1s micro   tau 1-8s:  0.504  |  0.500  |  0.504 [95% CI 0.501,0.506]
+      NQ 1s sub-min tau 8-45s:  0.497  |  0.501  |  0.497 [95% CI 0.493,0.500]
+      NQ 1s meso    tau 2-30m:  0.485  |  0.497  |  0.488 [95% CI 0.476,0.499]
+      NQ 1m meso    tau 2-30m:  0.484  |  0.493  |  0.491 [95% CI 0.484,0.498]
+      ES 1m meso    tau 2-30m:  0.474  |  0.493  |  0.481 [95% CI 0.474,0.489]
+    NQ 1m coarse  tau 30-180m:  0.428  |  0.466  |  0.462 [95% CI 0.432,0.490]
+    ES 1m coarse  tau 30-180m:  0.434  |  0.466  |  0.468 [95% CI 0.440,0.495]
+  (control near 0.5 => band is artifact-free and raw H is trustworthy;
+   control below 0.5 => that band's raw anti-persistence is saturation.)
+
+H(tau) CURVE  (local slope; tau in seconds; ctrl = matched RW)
+    tau_s    NQ_1s    NQ_1m    ES_1m    ctrl  n1s
+        1    0.511      .        .     0.500  228
+        2    0.508      .        .     0.500  228
+        3    0.506      .        .     0.500  228
+        4    0.499      .        .     0.500  228
+        5    0.498      .        .     0.500  228
+        6    0.498      .        .     0.501  228
+        8    0.498      .        .     0.501  228
+       10    0.499      .        .     0.501  228
+       13    0.498      .        .     0.501  228
+       17    0.498      .        .     0.501  228
+       21    0.497      .        .     0.501  228
+       26    0.496      .        .     0.501  228
+       33    0.496      .        .     0.501  228
+       42    0.496      .        .     0.501  228
+       53    0.495      .        .     0.500  228
+       60      .      0.491    0.467   0.496  
+       67    0.495      .        .     0.500  228
+       85    0.496      .        .     0.499  228
+      108    0.496      .        .     0.500  228
+      120      .      0.491    0.468   0.495  
+      136    0.497      .        .     0.500  228
+      172    0.498      .        .     0.501  228
+      180      .      0.491    0.470   0.495  
+      217    0.497      .        .     0.502  228
+      240      .      0.490    0.474   0.496  
+      275    0.494      .        .     0.503  228
+      347    0.490      .        .     0.502  228
+      360      .      0.489    0.476   0.495  
+      420      .      0.486    0.476   0.493  
+      438    0.485      .        .     0.500  228
+      540      .      0.482    0.475   0.491  
+      554    0.482      .        .     0.497  228
+      700    0.480      .        .     0.493  228
+      720      .      0.480    0.474   0.491  
+      884    0.477      .        .     0.490  228
+      960      .      0.477    0.473   0.491  
+     1118    0.473      .        .     0.488  228
+     1200      .      0.473    0.471   0.488  
+     1412    0.464      .        .     0.484  228
+     1560      .      0.467    0.467   0.482  
+     1784    0.452      .        .     0.481  228
+     1980      .      0.460    0.462   0.480  
+     2255    0.444      .        .     0.473  228
+     2520      .      0.450    0.454   0.481  
+     2849    0.440      .        .     0.470  228
+     3240      .      0.440    0.446   0.480  
+     3600    0.439      .        .     0.467  228
+
+READ (corrected = 0.5 + raw - RW_control):
+  micro  (1-8s)   H=0.504  ~random-walk  [1s OHLCV cannot resolve
+                  sub-1s bid-ask bounce; true-tick data needed for that]
+  meso   (2-30m)  H(1s)=0.488  H(1m)=0.491  ~random-walk  cross-freq gap 0.003
+  coarse (30-180m) NQ=0.462  ES=0.468  ANTI-persistent
+  Shape: H(tau) DECLINES with scale (RW at seconds -> anti-persistent at
+  tens-of-minutes), transfers NQ<->ES.  This STATIONARY-lag mean-reversion
+  is a DIFFERENT object from the anchored-at-open morning super-diffusion
+  (the cone learning): that is time-of-day dispersion growth (A3), this is
+  translation-invariant lag persistence averaged over the whole day.

@@ -1,0 +1,29 @@
+{
+  "inst": "NQ",
+  "base_sharpe": 1.2879021641030817,
+  "base_netR": 91.19699305486793,
+  "base_trades": 4209,
+  "base_expR": 0.02166714018884959,
+  "best": {
+    "sig": "H",
+    "dir": "high",
+    "thr": 0.5,
+    "n": 2597.0,
+    "retain": 0.6170111665478736,
+    "gross_pt_per_trade": 4.592221794378128,
+    "exp_netR_per_trade": 0.03110142819238547,
+    "sumR": 80.77040901562506,
+    "sharpe": 1.3461227482084408,
+    "d_sharpe": 0.05822058410535913,
+    "d_sumR": -10.426584039242869,
+    "recent_sharpe": 1.0314644428790603,
+    "max_dd": 4.173717268005268
+  },
+  "real_gate_passed": false,
+  "rand_frac_ge_real_sharpe": 0.03,
+  "rand_frac_ge_real_sumR": 0.1,
+  "rand_dSharpe_mean": -0.14802092652735926,
+  "rand_dSumR_mean": -18.231271693842324,
+  "matched_K": 7684,
+  "cand_pool": 12811
+}

@@ -186,6 +186,73 @@ def noise_bands_asymmetric(df: pd.DataFrame, lookback: int,
     return long.reset_index(drop=True)
 
 
+def noise_bands_surround(df: pd.DataFrame, hist: int, w: int) -> pd.DataFrame:
+    """
+    SURROUND-SMOOTHED noise band (HYP-0016). Same open anchor, gap adjustment and
+    output columns as `core/session.py::noise_bands`; changes ONLY how the per-slot
+    dispersion sigma is estimated.
+
+    The baseline estimates sigma[d, mfo] from ONE thin same-time-of-day sample per
+    prior day (the |move| at exactly `mfo`), averaged over the prior `lookback`
+    (=90) sessions. That is a high-variance per-slot estimator, so it needs a long,
+    lagging history. This estimator instead POOLS the local minute neighbourhood on
+    each prior day before averaging over history, trading a little cross-slot bias
+    for much lower variance so a SHORT (more adaptive) history becomes usable:
+
+        move[p, j]          = |close[p, j] / open[p, 0] - 1|
+        smooth_move[p, mfo] = mean over j in [mfo-w, mfo+w] of move[p, j]   (per day)
+        sigma[d, mfo]       = mean over the prior `hist` sessions of smooth_move[·, mfo]
+
+    The surround window is symmetric, CENTER-INCLUDED (2*w+1 minutes), and truncated
+    at the session edges: at mfo==0 it spans [0, w] (center + forward only), i.e.
+    "at the open we only average forward candles". `w` is a half-width (w=5 -> +/-5
+    min). The forward minutes come only from prior, fully-completed sessions (the
+    shift(1)), so using a later minute of a finished day is NOT lookahead (rule 7).
+
+    Because both steps are plain averages this equals one mean over the box
+    { prior `hist` sessions } x { j in [mfo-w, mfo+w] } of |move|. w=0 (no surround)
+    reduces to `noise_bands(df, hist)` exactly. Note this changes the band WIDTH
+    (the local move profile rises over the session, so a symmetric window over a
+    convex profile shifts the level, most near the open) -- width is a known
+    Sharpe-vs-capacity dial (EXP-0021), so read gross-per-trade and trade count, not
+    Sharpe alone.
+    """
+    if hist < 1 or w < 0:
+        raise ValueError(f"require hist>=1 and w>=0, got hist={hist}, w={w}")
+    o0 = df[df["mfo"] == 0].set_index("sdate")["open"]
+    if o0.empty:
+        raise ValueError("no session-open (mfo==0) bars found")
+    last = df.sort_values("et").groupby("sdate").tail(1).set_index("sdate")["close"]
+    dates = df["sdate"].drop_duplicates().sort_values().to_numpy()
+    prior_close = last.reindex(dates).shift(1)
+    o0 = o0.reindex(dates)
+
+    cm = df.pivot_table(index="sdate", columns="mfo", values="close", aggfunc="last")
+    cm = cm.reindex(dates)
+    # full contiguous minute axis so a +/-w COLUMN window is exactly +/-w MINUTES
+    full_mfo = np.arange(int(df["mfo"].min()), int(df["mfo"].max()) + 1)
+    cm = cm.reindex(columns=full_mfo)
+    move = (cm.div(o0, axis=0) - 1.0).abs()
+
+    # 1) smooth across the local minute window WITHIN each day (center included,
+    #    edge-truncated). Rolling over the minute axis (columns) via transpose.
+    win = 2 * w + 1
+    smooth = move.T.rolling(win, center=True, min_periods=1).mean().T
+    # 2) average the smoothed profile over the prior `hist` sessions (strictly prior)
+    sigma = smooth.shift(1).rolling(hist, min_periods=hist).mean()
+
+    long = sigma.stack().rename("sigma").reset_index()
+    long.columns = ["sdate", "mfo", "sigma"]
+    long = long.merge(o0.rename("rth_open"), on="sdate")
+    long = long.merge(prior_close.rename("prior_close"), on="sdate")
+    long = long.dropna(subset=["rth_open", "prior_close", "sigma"])
+    hi_ref = np.maximum(long["rth_open"], long["prior_close"])
+    lo_ref = np.minimum(long["rth_open"], long["prior_close"])
+    long["upper"] = hi_ref * (1.0 + long["sigma"])
+    long["lower"] = lo_ref * (1.0 - long["sigma"])
+    return long.reset_index(drop=True)
+
+
 def noise_bands_quantile(df: pd.DataFrame, lookback: int, q: float,
                          scale: float = 1.0) -> pd.DataFrame:
     """
@@ -220,6 +287,94 @@ def noise_bands_quantile(df: pd.DataFrame, lookback: int, q: float,
     cm = cm.reindex(dates)
     move = (cm.div(o0, axis=0) - 1.0).abs()
     sigma = move.shift(1).rolling(lookback, min_periods=lookback).quantile(q) * scale
+
+    long = sigma.stack().rename("sigma").reset_index()
+    long.columns = ["sdate", "mfo", "sigma"]
+    long = long.merge(o0.rename("rth_open"), on="sdate")
+    long = long.merge(prior_close.rename("prior_close"), on="sdate")
+    long = long.dropna(subset=["rth_open", "prior_close", "sigma"])
+    hi_ref = np.maximum(long["rth_open"], long["prior_close"])
+    lo_ref = np.minimum(long["rth_open"], long["prior_close"])
+    long["upper"] = hi_ref * (1.0 + long["sigma"])
+    long["lower"] = lo_ref * (1.0 - long["sigma"])
+    return long.reset_index(drop=True)
+
+
+def laplace_weights(mu: float, b: float, lookback: int) -> np.ndarray:
+    """One-/two-sided LAPLACE recency kernel over trailing session lag k=1..lookback.
+
+        w_k = exp( -|k - mu| / b ),   k = 1 (most recent prior session) .. lookback
+
+    `mu` is the center-of-mass lag (peak weight sits at k=mu); `b` is the scale
+    (larger b = slower decay = flatter, more history-like). Two limits anchor it:
+      * mu=1, small b  -> pure one-sided recency (weight collapses onto k=1);
+      * b -> inf        -> uniform weights over 1..lookback == the FLAT mean band.
+    Returns the raw (un-normalized) weight vector, w[0] == the k=1 (latest) weight.
+    """
+    if lookback < 1:
+        raise ValueError(f"lookback must be >= 1, got {lookback}")
+    if mu < 1:
+        raise ValueError(f"mu (center-of-mass lag) must be >= 1, got {mu}")
+    if not (b > 0):
+        raise ValueError(f"b (scale) must be > 0, got {b}")
+    k = np.arange(1, lookback + 1, dtype=float)
+    if not np.isfinite(b):
+        return np.ones_like(k)
+    return np.exp(-np.abs(k - mu) / b)
+
+
+def noise_bands_laplace(df: pd.DataFrame, mu: float, b: float, lookback: int,
+                        scale: float = 1.0) -> pd.DataFrame:
+    """
+    LAPLACE-WEIGHTED noise band (HYP-0020). Same open anchor, gap adjustment,
+    strict per-slot coverage (`min_periods=lookback`) and output columns as
+    `core/session.py::noise_bands`; changes ONLY how the trailing same-time-of-day
+    dispersion is aggregated across history — a flat mean becomes a recency-tilted
+    weighted mean under a Laplace kernel:
+
+        move[d-k, mfo] = |close[d-k, mfo] / open[d-k, 0] - 1|
+        sigma[d, mfo]  = ( Σ_{k=1..lookback} w_k · move[d-k, mfo] ) / Σ w_k · scale
+        w_k            = exp( -|k - mu| / b )                       (laplace_weights)
+
+    The baseline uses w_k ≡ 1 (flat mean over the prior `lookback` sessions). This
+    keeps a long window but can tilt the weight toward recent sessions (mu small,
+    b small) so recent regime changes count more, WITHOUT truncating to a short,
+    high-variance history (the EXP-0025 short-history failure). `b -> inf` reduces
+    this to `noise_bands(df, lookback)` EXACTLY (uniform weights; proved in
+    `tests/test_bands.py`), so the deployed lb90 baseline is the (mu=1, b=inf,
+    lookback=90) cell.
+
+    Causality: only strictly-prior sessions enter (the k>=1 lag is a shift(1)-style
+    trailing window); a date's band never sees its own or any later session. Because
+    every one of the `lookback` lagged frames must be present for the weighted sum to
+    be non-null (a missing slot propagates NaN), coverage is IDENTICAL to
+    `noise_bands(df, lookback)` — same strict `min_periods`.
+
+    `scale` is a fixed study multiplier used to hold MEDIAN band width equal to the
+    flat baseline, isolating the recency-tilt SHAPE from the width/capacity dial
+    (EXP-0021). scale=1.0 is the raw laplace band.
+    """
+    w = laplace_weights(mu, b, lookback)
+    o0 = df[df["mfo"] == 0].set_index("sdate")["open"]
+    if o0.empty:
+        raise ValueError("no session-open (mfo==0) bars found")
+    last = df.sort_values("et").groupby("sdate").tail(1).set_index("sdate")["close"]
+    dates = df["sdate"].drop_duplicates().sort_values().to_numpy()
+    prior_close = last.reindex(dates).shift(1)
+    o0 = o0.reindex(dates)
+
+    cm = df.pivot_table(index="sdate", columns="mfo", values="close", aggfunc="last")
+    cm = cm.reindex(dates)
+    move = (cm.div(o0, axis=0) - 1.0).abs()
+
+    # Weighted trailing mean: accumulate w_k * move.shift(k) for k=1..lookback.
+    # A NaN in any lagged frame propagates to the sum, so a (date, slot) is defined
+    # only when all `lookback` prior sessions have that slot == strict min_periods.
+    num = None
+    for k in range(1, lookback + 1):
+        term = move.shift(k) * w[k - 1]
+        num = term if num is None else num + term
+    sigma = num / w.sum() * scale
 
     long = sigma.stack().rename("sigma").reset_index()
     long.columns = ["sdate", "mfo", "sigma"]

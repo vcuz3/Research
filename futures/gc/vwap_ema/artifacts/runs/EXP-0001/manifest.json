@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0001",
+  "hypothesis_id": "HYP-0001",
+  "status": "abandoned",
+  "declared_utc": "2026-07-21T15:20:00.119224+00:00",
+  "config_path": "baseline_replication/configs/faithful_2024.json",
+  "data_scope": "GC proxy, 2024 primary; 2011-2026 context",
+  "code_ref": "WORKTREE",
+  "run_command": "python -m futures.gc.vwap_ema.scripts.run_baseline futures/gc/vwap_ema/artifacts/runs/EXP-0001",
+  "primary_metric": "2024 gross and net expectancy R",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-07-21T15:21:41.906777+00:00",
+  "result_summary": "Superseded before interpretation: audit found last-available-bar holiday liquidation and gross-R reporting needed correction",
+  "reviewer": "Codex",
+  "review_status": "issues"
+}

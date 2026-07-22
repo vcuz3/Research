@@ -1,0 +1,17 @@
+{
+  "source": "SSRN-6650958, 2026-04-26",
+  "instrument_proxy": "GC treated as XAU/USD",
+  "primary_period": ["2024-01-01", "2024-12-31"],
+  "session": "09:30-16:00 America/New_York",
+  "bar_minutes": 15,
+  "entry": "next_bar_open",
+  "risk_fraction": 0.01,
+  "round_trip_cost_R": 0.24,
+  "one_position_at_a_time": true,
+  "daily_loss_limit_R": -3.0,
+  "daily_consecutive_loss_limit": 3,
+  "intrabar_primary": "1_second_stop_first",
+  "intrabar_fallback": "15_minute_stop_first",
+  "news_exclusion": "2024 scheduled FOMC +/-15 minutes; 08:30 ET NFP/CPI/GDP outside session",
+  "unimplemented_source_ambiguity": "Section 4.3 VWAP milestone"
+}

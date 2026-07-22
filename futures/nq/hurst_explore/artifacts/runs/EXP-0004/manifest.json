@@ -1,0 +1,92 @@
+{
+  "schema_version": 2,
+  "experiment_id": "EXP-0004",
+  "generated_utc": "2026-07-22T10:15:45.422595+00:00",
+  "command": "python -u -m futures.nq.hurst_explore.scripts.a2_timescale",
+  "environment": {
+    "python": "3.14.4",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "packages": {
+      "numpy": "2.4.4",
+      "pandas": "3.0.2",
+      "pyarrow": "24.0.0"
+    }
+  },
+  "code": [
+    {
+      "path": "C:\\Users\\VuDoa\\Research\\futures\\nq\\hurst_explore\\scripts\\a2_timescale.py",
+      "sha256": "847190c19c4259cdff32f07e3df2f0ec4d98ead44fdf792888152269d4e24343"
+    },
+    {
+      "path": "C:\\Users\\VuDoa\\Research\\futures\\nq\\hurst_explore\\core\\hurst.py",
+      "sha256": "f4e70737713630166fadcee91c9f956f8ea502126bafa5aba9033e7e5c2d777e"
+    },
+    {
+      "path": "C:\\Users\\VuDoa\\Research\\futures\\nq\\hurst_explore\\core\\loaders.py",
+      "sha256": "e890f56af6a5e86aa53139628b36ea2e61d8721501874b2fdc03b85b2f45a040"
+    }
+  ],
+  "data": [
+    {
+      "path": "C:\\Users\\VuDoa\\Research\\futures\\nq\\data\\NQ_1m_clean.parquet",
+      "size": 81530633,
+      "mtime_ns": 1784132203605122300,
+      "rows": 5094910,
+      "row_groups": 5,
+      "schema": "ts_utc: timestamp[ns, tz=UTC]\nsymbol: large_string\nopen: double\nhigh: double\nlow: double\nclose: double\nvolume: int64\nis_roll: bool\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 993"
+    },
+    {
+      "path": "C:\\Users\\VuDoa\\Research\\futures\\nq\\data\\ES_1m_clean.parquet",
+      "size": 76258384,
+      "mtime_ns": 1784132243411704700,
+      "rows": 5222530,
+      "row_groups": 5,
+      "schema": "ts_utc: timestamp[ns, tz=UTC]\nsymbol: large_string\nopen: double\nhigh: double\nlow: double\nclose: double\nvolume: int64\nis_roll: bool\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 993"
+    },
+    {
+      "path": "C:\\Users\\VuDoa\\Research\\futures\\data\\databento\\NQ_ohlcv-1s_NQv0_20100606_20260717.parquet",
+      "size": 1740990831,
+      "mtime_ns": 1784312451502961000,
+      "rows": 142481276,
+      "row_groups": 146,
+      "schema": "ts_event: timestamp[ns, tz=UTC]\nproduct: large_string\ncontinuous_symbol: large_string\nsymbol: large_string\ninstrument_id: uint32\nopen: double\nhigh: double\nlow: double\nclose: double\nvolume: uint64\ndataset: large_string\nschema: large_string\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 1473"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "a2_summary.txt",
+      "size": 4246,
+      "sha256": "2d9e9608ce50686544e344ac89fa1b9113e73d79a1bd6fdb66e70ec2785af655"
+    },
+    {
+      "path": "band_uncertainty.csv",
+      "size": 891,
+      "sha256": "d82f84f28011730f0cfba5c2abb712165b566d99c9b268a4af11471a582f06ed"
+    },
+    {
+      "path": "coarse_band_sensitivity.csv",
+      "size": 770,
+      "sha256": "6abe310ae1827e157459935eb5c17cf8b15cd91d2a4017aee735ec26858e1b7f"
+    },
+    {
+      "path": "coarse_era_stability.csv",
+      "size": 834,
+      "sha256": "ddb54241934b1788735c8bf14f79d12691c6409e3beb67fe02c3f648b6eb78c9"
+    },
+    {
+      "path": "meta.json",
+      "size": 1070,
+      "sha256": "e99cc3edb8f9b212087e251faf781cfff967172f7a0adf2d74b7a22aa0886109"
+    },
+    {
+      "path": "review.md",
+      "size": 2209,
+      "sha256": "d577426fcea172f8f9af0cca884446180cdfb9f17cd09796b83eb3bac0d45edc"
+    },
+    {
+      "path": "scale_curve.csv",
+      "size": 7165,
+      "sha256": "03d042baba6c58c3227a3cbf3b3f0e220b35356bbe4bd9703d62e5bd3b260933"
+    }
+  ]
+}

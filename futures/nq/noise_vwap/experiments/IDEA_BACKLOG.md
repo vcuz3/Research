@@ -107,3 +107,13 @@ Priority order after the prerequisite faithful Null C rerun (`EXP-0007`):
 - Main artifact risk: Not independent of the paper's in-sample search; cross-asset transport is exploratory, definitions differ, and exact ladder translation is ambiguous. Benchmark only, never confirmation.
 - Motivating evidence: outputs/5095349_extracted.txt Tables 7,9-11
 - Status: untriaged
+
+## IDEA-0007 — Causal percentile-rank breakout strength with hysteresis
+
+- Created: 2026-07-22
+- Observation: TBD
+- Proposed mechanism: TBD
+- Expected improvement: TBD
+- Main artifact risk: TBD
+- Motivating evidence: None yet
+- Status: untriaged

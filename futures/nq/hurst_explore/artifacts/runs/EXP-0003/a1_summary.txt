@@ -1,0 +1,66 @@
+==============================================================================
+A1  MEASUREMENT-ERROR FLOOR OF AN INTRADAY HURST ESTIMATE
+draws=200  1s_sessions=149  1m_sessions NQ=3703 ES=3706  elapsed=117s
+==============================================================================
+
+PART A -- SYNTHETIC FLOOR  std(Hhat) [bias in brackets], H_true=0.50
+ n_bars |             ghe1             ghe2               rs              dfa
+     30 |     0.245[-0.03]     0.214[-0.07]     0.314[+0.09]     0.184[+0.19]
+     45 |     0.182[-0.06]     0.170[-0.08]     0.160[+0.09]     0.117[+0.09]
+     60 |     0.183[-0.06]     0.168[-0.09]     0.140[+0.09]     0.114[+0.09]
+     90 |     0.154[-0.05]     0.142[-0.07]     0.096[+0.09]     0.086[+0.07]
+    120 |     0.138[-0.04]     0.124[-0.05]     0.104[+0.08]     0.078[+0.07]
+    195 |     0.117[-0.04]     0.108[-0.05]     0.067[+0.08]     0.058[+0.04]
+    390 |     0.099[-0.02]     0.094[-0.04]     0.054[+0.07]     0.050[+0.04]
+    900 |     0.078[-0.01]     0.073[-0.02]     0.042[+0.06]     0.038[+0.03]
+   1800 |     0.069[-0.01]     0.065[-0.02]     0.027[+0.06]     0.027[+0.03]
+   5400 |     0.049[-0.01]     0.047[-0.02]     0.022[+0.04]     0.021[+0.02]
+  11700 |     0.046[-0.01]     0.044[-0.01]     0.018[+0.04]     0.019[+0.01]
+  23400 |     0.041[-0.01]     0.040[-0.01]     0.014[+0.04]     0.017[+0.01]
+  (std is the irreducible sampling noise; an intraday H is only
+   meaningful to +/- this at the given window length.)
+
+PART B -- REAL WHOLE-SESSION H distribution (mean +/- std over sessions)
+  NQ 1m:
+      ghe1: 0.463 +/- 0.095   [p10 0.342  p50 0.461  p90 0.585]
+      ghe2: 0.435 +/- 0.091   [p10 0.318  p50 0.434  p90 0.552]
+        rs: 0.568 +/- 0.046   [p10 0.509  p50 0.568  p90 0.627]
+       dfa: 0.533 +/- 0.052   [p10 0.469  p50 0.531  p90 0.601]
+     cross-estimator MAD: mean 0.061 median 0.054
+  ES 1m:
+      ghe1: 0.460 +/- 0.093   [p10 0.341  p50 0.461  p90 0.581]
+      ghe2: 0.432 +/- 0.088   [p10 0.319  p50 0.433  p90 0.547]
+        rs: 0.554 +/- 0.048   [p10 0.492  p50 0.555  p90 0.615]
+       dfa: 0.510 +/- 0.053   [p10 0.443  p50 0.509  p90 0.576]
+     cross-estimator MAD: mean 0.055 median 0.047
+  NQ 1s (full lags):
+      ghe1: 0.495 +/- 0.029   [p10 0.458  p50 0.495  p90 0.536]
+      ghe2: 0.480 +/- 0.031   [p10 0.437  p50 0.478  p90 0.523]
+        rs: 0.533 +/- 0.012   [p10 0.518  p50 0.533  p90 0.550]
+       dfa: 0.504 +/- 0.019   [p10 0.477  p50 0.506  p90 0.529]
+     cross-estimator MAD: mean 0.020 median 0.018
+
+BIAS-CALIBRATED WHOLE-SESSION LEVELS
+  (inverse interpolation through synthetic mean(H_true), n=390;
+   NaN means the observation lies outside the simulated H range)
+  NQ: ghe1=0.488  ghe2=0.473  rs=0.499  dfa=0.491
+  ES: ghe1=0.485  ghe2=0.471  rs=0.478  dfa=0.466
+
+PART C -- 1s vs 1m on NQ (matched-scale check)
+  matched sessions      : 149
+  ghe1 NQ 1m matched   : 0.471 +/- 0.100
+  ghe1 NQ 1s full lags : 0.495 +/- 0.029
+  ghe1 NQ 1s min+ lags : 0.490 +/- 0.062
+  (if min+ 1s ~ 1m but full 1s differs, the extra 1s info is sub-minute
+   -> the micro/meso split A2 measures.)
+
+Rule 9a DATA QUALITY (1s grid)
+  1s sessions sampled: 149  fill_rate mean 0.967 min 0.902 p10 0.934
+  1s fill_rate by era (forward-fill injects artificial zero-returns; a
+  low-fill session's SUB-MINUTE H is unreliable -> A2 must filter on this):
+     2015-2018: sessions  11  fill mean 0.947  min 0.903
+     2019-2022: sessions  62  fill mean 0.966  min 0.902
+     2023-2026: sessions  76  fill mean 0.970  min 0.922
+  1m NQ sessions 3703  ES 3706  degraded days excluded: 16
+  NQ incomplete 1m grids excluded: 7 of 3710; duplicates=0 missing_slots=60 internal_gaps=11
+  ES incomplete 1m grids excluded: 4 of 3710; duplicates=0 missing_slots=53 internal_gaps=4

@@ -1,0 +1,21 @@
+HYP-0016 surround-smoothed short-history band vs lb90 mean band: ES
+Common post-lb90; 30m RTH clock + VWAP gate; CONTINUOUS (every-bar) stop; next-open; cost-net ATR-R
+net_pt/t = per-trade quality (net points/trade); win% = net-positive trades; wRatio = median band width vs baseline
+      cell      n  net_pt/t   win%     Sh     dSh     netR   maxDD   23+Sh  wRatio
+ base lb90   4326    +0.515   25.2   0.70  +0.000    +51.5     7.4    0.80    1.00
+  plain h5   4942    +0.320   27.9   0.60  -0.098    +45.4    12.3    0.95    0.89
+     h5 w5   4763    +0.343   26.6   0.64  -0.061    +48.4    10.6    0.84    0.90
+    h5 w14   4714    +0.344   25.9   0.59  -0.105    +45.1    11.5    0.86    0.89
+    h5 w30   4669    +0.344   25.6   0.63  -0.068    +47.9    11.3    0.87    0.89
+ plain h14   4659    +0.426   26.8   0.72  +0.022    +54.0    10.3    0.91    0.93
+    h14 w5   4550    +0.435   26.0   0.72  +0.017    +53.8    10.2    0.85    0.93
+   h14 w14   4511    +0.440   25.5   0.71  +0.013    +53.6    11.4    0.85    0.93
+   h14 w30   4505    +0.434   25.4   0.73  +0.029    +54.7    11.6    0.82    0.93
+ plain h30   4498    +0.336   24.9   0.59  -0.107    +43.9     7.9    0.49    0.96
+    h30 w5   4423    +0.338   24.8   0.61  -0.084    +45.7     7.9    0.43    0.96
+   h30 w14   4387    +0.372   24.9   0.67  -0.032    +49.5     7.1    0.44    0.96
+   h30 w30   4409    +0.394   24.7   0.67  -0.030    +49.7     7.7    0.45    0.96
+
+Best SURROUND cell: hist=14, w=30; dSharpe=+0.029, dNetR=+3.2, dGrossPt/t=-0.081, dMaxDD=+4.2, dTrades=+179, wRatio=0.93
+
+GATE (best surround dSharpe>=+0.10 and netR>=baseline): FAIL -> REJECT from real evidence (no Null C)

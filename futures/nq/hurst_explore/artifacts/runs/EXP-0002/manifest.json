@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0002",
+  "hypothesis_id": "HYP-0002",
+  "status": "completed",
+  "declared_utc": "2026-07-22T09:47:57.863905+00:00",
+  "config_path": "scripts/a2_timescale.py",
+  "data_scope": "NQ 1s 2015-2026 fill>=0.90 (228 sess); NQ/ES 1m 2011-2026",
+  "code_ref": "futures/nq/hurst_explore/scripts/a2_timescale.py",
+  "run_command": "python -u -m futures.nq.hurst_explore.scripts.a2_timescale",
+  "primary_metric": "control-corrected H(tau) and per-band H; 1s/1m overlap; NQ<->ES transfer",
+  "builder": "Claude",
+  "outputs": [
+    "a2_summary.txt",
+    "meta.json",
+    "scale_curve.csv"
+  ]
+}

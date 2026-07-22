@@ -1,0 +1,9 @@
+HYP-0016 surround SMOOTHING at fixed lb90 history: ES
+Common post-lb90; 30m RTH clock + VWAP gate; CONTINUOUS (every-bar) stop; next-open; cost-net ATR-R
+Only change vs baseline = candle-neighbourhood smoothing (w=0 IS baseline)
+      cell      n  net_pt/t   win%     Sh     dSh     netR   maxDD   23+Sh  wRatio
+ base lb90   4326    +0.515   25.2   0.70  +0.000    +51.5     7.4    0.80    1.00
+   lb90 w5   4264    +0.510   25.0   0.69  -0.009    +50.8     6.5    0.76    1.00
+  lb90 w14   4245    +0.521   25.1   0.72  +0.023    +53.3     6.1    0.77    1.00
+  lb90 w30   4264    +0.540   25.2   0.73  +0.036    +54.5     6.2    0.81    1.00
+  lb90 w60   4199    +0.531   25.1   0.71  +0.017    +52.6     6.4    0.75    1.00

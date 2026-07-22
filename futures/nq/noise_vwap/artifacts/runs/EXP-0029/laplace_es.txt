@@ -1,0 +1,56 @@
+HYP-0020 Laplace recency-weighted band vs flat lb90 mean band: ES
+Common post-lb250 (same-sample); 30m RTH clock + VWAP gate; CONTINUOUS (every-bar) stop; next-open; cost-net ATR-R
+net_pt/t = per-trade quality; wRatio = median band width vs baseline; lb = derived lookback
+
+-- RAW laplace (scale 1.0; exposes the width/capacity dial) --
+     cell   lb      n  net_pt/t     Sh     dSh     netR   maxDD   23+Sh  wRatio
+flat lb90   90   4119    +0.537   0.72  +0.000    +51.1     7.4    0.80    1.00
+   mu1 h5   90   4385    +0.409   0.73  +0.011    +52.3     8.5    0.90    0.92
+  mu1 h15  110   4227    +0.419   0.73  +0.009    +51.9     6.4    0.66    0.98
+  mu1 h40  250   4123    +0.470   0.67  -0.050    +47.6     7.0    0.53    1.01
+   mu5 h5   90   4342    +0.385   0.70  -0.019    +50.5     8.4    0.80    0.93
+  mu5 h15  114   4210    +0.437   0.75  +0.029    +53.3     6.2    0.71    0.98
+  mu5 h40  250   4117    +0.478   0.68  -0.039    +48.4     6.8    0.54    1.01
+  mu15 h5   90   4326    +0.436   0.77  +0.043    +54.8     5.2    0.56    0.94
+ mu15 h15  124   4222    +0.390   0.61  -0.113    +43.0     8.0    0.66    0.99
+ mu15 h40  250   4100    +0.499   0.70  -0.025    +49.4     6.8    0.51    1.01
+  mu30 h5   90   4346    +0.436   0.56  -0.168    +39.7     9.3    0.57    0.95
+ mu30 h15  139   4180    +0.480   0.63  -0.096    +44.7     6.9    0.64    0.99
+ mu30 h40  250   4097    +0.508   0.71  -0.014    +49.9     6.1    0.58    1.01
+
+-- MATCHED width (median sigma == flat baseline; isolates recency SHAPE) --
+     cell   lb      n  net_pt/t     Sh     dSh     netR   maxDD   23+Sh  wRatio
+flat lb90   90   4119    +0.537   0.72  +0.000    +51.1     7.4    0.80    1.00
+   mu1 h5   90   3983    +0.456   0.79  +0.065    +54.2     7.5    1.03    1.00
+  mu1 h15  110   4152    +0.421   0.71  -0.014    +50.0     7.6    0.74    1.00
+  mu1 h40  250   4156    +0.497   0.70  -0.019    +49.9     7.5    0.59    1.00
+   mu5 h5   90   4035    +0.381   0.71  -0.014    +49.4     6.6    0.77    1.00
+  mu5 h15  114   4145    +0.412   0.69  -0.035    +48.3     8.1    0.70    1.00
+  mu5 h40  250   4151    +0.493   0.69  -0.031    +49.1     7.5    0.59    1.00
+  mu15 h5   90   4057    +0.425   0.76  +0.035    +52.9     5.5    0.50    1.00
+ mu15 h15  124   4150    +0.393   0.61  -0.109    +43.2     7.4    0.72    1.00
+ mu15 h40  250   4162    +0.497   0.69  -0.038    +48.7     7.3    0.54    1.00
+  mu30 h5   90   4119    +0.455   0.61  -0.115    +42.9     8.4    0.46    1.00
+ mu30 h15  139   4148    +0.485   0.64  -0.087    +45.2     6.7    0.60    1.00
+ mu30 h40  250   4181    +0.487   0.68  -0.045    +48.1     6.7    0.60    1.00
+
+Best MATCHED cell: mu=1, h=5 (b=7.2, lb=90), scale=1.082; dSharpe=+0.065, dNetR=+3.1, dGrossPt/t=-0.081, dMaxDD=+0.1, dTrades=-136
+
+Residual lap/flat by decision slot (best matched mu=1, h=5) — does the recency tilt reshape the per-slot level?
+      flat    lap  lap/flat
+mfo                        
+29  0.0020 0.0022    1.0832
+59  0.0027 0.0029    1.0770
+89  0.0031 0.0034    1.0776
+119 0.0035 0.0037    1.0794
+149 0.0037 0.0040    1.0803
+179 0.0039 0.0042    1.0793
+209 0.0040 0.0043    1.0757
+239 0.0042 0.0045    1.0814
+269 0.0044 0.0048    1.0803
+299 0.0047 0.0050    1.0788
+329 0.0049 0.0053    1.0798
+359 0.0051 0.0055    1.0807
+389 0.0055 0.0059    1.0796
+
+GATE (best matched dSharpe>=+0.10 and netR>=baseline): FAIL -> REJECT from real evidence (no Null C)

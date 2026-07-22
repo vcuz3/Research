@@ -1,0 +1,484 @@
+{
+  "assumptions": {
+    "instrument_proxy": "GC treated as XAU/USD",
+    "risk_fraction": 0.01,
+    "round_trip_cost_R": 0.24,
+    "primary_period": "2024-01-01/2024-12-31"
+  },
+  "primary_2024": {
+    "contract": {
+      "label": "2024",
+      "cost_R": 0.24,
+      "n_trades": 17,
+      "n_days_traded": 16,
+      "n_days_all": 259,
+      "trades_per_day": 1.0625,
+      "reasons": {
+        "trail50": 10,
+        "eod": 6,
+        "stop": 1
+      },
+      "gross_pts_per_trade": 2.5159679344000834,
+      "net_pts_per_trade": 0.46388101622697236,
+      "gross_expectancy_R": 0.11756526326367057,
+      "expectancy_R": -0.12243473673632943,
+      "win_rate": 0.29411764705882354,
+      "gross_profit_factor": 1.3681317503453647,
+      "net_profit_factor": 0.7432249007444895,
+      "avg_win_pts": 13.077316555508592,
+      "avg_loss_pts": -4.7917171251403685,
+      "payoff_ratio": 2.729150368016665,
+      "n_long": 14,
+      "n_short": 3,
+      "total_gross_usd": 4277.1454884801415,
+      "total_net_usd": 788.5977275858527,
+      "sharpe_net_daily": 0.19548062601880503,
+      "sharpe_gross_daily": 1.0168170654157629,
+      "day_net_t": 0.19817703789107105,
+      "max_dd_usd": 5250.721196204746,
+      "calmar": 0.1461293119207197,
+      "intrabar_exit_1s_frac": 0.058823529411764705
+    },
+    "compound": {
+      "label": "2024",
+      "cost_R": 0.24,
+      "n_trades": 17,
+      "total_return": -0.02136429184412046,
+      "cagr": -0.020792924235469523,
+      "sharpe_daily": -0.5245186561450638,
+      "max_dd_frac": 0.06578379818443353,
+      "calmar": -0.3160797158165575,
+      "final_equity": 9786.357081558795,
+      "expectancy_R": -0.12243473673632943
+    }
+  },
+  "full_history_context": {
+    "contract": {
+      "label": "all",
+      "cost_R": 0.24,
+      "n_trades": 201,
+      "n_days_traded": 194,
+      "n_days_all": 3844,
+      "trades_per_day": 1.0360824742268042,
+      "reasons": {
+        "trail50": 103,
+        "eod": 54,
+        "stop": 29,
+        "target": 11,
+        "trail20": 4
+      },
+      "gross_pts_per_trade": 0.16232722807151492,
+      "net_pts_per_trade": -1.4282484116470762,
+      "gross_expectancy_R": -0.02923108183512971,
+      "expectancy_R": -0.2692310818351297,
+      "win_rate": 0.2537313432835821,
+      "gross_profit_factor": 0.9231402177289252,
+      "net_profit_factor": 0.513626566866261,
+      "avg_win_pts": 7.467697265352289,
+      "avg_loss_pts": -4.45286994182686,
+      "payoff_ratio": 1.6770526341239935,
+      "n_long": 116,
+      "n_short": 85,
+      "total_gross_usd": 3262.7772842374497,
+      "total_net_usd": -28707.79307410623,
+      "sharpe_net_daily": -0.6114503942818049,
+      "sharpe_gross_daily": 0.069441927337278,
+      "day_net_t": -2.388100769142068,
+      "max_dd_usd": 32766.87886483225,
+      "calmar": -0.057435696684683735,
+      "intrabar_exit_1s_frac": 0.19900497512437812
+    },
+    "compound": {
+      "label": "all",
+      "cost_R": 0.24,
+      "n_trades": 201,
+      "total_return": -0.42408243199014256,
+      "cagr": -0.035527140486172226,
+      "sharpe_daily": -0.9677085432446281,
+      "max_dd_frac": 0.4367623788200129,
+      "calmar": -0.08134203449975426,
+      "final_equity": 5759.175680098577,
+      "expectancy_R": -0.2692310818351297
+    }
+  },
+  "raw_signals_2024": 18,
+  "news_blocked_signal_entries_2024": 1,
+  "completed_trades_2024": 17,
+  "completed_trade_sessions_without_1s_2024": 0,
+  "paper_synthetic_trade_count": 247,
+  "data_quality": {
+    "rows_15m": 98770,
+    "sessions_15m": 3844,
+    "date_min": "2011-08-01",
+    "date_max": "2026-07-16",
+    "duplicate_date_tsec": 0,
+    "out_of_order": 0,
+    "incomplete_sessions": 139,
+    "missing_15m_bars": 1174,
+    "min_bars_session": 3,
+    "median_bars_session": 26.0,
+    "sessions_spanning_symbols": 0,
+    "sessions_1s_total": 4070,
+    "sessions_1s_overlap": 3777,
+    "sessions_15m_without_1s": 67,
+    "slot_coverage": {
+      "0": {
+        "rows": 3844,
+        "sessions": 3844
+      },
+      "1": {
+        "rows": 3844,
+        "sessions": 3844
+      },
+      "2": {
+        "rows": 3844,
+        "sessions": 3844
+      },
+      "3": {
+        "rows": 3843,
+        "sessions": 3843
+      },
+      "4": {
+        "rows": 3843,
+        "sessions": 3843
+      },
+      "5": {
+        "rows": 3843,
+        "sessions": 3843
+      },
+      "6": {
+        "rows": 3843,
+        "sessions": 3843
+      },
+      "7": {
+        "rows": 3843,
+        "sessions": 3843
+      },
+      "8": {
+        "rows": 3843,
+        "sessions": 3843
+      },
+      "9": {
+        "rows": 3843,
+        "sessions": 3843
+      },
+      "10": {
+        "rows": 3842,
+        "sessions": 3842
+      },
+      "11": {
+        "rows": 3842,
+        "sessions": 3842
+      },
+      "12": {
+        "rows": 3842,
+        "sessions": 3842
+      },
+      "13": {
+        "rows": 3842,
+        "sessions": 3842
+      },
+      "14": {
+        "rows": 3792,
+        "sessions": 3792
+      },
+      "15": {
+        "rows": 3785,
+        "sessions": 3785
+      },
+      "16": {
+        "rows": 3785,
+        "sessions": 3785
+      },
+      "17": {
+        "rows": 3763,
+        "sessions": 3763
+      },
+      "18": {
+        "rows": 3761,
+        "sessions": 3761
+      },
+      "19": {
+        "rows": 3761,
+        "sessions": 3761
+      },
+      "20": {
+        "rows": 3730,
+        "sessions": 3730
+      },
+      "21": {
+        "rows": 3726,
+        "sessions": 3726
+      },
+      "22": {
+        "rows": 3723,
+        "sessions": 3723
+      },
+      "23": {
+        "rows": 3721,
+        "sessions": 3721
+      },
+      "24": {
+        "rows": 3717,
+        "sessions": 3717
+      },
+      "25": {
+        "rows": 3705,
+        "sessions": 3705
+      }
+    },
+    "feature_nan_counts": {
+      "ema200": 0,
+      "ema50": 0,
+      "ema20": 0,
+      "atr14": 0,
+      "volma20": 19,
+      "vwap": 0
+    },
+    "feature_missing_by_year": {
+      "2011": {
+        "ema200": 0,
+        "ema50": 0,
+        "ema20": 0,
+        "atr14": 0,
+        "volma20": 19,
+        "vwap": 0
+      },
+      "2012": {
+        "ema200": 0,
+        "ema50": 0,
+        "ema20": 0,
+        "atr14": 0,
+        "volma20": 0,
+        "vwap": 0
+      },
+      "2013": {
+        "ema200": 0,
+        "ema50": 0,
+        "ema20": 0,
+        "atr14": 0,
+        "volma20": 0,
+        "vwap": 0
+      },
+      "2014": {
+        "ema200": 0,
+        "ema50": 0,
+        "ema20": 0,
+        "atr14": 0,
+        "volma20": 0,
+        "vwap": 0
+      },
+      "2015": {
+        "ema200": 0,
+        "ema50": 0,
+        "ema20": 0,
+        "atr14": 0,
+        "volma20": 0,
+        "vwap": 0
+      },
+      "2016": {
+        "ema200": 0,
+        "ema50": 0,
+        "ema20": 0,
+        "atr14": 0,
+        "volma20": 0,
+        "vwap": 0
+      },
+      "2017": {
+        "ema200": 0,
+        "ema50": 0,
+        "ema20": 0,
+        "atr14": 0,
+        "volma20": 0,
+        "vwap": 0
+      },
+      "2018": {
+        "ema200": 0,
+        "ema50": 0,
+        "ema20": 0,
+        "atr14": 0,
+        "volma20": 0,
+        "vwap": 0
+      },
+      "2019": {
+        "ema200": 0,
+        "ema50": 0,
+        "ema20": 0,
+        "atr14": 0,
+        "volma20": 0,
+        "vwap": 0
+      },
+      "2020": {
+        "ema200": 0,
+        "ema50": 0,
+        "ema20": 0,
+        "atr14": 0,
+        "volma20": 0,
+        "vwap": 0
+      },
+      "2021": {
+        "ema200": 0,
+        "ema50": 0,
+        "ema20": 0,
+        "atr14": 0,
+        "volma20": 0,
+        "vwap": 0
+      },
+      "2022": {
+        "ema200": 0,
+        "ema50": 0,
+        "ema20": 0,
+        "atr14": 0,
+        "volma20": 0,
+        "vwap": 0
+      },
+      "2023": {
+        "ema200": 0,
+        "ema50": 0,
+        "ema20": 0,
+        "atr14": 0,
+        "volma20": 0,
+        "vwap": 0
+      },
+      "2024": {
+        "ema200": 0,
+        "ema50": 0,
+        "ema20": 0,
+        "atr14": 0,
+        "volma20": 0,
+        "vwap": 0
+      },
+      "2025": {
+        "ema200": 0,
+        "ema50": 0,
+        "ema20": 0,
+        "atr14": 0,
+        "volma20": 0,
+        "vwap": 0
+      },
+      "2026": {
+        "ema200": 0,
+        "ema50": 0,
+        "ema20": 0,
+        "atr14": 0,
+        "volma20": 0,
+        "vwap": 0
+      }
+    },
+    "coverage_by_year": {
+      "2011": {
+        "rows_15m": 2803,
+        "sessions": 109,
+        "incomplete_sessions": 3,
+        "missing_15m_bars": 31,
+        "sessions_without_1s": 1
+      },
+      "2012": {
+        "rows_15m": 6580,
+        "sessions": 256,
+        "incomplete_sessions": 9,
+        "missing_15m_bars": 76,
+        "sessions_without_1s": 5
+      },
+      "2013": {
+        "rows_15m": 6532,
+        "sessions": 252,
+        "incomplete_sessions": 3,
+        "missing_15m_bars": 20,
+        "sessions_without_1s": 5
+      },
+      "2014": {
+        "rows_15m": 6459,
+        "sessions": 251,
+        "incomplete_sessions": 7,
+        "missing_15m_bars": 67,
+        "sessions_without_1s": 7
+      },
+      "2015": {
+        "rows_15m": 6615,
+        "sessions": 258,
+        "incomplete_sessions": 9,
+        "missing_15m_bars": 93,
+        "sessions_without_1s": 5
+      },
+      "2016": {
+        "rows_15m": 6627,
+        "sessions": 258,
+        "incomplete_sessions": 7,
+        "missing_15m_bars": 81,
+        "sessions_without_1s": 3
+      },
+      "2017": {
+        "rows_15m": 6598,
+        "sessions": 257,
+        "incomplete_sessions": 10,
+        "missing_15m_bars": 84,
+        "sessions_without_1s": 5
+      },
+      "2018": {
+        "rows_15m": 6599,
+        "sessions": 258,
+        "incomplete_sessions": 12,
+        "missing_15m_bars": 109,
+        "sessions_without_1s": 4
+      },
+      "2019": {
+        "rows_15m": 6606,
+        "sessions": 258,
+        "incomplete_sessions": 10,
+        "missing_15m_bars": 102,
+        "sessions_without_1s": 4
+      },
+      "2020": {
+        "rows_15m": 6580,
+        "sessions": 258,
+        "incomplete_sessions": 12,
+        "missing_15m_bars": 128,
+        "sessions_without_1s": 3
+      },
+      "2021": {
+        "rows_15m": 6622,
+        "sessions": 258,
+        "incomplete_sessions": 9,
+        "missing_15m_bars": 86,
+        "sessions_without_1s": 5
+      },
+      "2022": {
+        "rows_15m": 6654,
+        "sessions": 258,
+        "incomplete_sessions": 9,
+        "missing_15m_bars": 54,
+        "sessions_without_1s": 3
+      },
+      "2023": {
+        "rows_15m": 6620,
+        "sessions": 257,
+        "incomplete_sessions": 10,
+        "missing_15m_bars": 62,
+        "sessions_without_1s": 8
+      },
+      "2024": {
+        "rows_15m": 6665,
+        "sessions": 259,
+        "incomplete_sessions": 12,
+        "missing_15m_bars": 69,
+        "sessions_without_1s": 5
+      },
+      "2025": {
+        "rows_15m": 6644,
+        "sessions": 258,
+        "incomplete_sessions": 11,
+        "missing_15m_bars": 64,
+        "sessions_without_1s": 3
+      },
+      "2026": {
+        "rows_15m": 3566,
+        "sessions": 139,
+        "incomplete_sessions": 6,
+        "missing_15m_bars": 48,
+        "sessions_without_1s": 1
+      }
+    },
+    "warmup_bars_explicitly_excluded": 200
+  }
+}
