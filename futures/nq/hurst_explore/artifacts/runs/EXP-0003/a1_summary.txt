@@ -1,6 +1,6 @@
 ==============================================================================
 A1  MEASUREMENT-ERROR FLOOR OF AN INTRADAY HURST ESTIMATE
-draws=200  1s_sessions=149  1m_sessions NQ=3703 ES=3706  elapsed=117s
+draws=200  1s_sessions=149  1m_sessions NQ=3703 ES=3706  elapsed=155s
 ==============================================================================
 
 PART A -- SYNTHETIC FLOOR  std(Hhat) [bias in brackets], H_true=0.50

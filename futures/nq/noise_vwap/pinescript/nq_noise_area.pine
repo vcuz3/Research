@@ -1,0 +1,173 @@
+//@version=6
+// =============================================================================
+// NQ Noise Area (+ session VWAP)
+//
+// Faithful TradingView port of the band built in
+//   futures/nq/noise_vwap/core/session.py :: noise_bands()
+//
+//   mfo            = minutes from the 09:30 ET anchor (0..389), NOT the first
+//                    observed bar -- so slots align across sessions even when a
+//                    minute is missing
+//   move[d, mfo]   = |close[d, mfo] / open[d, 0] - 1|
+//   sigma[d, mfo]  = mean of move over the prior `lookback` sessions
+//                    (STRICTLY prior -- today never enters its own band)
+//   upper[d, mfo]  = max(open[d,0], prior_session_close) * (1 + sigma)
+//   lower[d, mfo]  = min(open[d,0], prior_session_close) * (1 - sigma)
+//
+// Causality: today's per-minute moves accumulate in a pending buffer and are
+// only folded into the history matrix at the NEXT session open. No forward
+// reference exists anywhere in this script.
+//
+// !! REQUIRES A 1-MINUTE CHART. The band is defined per minute-of-session.
+// !! BAR BUDGET: lookback=90 needs 90 x 390 = 35,100 one-minute bars of chart
+//    history before the first band prints. TradingView caps intraday history by
+//    plan (~5k Basic / ~10k Essential / ~20k Premium 1-min bars), so on most
+//    plans you must lower `lookback`. The status table shows how many sessions
+//    are actually stored; the band stays blank until it reaches the requirement.
+// =============================================================================
+
+indicator("NQ Noise Area + VWAP", "Noise Area", overlay = true)
+
+// ----- inputs ----------------------------------------------------------------
+lookback = input.int(90,   "Lookback sessions",  minval = 2, maxval = 250,
+     tooltip = "Baseline is 90. Needs lookback x 390 one-minute bars of chart history.")
+minFrac  = input.float(1.0, "Required coverage",  minval = 0.1, maxval = 1.0, step = 0.05,
+     tooltip = "Fraction of the lookback that must have a bar at this exact minute. 1.0 = the faithful strict rule (NQ is liquid enough). Lower it to ~0.9 on thinner symbols.")
+showVwap = input.bool(true,  "Session VWAP")
+showSig  = input.bool(false, "Breakout markers (visual only)")
+period   = input.int(30, "Decision clock (min)", minval = 1,
+     tooltip = "Markers only fire on the decision bar, mfo %% period == period-1.")
+showInfo = input.bool(true,  "Status table")
+
+cUp   = input.color(color.new(color.teal, 0),   "Upper", inline = "c", group = "Style")
+cDn   = input.color(color.new(color.teal, 0),   "Lower", inline = "c", group = "Style")
+cFill = input.color(color.new(color.teal, 90),  "Fill",  inline = "c", group = "Style")
+
+if timeframe.in_seconds() != 60
+    runtime.error("NQ Noise Area requires a 1-minute chart (the band is defined per minute-of-session).")
+
+// ----- session clock ---------------------------------------------------------
+TZ     = "America/New_York"
+SLOTS  = 390                                    // 09:30..15:59 ET inclusive
+tod    = hour(time, TZ) * 60 + minute(time, TZ)
+inSess = tod >= 570 and tod < 960               // RTH_START .. RTH_END (exclusive)
+mfo    = tod - 570
+// ET calendar date key. A new session MUST be detected by date change, not by an
+// inSess false->true edge: on a Regular-trading-hours chart every bar is already
+// in-session, so that edge never fires and the whole thing silently stays blank.
+dateKey = year(time, TZ) * 10000 + month(time, TZ) * 100 + dayofmonth(time, TZ)
+
+// ----- state -----------------------------------------------------------------
+var matrix<float> hist  = matrix.new<float>(lookback, SLOTS, na)  // prior sessions
+var array<float>  pend  = array.new_float(SLOTS, na)              // today, not yet visible
+var int   wrow       = 0
+var int   nStored    = 0      // rows filled in `hist`, capped at lookback
+var int   nSeen      = 0      // total sessions the chart actually holds (diagnostic)
+var int   curDay     = na
+var bool  havePend   = false
+var float sessOpen   = na
+var float priorClose = na
+var float lastClose  = na
+var float cumTPV     = 0.0
+var float cumV       = 0.0
+
+newSess = inSess and (na(curDay) or dateKey != curDay)
+
+if newSess
+    // fold YESTERDAY's completed profile into history (circular buffer)
+    if havePend
+        for i = 0 to SLOTS - 1
+            matrix.set(hist, wrow, i, array.get(pend, i))
+        wrow    := (wrow + 1) % lookback
+        nStored := math.min(nStored + 1, lookback)
+        nSeen   += 1
+    for i = 0 to SLOTS - 1
+        array.set(pend, i, na)
+    havePend   := true
+    curDay     := dateKey
+    priorClose := lastClose        // last RTH close of the previous session
+    sessOpen   := open             // the mfo == 0 bar's open
+    cumTPV     := 0.0
+    cumV       := 0.0
+
+// ----- sigma at this minute (strictly prior sessions only) -------------------
+float sigma = na
+if inSess and mfo >= 0 and mfo < SLOTS
+    float acc = 0.0
+    int   cnt = 0
+    for r = 0 to lookback - 1
+        v = matrix.get(hist, r, mfo)
+        if not na(v)
+            acc += v
+            cnt += 1
+    need  = math.max(2, int(math.ceil(minFrac * lookback)))
+    sigma := cnt >= need ? acc / cnt : na
+    // record today's move for use from TOMORROW onward
+    if not na(sessOpen) and sessOpen != 0
+        array.set(pend, mfo, math.abs(close / sessOpen - 1.0))
+
+// ----- session VWAP (cumulative, hlc3, resets at 09:30) ----------------------
+if inSess
+    cumTPV += ((high + low + close) / 3.0) * volume
+    cumV   += volume
+    lastClose := close
+
+vwap = inSess and cumV > 0 ? cumTPV / cumV : na
+
+// ----- bands -----------------------------------------------------------------
+ok    = inSess and not na(sigma) and not na(sessOpen) and not na(priorClose)
+hiRef = math.max(sessOpen, priorClose)
+loRef = math.min(sessOpen, priorClose)
+upper = ok ? hiRef * (1.0 + sigma) : na
+lower = ok ? loRef * (1.0 - sigma) : na
+
+pu = plot(upper, "Noise upper", color = cUp, linewidth = 2, style = plot.style_linebr)
+pl = plot(lower, "Noise lower", color = cDn, linewidth = 2, style = plot.style_linebr)
+fill(pu, pl, color = cFill, title = "Noise area")
+plot(showVwap ? vwap : na, "Session VWAP", color = color.new(color.orange, 0),
+     linewidth = 1, style = plot.style_linebr)
+plot(ok ? sessOpen : na, "Session open", color = color.new(color.gray, 40),
+     style = plot.style_linebr)
+
+// ----- breakout markers (visual only -- NOT the audited engine) --------------
+isDecision = inSess and mfo % period == period - 1
+longSig    = showSig and isDecision and ok and close > upper and close > vwap
+shortSig   = showSig and isDecision and ok and close < lower and close < vwap
+plotshape(longSig,  "Long break",  shape.triangleup,   location.belowbar,
+     color.new(color.teal, 0), size = size.tiny)
+plotshape(shortSig, "Short break", shape.triangledown, location.abovebar,
+     color.new(color.red, 0),  size = size.tiny)
+
+// ----- status ----------------------------------------------------------------
+need = math.max(2, int(math.ceil(minFrac * lookback)))
+
+if showInfo and barstate.islast
+    var table t = table.new(position.top_right, 2, 5, border_width = 1)
+    ready = nStored >= need
+    table.cell(t, 0, 0, "sessions stored", text_color = color.gray, text_size = size.small)
+    table.cell(t, 1, 0, str.tostring(nStored) + " / " + str.tostring(need) + " needed",
+         text_color = ready ? color.teal : color.red, text_size = size.small)
+    table.cell(t, 0, 1, "sessions on chart", text_color = color.gray, text_size = size.small)
+    table.cell(t, 1, 1, str.tostring(nSeen), text_color = color.gray, text_size = size.small)
+    table.cell(t, 0, 2, "sigma", text_color = color.gray, text_size = size.small)
+    table.cell(t, 1, 2, na(sigma) ? "n/a" : str.tostring(sigma * 100, "#.###") + " %",
+         text_color = color.gray, text_size = size.small)
+    table.cell(t, 0, 3, "band width", text_color = color.gray, text_size = size.small)
+    table.cell(t, 1, 3, na(upper) ? "n/a" : str.tostring(upper - lower, "#.##") + " pt",
+         text_color = color.gray, text_size = size.small)
+    table.cell(t, 0, 4, "min from open", text_color = color.gray, text_size = size.small)
+    table.cell(t, 1, 4, inSess ? str.tostring(mfo) : "closed",
+         text_color = color.gray, text_size = size.small)
+
+// Loud warm-up notice: a blank band is otherwise indistinguishable from a broken
+// script. `nSeen` is how many sessions the chart actually holds, so it tells you
+// the largest lookback this chart can support.
+if barstate.islast and nStored < need
+    var label warn = na
+    label.delete(warn)
+    warn := label.new(bar_index, high, textcolor = color.white, style = label.style_label_left,
+         color = color.new(color.red, 20), size = size.normal,
+         text = "Noise Area warming up: " + str.tostring(nStored) + " of " + str.tostring(need)
+              + " sessions stored.\nThis chart holds " + str.tostring(nSeen)
+              + " RTH sessions -- set 'Lookback sessions' to " + str.tostring(nSeen)
+              + " or less, or load more 1-min history.")

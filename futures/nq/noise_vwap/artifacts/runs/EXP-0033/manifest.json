@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0033",
+  "hypothesis_id": "HYP-0023",
+  "status": "completed",
+  "declared_utc": "2026-07-25T13:14:32.992015+00:00",
+  "config_path": "experiments/configs/hyp_0023_fast_exact_nullc.json",
+  "data_scope": "NQ clean one-minute and Databento one-second RTH through 2026-07-14; consumed history",
+  "code_ref": "core/nulls.py reference; core/nulls_fast.py accelerated shuffle/family/1s remap; core/atr_buffer.py; scripts/hyp_0023_fast_exact_nullc.py; tests/test_nulls.py; tests/test_atr_buffer.py",
+  "run_command": "python -m futures.nq.noise_vwap.scripts.hyp_0023_fast_exact_nullc validate ; python -m futures.nq.noise_vwap.scripts.hyp_0023_fast_exact_nullc null 199 --workers 4",
+  "primary_metric": "Exact reference parity, family-max Null-C p, one-minute versus one-second paired uplift error, and wall-clock speedup",
+  "builder": "Codex",
+  "outputs": ["benchmark.json", "invariants.json", "one_second_proxy_parity.csv", "one_second_proxy_parity.json", "nullc_family_draws.csv", "nullc_family_report.json", "review.md"],
+  "closed_utc": "2026-07-25T13:31:42.732355+00:00",
+  "result_summary": "PASS implementation; EXP-0032 rejection strengthened. Fast shuffle is bit-exact and 15.8x faster. Fused daily engine matches reference within 2.2e-15 and evaluates 60 variants in 5.3s versus 17.4s for 3 reference variants. Exact 1s minute-block null replay passes proxy gate (max uplift error 0.0046, mean 0.0024). Selection-corrected 199-draw Null C: real scaling uplift 0.0850, null mean 0.0882, p=0.525; vs-close uplift real 0.1319, null mean 0.1385, p=0.510. Four-worker elapsed 124.4s.",
+  "reviewer": "unassigned",
+  "review_status": "not-reviewed"
+}

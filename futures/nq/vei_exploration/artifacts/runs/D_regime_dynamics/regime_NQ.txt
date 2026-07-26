@@ -1,0 +1,19 @@
+
+======== Study D: VEI regime -> momentum vs mean-reversion — NQ ========
+VEI variant: {'short': 10, 'long': 50, 'atr_method': 'wilder', 'smooth': 0}  (seed=sma)
+            regime       n   corr(past,fwd)                   CI           read
+        low(<0.90)   23118          -0.0082 [-0.0302,+0.0153]    random-walk
+   calm(0.90-1.10)   14834          +0.0195 [-0.0052,+0.0452]    random-walk
+       high(>1.10)    2854          +0.0673 [-0.0099,+0.1491]    random-walk
+
+corr<0 = trailing move reverses (fade works); corr>0 = continues (momentum).
+
+--- threshold confound control (HYP-0003 kill test 3) ---
+legacy-seed share above 1.10 = 0.0655; matched-rate threshold on repaired VEI = 1.1058
+                         cut       n   corr(past,fwd)                   CI
+        repaired, abs T>1.10    2854          +0.0673 [-0.0110,+0.1423]
+repaired, matched-rate T>1.106    2674          +0.0824 [+0.0037,+0.1583]
+          LEGACY, abs T>1.10    2674          +0.1041 [+0.0242,+0.1816]
+Read: if the repaired result holds at BOTH the absolute and the matched-rate
+cut, it is a feature effect; if only at one, it is a threshold effect.
+artifacts -> C:\Users\VuDoa\Research\futures\nq\vei_exploration\artifacts\runs\D_regime_dynamics

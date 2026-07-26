@@ -1,0 +1,47 @@
+{
+  "eligible_sessions": 3628,
+  "covered_sessions": 3628,
+  "first_covered": "2011-12-08",
+  "last_covered": "2026-07-14",
+  "rth_second_rows": 68265250,
+  "specs": [
+    [
+      "1s_close_confirmed_L0",
+      1,
+      0
+    ],
+    [
+      "1s_first_touch_L0",
+      0,
+      0
+    ],
+    [
+      "1s_first_touch_L1",
+      0,
+      1
+    ],
+    [
+      "1s_first_touch_L2",
+      0,
+      2
+    ]
+  ],
+  "refresh_every_bar": true,
+  "decomposition": {
+    "resolution_B_minus_A": {
+      "d_daily_sharpe": 0.0008960735842181711,
+      "d_gross_pt": 0.002969826562128741,
+      "d_trades": 0
+    },
+    "wick_C_minus_B": {
+      "d_daily_sharpe": -0.04078173369248195,
+      "d_gross_pt": -0.44731225485088055,
+      "d_stop_exits": 504,
+      "d_trades": 454
+    },
+    "latency_C1_minus_C": {
+      "d_daily_sharpe": -0.11511970737731392,
+      "d_gross_pt": -0.3296006393415216
+    }
+  }
+}

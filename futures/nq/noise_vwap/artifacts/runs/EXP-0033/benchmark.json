@@ -1,0 +1,30 @@
+{
+  "seed": 7200000,
+  "shuffle_max_abs_errors": {
+    "open": 0.0,
+    "high": 0.0,
+    "low": 0.0,
+    "close": 0.0,
+    "volume": 0.0,
+    "vwap": 0.0,
+    "bar_i": 0.0
+  },
+  "selected_cell_parity_errors": {
+    "cc": 0.0,
+    "scaled": 1.5543122344752192e-15,
+    "fixed": 2.1094237467877974e-15
+  },
+  "reference_shuffle_seconds": 5.270176399993943,
+  "fast_shuffle_seconds": 0.3330783999990672,
+  "shuffle_speedup": 15.822630347716041,
+  "reference_three_variant_engine_seconds": 17.399813799973344,
+  "fast_sixty_variant_engine_seconds": 5.3065963000117335,
+  "fast_selected": {
+    "selected": "N30_k1.5",
+    "scaled": 0.48310380881057785,
+    "fixed": 0.4323168368039499,
+    "cc": 0.4647222411801897,
+    "uplift_vs_cc": 0.018381567630388174,
+    "uplift_scaling": 0.05078697200662796
+  }
+}

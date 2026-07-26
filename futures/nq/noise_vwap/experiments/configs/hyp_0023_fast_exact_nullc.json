@@ -1,0 +1,14 @@
+{
+  "hypothesis_id": "HYP-0023",
+  "title": "Fast selection-corrected Null C with exact one-second execution validation",
+  "lookback": 90,
+  "atr_lookbacks": [5, 10, 14, 20, 30],
+  "atr_multipliers": [0.25, 0.5, 0.75, 1.0, 1.5, 2.0],
+  "fixed_control": "cell-specific k times the draw-specific unconditional median causal ATR_N",
+  "null_seeds": {"start": 7200000, "draws": 199},
+  "one_second_validation_seeds": [7200000, 7200001, 7200002],
+  "proxy_tolerance": {"per_draw_sharpe": 0.03, "mean_absolute_sharpe": 0.02},
+  "selection_statistic": "select the N-k cell with maximum scaled Sharpe, exactly as Phase 1 did, then compare that selected cell with its cell-specific matched fixed-buffer Sharpe",
+  "costs": {"slippage_ticks_per_side": 0.5, "fees_usd_per_side": 2.25},
+  "data_scope": "NQ clean one-minute and Databento one-second RTH through 2026-07-14; consumed history"
+}

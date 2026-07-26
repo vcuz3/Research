@@ -1,0 +1,53 @@
+
+================ VEI Part-1 exploration: ES ================
+sessions=3718 decisions/clock=[29, 59, 89, 119, 149, 179, 209, 239, 269, 299, 329, 359, 389]
+
+--- A. VEI(10/50) coverage per decision slot (rule 9a) ---
+     n_dates  vei_defined  cov_frac
+mfo                                
+29      3718            0     0.000
+59      3718         3715     0.999
+89      3718         3718     1.000
+119     3718         3718     1.000
+149     3718         3718     1.000
+179     3718         3718     1.000
+209     3717         3717     1.000
+239     3718         3718     1.000
+269     3718         3718     1.000
+299     3718         3718     1.000
+329     3718         3718     1.000
+359     3718         3718     1.000
+389     3718         3718     1.000
+VEI dist: mean=0.986 med=0.958 p10=0.785 p90=1.214 frac>1=0.390
+
+--- B. VEI(10/50) vs forward H-min return (all decision bars) ---
+H=  5m  n= 40894  IC(signed)=+0.0077 [-0.0003,+0.0159]   IC(|ret|)=+0.0241 [+0.0159,+0.0320]
+H= 15m  n= 40894  IC(signed)=+0.0026 [-0.0048,+0.0106]   IC(|ret|)=+0.0141 [+0.0061,+0.0223]
+H= 30m  n= 40893  IC(signed)=+0.0094 [+0.0019,+0.0172]   IC(|ret|)=+0.0211 [+0.0132,+0.0288]
+   quintile bins (H=30m):
+     vei_lo  vei_hi     n  mean_y  median_y  mean_signed
+bin                                                     
+0   0.45000 0.83333  8263 0.00123   0.00081     -0.00002
+1   0.83333 0.90909  8160 0.00129   0.00084     -0.00001
+2   0.90951 0.98160  8125 0.00134   0.00085      0.00004
+3   0.98165 1.07422  8166 0.00135   0.00087      0.00003
+4   1.07430 2.95396  8179 0.00141   0.00087      0.00003
+H= 60m  n= 37175  IC(signed)=+0.0056 [-0.0026,+0.0138]   IC(|ret|)=+0.0213 [+0.0124,+0.0294]
+
+--- C. VEI at BREAKOUT signal vs continuation-to-close (ATR-R, side-signed) ---
+scan of (short,long) variants: continuation-to-close IC and quintile spread
+VEI( 5/ 20)  n=12210  IC(cont_R)=+0.0035 [-0.0110,+0.0180]  Q5-Q1 meanR=+0.0007
+VEI(10/ 50)  n=11362  IC(cont_R)=-0.0106 [-0.0256,+0.0048]  Q5-Q1 meanR=+0.0103  <-- baseline
+   quintile bins (baseline 10/50, cont_R to close):
+     vei_lo  vei_hi     n  mean_y  median_y
+bin                                        
+0   0.49118 0.84350  2273 0.01234   0.02401
+1   0.84356 0.92486  2272 0.01093   0.00740
+2   0.92491 1.00213  2272 0.01158  -0.00000
+3   1.00244 1.10759  2272 0.01826  -0.00000
+4   1.10769 2.95396  2273 0.02260  -0.00000
+VEI(10/100)  n= 9581  IC(cont_R)=-0.0189 [-0.0386,+0.0013]  Q5-Q1 meanR=-0.0030
+VEI(14/ 50)  n=11362  IC(cont_R)=-0.0106 [-0.0259,+0.0048]  Q5-Q1 meanR=+0.0121
+VEI(20/100)  n= 9581  IC(cont_R)=-0.0141 [-0.0357,+0.0057]  Q5-Q1 meanR=+0.0088
+
+artifacts -> C:\Users\VuDoa\Research\futures\nq\noise_vwap\artifacts\runs\EXP-0035

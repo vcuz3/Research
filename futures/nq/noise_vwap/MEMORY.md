@@ -70,7 +70,54 @@ the linked reports, code, and run artifacts.
   0.883 (1s touch), within the predeclared -0.15 tolerance. The touch engine was
   not an improvement: turnover increased and vol-targeted Sharpe/CAGR/maxDD
   changed from 1.184/22.5%/-18.1% to 1.090/19.5%/-24.4%. Evidence:
-  `artifacts/runs/EXP-0009/`.
+  `artifacts/runs/EXP-0009/`. **Decomposed by `EXP-0031`** (corrected after a
+  reviewer question — the first-pass "latency" framing was wrong): the 1m
+  continuous stop is CLOSE-CONFIRMED (`engine.py:158`, `close<stop` then next-1m
+  open) whereas the EXP-0009 1s engine is FIRST-TOUCH (`sec_low<=stop`, a resting
+  stop). These are different exit RULES, not one rule at two resolutions. Adding a
+  default-off `trigger=1` (close-confirmed on 1s) splits the gap three ways at 0.5
+  tick/side: (1) RESOLUTION is neutral — 1s close-confirmed reproduces the 1m
+  result EXACTLY (4209 trades, daily Sharpe 0.9235 vs 0.9226), so finer data alone
+  changes nothing and the fill is the next-minute open; (2) the WICK/trigger switch
+  to first-touch is the real cost — +504 stop exits / +454 trades, −0.447 gross
+  pt/trade, −0.041 daily Sharpe (~478 gross pts, ~1 NQ pt per wick-out), because
+  close-confirmation filters the 1m wicks a resting stop takes; (3) LATENCY is a
+  further separate −0.115 daily Sharpe / −0.33 gross pt per second on the touch
+  model only (touch zero-day Sharpe L0/1/2/3/5s = 0.883/0.768/0.713/0.676/0.634).
+  Conclusion: executing on finer data does NOT degrade the strategy; close-
+  confirmation is a beneficial WICK FILTER and the deployed stop is realistic if
+  you wait for the bar close. First-touch (a live resting stop) is a different,
+  mildly worse exit policy dominated by premature wick-outs, not latency, though it
+  stays net-positive (+$48-67/day, t>2.4). Retain the 1m close-confirmed continuous
+  stop. New default-off `latency`+`trigger` args on `core/first_touch.py` (parity +
+  wick + latency proved in `tests/test_first_touch.py`). Evidence:
+  `artifacts/runs/EXP-0031/`; reproduce with
+  `python -u -m futures.nq.noise_vwap.scripts.first_touch_decompose` and
+  `... .scripts.hyp_0002_latency`.
+
+- `EXP-0034` (HYP-0024) — decision-clock robustness audit of the continuous-stop
+  baseline (user request). Shifted the 30-min decision-clock phase by +/-5/10 min and
+  tried a 15-min cadence, across three exit engines on the common 3628-session 1s
+  sample: E1 1m continuous (deployed close-confirmed), E2 1s first-touch (k=0), E3
+  ATR buffer band-1.5*ATR_20 (EXP-0032 cell). Bands exist at every minute, so a shift
+  only moves entry timing. VERDICT: **directionally robust but magnitude phase-
+  sensitive; the deployed :59/:29 clock is a LOCAL OPTIMUM.** Every phase shift and
+  the 15m cadence stays net-positive and significant (daily t 2.5-3.5, all vol-tgt
+  Sharpe > 0.81) so the edge's sign/significance does not depend on the exact clock —
+  but base30 is the BEST of the six grids on every engine/metric (1m daily Sharpe base
+  0.923 vs shifts 0.669-0.814, max dev 0.25; touch 0.883 vs 0.552-0.791; atr 1.052 vs
+  0.765-0.980), the +5min shift is uniformly the worst, and gross AND net pt/trade FALL
+  on every shift (not variance — per-trade entry quality is phase-dependent). The
+  identical phase-quality profile transfers across all three independent exit engines
+  (shared entries only) = a real ENTRY-timing/intraday-seasonality effect around the
+  round hour (:59 close -> :00 liquid open), corroborating FORENSIC's :00/:30
+  off-by-one clock costing ~0.2-0.4 Sharpe. The 15m cadence is DILUTIVE (+40-50%
+  trades, gross/trade collapses, lower zero-day Sharpe; vol-tgt holds). Rule-9a band
+  coverage 0.996-1.000 all clocks. Retain the deployed :59/:29 30-min clock; record
+  as a caveat that part of the headline is clock-phase alignment. No Null C (no clock
+  improved on base). No core engine change. Evidence: `artifacts/runs/EXP-0034/`
+  (`review.md`, `clock_grid.csv`, `report.json`); reproduce
+  `python -u -m futures.nq.noise_vwap.scripts.hyp_0024_decision_clock`.
 
 ## Provisional hypotheses
 
@@ -78,6 +125,129 @@ the linked reports, code, and run artifacts.
 
 ## Invalidated or superseded findings
 
+- `HYP-0025` is rejected (EXP-0035 SMA + EXP-0036 Wilder revisit, NO-GO both markets):
+  the user's Volatility Expansion Index (VEI = intraday ATR(short)/ATR(long), baseline
+  10/50, causal within-session `core/vei.py`) carries no robust, cross-market,
+  monetizable info.
+  **EXP-0036 (Wilder-RMA revisit, user request):** `vei_exploration` Study A showed the
+  SMA ATR used in EXP-0035 is the jumpiest, least-informative VEI variant; the Wilder
+  RMA is far more persistent. Re-running the exact gate sweep with `method="wilder"`
+  (`core/vei.py` now supports sma|wilder|ema, default sma reproduces EXP-0035) SHARPENED
+  the result but did not change the verdict. NQ real gate now PASSES: family-best
+  VEI(5/20) `low`≤1.003 (keep low-VEI/coiled breakouts, drop highest-VEI ~15% late
+  chases) dSharpe +0.105, net R flat +0.33, retain 0.855, AND beats the matched-count
+  random-drop null decisively (frac 0.000) = real per-trade quality selection (not
+  rarity; matches EXP-0035 Part-C low-VEI-continues-better). BUT fails the decisive
+  drift-preserving Null C on the primary metric (dSharpe real +0.105 vs null mean −0.001,
+  center ~0, z+0.90, frac(null≥real)=0.175; dNetR frac 0.400) — the low-VEI quality
+  selection is largely reproduced once returns are shuffled = vol-geometry the null
+  preserves (EXP-0032 pattern), not a unique timing edge — and does NOT transfer to ES
+  (best cell cuts 62% of trades, net R −12.0 = turnover lever). Estimator is load-bearing
+  (SMA clear-fail → Wilder gate-pass-but-null-fail), verdict unchanged: real weak
+  per-trade tilt, not validated alpha. Evidence: `artifacts/runs/EXP-0036/`; reproduce
+  `...hyp_0025_vei_filter {real|null} {NQ|ES} 40 wilder`.
+  --- Original EXP-0035 (SMA) below still stands ---
+  Two parts. PART 1 descriptive (`scripts/vei_explore.py`, session-block-bootstrap
+  Spearman IC): VEI does NOT predict direction (signed IC ≈0 both markets); it weakly
+  predicts forward |move| (IC +0.017…+0.025, vol clustering, ~14% Q1→Q5 spread, not
+  tradable); and at the BREAKOUT signal it has a small but cross-VARIANT-consistent
+  NEGATIVE continuation-to-close IC on NQ (all 5 variants negative; baseline −0.030,
+  CI[−0.046,−0.015]) = breakouts out of a LOW-VEI compression/coil follow through
+  BETTER than high-VEI late chases (INVERTS the naive "expansion=impulse" thesis,
+  mechanism-plausible) — BUT this does NOT transfer: ES continuation IC is
+  weak/insignificant (−0.011, CI incl 0) with a POSITIVE quintile Q5−Q1 (+0.010,
+  opposite sign). PART 2 entry gate (`scripts/hyp_0025_vei_filter.py`, rule-18 engine
+  rerun via `entry_gate`, 5 variants × 2 dirs × 7 thresholds = 70 cells/mkt): NQ EVERY
+  cell negative dSharpe (family-best VEI5/20 high retain0.85 dSharpe −0.013 = just the
+  least-exposure-cut cell; matched random-drop null real −0.013 vs random −0.058,
+  frac0.245 = mild real per-trade tilt but noise-level and net-negative); ES
+  family-best VEI5/20 high dSharpe +0.066 but netR FALLS −2.4 and frac(rand≥real)0.095
+  = turnover/capacity lever indistinguishable from random dropping, and OPPOSITE
+  direction to NQ. Real gate REJECT on both → no Null C (standing rule). The classic
+  project signature (small real per-trade effect, no risk-adjusted monetization) and
+  fully consistent with volatility-INDEPENDENCE + the rejected selectivity screens
+  (RVOL EXP-0016, gap EXP-0024, Hurst EXP-0026/0027, ATR-buffer EXP-0032). Retain the
+  unconditioned continuous-stop baseline; `core/vei.py` kept as tested causal feature
+  machinery, gate overlays default-off (no core engine change). Rule-9a: only the
+  09:59 slot drops (intraday long-ATR not yet populated); ~100% coverage elsewhere.
+  Evidence: `artifacts/runs/EXP-0035/` (`review.md`, `explore_{NQ,ES}.txt`,
+  `gate_{NQ,ES}.txt`, `sweep_{NQ,ES}.csv`, `{coverage,forward_ic,continuation_ic}_*`,
+  `random_null_*`, `verdict_*`); reproduce
+  `python -u -m futures.nq.noise_vwap.scripts.vei_explore {NQ|ES}` and
+  `...hyp_0025_vei_filter real {NQ|ES}`.
+- `HYP-0022` is rejected (EXP-0032, NO-GO): a causal intraday-ATR stop buffer as a
+  systematic replacement for the arbitrary close-confirmation wick filter. Exit on
+  the first 1s touch of `stop = max(upper,vwap) − k·ATR_N` (float, no ratchet;
+  `ATR_N` = causal rolling 1-min True-Range mean, `N∈{5..30}`, available from mfo30;
+  entries unchanged; `k=0` = EXP-0031 first-touch). Motivated by EXP-0031: close-
+  confirmation is an arbitrary, sampling-grid-pinned wick tolerance, so replace it
+  with an explicit volatility-scaled buffer. PHASE 1 beat it in-sample — best
+  `N20_k1.5` daily Sharpe 1.052 vs 0.923 (+0.130), vol-tgt 1.331 vs 1.184, `k=1.5`
+  best for every `N`; a matched-width fixed 6.375-pt buffer reached only 0.968, an
+  apparent +0.085 vol-scaling uplift; calibration showed close-confirmation tolerates
+  wicks to ~0.8–1.0 ATR (p90) but the monetized `k≈1.5` is wider (part trailing
+  looseness). The uplift HELD/strengthened in recent eras (≥2024 +0.191, ≥2025
+  +0.155, last-252d +0.286; only CY2025 soft −0.061) and TRANSFERRED to ES (+0.105
+  vs-cc, +0.032 scaling). PHASE 2 Null C KILLED it, and EXP-0033 supersedes the
+  original 30-draw fixed-cell statistics with a full 199-draw selection-corrected
+  test: every null draw repeats the complete N-k family and Phase-1 maximum-Sharpe
+  selection. BOTH real uplifts sit almost exactly at their null centers:
+  `uplift_vs_cc` real +0.132 vs null +0.139 (z -0.08, p=0.510); decisive
+  `uplift_scaling` real +0.085 vs null +0.088 (z -0.04, p=0.525). Exact one-second
+  minute-block null replay validates the fast one-minute proxy (3 frozen draws,
+  max uplift error 0.0046 Sharpe, mean 0.0024). The return shuffle preserves the
+  opening anchor, complete bar/link/volume atom set, session NET move, and
+  diffusivity — NOT session high-low range (prior wording corrected) — while
+  destroying order. The vol-adaptive stop benefit is reproduced after order is
+  destroyed. Same signature as
+  EXP-0019 (vol-conditional cadence) and the EXP-0010/0012 looser-stop rejections:
+  whipsaw/vol-geometry is a property Null C preserves. Better-motivated than the wick
+  mechanic and beats it in-sample/recently/on ES, but the gain is machinery, not real
+  intraday path structure. Retain the close-confirmed continuous stop; thread closed
+  on consumed history (revisit only with future/shadow data). New isolated engine
+  `core/atr_buffer.py` (+ 1m runner reusing the kernel on 1m bars; `first_touch.py`
+  untouched); accelerated audited null machinery in `core/nulls_fast.py` is
+  bit-exact and its 4-worker 199-draw family run completed in 124.4s. Evidence:
+  `artifacts/runs/EXP-0032/` for Phase 1 and `artifacts/runs/EXP-0033/` for the
+  corrected null/execution validation; reproduce
+  `python -u -m futures.nq.noise_vwap.scripts.hyp_0023_fast_exact_nullc validate`
+  and `...hyp_0023_fast_exact_nullc null 199 --workers 4`.
+  **EXP-0037 block-null follow-up (user request):** the concern that single-minute
+  shuffling destroys the volatility clusters an ATR exit needs is now directly
+  tested and does not change the verdict. A corrected block Null C pins only the
+  opening atom and permutes intact 5m/10m/15m blocks, preserving most local
+  volatility dependence (absolute-body lag1 real 0.464 vs null 0.437/0.450/0.452;
+  lag5 under 10m/15m blocks 0.408/0.421 vs 0.454) while reducing the time-of-day
+  volatility-profile correlation to 0.286/0.303/0.331. In 199 full-family draws
+  per block, real scaling uplift +0.085 sits at every null center: 5m +0.0888
+  (z-0.05,p.515), 10m +0.0917 (z-0.09,p.480), 15m +0.0795 (z+0.08,p.395).
+  Uplift versus close-confirmed fails even more strongly (all null means above
+  real). Thus EXP-0033 was not rejected merely because its atom shuffle destroyed
+  local vol clustering; keep the ATR buffer NO-GO. Evidence: `artifacts/runs/EXP-0037/`;
+  reproduce `python -m futures.nq.noise_vwap.scripts.hyp_0026_block_nullc validate`
+  and `...hyp_0026_block_nullc null 199 --workers 4`.
+- `HYP-0021` is rejected (EXP-0030): the paper-inspired causal multi-horizon
+  percentile-rank momentum + hysteresis overlay is a strong NQ NO-GO; no Null C
+  spent because the real family failed by a wide margin.  At every minute, causal
+  ATR-normalized returns over {5,15,30,60} minutes were ranked against the
+  strictly prior 252-session, same-minute, same-sign history; the four ranks were
+  averaged per side.  Normal noise/VWAP entries were gated at
+  `q_enter in {0.6,0.7,0.8}` and the ordinary continuous band/VWAP stop was armed
+  only after active-side rank fell below `q_exit in {0.2,0.4,0.6}`; flips/EOD
+  remained active.  EVERY cell was worse: baseline 4209 trades / 91.20R / Sharpe
+  1.288 / gross 3.509 pt/trade / maxDD 4.70R; family-best `qe0.6/qx0.2` retained
+  only 37% (1556 trades), raised gross/trade to 4.247 but collapsed netR to 39.42,
+  Sharpe to 0.694 (delta -0.594), and worsened maxDD to 7.18R.  Hysteresis worked
+  mechanically (mean hold 67.7->106.9 min; stop exits 3414->949) and modestly
+  improved the same-entry rank-only arm, but could not offset lost exposure.
+  Stronger ranks were non-monotone (`qe0.8` gross below baseline); the inverted
+  weak-rank control also lost (Sharpe 1.138 / 63.11R), so this is neither clean
+  strength alpha nor a reversed edge.  It repeats the Hurst/cross-confirmation
+  pattern: modest per-trade quality/capacity information does not monetize at the
+  portfolio level.  Feature coverage was 96.45%-100% by slot; default-off engine
+  parity passed.  Retain the unconditioned continuous-stop baseline.  Evidence:
+  `artifacts/runs/EXP-0030/`; reproduce with
+  `python -u -m futures.nq.noise_vwap.scripts.hyp_0021_percentile_hysteresis NQ`.
 - `HYP-0020` is rejected (EXP-0029): a LAPLACE recency-weighted noise band is a
   cross-market NO-GO; no Null C spent. User idea: the flat lb90 mean band beats
   shorter lookbacks (EXP-0025) but under-weights recent sessions, so keep a long

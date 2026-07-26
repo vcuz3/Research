@@ -1,0 +1,52 @@
+
+================ EXP-0004 momentum-in-VEI — NQ ================
+VEI={'short': 10, 'long': 50, 'atr_method': 'wilder', 'smooth': 0}  clock=30m past_win=30 horizon=30 cost=0.350pt  sessions=3710
+
+--- dose-response (preregistered T=1.10) ---
+        momo_all n=43903 grossPt=  +2377.8 netPt= -12988.3 net/t=-0.2958 netR= -161.19 Sh=-1.173 t=-4.50 hit=0.480 maxDD=163.95 23+Sh=-0.365
+  momo_low<=1.10 n=37405 grossPt=  -1710.2 netPt= -14802.0 net/t=-0.3957 netR= -168.94 Sh=-1.458 t=-5.59 hit=0.480 maxDD=174.33 23+Sh=-0.950
+  momo_high>1.10 n= 2816 grossPt=  +3917.5 netPt=  +2931.9 net/t=+1.0412 netR=   +6.47 Sh=+0.134 t=+0.52 hit=0.470 maxDD= 10.70 23+Sh=+1.206
+
+--- HYP-0003 reproduction + threshold control ---
+  legacy share > 1.1 = 0.1048  ->  matched-rate cut on repaired VEI = 1.1148
+LEGACY_high>1.10 n= 2636 grossPt=  +2527.8 netPt=  +1605.2 net/t=+0.6089 netR=   +0.68 Sh=+0.015 t=+0.06 hit=0.470 maxDD= 12.35 23+Sh=+0.875
+  momo_high>1.10 n= 2816 grossPt=  +3917.5 netPt=  +2931.9 net/t=+1.0412 netR=   +6.47 Sh=+0.134 t=+0.52 hit=0.470 maxDD= 10.70 23+Sh=+1.206
+repaired_matched>1.115 n= 2408 grossPt=  +4363.8 netPt=  +3521.0 net/t=+1.4622 netR=  +10.62 Sh=+0.232 t=+0.89 hit=0.471 maxDD=  8.81 23+Sh=+1.318
+  LEGACY row must match EXP-0004's published high>1.10 cell (rule 23).
+
+--- T sensitivity sweep ---
+mode      T     n      netR  sharpe   day_t    hit  net_pt_per_trade
+high 0.8500 23956 -117.0018 -1.1458 -4.3964 0.4715           -0.3085
+high 0.9000 17447  -61.6264 -0.6822 -2.6175 0.4740           -0.0386
+high 0.9500 11719  -41.7272 -0.5408 -2.0751 0.4682           -0.0413
+high 1.0000  7545  -35.2468 -0.5272 -2.0227 0.4648           -0.2600
+high 1.0500  4648   -5.0287 -0.0896 -0.3438 0.4744            0.5032
+high 1.1000  2816    6.4653  0.1343  0.5154 0.4702            1.0412
+high 1.1500  1693   12.8311  0.3043  1.1675 0.4708            1.8361
+high 1.2000  1025    6.9604  0.2076  0.7967 0.4595            2.3022
+ low 0.8500 16265  -45.4767 -0.6167 -2.3661 0.4899           -0.2755
+ low 0.9000 22774 -100.8521 -1.1381 -4.3668 0.4827           -0.4916
+ low 0.9500 28502 -120.7513 -1.2054 -4.6250 0.4834           -0.3995
+ low 1.0000 32676 -127.2317 -1.1917 -4.5724 0.4822           -0.3032
+ low 1.0500 35573 -157.4499 -1.4027 -5.3820 0.4795           -0.3994
+ low 1.1000 37405 -168.9438 -1.4579 -5.5941 0.4796           -0.3957
+ low 1.1500 38528 -175.3096 -1.4879 -5.7088 0.4793           -0.3888
+ low 1.2000 39196 -169.4389 -1.4146 -5.4278 0.4795           -0.3630
+
+--- horizon check (high>1.10) ---
+             H15 n= 2816 grossPt=  +2116.2 netPt=  +1130.7 net/t=+0.4015 netR=   -3.22 Sh=-0.088 t=-0.34 hit=0.458 maxDD= 14.73 23+Sh=+1.194
+             H30 n= 2816 grossPt=  +3917.5 netPt=  +2931.9 net/t=+1.0412 netR=   +6.47 Sh=+0.134 t=+0.52 hit=0.470 maxDD= 10.70 23+Sh=+1.206
+             H60 n= 2378 grossPt=  +5820.8 netPt=  +4988.5 net/t=+2.0978 netR=  +29.64 Sh=+0.549 t=+2.11 hit=0.488 maxDD=  6.13 23+Sh=+1.030
+
+--- H=60 estimand check (erratum, EXP-0005) ---
+   H60_overlap2u n= 2816 grossPt=  +7494.8 netPt=  +6509.1 net/t=+2.3115 netR=  +37.06 Sh=+0.565 t=+2.17 hit=0.486 maxDD=  6.79 23+Sh=+1.058
+       H60_1unit n= 2378 grossPt=  +5820.8 netPt=  +4988.5 net/t=+2.0978 netR=  +29.64 Sh=+0.549 t=+2.11 hit=0.488 maxDD=  6.13 23+Sh=+1.030
+     H60_clock60 n= 1743 grossPt=  +3678.2 netPt=  +3068.2 net/t=+1.7603 netR=  +20.20 Sh=+0.461 t=+1.77 hit=0.480 maxDD=  6.03 23+Sh=+1.021
+  H60_overlap2u = as originally published (up to 2 concurrent positions);
+  H60_1unit     = same clock, one position at a time (declared estimand);
+  H60_clock60   = 60-min decision clock, non-overlapping by construction.
+
+KILL-TEST 1 (real gate: high netR>0 & Sh>0 & day_t>=2.0 & high>low): REJECT
+Real gate failed -> nulls skipped (standing rule).
+
+artifacts -> C:\Users\VuDoa\Research\futures\nq\vei_exploration\artifacts\runs\EXP-0004

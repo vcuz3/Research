@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "experiment_id": "EXP-0004",
-  "generated_utc": "2026-07-22T10:15:45.422595+00:00",
+  "generated_utc": "2026-07-22T10:31:17.465484+00:00",
   "command": "python -u -m futures.nq.hurst_explore.scripts.a2_timescale",
   "environment": {
     "python": "3.14.4",
@@ -55,8 +55,8 @@
   "outputs": [
     {
       "path": "a2_summary.txt",
-      "size": 4246,
-      "sha256": "2d9e9608ce50686544e344ac89fa1b9113e73d79a1bd6fdb66e70ec2785af655"
+      "size": 4247,
+      "sha256": "89ae71d44dfc5212690a70667f552ae75ce15d0f4d5c84592e8a4a3ef3abc270"
     },
     {
       "path": "band_uncertainty.csv",
@@ -75,8 +75,8 @@
     },
     {
       "path": "meta.json",
-      "size": 1070,
-      "sha256": "e99cc3edb8f9b212087e251faf781cfff967172f7a0adf2d74b7a22aa0886109"
+      "size": 1071,
+      "sha256": "eb664e824ae40dde53d17642eacea71e97bd42307b813869cdea367d1494731b"
     },
     {
       "path": "review.md",

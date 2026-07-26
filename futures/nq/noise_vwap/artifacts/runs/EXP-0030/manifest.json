@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0030",
+  "hypothesis_id": "HYP-0021",
+  "status": "completed",
+  "declared_utc": "2026-07-22T10:26:41.766899+00:00",
+  "config_path": "experiments/configs/hyp_0021_percentile_hysteresis.json",
+  "data_scope": "NQ clean Databento RTH 2011-2026, common post-252-session causal-rank sample; consumed discovery history",
+  "code_ref": "scripts/hyp_0021_percentile_hysteresis.py; core/engine2.py default-off stop_gate; tests/test_percentile_hysteresis.py",
+  "run_command": "python -u -m futures.nq.noise_vwap.scripts.hyp_0021_percentile_hysteresis NQ",
+  "primary_metric": "Family-best zero-trade-day daily net-ATR-R Sharpe uplift with net R co-primary",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-07-22T10:38:14.242124+00:00",
+  "result_summary": "REJECT: every percentile-rank/hysteresis arm failed. Baseline 4209 trades/91.20R/Sh1.288/gross3.509pt/maxDD4.70R; best qe0.6 qx0.2 retained 37% (1556), gross/t rose to 4.247 but netR collapsed to 39.42, Sharpe 0.694 (d-0.594), maxDD worsened 7.18R. Hysteresis lengthened holds and reduced stop exits but did not monetize; weak-rank inversion also lost. Real gate failed, so no Null C.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

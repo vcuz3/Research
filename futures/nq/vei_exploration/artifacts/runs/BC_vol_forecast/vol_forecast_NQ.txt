@@ -1,0 +1,29 @@
+
+======== Study B+C: VEI vol forecasting — NQ ========
+VEI variant: {'short': 10, 'long': 50, 'atr_method': 'wilder', 'smooth': 0}   n_decisions=44519
+
+--- B. Forecast forward realized abs-variation (rank IC + OLS dR^2) ---
+H= 30m  IC(level)=+0.8602  IC(VEI)=+0.2024 [+0.1944,+0.2103]  R2 level=0.6078 -> +VEI=0.6096 (dR2=+0.0017; VEI coef CI[+0.002,+0.002])
+H= 60m  IC(level)=+0.8546  IC(VEI)=+0.2195 [+0.2112,+0.2289]  R2 level=0.6005 -> +VEI=0.6019 (dR2=+0.0013; VEI coef CI[+0.002,+0.004])
+
+--- C. Expansion ratio (fwd abs-var / past abs-var) by VEI quintile ---
+
+ H=30m expansion ratio (median) by VEI quintile (>1 = vol rises, <1 = vol falls):
+   vei_lo  vei_hi     n  exp_ratio  fwd_absvar  fwd_range
+q                                                        
+0  0.4762  0.7900  8890     0.9583      0.0061     0.0023
+1  0.7900  0.8590  8848     0.9438      0.0071     0.0026
+2  0.8590  0.9271  8772     0.9516      0.0075     0.0027
+3  0.9272  1.0272  8409     0.9683      0.0078     0.0028
+4  1.0273  2.3048  5887     0.9600      0.0088     0.0031
+
+ H=60m expansion ratio (median) by VEI quintile (>1 = vol rises, <1 = vol falls):
+   vei_lo  vei_hi     n  exp_ratio  fwd_absvar  fwd_range
+q                                                        
+0  0.4762  0.7900  8815     0.9386      0.0120     0.0031
+1  0.7900  0.8590  8609     0.9309      0.0142     0.0036
+2  0.8590  0.9271  8144     0.9425      0.0151     0.0039
+3  0.9272  1.0272  7075     0.9528      0.0159     0.0040
+4  1.0273  2.3048  4452     0.9303      0.0176     0.0044
+
+artifacts -> C:\Users\VuDoa\Research\futures\nq\vei_exploration\artifacts\runs\BC_vol_forecast

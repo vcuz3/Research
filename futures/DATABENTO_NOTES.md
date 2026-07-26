@@ -63,3 +63,27 @@ Gold futures were downloaded on 2026-07-18 Sydney time:
 The GC file contains 5,186,870 one-minute bars from `2011-08-01 00:00:00 UTC` through `2026-07-16 23:59:00 UTC`, with 75 raw contract segments and 74 additive roll adjustments. The Databento cost estimate returned `$0.0000`.
 
 For `GLBX.MDP3` over this range, the dataset condition calendar has 4,666 available days, 28 degraded days, and 13 missing days.
+
+## ES and YM 1-second downloads completed
+
+ES and YM 1-second OHLCV futures were downloaded on 2026-07-25 Sydney time:
+
+- ES raw: `futures\data\databento\ES_ohlcv-1s_ESv0_20100606_20260724.parquet`
+- ES roll map: `futures\data\databento\ES_ohlcv-1s_ESv0_20100606_20260724_roll_map.csv`
+- YM raw: `futures\data\databento\YM_ohlcv-1s_YMv0_20100606_20260724.parquet`
+- YM roll map: `futures\data\databento\YM_ohlcv-1s_YMv0_20100606_20260724_roll_map.csv`
+
+Before download, no existing `ES_ohlcv-1s*` or `YM_ohlcv-1s*` file was present in
+`futures\data\databento`. The Databento estimate for `GLBX.MDP3`, schema
+`ohlcv-1s`, symbols `ES.v.0` and `YM.v.0`, from `2010-06-06` through exclusive
+`2026-07-24`, returned `$0.0000` for each symbol and `$0.0000` total. The
+download command used `--require-zero-cost`.
+
+Verified outputs:
+
+- ES: 148,538,728 rows, 1,532,409,672 bytes.
+- YM: 98,540,418 rows, 1,128,780,196 bytes.
+
+Databento emitted reduced-quality warnings for some degraded or missing dates
+inside the requested range. Treat those as data-quality findings to quantify
+before relying on affected periods.

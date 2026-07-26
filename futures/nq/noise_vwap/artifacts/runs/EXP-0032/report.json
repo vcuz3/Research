@@ -1,0 +1,48 @@
+{
+  "calibration": {
+    "N5": {
+      "tolerated_wick_atr_p50": 0.3242516385550759,
+      "tolerated_wick_atr_p90": 0.9338582572106542,
+      "tolerated_wick_atr_p95": 1.161945013643018,
+      "real_break_atr_p50": 0.3107490285698147,
+      "n_tolerated": 6834,
+      "n_breaks": 3414,
+      "atr_pts_median": 4.25
+    },
+    "N14": {
+      "tolerated_wick_atr_p50": 0.32979401526200136,
+      "tolerated_wick_atr_p90": 0.9926005881160069,
+      "tolerated_wick_atr_p95": 1.2828024784860543,
+      "real_break_atr_p50": 0.32268021513240464,
+      "n_tolerated": 6834,
+      "n_breaks": 3414,
+      "atr_pts_median": 4.267857142857143
+    },
+    "N30": {
+      "tolerated_wick_atr_p50": 0.3226693235763618,
+      "tolerated_wick_atr_p90": 0.9905317051047855,
+      "tolerated_wick_atr_p95": 1.3013506415606784,
+      "real_break_atr_p50": 0.31990447490114404,
+      "n_tolerated": 6834,
+      "n_breaks": 3414,
+      "atr_pts_median": 4.225
+    }
+  },
+  "best_cell": {
+    "name": "N20_k1.5",
+    "N": 20,
+    "k": 1.5,
+    "daily_sharpe": 1.0523025085850632
+  },
+  "anchors": {
+    "close_confirmed_sharpe": 0.9225778698027771,
+    "k0_first_touch_sharpe": 0.8826922096945133
+  },
+  "matched_width": {
+    "fixed_c_pts": 6.375,
+    "fixed_sharpe": 0.9675047425804193,
+    "atr_scaled_sharpe": 1.0523025085850632,
+    "scaling_uplift_vs_fixed": 0.08479776600464395
+  },
+  "covered_sessions": 3628
+}

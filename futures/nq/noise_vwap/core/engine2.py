@@ -201,10 +201,14 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
                 elif sok[i]:
                     pend, target = -1, i + entry_delay
 
-    def gate_ok(m):
+    def gate_ok(m, side):
         # Design-C bad-trade filter (rule 18): if a gate is supplied, a position may
-        # only be OPENED at signal bars the filter kept. None -> allow all (identity).
-        return entry_gate is None or (the_date, int(m)) in entry_gate
+        # only be OPENED at signal bars the filter kept.  Existing two-key gates
+        # remain valid; a three-key gate can additionally distinguish long/short.
+        # None -> allow all (identity).
+        return (entry_gate is None
+                or (the_date, int(m)) in entry_gate
+                or (the_date, int(m), int(side)) in entry_gate)
 
     for i in range(n):
         if i >= flat_i:
@@ -363,7 +367,8 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
                           or (the_date, int(m), int(pos)) in stop_gate)
             if (hit and check_here and stop_armed) or flip:
                 stop_reason = "istop" if (hit and istop_binds and not flip) else "stop"
-                if close_trade(i, "flip" if flip else stop_reason) and flip and gate_ok(m):
+                if (close_trade(i, "flip" if flip else stop_reason) and flip
+                        and gate_ok(m, want)):
                     px, pmfo = fill(i)
                     if px is not None:
                         open_pos(want, px, pmfo)
@@ -386,7 +391,8 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
 
         # ---- fresh entry ----
         if pos == 0 and want != 0:
-            can_enter = (is_decision if entry_mode == "clock" else True) and gate_ok(m)
+            can_enter = ((is_decision if entry_mode == "clock" else True)
+                         and gate_ok(m, want))
             if can_enter:
                 px, pmfo = fill(i)
                 if px is not None:

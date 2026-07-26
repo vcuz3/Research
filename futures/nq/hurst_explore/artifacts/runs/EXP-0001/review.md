@@ -35,4 +35,13 @@ The bias table IS the reference used to correct the real levels.
 
 ## Reviewer verdict
 
-Pending independent review.
+Independent review (Claude, 2026-07-22) of the user's correction run EXP-0003:
+ACCEPT. The complete-grid estimator gate (exact slots 0..389; 7 NQ / 4 ES
+sessions excluded), the executable inverse-calibration bias correction, and the
+matched-session Part C all correct real defects in EXP-0001. The calibration
+DISPROVED my original "collapses to ~0.50" overclaim: properly bias-corrected
+whole-session levels span NQ 0.473-0.499 / ES 0.466-0.485 (cluster mildly BELOW
+0.5), i.e. near-RW to mildly anti-persistent, not a universal 0.50. R/S calibrated
+0.568->0.499 (NQ), confirming the calibration removes its known bias. Part C on
+149 matched sessions (1m 0.471 vs 1s min+ 0.490) is honestly labeled a consistency
+diagnostic, not agreement. No further correctness objections.

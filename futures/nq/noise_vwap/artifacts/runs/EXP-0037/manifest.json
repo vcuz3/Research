@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0037",
+  "hypothesis_id": "HYP-0026",
+  "status": "completed",
+  "declared_utc": "2026-07-26T08:31:54.317985+00:00",
+  "config_path": "experiments/configs/hyp_0026_block_nullc.json",
+  "data_scope": "NQ clean one-minute Databento RTH through 2026-07-14; consumed history",
+  "code_ref": "core/nulls_fast.py; scripts/hyp_0026_block_nullc.py; tests/test_nulls.py",
+  "run_command": "python -m futures.nq.noise_vwap.scripts.hyp_0026_block_nullc validate ; python -m futures.nq.noise_vwap.scripts.hyp_0026_block_nullc null 199 --workers 4",
+  "primary_metric": "family-selected scaled-minus-fixed zero-day daily net Sharpe uplift by block size",
+  "builder": "Codex",
+  "outputs": [
+    "invariants.json",
+    "block_nullc_draws.csv",
+    "block_nullc_report.json",
+    "review.md",
+    "run_stdout.txt",
+    "run_stderr.txt"
+  ],
+  "closed_utc": "2026-07-26T08:47:21.662859+00:00",
+  "result_summary": "REJECT: volatility-cluster-preserving block Null C reproduces the ATR-buffer family-selected scaling uplift. Real +0.0850; 5m null +0.0888 z-0.05 p0.515; 10m +0.0917 z-0.09 p0.480; 15m +0.0795 z+0.08 p0.395. Local abs-return clustering is preserved and all 597 draws retain diffusivity 0.25. EXP-0033 NO-GO confirmed.",
+  "reviewer": "unassigned",
+  "review_status": "not-reviewed"
+}

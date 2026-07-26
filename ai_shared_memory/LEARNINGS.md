@@ -19,6 +19,81 @@ kill them.
 
 ## Learnings
 
+### 2026-07-26 — Compare smoothers at matched effective MEMORY (centre-of-mass), not matched nominal n; and `ewm(adjust=False, min_periods=n)` is NOT textbook Wilder ATR
+
+- Status: confirmed
+- Applies to: any study that concludes one estimator/smoother "beats" another (SMA vs
+  EMA vs Wilder RMA for ATR, and by extension any moving-average feature), and any
+  Wilder/RMA ATR built with pandas `ewm` — especially one that RESETS per session.
+- Learning, part 1 (the confound): `SMA(n)` has centre-of-mass `(n-1)/2`; an EMA with
+  `alpha` has com `(1-alpha)/alpha`, so Wilder (`alpha=1/n`) has com `n-1` — **twice**
+  the SMA of the same nominal `n`. Comparing `sma(10,50)` against `wilder(10,50)` therefore
+  changes estimator FORM and effective MEMORY together, and the memory is usually the
+  bigger lever. On NQ/ES intraday ATR ratios the confound fully reversed the conclusion:
+  a com-matched plain `SMA(19/99)` reached forward-vol IC +0.186 NQ / +0.188 ES vs
+  Wilder(10/50)'s +0.157 / +0.195 (a wash, one market each way), while the reverse control
+  `Wilder(5/25)` — com-matched DOWN to SMA(10/50) — collapsed to IC **+0.001 / +0.040**,
+  worse than the SMA it was supposed to beat. Changing memory alone (SMA 10/50 → 19/99)
+  roughly tripled the IC on both markets. Related trap: Wilder `alpha=1/n` **is** exactly
+  `ewm(span=2n-1)`, so a "Wilder vs EMA" row is not an estimator contrast at all — it is
+  the same recursion at two alphas.
+- Learning, part 2 (the initialisation): pandas `ewm(..., adjust=False)` seeds the
+  recursion at the FIRST observation; `min_periods=n` only MASKS the first n-1 outputs, it
+  does not seed with the first n-bar SMA the way textbook Wilder ATR does. Two separable
+  costs, both material: (a) `min_periods=n` on an `alpha=1/n` recursion admits bars whose
+  average has had well under one e-folding of data — on the NQ/ES VEI that was 17% of all
+  decisions, and masking them lifted IC +0.157→+0.242 (NQ) / +0.195→+0.249 (ES); (b) the
+  seed itself — a textbook SMA seed lifted IC to +0.202/+0.207. The shipped feature was
+  worse than BOTH repairs. This is normally a one-off warm-up you can ignore on a
+  continuous series, but **a feature that resets each session pays it every session**
+  (~3710x here), so it becomes a permanent bias rather than a burn-in.
+- Learning, part 3 (the calibration corollary): a ratio of a short to a long
+  session-reset ATR is NOT centred on 1. The long window stays anchored on the high-vol
+  open while the short window walks off it, so the ratio starts far below 1 and drifts up
+  monotonically all day (mean by 30-min slot: 0.745→1.165 NQ, 0.788→1.216 ES). A fixed
+  `ratio = 1` "calm/expansion" line is therefore a TIME-OF-DAY threshold, not a volatility
+  threshold, and any metric defined as crossings of that line (e.g. a "whipsaw rate")
+  partly measures the clock. Note the mis-initialisation explains only ~20% of the
+  sub-1 mean — the session-reset anchoring is the dominant cause, and an SMA version with
+  no recursion seed at all is also below 1.
+- Consequence: (1) before crediting an estimator swap, run the com-matched control in
+  BOTH directions (match the loser up, and the winner down) — one direction alone can be
+  explained away; (2) for any per-session `ewm` ATR, either seed with the textbook n-bar
+  SMA or set `min_periods` to the recursion's memory (~2n-1) rather than n, and report
+  how many decision points the choice adds or removes; (3) never read a session-reset
+  ratio against a fixed 1.0 line without first plotting its mean BY TIME OF DAY. Caveat
+  from the same workspace: de-seasonalising such a ratio can DESTROY its information (the
+  absolute level is what carries), so the fix is to re-label the threshold, not to
+  normalise the drift away.
+- Evidence: `futures/nq/vei_exploration/scripts/s1b_estimator_controls.py` →
+  `artifacts/runs/A_smoothing/estimator_controls_{NQ,ES}.txt`,
+  `futures/nq/vei_exploration/reports/FINDINGS.md` §A-corrected (+ the superseded §A).
+  The same `ewm(alpha=1/n, min_periods=n, adjust=False)` warm-up defect is present at
+  `futures/nq/noise_vwap/core/vei.py:58` (EXP-0036), so that revisit also ran the
+  mis-initialised feature. Reproduce via
+  `python -u -m futures.nq.vei_exploration.scripts.s1b_estimator_controls {NQ|ES}`.
+- **Downstream consequence, added after EXP-0006 (the reason this is worth a shared
+  entry):** repairing the warm-up was NOT cosmetic. Re-running the project's five prior
+  experiments through the repaired feature (single-variable change, legacy path retained
+  for a rule-23 reproduction that passed exactly) **shrank the project's headline finding
+  until it failed its own preregistered kill test** — a momentum-regime contrast went from
+  +0.110 [+0.025,+0.172] NQ / +0.103 [+0.021,+0.168] ES to +0.069 [−0.007,+0.134] /
+  +0.086 [+0.009,+0.147], i.e. 63%/83% of published with NQ's CI crossing zero. Two
+  further legacy conclusions inverted, both because the warm-up bias was itself TIME-OF-DAY
+  dependent (worst early in the session, where the long window is least populated): a
+  "de-seasonalising destroys information" corollary reversed (the causal same-slot
+  percentile is now equal-or-better than the raw level), and a monotone dose-response
+  slope flattened to noise. Note also that the defect **inflated the feature's apparent
+  persistence** — lag-1 autocorrelation FELL 0.549→0.441 on repair, because consecutive
+  bars shared one contaminating seed. General lesson: a per-reset warm-up bias is not a
+  rounding error; it is a slowly-decaying common component injected into every window,
+  and it can manufacture both autocorrelation and a time-of-day gradient that later
+  studies then interpret as signal. Repair it BEFORE building findings on the feature.
+- Origin: reviewer challenge to `futures/nq/vei_exploration` EXP-0001's "the ATR
+  estimator dominates smoothing" headline (2026-07-26); the objection was upheld, the
+  finding's attribution withdrawn, and the repair + full re-run registered as EXP-0006
+  (`artifacts/runs/EXP-0006/review.md`, HYP-0003).
+
 ### 2026-07-20 — A same-time-of-day noise band is fully summarized by its per-slot SYMMETRIC LEVEL/width: none of a √t reshape (cone), a distributional reshape (quantile), or an up/down redistribution (asymmetric) adds value; the morning is super-diffusive
 
 - Status: confirmed

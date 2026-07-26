@@ -1,0 +1,16 @@
+{
+  "preserved": {
+    "diffusivity_real": 0.25,
+    "diffusivity_null": 0.25,
+    "session_net_max_abs_error": 0.0
+  },
+  "destroyed_or_changed": {
+    "body_lag1_real": 0.007945561587970306,
+    "body_lag1_null": -0.0005392443388261861,
+    "abs_body_lag1_real": 0.464245694537901,
+    "abs_body_lag1_null": 0.35540115523463306,
+    "tod_abs_body_profile_corr": 0.2302792409290776,
+    "session_range_median_real": 91.75,
+    "session_range_median_null": 90.5
+  }
+}

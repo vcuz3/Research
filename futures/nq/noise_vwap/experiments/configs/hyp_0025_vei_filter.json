@@ -1,0 +1,30 @@
+{
+  "hypothesis": "HYP-0025",
+  "experiment": "EXP-0035",
+  "indicator": "Volatility Expansion Index (VEI) = intraday ATR(short)/ATR(long)",
+  "feature_module": "core/vei.py",
+  "baseline": {
+    "bands": "noise_bands lb90",
+    "session": "RTH",
+    "decision_clock_min": 30,
+    "vwap_gate": true,
+    "exit": "every_bar band/VWAP continuous stop",
+    "fills": "next_open",
+    "costs": "per-instrument round-trip (fee 2.25 USD/side + 0.25 tick)"
+  },
+  "vei_variants_short_long": [[5, 20], [10, 50], [10, 100], [14, 50], [20, 100]],
+  "vei_baseline_variant": [10, 50],
+  "threshold_quantiles": [0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80],
+  "directions": ["high", "low"],
+  "atr_definition": "True Range, causal within-session, strict min_periods, reset each session; method in {sma,wilder,ema}",
+  "atr_method": "sma (EXP-0035 default) | wilder (EXP-0036 revisit, cleaner regime signal per vei_exploration Study A)",
+  "primary_metric": "zero-trade-day daily net-ATR-R Sharpe uplift vs baseline at family-best filtering cell; net R co-primary",
+  "gate": "dSharpe >= +0.10 AND netR >= baseline -> else REJECT (no Null C, standing rule)",
+  "controls": ["matched-count random-signal-drop null (always)", "drift-preserving Null C (gated)", "ES cross-market", "both gate directions"],
+  "markets": ["NQ", "ES"],
+  "data_scope": "clean Databento RTH 1-min 2011-2026, common post-lb90 sample",
+  "run_commands": [
+    "python -u -m futures.nq.noise_vwap.scripts.vei_explore {NQ|ES}",
+    "python -u -m futures.nq.noise_vwap.scripts.hyp_0025_vei_filter real {NQ|ES}"
+  ]
+}

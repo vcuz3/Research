@@ -41,4 +41,24 @@ artifact-free.
 
 ## Reviewer verdict
 
-Pending independent review.
+Independent review (Claude, 2026-07-22) of the user's correction run EXP-0004:
+ACCEPT with refinements. The moving-block bootstrap, endpoint-sensitivity, and
+era-stability additions are correct and appropriately TEMPER the finding: coarse
+(30-180m) anti-persistence CIs exclude 0.5 at full sample (NQ 0.462 [0.432,0.490],
+ES 0.468 [0.440,0.495]) but STRADDLE 0.5 in 2023-2026 (NQ [0.443,0.502], ES
+[0.463,0.520]) and for the ES 45-180m endpoint — so it is real full-sample, mild,
+and NOT robust in the recent (deployment-relevant) era.
+
+Refinements (not blocking):
+1. Micro-band CI [0.501,0.506] excludes 0.5 upward, but forward-fill is a
+   systematic BIAS the session bootstrap cannot see (it captures variance only),
+   so that CI understates uncertainty. Verified: dropping tau=1-2s moves micro H
+   0.503->0.493 in fill 0.90-0.97 sessions (fill inflation, predicted direction);
+   in fill>=0.97 sessions it holds ~0.502. Read micro as ~0.50 / unresolved, not
+   ">0.5". Suggest computing the micro band from tau>=3-5s or fill>=0.97 only.
+2. block=5 bootstrap is well-specified for the CONTIGUOUS 1m full-history bands
+   (=1 week) but not for the stratified-random 1s sample (5 consecutive rows span
+   months); use block=1 (iid) for the 1s bands, or note it.
+3. ~7 bands x endpoints x eras tested vs 0.5 with no family adjustment; the
+   era/endpoint straddles already serve as the robustness check, but note the
+   family when reading "CI excludes 0.5" as significance.

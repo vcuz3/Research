@@ -1,6 +1,6 @@
 ==============================================================================
 A2  HURST TERM STRUCTURE ACROSS TIMESCALE  H(tau)
-1s sessions used (fill>=0.9, era>=2015): 228   1m sessions NQ=3703 ES=3706   elapsed=73s
+1s sessions used (fill>=0.9, era>=2015): 228   1m sessions NQ=3703 ES=3706   elapsed=103s
 ==============================================================================
 
 BAND HURST  raw H  |  RW-control H  |  corrected (real-control, vs 0.5)

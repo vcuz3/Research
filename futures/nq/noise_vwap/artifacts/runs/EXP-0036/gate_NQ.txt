@@ -1,0 +1,118 @@
+[VEI ATR method = wilder; artifacts -> EXP-0036]
+
+=== HYP-0025 VEI entry gate — NQ ===
+baseline: trades=4209 Sharpe=1.2879 netR=91.20 expR/trade=+0.0217 grossPt/trade=+3.5091
+
+--- VEI(5/20) direction=high (keep >= thr) ---
+ short  long  dir    thr    n  retain  gross_pt_per_trade  exp_netR_per_trade    sumR  sharpe  d_sharpe   d_sumR  recent_sharpe
+     5    20 high 0.8395 3473  0.8251              4.3200              0.0237 82.1931  1.2291   -0.0588  -9.0039         1.3096
+     5    20 high 0.8739 3166  0.7522              4.2735              0.0219 69.4936  1.0575   -0.2304 -21.7034         1.2543
+     5    20 high 0.9057 2864  0.6804              4.5340              0.0224 64.1127  1.0047   -0.2832 -27.0843         1.2018
+     5    20 high 0.9358 2540  0.6035              3.8554              0.0198 50.3000  0.8285   -0.4594 -40.8970         0.9288
+     5    20 high 0.9672 2194  0.5213              3.2903              0.0194 42.6279  0.7513   -0.5366 -48.5691         0.8482
+     5    20 high 1.0027 1797  0.4269              2.6362              0.0153 27.4148  0.5229   -0.7650 -63.7822         0.4548
+     5    20 high 1.0489 1311  0.3115              2.5189              0.0187 24.5554  0.5347   -0.7532 -66.6416         0.5083
+
+--- VEI(5/20) direction=low (keep <= thr) ---
+ short  long dir    thr    n  retain  gross_pt_per_trade  exp_netR_per_trade    sumR  sharpe  d_sharpe   d_sumR  recent_sharpe
+     5    20 low 0.8395 1685  0.4003              2.0909              0.0166 27.9856  0.6212   -0.6667 -63.2113        -0.1709
+     5    20 low 0.8739 2214  0.5260              3.6876              0.0237 52.5443  1.0268   -0.2611 -38.6527         0.3968
+     5    20 low 0.9057 2649  0.6294              3.3056              0.0226 59.7713  1.0634   -0.2245 -31.4257         0.3672
+     5    20 low 0.9358 3013  0.7158              4.1567              0.0250 75.2395  1.2337   -0.0542 -15.9575         0.9165
+     5    20 low 0.9672 3335  0.7923              3.9223              0.0251 83.5879  1.3149    0.0270  -7.6091         0.8627
+     5    20 low 1.0027 3600  0.8553              3.8736              0.0254 91.5226  1.3924    0.1045   0.3256         0.8842
+     5    20 low 1.0489 3853  0.9154              3.6604              0.0232 89.3838  1.3199    0.0320  -1.8132         0.9365
+
+--- VEI(10/50) direction=high (keep >= thr) ---
+ short  long  dir    thr    n  retain  gross_pt_per_trade  exp_netR_per_trade    sumR  sharpe  d_sharpe   d_sumR  recent_sharpe
+    10    50 high 0.7514 3082  0.7322              4.3974              0.0219 67.5014  1.0568   -0.2311 -23.6956         1.3732
+    10    50 high 0.7951 2818  0.6695              3.9061              0.0203 57.2240  0.9223   -0.3656 -33.9730         0.9655
+    10    50 high 0.8353 2530  0.6011              3.4655              0.0201 50.8832  0.8467   -0.4412 -40.3138         0.6775
+    10    50 high 0.8741 2253  0.5353              3.6914              0.0198 44.6485  0.7872   -0.5007 -46.5485         0.7359
+    10    50 high 0.9143 1955  0.4645              3.7818              0.0206 40.3174  0.7482   -0.5397 -50.8796         0.5768
+    10    50 high 0.9609 1608  0.3820              2.7416              0.0150 24.1069  0.4818   -0.8061 -67.0901         0.4490
+    10    50 high 1.0212 1172  0.2785              3.8151              0.0226 26.4503  0.5988   -0.6891 -64.7467         0.5376
+
+--- VEI(10/50) direction=low (keep <= thr) ---
+ short  long dir    thr    n  retain  gross_pt_per_trade  exp_netR_per_trade    sumR  sharpe  d_sharpe   d_sumR  recent_sharpe
+    10    50 low 0.7514 1331  0.3162              1.6514              0.0133 17.7225  0.4633   -0.8246 -73.4745        -0.2769
+    10    50 low 0.7951 1767  0.4198              4.0011              0.0161 28.3620  0.6135   -0.6744 -62.8350         0.6410
+    10    50 low 0.8353 2163  0.5139              3.5235              0.0159 34.3639  0.6915   -0.5964 -56.8331         0.8705
+    10    50 low 0.8741 2493  0.5923              3.3632              0.0186 46.2933  0.8624   -0.4255 -44.9037         0.6329
+    10    50 low 0.9143 2811  0.6679              3.4589              0.0195 54.7752  0.9536   -0.3343 -36.4218         0.9533
+    10    50 low 0.9609 3082  0.7322              3.4070              0.0198 60.9823  1.0271   -0.2608 -30.2147         0.8707
+    10    50 low 1.0212 3344  0.7945              3.1481              0.0192 64.1119  1.0173   -0.2706 -27.0851         0.7347
+
+--- VEI(10/100) direction=high (keep >= thr) ---
+ short  long  dir    thr    n  retain  gross_pt_per_trade  exp_netR_per_trade    sumR  sharpe  d_sharpe   d_sumR  recent_sharpe
+    10   100 high 0.5993 2587  0.6146              3.3928              0.0167 43.2951  0.7526   -0.5353 -47.9019         0.7255
+    10   100 high 0.6512 2392  0.5683              3.3117              0.0161 38.5351  0.6906   -0.5973 -52.6619         0.5781
+    10   100 high 0.7006 2156  0.5122              3.3842              0.0174 37.4271  0.6989   -0.5890 -53.7699         0.4857
+    10   100 high 0.7518 1909  0.4536              3.1194              0.0182 34.6971  0.6738   -0.6141 -56.4999         0.3763
+    10   100 high 0.8066 1624  0.3858              3.6957              0.0235 38.0868  0.7888   -0.4991 -53.1102         0.6290
+    10   100 high 0.8722 1308  0.3108              3.3911              0.0172 22.5092  0.5085   -0.7794 -68.6877         0.5490
+    10   100 high 0.9576  875  0.2079              4.5171              0.0234 20.5044  0.5528   -0.7351 -70.6926         0.4925
+
+--- VEI(10/100) direction=low (keep <= thr) ---
+ short  long dir    thr    n  retain  gross_pt_per_trade  exp_netR_per_trade    sumR  sharpe  d_sharpe   d_sumR  recent_sharpe
+    10   100 low 0.5993  919  0.2183              2.5919              0.0075  6.8527  0.2434   -1.0445 -84.3443        -0.1675
+    10   100 low 0.6512 1258  0.2989              4.5481              0.0110 13.8664  0.3791   -0.9088 -77.3306         0.6970
+    10   100 low 0.7006 1562  0.3711              4.1826              0.0125 19.5524  0.4715   -0.8164 -71.6446         0.8210
+    10   100 low 0.7518 1875  0.4455              3.4420              0.0127 23.7353  0.5171   -0.7708 -67.4617         0.7211
+    10   100 low 0.8066 2151  0.5110              2.9458              0.0113 24.4061  0.4939   -0.7940 -66.7909         0.5856
+    10   100 low 0.8722 2399  0.5700              3.1372              0.0143 34.2935  0.6438   -0.6442 -56.9035         0.5906
+    10   100 low 0.9576 2647  0.6289              2.8830              0.0146 38.5410  0.6950   -0.5929 -52.6560         0.4295
+
+--- VEI(14/50) direction=high (keep >= thr) ---
+ short  long  dir    thr    n  retain  gross_pt_per_trade  exp_netR_per_trade    sumR  sharpe  d_sharpe   d_sumR  recent_sharpe
+    14    50 high 0.7767 3071  0.7296              4.5381              0.0219 67.4062  1.0545   -0.2334 -23.7908         1.4516
+    14    50 high 0.8169 2810  0.6676              3.7892              0.0194 54.6074  0.8831   -0.4048 -36.5896         0.9727
+    14    50 high 0.8524 2531  0.6013              3.5120              0.0175 44.2636  0.7432   -0.5447 -46.9334         0.6662
+    14    50 high 0.8873 2251  0.5348              3.3784              0.0184 41.3222  0.7277   -0.5602 -49.8748         0.5640
+    14    50 high 0.9231 1940  0.4609              3.2701              0.0190 36.7868  0.6771   -0.6108 -54.4102         0.4774
+    14    50 high 0.9636 1602  0.3806              2.4012              0.0148 23.7694  0.4764   -0.8115 -67.4276         0.3987
+    14    50 high 1.0140 1145  0.2720              3.9009              0.0231 26.4651  0.6045   -0.6834 -64.7319         0.6381
+
+--- VEI(14/50) direction=low (keep <= thr) ---
+ short  long dir    thr    n  retain  gross_pt_per_trade  exp_netR_per_trade    sumR  sharpe  d_sharpe   d_sumR  recent_sharpe
+    14    50 low 0.7767 1298  0.3084              1.3207              0.0139 18.0328  0.4832   -0.8047 -73.1642        -0.4206
+    14    50 low 0.8169 1721  0.4089              4.5164              0.0178 30.6098  0.6740   -0.6139 -60.5872         0.7347
+    14    50 low 0.8524 2098  0.4985              3.3708              0.0152 31.8960  0.6548   -0.6331 -59.3010         0.7286
+    14    50 low 0.8873 2448  0.5816              3.5250              0.0180 44.0111  0.8332   -0.4547 -47.1859         0.7812
+    14    50 low 0.9231 2766  0.6572              3.4614              0.0190 52.5542  0.9286   -0.3593 -38.6428         0.9280
+    14    50 low 0.9636 3061  0.7273              3.3790              0.0191 58.3438  0.9920   -0.2959 -32.8532         0.9019
+    14    50 low 1.0140 3329  0.7909              3.0833              0.0186 61.7948  0.9845   -0.3034 -29.4022         0.7567
+
+--- VEI(20/100) direction=high (keep >= thr) ---
+ short  long  dir    thr    n  retain  gross_pt_per_trade  exp_netR_per_trade    sumR  sharpe  d_sharpe   d_sumR  recent_sharpe
+    20   100 high 0.6342 2569  0.6104              3.6502              0.0176 45.1888  0.7863   -0.5016 -46.0082         0.7771
+    20   100 high 0.6820 2349  0.5581              3.3879              0.0170 39.8511  0.7198   -0.5681 -51.3459         0.7121
+    20   100 high 0.7259 2131  0.5063              2.9810              0.0176 37.4122  0.7093   -0.5786 -53.7848         0.3780
+    20   100 high 0.7707 1877  0.4459              3.1653              0.0197 36.8888  0.7256   -0.5623 -54.3082         0.2546
+    20   100 high 0.8192 1609  0.3823              3.2419              0.0194 31.1768  0.6606   -0.6273 -60.0201         0.4619
+    20   100 high 0.8750 1258  0.2989              3.2878              0.0180 22.6981  0.5301   -0.7578 -68.4989         0.6818
+    20   100 high 0.9425  848  0.2015              5.5466              0.0288 24.4044  0.6601   -0.6278 -66.7926         0.5822
+
+--- VEI(20/100) direction=low (keep <= thr) ---
+ short  long dir    thr    n  retain  gross_pt_per_trade  exp_netR_per_trade    sumR  sharpe  d_sharpe   d_sumR  recent_sharpe
+    20   100 low 0.6342  877  0.2084              1.3726              0.0038  3.3073  0.1249   -1.1630 -87.8897        -0.2459
+    20   100 low 0.6820 1203  0.2858              5.3259              0.0169 20.2712  0.5675   -0.7204 -70.9258         0.8256
+    20   100 low 0.7259 1509  0.3585              4.2551              0.0138 20.8801  0.5140   -0.7739 -70.3169         0.7516
+    20   100 low 0.7707 1812  0.4305              3.9263              0.0143 25.9982  0.5841   -0.7038 -65.1988         0.8943
+    20   100 low 0.8192 2098  0.4985              3.3454              0.0142 29.8217  0.5896   -0.6983 -61.3753         0.6898
+    20   100 low 0.8750 2366  0.5621              2.9458              0.0145 34.2559  0.6513   -0.6366 -56.9411         0.5698
+    20   100 low 0.9425 2619  0.6222              2.6700              0.0133 34.8164  0.6377   -0.6502 -56.3806         0.4942
+
+FAMILY-BEST (max dSharpe among filtering cells): VEI(5/20) dir=low thr=1.0027 retain=0.855 dSharpe=+0.1045 dSumR=+0.33 grossPt/trade=+3.8736 (base +3.5091)
+REAL GATE (dSharpe>=+0.10 AND netR>=base): PASS
+  matched-count random null 1/200  matched-count random null 2/200  matched-count random null 3/200  matched-count random null 4/200  matched-count random null 5/200  matched-count random null 6/200  matched-count random null 7/200  matched-count random null 8/200  matched-count random null 9/200  matched-count random null 10/200  matched-count random null 11/200  matched-count random null 12/200  matched-count random null 13/200  matched-count random null 14/200  matched-count random null 15/200  matched-count random null 16/200  matched-count random null 17/200  matched-count random null 18/200  matched-count random null 19/200  matched-count random null 20/200  matched-count random null 21/200  matched-count random null 22/200  matched-count random null 23/200  matched-count random null 24/200  matched-count random null 25/200  matched-count random null 26/200  matched-count random null 27/200  matched-count random null 28/200  matched-count random null 29/200  matched-count random null 30/200  matched-count random null 31/200  matched-count random null 32/200  matched-count random null 33/200  matched-count random null 34/200  matched-count random null 35/200  matched-count random null 36/200  matched-count random null 37/200  matched-count random null 38/200  matched-count random null 39/200  matched-count random null 40/200  matched-count random null 41/200  matched-count random null 42/200  matched-count random null 43/200  matched-count random null 44/200  matched-count random null 45/200  matched-count random null 46/200  matched-count random null 47/200  matched-count random null 48/200  matched-count random null 49/200  matched-count random null 50/200  matched-count random null 51/200  matched-count random null 52/200  matched-count random null 53/200  matched-count random null 54/200  matched-count random null 55/200  matched-count random null 56/200  matched-count random null 57/200  matched-count random null 58/200  matched-count random null 59/200  matched-count random null 60/200  matched-count random null 61/200  matched-count random null 62/200  matched-count random null 63/200  matched-count random null 64/200  matched-count random null 65/200  matched-count random null 66/200  matched-count random null 67/200  matched-count random null 68/200  matched-count random null 69/200  matched-count random null 70/200  matched-count random null 71/200  matched-count random null 72/200  matched-count random null 73/200  matched-count random null 74/200  matched-count random null 75/200  matched-count random null 76/200  matched-count random null 77/200  matched-count random null 78/200  matched-count random null 79/200  matched-count random null 80/200  matched-count random null 81/200  matched-count random null 82/200  matched-count random null 83/200  matched-count random null 84/200  matched-count random null 85/200  matched-count random null 86/200  matched-count random null 87/200  matched-count random null 88/200  matched-count random null 89/200  matched-count random null 90/200  matched-count random null 91/200  matched-count random null 92/200  matched-count random null 93/200  matched-count random null 94/200  matched-count random null 95/200  matched-count random null 96/200  matched-count random null 97/200  matched-count random null 98/200  matched-count random null 99/200  matched-count random null 100/200  matched-count random null 101/200  matched-count random null 102/200  matched-count random null 103/200  matched-count random null 104/200  matched-count random null 105/200  matched-count random null 106/200  matched-count random null 107/200  matched-count random null 108/200  matched-count random null 109/200  matched-count random null 110/200  matched-count random null 111/200  matched-count random null 112/200  matched-count random null 113/200  matched-count random null 114/200  matched-count random null 115/200  matched-count random null 116/200  matched-count random null 117/200  matched-count random null 118/200  matched-count random null 119/200  matched-count random null 120/200  matched-count random null 121/200  matched-count random null 122/200  matched-count random null 123/200  matched-count random null 124/200  matched-count random null 125/200  matched-count random null 126/200  matched-count random null 127/200  matched-count random null 128/200  matched-count random null 129/200  matched-count random null 130/200  matched-count random null 131/200  matched-count random null 132/200  matched-count random null 133/200  matched-count random null 134/200  matched-count random null 135/200  matched-count random null 136/200  matched-count random null 137/200  matched-count random null 138/200  matched-count random null 139/200  matched-count random null 140/200  matched-count random null 141/200  matched-count random null 142/200  matched-count random null 143/200  matched-count random null 144/200  matched-count random null 145/200  matched-count random null 146/200  matched-count random null 147/200  matched-count random null 148/200  matched-count random null 149/200  matched-count random null 150/200  matched-count random null 151/200  matched-count random null 152/200  matched-count random null 153/200  matched-count random null 154/200  matched-count random null 155/200  matched-count random null 156/200  matched-count random null 157/200  matched-count random null 158/200  matched-count random null 159/200  matched-count random null 160/200  matched-count random null 161/200  matched-count random null 162/200  matched-count random null 163/200  matched-count random null 164/200  matched-count random null 165/200  matched-count random null 166/200  matched-count random null 167/200  matched-count random null 168/200  matched-count random null 169/200  matched-count random null 170/200  matched-count random null 171/200  matched-count random null 172/200  matched-count random null 173/200  matched-count random null 174/200  matched-count random null 175/200  matched-count random null 176/200  matched-count random null 177/200  matched-count random null 178/200  matched-count random null 179/200  matched-count random null 180/200  matched-count random null 181/200  matched-count random null 182/200  matched-count random null 183/200  matched-count random null 184/200  matched-count random null 185/200  matched-count random null 186/200  matched-count random null 187/200  matched-count random null 188/200  matched-count random null 189/200  matched-count random null 190/200  matched-count random null 191/200  matched-count random null 192/200  matched-count random null 193/200  matched-count random null 194/200  matched-count random null 195/200  matched-count random null 196/200  matched-count random null 197/200  matched-count random null 198/200  matched-count random null 199/200  matched-count random null 200/200
+
+matched-count random-signal-drop null (keep 8841 of 12811 candidates, 200 draws):
+  real  dSharpe=+0.1045  dSumR=+0.33
+  rand  dSharpe mean=-0.1045 sd=0.0799  dSumR mean=-13.10
+  frac(rand>=real): Sharpe=0.000  sumR=0.000  (<0.05 = real beats a random equal-count drop)
+  Null-C draw 1/40  Null-C draw 2/40  Null-C draw 3/40  Null-C draw 4/40  Null-C draw 5/40  Null-C draw 6/40  Null-C draw 7/40  Null-C draw 8/40  Null-C draw 9/40  Null-C draw 10/40  Null-C draw 11/40  Null-C draw 12/40  Null-C draw 13/40  Null-C draw 14/40  Null-C draw 15/40  Null-C draw 16/40  Null-C draw 17/40  Null-C draw 18/40  Null-C draw 19/40  Null-C draw 20/40  Null-C draw 21/40  Null-C draw 22/40  Null-C draw 23/40  Null-C draw 24/40  Null-C draw 25/40  Null-C draw 26/40  Null-C draw 27/40  Null-C draw 28/40  Null-C draw 29/40  Null-C draw 30/40  Null-C draw 31/40  Null-C draw 32/40  Null-C draw 33/40  Null-C draw 34/40  Null-C draw 35/40  Null-C draw 36/40  Null-C draw 37/40  Null-C draw 38/40  Null-C draw 39/40  Null-C draw 40/40
+
+Null-C dSumR mean=-1.99 z=+0.28 frac(null>=real)=0.400
+
+artifacts -> C:\Users\VuDoa\Research\futures\nq\noise_vwap\artifacts\runs\EXP-0036

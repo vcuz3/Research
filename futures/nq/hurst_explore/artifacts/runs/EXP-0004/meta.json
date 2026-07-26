@@ -7,7 +7,7 @@
   "era_min": 2015,
   "bootstrap_reps": 1000,
   "bootstrap_block_sessions": 5,
-  "elapsed_s": 72.7,
+  "elapsed_s": 103.4,
   "bands": {
     "NQ 1s micro   tau 1-8s": {
       "raw": 0.5037,

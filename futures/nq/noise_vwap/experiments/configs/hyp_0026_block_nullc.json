@@ -1,0 +1,17 @@
+{
+  "hypothesis_id": "HYP-0026",
+  "title": "ATR-buffer family under volatility-cluster-preserving block Null C",
+  "lookback": 90,
+  "block_minutes": [5, 10, 15],
+  "block_policy": "pin opening atom; partition all later atoms into contiguous blocks; permute every block including a shorter terminal block",
+  "atr_lookbacks": [5, 10, 14, 20, 30],
+  "atr_multipliers": [0.25, 0.5, 0.75, 1.0, 1.5, 2.0],
+  "fixed_control": "cell-specific k times the draw-specific unconditional median causal ATR_N",
+  "null_seeds": {"start": 7300000, "draws_per_block": 199},
+  "selection_statistic": "select the N-k scaled cell with maximum Sharpe within every draw; compare with its cell-specific matched fixed buffer",
+  "primary_metric": "family-selected scaled-minus-fixed zero-day daily net Sharpe uplift",
+  "secondary_metric": "family-selected scaled-minus-close-confirmed zero-day daily net Sharpe uplift",
+  "kill_test": "real must beat all three block-null distributions at upper-tail p<=0.05 and z>=2 with non-positive null centers",
+  "costs": {"slippage_ticks_per_side": 0.5, "fees_usd_per_side": 2.25},
+  "data_scope": "NQ clean one-minute Databento RTH through 2026-07-14; consumed history"
+}

@@ -1,0 +1,31 @@
+{
+  "instrument": "NQ",
+  "baseline": {
+    "arm": "baseline",
+    "n": 4209,
+    "retain": 1.0,
+    "gross_pt_per_trade": 3.5091470658113564,
+    "netR": 91.19699305486793,
+    "sharpe": 1.2879021641030817,
+    "d_netR": 0.0,
+    "d_sharpe": 0.0,
+    "max_dd": 4.7033328438368045,
+    "mean_hold_min": 67.73152767878356
+  },
+  "best": {
+    "arm": "hyst_qe0.6_qx0.2",
+    "n": 1556,
+    "retain": 0.3696840104537895,
+    "gross_pt_per_trade": 4.247429305912596,
+    "netR": 39.42285475347812,
+    "sharpe": 0.6941234977581446,
+    "d_netR": -51.77413830138981,
+    "d_sharpe": -0.593778666344937,
+    "max_dd": 7.182504628367454,
+    "mean_hold_min": 106.8978149100257
+  },
+  "real_gate_pass": false,
+  "null_c_required": false,
+  "feature_coverage_min": 0.9644970414201184,
+  "feature_coverage_max": 1.0
+}

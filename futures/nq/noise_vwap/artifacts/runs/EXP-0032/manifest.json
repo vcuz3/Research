@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0032",
+  "hypothesis_id": "HYP-0022",
+  "status": "completed",
+  "phase": "experiment (Phase 1 sweep/calibration/matched-width + era + Phase 2 Null C/ES); VERDICT NO-GO",
+  "config_path": "legacy-not-frozen (N in {5,10,14,20,30} x k in {0.25..2.0} ATR + k0 anchor + matched-width fixed buffer, in scripts/hyp_0022_atr_buffer.py)",
+  "data_scope": "NQ raw Databento one-second RTH, 3628 eligible post-lookback-90 sessions 2011-12-08..2026-07-14 (consumed)",
+  "code_ref": "core/atr_buffer.py (isolated 1s buffered-stop kernel + intraday ATR + 1m runner); scripts/hyp_0022_atr_buffer.py + hyp_0022_era.py + hyp_0022_nullc.py; tests/test_atr_buffer.py; first_touch.py untouched",
+  "run_command": "python -u -m futures.nq.noise_vwap.scripts.hyp_0022_atr_buffer ; ... .hyp_0022_era ; ... .hyp_0022_nullc null 30",
+  "primary_metric": "zero-eligible-day one-contract daily net Sharpe at 0.5 tick/side + fees vs the close-confirmed continuous stop (0.9226); Phase 2 = Null-C uplift over the matched-width fixed buffer",
+  "builder": "Claude (Opus 4.8)",
+  "outputs": ["sweep.csv", "report.json", "era_sharpe.csv", "era_sharpe_summary.json", "nullc_draws.csv", "nullc_report.json", "review.md"],
+  "result_summary": "NO-GO (Phase 2 Null C REJECT). Causal intraday-ATR stop buffer, exit on first 1s touch of stop=max(upper,vwap)-k*ATR_N (float, no ratchet, N-min TR-based, entries unchanged; k=0=EXP-0031 first-touch), as a systematic replacement for the arbitrary close-confirmation wick filter. PHASE 1 (in-sample) beat close-confirmation: best N20_k1.5 daily Sharpe 1.052 vs 0.923 (+0.130), vol-tgt 1.331 vs 1.184; k=1.5 best for every N; matched-width fixed 6.375-pt buffer only 0.968 => +0.085 apparent scaling uplift. Uplift held/strengthened in recent eras (>=2024 +0.191, >=2025 +0.155, last252d +0.286; only CY2025 soft -0.061) and transferred to ES (+0.105 vs-cc, +0.032 scaling). PHASE 2 Null C (30 draws, diffusivity gate real0.25=null0.25) KILLS it: BOTH uplifts' null distributions center POSITIVE with the real inside the band -- uplift_vs_cc null center +0.073 (real z0.65, frac 0.26) = plain looser-stop variance amplifier; DECISIVE uplift_scaling null center +0.042 (half the real +0.085), z0.45, frac(null>=real)=0.40 => the vol-scaling advantage over a fixed-width buffer is reproduced on pure noise (the shuffle preserves session range magnitude, so a vol-adaptive stop width is mechanically better than a fixed one regardless of signal). Same signature as EXP-0019/EXP-0010/EXP-0012. The buffer is better-motivated than the wick mechanic but the gain is machinery, not real intraday path structure. Retain the close-confirmed continuous stop; thread closed on consumed history.",
+  "reviewer": "unassigned",
+  "review_status": "reviewed (builder); NO-GO"
+}

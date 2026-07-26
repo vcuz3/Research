@@ -1,0 +1,48 @@
+{
+  "draws": [
+    {
+      "seed": 7200000,
+      "proxy_scaled": 0.4824745575924552,
+      "exact_scaled": 0.47788904947338723,
+      "proxy_fixed": 0.43216662074947065,
+      "exact_fixed": 0.42834169311069814,
+      "proxy_uplift_vs_cc": 0.017752316412265545,
+      "exact_uplift_vs_cc": 0.013166808293197552,
+      "proxy_uplift_scaling": 0.05030793684298457,
+      "exact_uplift_scaling": 0.04954735636268909,
+      "error_vs_cc": -0.004585508119067994,
+      "error_scaling": -0.0007605804802954808
+    },
+    {
+      "seed": 7200001,
+      "proxy_scaled": 0.31295883404901875,
+      "exact_scaled": 0.3089026038349402,
+      "proxy_fixed": 0.2905545212004492,
+      "exact_fixed": 0.28691360354175677,
+      "proxy_uplift_vs_cc": 0.0695310258553529,
+      "exact_uplift_vs_cc": 0.06547479564127437,
+      "proxy_uplift_scaling": 0.02240431284856953,
+      "exact_uplift_scaling": 0.02198900029318346,
+      "error_vs_cc": -0.004056230214078527,
+      "error_scaling": -0.0004153125553860715
+    },
+    {
+      "seed": 7200002,
+      "proxy_scaled": 0.457745143229893,
+      "exact_scaled": 0.45381616761552557,
+      "proxy_fixed": 0.3815166815752131,
+      "exact_fixed": 0.3779963562096176,
+      "proxy_uplift_vs_cc": 0.1773572435348308,
+      "exact_uplift_vs_cc": 0.17342826792046334,
+      "proxy_uplift_scaling": 0.07622846165467989,
+      "exact_uplift_scaling": 0.07581981140590799,
+      "error_vs_cc": -0.003928975614367447,
+      "error_scaling": -0.00040865024877190237
+    }
+  ],
+  "max_abs_error": 0.004585508119067994,
+  "mean_abs_error": 0.002359209538661237,
+  "per_draw_tolerance": 0.03,
+  "mean_abs_tolerance": 0.02,
+  "passed": true
+}

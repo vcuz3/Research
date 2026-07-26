@@ -25,13 +25,30 @@ ONE_SECOND_PATH = (
 def simulate_session_1s(
     sec_ts, sec_open, sec_high, sec_low,
     minute_ts, minute_open, minute_close, minute_vwap, upper, lower,
-    is_decision, refresh_every_bar,
+    is_decision, refresh_every_bar, latency=0, trigger=0,
 ):
     """Return fixed-size trade arrays and count for one RTH session.
 
-    Touch fills are stop-market proxies: at the stop unless the first observed
+    Touch fills are stop-market proxies: at the stop unless the observed
     one-second open has already gapped through, in which case that open is used.
     Slippage and fees remain downstream costs so gross execution is auditable.
+
+    ``latency`` models conservative execution-time slippage: the stop-market
+    order is *triggered* at the first second whose range touches the level, but
+    it does not fill until ``latency`` seconds later, at that later second's
+    open.  The fill is capped so it is never better than the stop, so any price
+    drift during the execution delay is adverse-or-neutral by construction.
+    ``latency == 0`` reproduces the instantaneous first-touch fill bit-exactly.
+
+    ``trigger`` selects the EXIT RULE, isolating the exit trigger from execution
+    resolution:
+      * 0 = first-touch (default): a resting stop order; exit the first second
+        whose range crosses the level, including a 1-second wick.
+      * 1 = close-confirmed: the 1m-engine rule executed on 1s data; exit only
+        when the completed prior minute's CLOSE is beyond the stop, filled at the
+        first one-second open of the current minute (plus ``latency``).  This is
+        the same wick-filtering rule as ``core/engine.py`` and reproduces the 1m
+        continuous stop up to the one-second fill print.
     """
     nmin = minute_ts.size
     # At most one closed trade per minute under a single-position policy.
@@ -95,16 +112,43 @@ def simulate_session_1s(
             hi = np.searchsorted(sec_ts, minute_ts[j + 1], side="left")
         else:
             hi = sec_ts.size
+
+        if trigger == 1:
+            # Close-confirmed: the prior completed minute must CLOSE beyond the
+            # stop (a 1m wick that closes back inside does not exit).  Fill at
+            # the first one-second open of this minute -- the 1m engine's next
+            # open, printed on 1s data.
+            confirmed = minute_close[p] < stop if pos == 1 else minute_close[p] > stop
+            if confirmed and lo < hi:
+                fk = lo + latency
+                if fk >= sec_ts.size:
+                    fk = sec_ts.size - 1
+                o_side[nt] = pos
+                o_entry_ts[nt] = entry_ts
+                o_exit_ts[nt] = sec_ts[fk]
+                o_entry_px[nt] = entry_px
+                o_exit_px[nt] = sec_open[fk]
+                o_reason[nt] = 0
+                nt += 1
+                pos = 0
+                entry_ts = -1
+                entry_px = np.nan
+                stop = np.nan
+            continue
+
         for k in range(lo, hi):
             hit = sec_low[k] <= stop if pos == 1 else sec_high[k] >= stop
             if hit:
+                fk = k + latency
+                if fk >= sec_ts.size:
+                    fk = sec_ts.size - 1
                 if pos == 1:
-                    fpx = sec_open[k] if sec_open[k] < stop else stop
+                    fpx = sec_open[fk] if sec_open[fk] < stop else stop
                 else:
-                    fpx = sec_open[k] if sec_open[k] > stop else stop
+                    fpx = sec_open[fk] if sec_open[fk] > stop else stop
                 o_side[nt] = pos
                 o_entry_ts[nt] = entry_ts
-                o_exit_ts[nt] = sec_ts[k]
+                o_exit_ts[nt] = sec_ts[fk]
                 o_entry_px[nt] = entry_px
                 o_exit_px[nt] = fpx
                 o_reason[nt] = 0
@@ -218,6 +262,108 @@ def run_streaming(path: Path, bars: pd.DataFrame, bands: pd.DataFrame,
     results, audit = run_streaming_both(path, bars, bands)
     key = "every_bar" if refresh_every_bar else "decision"
     return results[key], audit
+
+
+def run_streaming_latencies(path: Path, bars: pd.DataFrame, bands: pd.DataFrame,
+                            latencies, refresh_every_bar: bool = True):
+    """Scan the large Parquet file once and evaluate several execution latencies.
+
+    Returns ``{latency_seconds: trades_frame}`` plus a coverage audit.  Only the
+    continuous (``refresh_every_bar``) stop is evaluated by default because that
+    is the deployed baseline; the single scan keeps the 1.7 GB file read once.
+    """
+    sessions = prepare_sessions(bars, bands)
+    dates = np.array(sorted(sessions), dtype="datetime64[ns]")
+    lats = [int(v) for v in latencies]
+    rows = {lat: [] for lat in lats}
+    covered = []
+    second_rows = 0
+    reasons = np.array(["touch", "flip", "eod"])
+    for code, sec in iter_rth_seconds(path, dates):
+        date = dates[code]
+        minute = sessions.get(date)
+        if minute is None:
+            continue
+        second_rows += sec[0].size
+        covered.append(date)
+        for lat in lats:
+            side, ets, xts, epx, xpx, reason = simulate_session_1s(
+                *sec, *minute, refresh_every_bar, lat)
+            if side.size:
+                rows[lat].append(pd.DataFrame({
+                    "date": date, "side": side,
+                    "entry_ts": pd.to_datetime(ets, utc=True),
+                    "exit_ts": pd.to_datetime(xts, utc=True),
+                    "entry_px": epx, "exit_px": xpx,
+                    "points": (xpx - epx) * side,
+                    "reason": reasons[reason],
+                }))
+    trades = {
+        lat: (pd.concat(parts, ignore_index=True) if parts else pd.DataFrame())
+        for lat, parts in rows.items()
+    }
+    audit = {
+        "eligible_sessions": len(dates),
+        "covered_sessions": len(covered),
+        "covered_dates": [str(pd.Timestamp(d).date()) for d in covered],
+        "first_covered": str(pd.Timestamp(min(covered)).date()) if covered else None,
+        "last_covered": str(pd.Timestamp(max(covered)).date()) if covered else None,
+        "rth_second_rows": int(second_rows),
+        "latencies_seconds": lats,
+        "refresh_every_bar": bool(refresh_every_bar),
+    }
+    return trades, audit
+
+
+def run_streaming_specs(path: Path, bars: pd.DataFrame, bands: pd.DataFrame,
+                        specs, refresh_every_bar: bool = True):
+    """Scan the Parquet file once and evaluate several (trigger, latency) specs.
+
+    ``specs`` is an iterable of ``(name, trigger, latency)`` tuples.  Returns
+    ``{name: trades_frame}`` plus a coverage audit.  Lets a single 1.7 GB read
+    produce the close-confirmed / first-touch / latency decomposition together.
+    """
+    sessions = prepare_sessions(bars, bands)
+    dates = np.array(sorted(sessions), dtype="datetime64[ns]")
+    specs = [(str(nm), int(tr), int(lat)) for nm, tr, lat in specs]
+    rows = {nm: [] for nm, _, _ in specs}
+    covered = []
+    second_rows = 0
+    reasons = np.array(["touch", "flip", "eod"])
+    for code, sec in iter_rth_seconds(path, dates):
+        date = dates[code]
+        minute = sessions.get(date)
+        if minute is None:
+            continue
+        second_rows += sec[0].size
+        covered.append(date)
+        for nm, tr, lat in specs:
+            side, ets, xts, epx, xpx, reason = simulate_session_1s(
+                *sec, *minute, refresh_every_bar, lat, tr)
+            if side.size:
+                rows[nm].append(pd.DataFrame({
+                    "date": date, "side": side,
+                    "entry_ts": pd.to_datetime(ets, utc=True),
+                    "exit_ts": pd.to_datetime(xts, utc=True),
+                    "entry_px": epx, "exit_px": xpx,
+                    "points": (xpx - epx) * side,
+                    "reason": reasons[reason],
+                }))
+    trades = {
+        nm: (pd.concat(parts, ignore_index=True) if parts else pd.DataFrame())
+        for nm, parts in rows.items()
+    }
+    audit = {
+        "eligible_sessions": len(dates),
+        "covered_sessions": len(covered),
+        "covered_dates": [str(pd.Timestamp(d).date()) for d in covered],
+        "first_covered": str(pd.Timestamp(min(covered)).date()) if covered else None,
+        "last_covered": str(pd.Timestamp(max(covered)).date()) if covered else None,
+        "rth_second_rows": int(second_rows),
+        "specs": specs,
+        "refresh_every_bar": bool(refresh_every_bar),
+    }
+    return trades, audit
 
 
 def run_streaming_both(path: Path, bars: pd.DataFrame, bands: pd.DataFrame):

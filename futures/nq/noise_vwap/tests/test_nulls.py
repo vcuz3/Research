@@ -6,6 +6,11 @@ import numpy as np
 import pandas as pd
 
 from futures.nq.noise_vwap.core.nulls import diffusivity, null_c_returns
+from futures.nq.noise_vwap.core.nulls_fast import (
+    _block_permutation,
+    null_c_returns_fast,
+    remap_second_minute_blocks,
+)
 from futures.nq.noise_vwap.scripts.studies import _null_c_frame
 
 
@@ -50,6 +55,68 @@ def _atoms(group: pd.DataFrame) -> list[tuple[float, ...]]:
 
 
 class NullCReturnsTests(unittest.TestCase):
+    def test_block_permutation_pins_open_and_preserves_block_order(self) -> None:
+        rng = np.random.default_rng(123)
+        perm = _block_permutation(17, 5, rng)
+        self.assertEqual(perm[0], 0)
+        self.assertEqual(sorted(perm.tolist()), list(range(17)))
+        for a in range(1, 17, 5):
+            source = np.arange(a, min(a + 5, 17))
+            positions = np.flatnonzero(np.isin(perm, source))
+            np.testing.assert_array_equal(np.diff(positions), np.ones(len(source) - 1))
+            np.testing.assert_array_equal(perm[positions], source)
+
+    def test_block_null_preserves_atoms_net_move_and_within_block_order(self) -> None:
+        bars = _bars()
+        for block_size in (2, 3):
+            shuffled, perms = null_c_returns_fast(
+                bars, 456, block_size=block_size, return_permutations=True)
+            for date, original in bars.groupby("date", sort=False):
+                rebuilt = shuffled[shuffled["date"] == date]
+                self.assertEqual(_atoms(original), _atoms(rebuilt))
+                self.assertAlmostEqual(
+                    original.iloc[-1]["close"] - original.iloc[0]["open"],
+                    rebuilt.iloc[-1]["close"] - rebuilt.iloc[0]["open"],
+                )
+                perm = perms[np.datetime64(date, "ns")]
+                self.assertEqual(perm[0], 0)
+                for a in range(1, len(perm), block_size):
+                    source = np.arange(a, min(a + block_size, len(perm)))
+                    positions = np.flatnonzero(np.isin(perm, source))
+                    np.testing.assert_array_equal(
+                        np.diff(positions), np.ones(len(source) - 1, dtype=np.int64))
+                    np.testing.assert_array_equal(perm[positions], source)
+
+    def test_fast_implementation_is_bit_exact_to_reference(self) -> None:
+        bars = _bars()
+        for seed in range(10):
+            reference = null_c_returns(bars, seed)
+            fast, perms = null_c_returns_fast(
+                bars, seed, return_permutations=True)
+            for col in ("open", "high", "low", "close", "volume", "vwap", "bar_i"):
+                np.testing.assert_allclose(
+                    fast[col].to_numpy(), reference[col].to_numpy(),
+                    rtol=0.0, atol=0.0)
+            self.assertEqual(len(perms), bars["date"].nunique())
+
+    def test_second_block_remap_preserves_intraminute_paths(self) -> None:
+        mts = np.array([0, 60, 120], dtype=np.int64) * 1_000_000_000
+        # Two seconds per minute are enough to prove timestamp and displacement
+        # relocation; source minute 0 remains pinned, as in Null C.
+        sts = np.concatenate([m + np.array([0, 1_000_000_000]) for m in mts])
+        mop = np.array([100.0, 110.0, 90.0])
+        so = np.array([100.0, 101.0, 110.0, 109.0, 90.0, 92.0])
+        sh, sl = so + 0.5, so - 0.25
+        perm = np.array([0, 2, 1], dtype=np.int64)
+        new_open = np.array([100.0, 102.0, 105.0])
+        ots, oo, oh, ol = remap_second_minute_blocks(
+            sts, so, sh, sl, mts, mop, new_open, perm)
+        np.testing.assert_array_equal(
+            ots, np.concatenate([m + np.array([0, 1_000_000_000]) for m in mts]))
+        np.testing.assert_allclose(oo, [100, 101, 102, 104, 105, 104])
+        np.testing.assert_allclose(oh - oo, 0.5)
+        np.testing.assert_allclose(oo - ol, 0.25)
+
     def test_preserves_anchor_net_move_atoms_and_diffusivity(self) -> None:
         bars = _bars()
         real_diffusivity = diffusivity(bars)

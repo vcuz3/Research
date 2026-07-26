@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0031",
+  "hypothesis_id": "HYP-0002",
+  "status": "completed",
+  "config_path": "legacy-not-frozen (latency sweep {0,1,2,3,5}s x cost {0.25,0.5,1.0} tick in scripts/hyp_0002_latency.py)",
+  "data_scope": "NQ raw Databento one-second RTH history on 3628 eligible post-lookback-90 sessions from 2011-12-08 through 2026-07-14 (consumed)",
+  "code_ref": "core/first_touch.py default-off latency + trigger args + run_streaming_latencies/run_streaming_specs; scripts/hyp_0002_latency.py + scripts/first_touch_decompose.py; tests/test_first_touch.py",
+  "run_command": "python -u -m futures.nq.noise_vwap.scripts.hyp_0002_latency ; python -u -m futures.nq.noise_vwap.scripts.first_touch_decompose",
+  "primary_metric": "Zero-eligible-day one-contract daily net Sharpe at 0.5 tick/side plus fees vs the 1m close-confirmed continuous stop, decomposed into resolution / wick-trigger / latency",
+  "builder": "Claude (Opus 4.8)",
+  "outputs": [
+    "data_audit.json",
+    "zero_day_summary.csv",
+    "vol_target_summary.csv",
+    "trades_1s_touch_latency_0s.parquet",
+    "trades_1s_touch_latency_1s.parquet",
+    "trades_1s_touch_latency_2s.parquet",
+    "trades_1s_touch_latency_3s.parquet",
+    "trades_1s_touch_latency_5s.parquet",
+    "decomposition.csv",
+    "decomposition_audit.json",
+    "review.md"
+  ],
+  "result_summary": "Execution-realism investigation of EXP-0009, corrected after a reviewer question. The 1m continuous stop is CLOSE-CONFIRMED (engine.py:158 close<stop, next-1m-open fill); the EXP-0009 1s engine is FIRST-TOUCH (resting stop on sec_low<=stop). These are different exit RULES, not one rule at two resolutions. Decomposition (0.5 tick/side): (1) RESOLUTION is neutral -- a 1s CLOSE-CONFIRMED stop (new trigger=1) reproduces the 1m result exactly, 4209 trades, daily Sharpe 0.9235 vs 0.9226 (+0.0009); (2) the WICK/trigger switch to first-touch is the real effect -- +504 stop exits / +454 trades, -0.447 gross pt/trade, -0.041 daily Sharpe (~478 gross pts, ~1 NQ pt per wick-out), because close-confirmation filters 1m wicks the resting stop takes; (3) LATENCY on the touch model is a further separate -0.115 daily Sharpe / -0.33 gross pt per second. Conclusion: granularity does NOT degrade the strategy; close-confirmation is a beneficial wick filter and the deployed exit is realistic if you wait for the bar close. First-touch (resting stop) is a different, mildly worse policy dominated by premature wick-outs, not latency. Retain the 1m close-confirmed continuous stop. No Null C.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}
