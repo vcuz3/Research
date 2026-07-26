@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0008",
+  "hypothesis_id": "HYP-0005",
+  "status": "completed",
+  "declared_utc": "2026-07-26T16:46:00.464795+00:00",
+  "config_path": "scripts/s1c_selection_metric.py",
+  "data_scope": "NQ + ES clean Databento RTH 1-min 2011\u20132026, same sample as EXP-0001..0006",
+  "code_ref": "working-tree",
+  "run_command": "python -u -m futures.nq.vei_exploration.scripts.s1c_selection_metric {NQ|ES}",
+  "primary_metric": "the cross-variant R\u00b2 of `IC_fwdvol` regressed on `corr_lvl`, plus the",
+  "builder": "Claude",
+  "outputs": [],
+  "closed_utc": "2026-07-26T16:47:30.483902+00:00",
+  "result_summary": "CONFIRMED DECISIVELY both markets; IC_fwdvol RETIRED as an estimator-selection metric. Across 10 variants on one common sample (n=33389), IC_fwdvol is a near-perfect linear function of corr_lvl (how level-like the variant is): R2=0.992 on BOTH NQ and ES, slope ~0.90, intercept ~0. Decisive control: LEVEL:atr_10 has NO denominator (zero ratio content) and TOPS the IC_fwdvol column on both markets (+0.5745 NQ/+0.6130 ES vs best ratio +0.3958/+0.3530) - a metric a non-ratio wins cannot select among ratios. KILL TEST 3 ALSO FIRED (harmful case): contrast (the project primary metric) is NEGATIVELY related to corr_lvl (r -0.915 NQ/-0.871 ES, R2 0.838/0.759), so the two metrics rank variants OPPOSITELY. EXP-0006's tempting lead wilder_20_100 has the LOWEST momentum contrast of any ratio (+0.0587/+0.0453, CIs incl 0) vs canonical wilder_10_50 (+0.0751/+0.0894) -> lead WITHDRAWN, EXP-0006's non-adoption vindicated, canonical retained. Mechanism is algebraic: as the denominator's memory grows ATR(long) -> a within-session constant, so the ratio degenerates into a rescaled ATR(short) = the vol LEVEL, which Study B showed beats every VEI variant at forecasting vol (+0.86). IC_partial (new analysis.partial_spearman) is a PARTIAL repair only - it breaks the fit (R2 0.992->0.301/0.496) but the pure-level controls still top it (+0.117/+0.149) because a differently-windowed level carries fwd-vol info past_rv lacks; NO forward-vol-based metric can select a ratio. FREE BONUS RESULT (the most valuable output): the pure vol LEVEL has a momentum contrast of ~ZERO (-0.0047 NQ/+0.0225 ES, CIs span 0) while every genuine ratio is positive (+0.06..+0.12) -> high volatility ALONE does NOT select the momentum regime, the EXPANSION RATIO does. First result separating VEI from the level on the momentum axis; sharpens Study D (it is NOT 'momentum works when vol is high'). Coherent two-axis picture: on vol-forecasting the ratio is dominated by the level (B, dR2 +0.0017); on momentum-regime the level is worthless and only the ratio carries. Does NOT revive Study D (still qualified/inconclusive, CIs wide); contrast column is a 10-variant SEARCH on consumed history, argmax wilder_20_50 NOT promoted - only the SLOPE is established. Tests 13/13 (2 new). Wrote only to its own artifact dir (EXP-0006 defect not repeated).",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

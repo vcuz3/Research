@@ -16,6 +16,36 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+
+def opening_tr_ratio(bars: pd.DataFrame, true_range: pd.Series,
+                     windows=(5, 10, 30, 50)) -> pd.DataFrame:
+    """Causal per-session opening condition from the first RTH bars.
+
+    For each requested ``n``::
+
+        open_rel_n = TR[first bar] / mean(TR[first n bars])
+
+    The value is available from bar ``n-1`` onward.  This helper returns one row per
+    session; callers are responsible for using a ratio only at decisions where its
+    window is complete.  ``true_range`` must be aligned to ``bars.index``.
+    """
+    if not true_range.index.equals(bars.index):
+        true_range = true_range.reindex(bars.index)
+    b = bars[["sdate", "mfo"]].copy()
+    b["tr"] = true_range.to_numpy(float)
+    b = b.sort_values(["sdate", "mfo"])
+    rows = []
+    for sd, g in b.groupby("sdate", sort=False):
+        tr = g["tr"].to_numpy(float)
+        rec = {"date": sd, "open_tr": tr[0] if len(tr) else np.nan}
+        for n in windows:
+            mean_n = float(np.mean(tr[:n])) if len(tr) >= n else np.nan
+            rec[f"open_mean_{n}"] = mean_n
+            rec[f"open_rel_{n}"] = (rec["open_tr"] / mean_n
+                                      if np.isfinite(mean_n) and mean_n > 0 else np.nan)
+        rows.append(rec)
+    return pd.DataFrame(rows)
+
 # --------------------------------------------------------------------------- #
 # decision clock (shared; every study used to redefine this locally)
 # --------------------------------------------------------------------------- #
@@ -101,6 +131,52 @@ def block_boot_ic(df: pd.DataFrame, xcol: str, ycol: str, rng,
     boots = _block_boot(d, [xcol, ycol], _stat, rng, nboot)
     lo, hi = np.nanpercentile(boots, [5, 95])
     return real, float(lo), float(hi)
+
+
+def _resid_on(a: np.ndarray, z: np.ndarray) -> np.ndarray:
+    """Residual of `a` after removing an intercept + linear term in `z`."""
+    X = np.c_[np.ones(len(z)), z]
+    beta, *_ = np.linalg.lstsq(X, a, rcond=None)
+    return a - X @ beta
+
+
+def partial_spearman(x: np.ndarray, y: np.ndarray, z: np.ndarray) -> float:
+    """Spearman correlation of x and y with z partialled out (linearly, on RANKS).
+
+    Answers "what does x say about y that z does not already say". The rank
+    transform is applied first, then z is projected out of both, so this is the
+    rank-space analogue of an incremental regression coefficient.
+
+    The motivating use (reports/FINDINGS.md, next action 0b) is that a VEI variant
+    with a very long denominator degenerates towards a rescaled ATR(short), i.e.
+    towards the vol LEVEL — which Study B showed predicts forward vol at IC +0.86 all
+    by itself. A plain `IC_fwdvol` therefore cannot distinguish "a better expansion
+    ratio" from "no longer a ratio". Partialling the level out scores only the
+    ratio's OWN contribution.
+    """
+    m = np.isfinite(x) & np.isfinite(y) & np.isfinite(z)
+    if m.sum() < 20:
+        return np.nan
+    rx = pd.Series(x[m]).rank().to_numpy().astype(float)
+    ry = pd.Series(y[m]).rank().to_numpy().astype(float)
+    rz = pd.Series(z[m]).rank().to_numpy().astype(float)
+    return _rankcorr(_resid_on(rx, rz), _resid_on(ry, rz))
+
+
+def block_boot_partial_ic(df: pd.DataFrame, xcol: str, ycol: str, zcol: str, rng,
+                          nboot: int = 1000) -> tuple[float, float, float]:
+    """`partial_spearman` + session-block bootstrap 90% CI (resample sessions)."""
+    d = df.dropna(subset=[xcol, ycol, zcol])
+    if len(d) < 50:
+        return np.nan, np.nan, np.nan
+    real = partial_spearman(d[xcol].to_numpy(float), d[ycol].to_numpy(float),
+                            d[zcol].to_numpy(float))
+
+    def _stat(xb, yb, zb):
+        return partial_spearman(xb, yb, zb)
+
+    boots = _block_boot(d, [xcol, ycol, zcol], _stat, rng, nboot)
+    return real, float(np.nanpercentile(boots, 5)), float(np.nanpercentile(boots, 95))
 
 
 def block_boot_corr(df: pd.DataFrame, xcol: str, ycol: str, rng,

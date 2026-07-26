@@ -19,6 +19,66 @@ kill them.
 
 ## Learnings
 
+### 2026-07-27 — Never select a RATIO feature on a metric its own NUMERATOR maximises; test it with the degenerate no-denominator control
+
+- Status: confirmed
+- Applies to: any feature defined as a ratio, spread, or normalisation of one quantity by
+  a slower/broader version of itself — ATR(short)/ATR(long), realised-vol ratios,
+  volume-vs-average-volume, price-vs-moving-average, spread-vs-rolling-spread — whenever
+  variants of it are ranked against each other by a predictive score.
+- Learning: a ratio X/Y is only a ratio to the extent Y actually varies. As Y's effective
+  memory grows it approaches a constant over the evaluation window, and X/Y degenerates
+  into a **rescaled X**. If X's own level is a strong predictor of the target, the ranking
+  metric will then reward variants *for ceasing to be ratios*. This is not a subtle
+  contamination: on NQ/ES intraday VEI = ATR(short)/ATR(long), scoring ten variants by
+  forward-vol IC gave `IC_fwdvol` = **0.89·corr(variant, vol level) + 0.01, R² 0.992 on
+  BOTH markets** — the metric was, to three significant figures, nothing but
+  level-likeness. The tempting "best" variant (`wilder_20_100`, IC +0.396/+0.353 vs
+  canonical +0.202/+0.207) was simply the most degenerate one.
+- **The decisive test is a one-line control: score the bare NUMERATOR, with no denominator
+  at all.** It is not a candidate feature; it is the degenerate limit. If it *wins* the
+  metric, the metric cannot select among ratios — no further argument is needed. Here the
+  no-denominator ATR(10) topped the column outright (+0.575 NQ / +0.613 ES). Report it
+  alongside the cross-variant regression of the metric on corr(variant, level); a high R²
+  plus a winning numerator is conclusive.
+- **Partialling the level out is only a PARTIAL repair.** A rank-partial IC (target and
+  feature both residualised on the level) broke the fit (R² 0.992 → 0.30/0.50) but the
+  bare-numerator controls still topped it, because a *differently windowed* level carries
+  information the specific level being partialled out does not. Conclusion: when the
+  target is the same quantity the numerator measures, **no metric built on that target can
+  select the ratio** — change the target, don't patch the score.
+- **Worse than uninformative — often anti-selective.** The metric ranked variants
+  *opposite* to the property the ratio existed to provide: correlation between the
+  momentum-regime contrast and level-likeness was **r −0.915 (NQ) / −0.871 (ES)**, and the
+  `IC_fwdvol` winner had the *lowest* contrast of any ratio tested. So the score is not a
+  weak signal to be used with caution; acting on it actively destroys the feature. Always
+  check whether the convenient ranking metric and the metric you actually care about are
+  correlated *at all* before selecting on the convenient one.
+- **Corollary worth its own line — the control often answers the more interesting
+  question.** Because the bare numerator is "the level with no ratio content", contrasting
+  it against the ratios isolates what the ratio adds. Here the pure vol LEVEL had a
+  momentum-regime contrast of essentially **zero** (−0.005 NQ / +0.023 ES, CIs spanning 0)
+  while every genuine ratio was +0.06..+0.12: **high volatility alone does not select the
+  momentum regime; the expansion RATIO does.** That vindicated the construct on one axis
+  while the same run showed it near-worthless on the other (forecasting vol, where the
+  level dominates). A ratio and its numerator can be measuring genuinely different things
+  — run the degenerate control on *both* axes before concluding either way.
+- Method notes that made the result clean: score every variant on ONE **common sample**
+  (the intersection where all are defined) or a longer window silently changes which times
+  of day are measured; and match the **selection rate** when threshold-based behaviour is
+  compared, so no variant wins by relabelling more observations. Treat a multi-variant scan
+  against the project's primary metric as a SEARCH — read the slope across variants, not
+  the argmax.
+- Evidence: `futures/nq/vei_exploration/scripts/s1c_selection_metric.py` →
+  `artifacts/runs/EXP-0008/selection_metric_{NQ,ES}.txt`,
+  `futures/nq/vei_exploration/reports/FINDINGS.md` §H, `experiments/hypotheses/HYP-0005.md`.
+  Helper + tests: `core/analysis.py::partial_spearman`,
+  `tests/test_core.py::test_partial_spearman_removes_the_conditioning_variable`.
+  Reproduce via
+  `python -u -m futures.nq.vei_exploration.scripts.s1c_selection_metric {NQ|ES}`.
+- Origin: EXP-0006 flagged a suspiciously high-scoring long-memory variant and deliberately
+  refused to adopt it; EXP-0008 (2026-07-27) tested the suspicion and upheld it.
+
 ### 2026-07-26 — Compare smoothers at matched effective MEMORY (centre-of-mass), not matched nominal n; and `ewm(adjust=False, min_periods=n)` is NOT textbook Wilder ATR
 
 - Status: confirmed

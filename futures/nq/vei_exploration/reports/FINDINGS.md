@@ -104,15 +104,16 @@ was not cosmetic — Study D lost significance on NQ and has been downgraded.**
 series was partly autocorrelated because consecutive bars shared one contaminating seed,
 so EXP-0001's "persistence" headline was itself inflated by the defect.
 
-**Open lead, flagged not adopted.** `wilder_20_100` scores far higher than everything else
-(IC **+0.396 NQ / +0.353 ES** at the same 37099 decisions as the 19/99 cells, AC1 0.685,
-whipsaw 0.15), and IC rises monotonically with memory across every cell. Do **not** adopt
-it on that basis yet: section B shows the vol LEVEL predicts forward vol at IC +0.86, so
-lengthening the numerator's memory makes VEI progressively more level-like, and
-`IC_fwdvol` may simply be rewarding "less of a ratio". **`IC_fwdvol` is a poor selection
-metric for a ratio feature** — Study A's original metric choice is itself suspect, and a
-metric that is not monotone in "how much this ratio resembles the level" is needed before
-any estimator change. Canonical stays Wilder(10/50), repaired.
+**~~Open lead, flagged not adopted~~ → LEAD WITHDRAWN by EXP-0008 (see §H).**
+`wilder_20_100` scores far higher than everything else (IC **+0.396 NQ / +0.353 ES** at
+the same 37099 decisions as the 19/99 cells, AC1 0.685, whipsaw 0.15), and IC rises
+monotonically with memory across every cell. The suspicion recorded here — that
+`IC_fwdvol` was rewarding "less of a ratio" — **was tested and confirmed decisively**:
+`IC_fwdvol` is a near-perfect linear function of level-likeness (R² 0.992 on both
+markets) and is won outright by a control with no denominator at all. Worse, it ranks
+variants *opposite* to the project's primary metric, and `wilder_20_100` turns out to
+have the **lowest** momentum contrast of any ratio tested. Not adopting it was correct.
+**`IC_fwdvol` is retired as a selection metric.** Canonical stays Wilder(10/50), repaired.
 
 ## A-corrected (b). VEI = 1 is not a calibrated "calm" line — it is a time-of-day line
 
@@ -350,36 +351,153 @@ by default. **Study E's verdict is unchanged** — the preregistered H=30 cell i
 kill-test 1 still fails, nulls remain unspent — and H=60 is a post-hoc horizon on consumed
 history, so the ES t=2.02 is not a pass.
 
+## G. Did the legacy Wilder bug accidentally capture useful opening information? — mechanism yes, prediction NO
+
+- Status: **mechanism confirmed; predictive feature rejected** (NQ + ES) — EXP-0007 /
+  HYP-0004, post-hoc mechanism validation
+- Script: `scripts/hyp_0004_opening_seed.py` → `artifacts/runs/EXP-0007/`
+
+The hypothesis came from EXP-0006's puzzle: repairing Wilder reduced Study D even though
+the legacy and repaired `VEI>1.10` sets overlap by 92.1%. The legacy recursion starts both
+ATR legs at the first RTH bar, so it may accidentally encode whether the first minute was
+quiet or shocked relative to the first 50 minutes. That mechanical story is **confirmed**:
+within time-of-day slot, `legacy_vei - repaired_vei` correlates **+0.551 NQ / +0.532 ES**
+with `quiet_open = -log(first-minute TR / mean first-50-minute TR)`. The bug is an
+undocumented opening-anchor feature, not merely random VEI noise.
+
+It is **not a stable predictor**. After controlling for repaired VEI, past volatility,
+slot and era levels, and slot/era baseline-momentum slopes, the standardized
+`past_ret × quiet_open` coefficient is:
+
+| | coefficient [session-block 90% CI] | era-stratified re-pairing p | quietest−loudest quintile spread |
+|---|---:|---:|---:|
+| NQ | +0.0171 [−0.0304,+0.0210] | 0.0450 | +0.0160 |
+| ES | +0.0121 [−0.0272,+0.0164] | 0.1369 | **−0.0217** |
+
+Both CIs include zero, ES fails the claim-matched null and has the wrong-signed quintile
+spread, neither market is monotone by opening-condition quintile, and era coefficients
+alternate sign. The apparent positive full-sample coefficient is concentrated in the
+**same single session on both markets, 2020-03-16**, whose first RTH bar has zero range.
+Leaving it out flips the coefficient to −0.0153 NQ / −0.0071 ES; dropping zero-range
+openings gives −0.0128 / −0.0059 (both CIs include zero), and a bounded causal
+`-log1p(open_rel50)` transform also gives ≈0. NQ's isolated p=0.045 is therefore not a
+robust survivor, and same-date NQ/ES leverage is not independent replication.
+
+The spectacular consumed-history fringe reproduces — legacy-only is just 23 NQ / 40 ES
+observations with corr +0.809/+0.451, repaired-only 203/228 with −0.229/−0.154 — but it
+does not generalise continuously. The 2,651/3,128 observations high under **both**
+versions retain a weaker +0.087/+0.086 correlation, so Study D's qualified common core is
+not wholly a seed artefact. **Consequence:** do not restore the defective seed and do not
+promote `quiet_open`; the legacy uplift was rare boundary selection plus one shared
+extreme session. Any new opening-transition work should use an explicit causal onset /
+volume feature and future data, not more transforms of this consumed screen.
+
+---
+
+## H. `IC_fwdvol` measures level-likeness, not ratio quality — and the LEVEL alone does not select momentum
+
+- Status: **confirmed (NQ + ES), decisively** — EXP-0008 / HYP-0005
+- Script: `scripts/s1c_selection_metric.py` → `artifacts/runs/EXP-0008/`
+- Closes next action 0b **by replacement**, not by adopting the argmax.
+
+Ten VEI variants scored on ONE common sample (n=33,389; the intersection where every
+variant is defined, so the estimator is never confounded with the time of day it is
+measured at). `corr_lvl` = Spearman against the vol level (`past_rv`, Study B's
+baseline). Two `LEVEL:` rows are ATR(short) with **no denominator at all** — not
+candidate features, but the degenerate limit, and the decisive control.
+
+| variant | corr_lvl | IC_fwdvol | IC_partial | contrast (matched rate) |
+| --- | --- | --- | --- | --- |
+| `LEVEL: atr_10` (no ratio) | +0.616 / +0.655 | **+0.5745 / +0.6130** | +0.117 / +0.149 | **−0.005 [−0.062,+0.044] / +0.023 [−0.026,+0.069]** |
+| `wilder_5_25` | +0.090 / +0.086 | +0.1124 / +0.1103 | **+0.069 / +0.070** | +0.093 [+0.027,+0.152] / +0.099 [+0.025,+0.167] |
+| `wilder_10_50` **[canon]** | +0.259 / +0.252 | +0.2436 / +0.2367 | +0.044 / +0.047 | +0.075 [−0.013,+0.129] / +0.089 [+0.002,+0.152] |
+| `wilder_20_100` | +0.450 / +0.404 | +0.3958 / +0.3530 | +0.025 / +0.025 | +0.059 [−0.028,+0.120] / +0.045 [−0.034,+0.109] |
+
+Cross-variant regressions (NQ / ES):
+
+| | slope on `corr_lvl` | R² |
+| --- | --- | --- |
+| `IC_fwdvol` | **+0.891 / +0.903** | **0.992 / 0.992** |
+| `IC_partial` | +0.116 / +0.175 | 0.301 / 0.496 |
+| `contrast` | **−0.216 / −0.160** | 0.838 / 0.759 |
+
+**(a) The incumbent metric is level-likeness, to three significant figures.** R² 0.992 on
+both markets, slope ≈0.9, intercept ≈0 — there is essentially no residual left for
+"ratio quality". The control settles it: a feature with *zero* ratio content **wins the
+`IC_fwdvol` column outright** on both markets. A metric a non-ratio wins cannot select
+among ratios. The mechanism is algebraic, not empirical: as the denominator's memory
+grows, ATR(long) approaches a within-session constant, and dividing by a constant is not
+forming a ratio — it is rescaling ATR(short). The "better" variants were better because
+they had stopped being ratios.
+
+**(b) It is not merely uninformative, it is anti-selective.** `contrast` — the project's
+primary metric — moves *against* `corr_lvl` (r −0.915 / −0.871). The two metrics rank
+variants oppositely, so selecting on `IC_fwdvol` degrades the momentum-regime property.
+`wilder_20_100`, the highest-scoring ratio on the incumbent metric, has the **lowest**
+momentum contrast of any ratio tested, below canonical on both markets. §A-corrected's
+refusal to adopt it is vindicated.
+
+**(c) No forward-vol metric can do this job.** `IC_partial` (level partialled out of both
+sides, `analysis.partial_spearman`) breaks the near-perfect fit but the pure-level
+controls still top it, because `LEVEL: atr_10` is a *differently windowed* level that
+carries forward-vol information `past_rv` lacks. Report `IC_partial` as a diagnostic;
+do not promote it to the selection rule.
+
+**(d) The most valuable result came from the control.** The pure vol level has a momentum
+contrast of essentially **zero** (−0.005 NQ / +0.023 ES, both CIs spanning 0), while every
+genuine ratio is positive (+0.06 to +0.12). **High volatility alone does NOT select the
+momentum regime; the expansion RATIO does.** This is the first result in the project that
+separates VEI from the level on the momentum axis rather than the vol-forecasting axis,
+and it sharpens Study D's meaning — D is *not* "momentum works when vol is high".
+
+**The two axes are now coherent and opposite.** On the **vol-forecasting** axis the ratio
+is dominated by the level and nearly worthless (§B, ΔR² +0.0017). On the
+**momentum-regime** axis the level is worthless and only the ratio carries anything (this
+section). These are not competing measurements of one quantity — they are different
+quantities, and VEI's only distinctive role is the second.
+
+**Limits (rule 26).** This does **not** revive Study D: D remains qualified/inconclusive
+after EXP-0006, its CI still crosses zero on NQ at the canonical variant, and every
+contrast CI here is wide and overlapping. The `contrast` column is a ten-variant SEARCH
+on consumed history; the argmax `wilder_20_50` (+0.108 / +0.118) is **not** promoted and
+must not be cited as a better estimator. What is established is the *slope* — the
+direction of the relationship between level-likeness and momentum-selectivity — not any
+individual cell. Flagged for any future estimator work: the short-window cells
+(`wilder_5_25`, `wilder_5_50`) are the least level-contaminated, so the **short** leg is
+where to look, not the long one; and `sma_19_99` has `IC_partial` ≈ 0 on both markets, so
+its entire forward-vol score is level content.
+
 ---
 
 ## Synthesis
 
-VEI is not a direction predictor, and as a vol *forecaster* it is dominated by the vol
-level. Its real, cross-market-consistent value is as a **momentum regime switch**: the
-tape trends when vol expands and is a random walk otherwise. The single most important
-practical correction is the **estimator** — use Wilder ATR, not rolling-mean, or VEI
-is mostly noise.
+VEI is not a direction predictor, and as a volatility forecaster it is dominated by the
+volatility level. Effective **memory**, not estimator brand, explains Study A; use the
+repaired textbook Wilder seed when Wilder is specified, but Wilder(10/50) is not proven
+optimal. A fixed VEI=1 or 1.10 line is also not a universal calm/expansion boundary.
 
-Study D's momentum switch was then promoted to a preregistered strategy (E / EXP-0004):
-the mechanism **confirmed** cleanly (gross dose-response high ≫ low, cross-market), but
-the per-trade tilt is **too small to monetize** — daily Sharpe ≈0, sub-cost. So VEI's
-honest, verified role is diagnostic/regime-labelling and (marginally) risk — not a
-standalone directional edge.
+§H settles what VEI is *for*. The two candidate roles turn out to be mutually exclusive,
+and only one of them is the ratio's: at forecasting volatility the level dominates and
+the ratio adds a sliver, while at selecting the momentum regime the level contributes
+**nothing** (contrast ≈ 0) and only the ratio carries anything. That also retires the
+metric Study A was originally selected on — `IC_fwdvol` scores level-likeness (R² 0.992)
+and ranks variants opposite to the primary metric — so no estimator change should be made
+on it, and the `wilder_20_100` lead is withdrawn.
 
-Study F (EXP-0005) then stress-tested the one surviving mechanism and it held. The
-obvious alternative explanation — that `VEI>1.10` is really just "it is late in the
-session", since ~88% of high-VEI decisions fall after 14:00 — is **rejected on both
-markets**: matching time of day leaves the contrast at 106% / 105% of its pooled size.
-The regime switch is a genuine volatility property. Two corollaries change how VEI should
-be used: its information lives in the **absolute level** (de-seasonalising it makes it
-worse, not better), and the predictability is **front-loaded** at 5–30 minutes rather
-than strengthening with hold — so Study E's H=60 lead is cost amortisation, not a longer
-trend. Combined with F2 (no VR difference), the sharpest statement of what VEI does is:
-*it tilts the drift of the next ~30 minutes toward the last 30 minutes' direction, and
-changes nothing else about the path.*
+The best directional lead remains a **weak, qualified momentum tilt**: repaired high VEI
+has positive 30-minute continuation on both markets, and the time-of-day audit shows it
+is not merely a late-session clock effect, but NQ loses significance at the fixed 1.10
+cut. The standalone causal strategy remains rejected on daily risk-adjusted performance;
+modeled costs consume part, not all, of its positive high-cell gross expectancy.
+
+EXP-0007 closes the tempting explanation that the legacy seed was secretly a better
+predictor. It did mechanically encode the opening bar, but that opening component has no
+monotone, era-stable, cross-market incremental information and is load-bearing on one
+shared zero-range session. The honest verified role for VEI is therefore descriptive
+regime labelling and marginal risk information, not established directional alpha.
 
 Remaining leads, none started: the daily-timescale squeeze (backlog 4, deferred by Study
-C and untouched), expansion onset vs late-chase and volume participation (backlog 8, the
+C and untouched), expansion onset vs late-chase and volume participation (backlog 11, the
 "what kind of expansion" split), a regime-persistence exit that holds while VEI stays
 expanded (backlog 10), and VEI as a gate on an existing momentum book rather than
 standalone (backlog 3/7). The H=60 axis is now closed as a lead.

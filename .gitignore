@@ -20,6 +20,9 @@ ai_shared_memory/*.sqlite-wal
 
 # data files
 *.csv
+# ...but the experiment ledger is the mandated run-level audit trail
+# (RESEARCH_WORKFLOW.md), not data. Keep it under version control.
+!**/experiments/ledger.csv
 *.xlsx
 *.parquet
 *.png

@@ -1,0 +1,57 @@
+{
+  "instrument": "ES",
+  "mechanism_corr": 0.531688594912372,
+  "overlap": {
+    "legacy_high": 3168,
+    "repaired_high": 3356,
+    "both_high": 3128,
+    "jaccard": 0.9210836277974087
+  },
+  "quintile_spread": -0.021727772152931195,
+  "primary": {
+    "coef": 0.012138044006628873,
+    "ci_lo": -0.02717134040629677,
+    "ci_hi": 0.01639380283428249,
+    "jack_min": -0.007112643750973741,
+    "jack_max": 0.012789474544199824,
+    "jack_positive_fraction": 0.9997304582210242,
+    "max_abs_jack_delta": 0.019250687757602615,
+    "max_influence_date": "2020-03-16",
+    "max_influence_leaveout_coef": -0.007112643750973741
+  },
+  "null_mean": -0.00023897602702087201,
+  "null_q95": 0.01961092681567988,
+  "null_p": 0.13686313686313686,
+  "era_coefs": [
+    {
+      "era": "2011-14",
+      "n": 9284,
+      "sessions": 844,
+      "coef": -0.004767529832965631
+    },
+    {
+      "era": "2015-18",
+      "n": 10967,
+      "sessions": 997,
+      "coef": -0.02006077512217016
+    },
+    {
+      "era": "2019-22",
+      "n": 10941,
+      "sessions": 995,
+      "coef": 0.018183260490625734
+    },
+    {
+      "era": "2023+",
+      "n": 9614,
+      "sessions": 874,
+      "coef": -0.017655296772439315
+    }
+  ],
+  "gates": {
+    "mechanism": true,
+    "ci": false,
+    "null": false,
+    "dose": false
+  }
+}

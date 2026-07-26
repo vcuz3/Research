@@ -1,0 +1,15 @@
+{
+  "instrument": "NQ",
+  "sessions": 3710,
+  "bars": 1446840,
+  "incomplete_sessions": 7,
+  "missing_rth_bars": 60,
+  "duplicate_date_mfo": 0,
+  "decision_rows_finite": 40806,
+  "opening_feature_missing": 0,
+  "zero_range_opening_sessions": 1,
+  "zero_range_ratio_floor": 1e-06,
+  "first_eligible_mfo": 59,
+  "last_forward_mfo": 359,
+  "roll_boundaries": "not identifiable from loaded continuous clean file; inherited loader limitation"
+}

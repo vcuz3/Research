@@ -93,3 +93,23 @@ material run. Done items link to the run.
   vol-selectivity screen (RVOL/gap/Hurst/ATR-buffer/VEI-gate) was a turnover lever, not
   alpha. A VEI edge must beat that prior by monetizing at the portfolio/Sharpe level,
   not just improving per-trade quality.
+
+## IDEA-0001 — Legacy Wilder seed as an accidental opening-condition feature
+
+- Created: 2026-07-26
+- Observation: repairing the Wilder seed reduced Study D even though the legacy and
+  repaired `VEI>1.10` sets overlapped by ~92%. The few legacy-only observations began
+  with unusually quiet first bars and showed strong historical continuation; the larger
+  repaired-only set began with unusually large first bars and showed negative
+  continuation.
+- Proposed mechanism: first-observation seeding accidentally encodes the shape of the
+  opening transition. A quiet first minute followed by expansion lifts the fast/slow
+  ratio; an opening shock followed by cooling depresses it. The bug may therefore act as
+  an undocumented opening-condition filter.
+- Expected improvement: not to restore the bug, but to extract and test an explicit,
+  causal opening feature alongside repaired VEI.
+- Main artifact risk: the motivating fringe is only 23 NQ / 40 ES observations and was
+  found post-hoc; a few sessions, time-of-day composition, or correlated sibling-market
+  dates could explain it.
+- Motivating evidence: EXP-0006 plus the user-requested read-only boundary diagnostic.
+- Status: promoted to HYP-0004

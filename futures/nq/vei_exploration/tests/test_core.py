@@ -130,6 +130,23 @@ def test_forward_features_causality():
                 assert np.isclose(bk.loc[key, col], ak.loc[key, col]), (key, col)
 
 
+def test_opening_tr_ratio_is_causal_and_matches_definition():
+    df = _toy(n_per=70, n_sess=3, seed=8)
+    tr = V.true_range(df)
+    got = A.opening_tr_ratio(df, tr, windows=(5, 10, 50)).set_index("date")
+    for sd, g in df.groupby("sdate", sort=False):
+        tg = tr.loc[g.index].to_numpy(float)
+        for n in (5, 10, 50):
+            assert np.isclose(got.loc[sd, f"open_rel_{n}"], tg[0] / tg[:n].mean())
+
+    # Anything after the opening window cannot change the feature.
+    p = df.copy()
+    p.loc[p["mfo"] >= 50, ["open", "high", "low", "close"]] *= 7.0
+    after = A.opening_tr_ratio(p, V.true_range(p), windows=(5, 10, 50)).set_index("date")
+    assert np.allclose(got[["open_rel_5", "open_rel_10", "open_rel_50"]],
+                       after[["open_rel_5", "open_rel_10", "open_rel_50"]])
+
+
 def test_variance_ratio():
     rng = np.random.default_rng(3)
     noise = rng.normal(0, 1, 5000)
@@ -141,3 +158,48 @@ def test_variance_ratio():
     assert A.variance_ratio(ar, 5) > 1.3
     alt = np.tile([1.0, -1.0], 2500)                          # mean-reverting
     assert A.variance_ratio(alt, 2) < 0.5
+
+
+def test_partial_spearman_removes_the_conditioning_variable():
+    """Three load-bearing properties of the 0b selection metric.
+
+    1. If x is a monotone function of z ALONE, x adds nothing about y once z is
+       partialled out -- even when its raw IC vs y is large. This is exactly the
+       degenerate case the metric exists to catch: a VEI whose denominator is so slow
+       that the ratio is just a rescaled level.
+    2. A genuinely independent contribution survives partialling.
+    3. Partialling out something unrelated leaves the plain Spearman ~unchanged.
+    """
+    rng = np.random.default_rng(11)
+    n = 4000
+    z = rng.normal(0, 1, n)
+    y = z + rng.normal(0, 0.5, n)
+
+    # 1. x is a monotone transform of z => raw IC is high, partial IC ~ 0
+    x_deg = np.exp(0.7 * z)
+    assert A.spearman(x_deg, y) > 0.7
+    assert abs(A.partial_spearman(x_deg, y, z)) < 0.05
+
+    # 2. x carries its own information about y beyond z
+    own = rng.normal(0, 1, n)
+    y2 = z + own + rng.normal(0, 0.3, n)
+    x_own = own + 0.3 * z
+    assert A.partial_spearman(x_own, y2, z) > 0.5
+
+    # 3. partialling an irrelevant variable barely moves the estimate
+    junk = rng.normal(0, 1, n)
+    assert abs(A.partial_spearman(x_own, y2, junk) - A.spearman(x_own, y2)) < 0.05
+
+
+def test_partial_spearman_matches_manual_rank_residual_correlation():
+    rng = np.random.default_rng(12)
+    n = 500
+    z = rng.normal(0, 1, n)
+    x = 0.6 * z + rng.normal(0, 1, n)
+    y = 0.4 * z + 0.5 * x + rng.normal(0, 1, n)
+    rx, ry, rz = (pd.Series(v).rank().to_numpy(float) for v in (x, y, z))
+    X = np.c_[np.ones(n), rz]
+    ex = rx - X @ np.linalg.lstsq(X, rx, rcond=None)[0]
+    ey = ry - X @ np.linalg.lstsq(X, ry, rcond=None)[0]
+    want = float(np.corrcoef(ex, ey)[0, 1])
+    assert np.isclose(A.partial_spearman(x, y, z), want, atol=1e-10)

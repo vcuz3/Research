@@ -1,0 +1,31 @@
+
+===== 0b: is IC_fwdvol a valid selection metric? — ES =====
+sessions=3710  decision clock=30m  horizon=30m
+common sample n=33389 over 9/13 slots (mfo 119..359); level = past_rv (Study B's baseline predictor)
+matched selection rate = 0.0946 (share of common sample with canonical VEI > 1.1), n_high=3160
+
+                   variant   own_n  corr_lvl  IC_fwdvol  IC_partial         partial_CI  contrast        contrast_CI
+  LEVEL: atr_10 (no ratio)   48229    +0.655    +0.6130     +0.1494 [+0.1421,+0.1581]   +0.0225 [-0.0259,+0.0686]
+  LEVEL: atr_20 (no ratio)   48226    +0.647    +0.6043     +0.1433 [+0.1355,+0.1513]   +0.0093 [-0.0417,+0.0562]
+               wilder_5_25   48226    +0.086    +0.1103     +0.0701 [+0.0602,+0.0796]   +0.0994 [+0.0251,+0.1670]
+              wilder_10_25   48226    +0.155    +0.1532     +0.0416 [+0.0326,+0.0509]   +0.0812 [-0.0020,+0.1330]
+      wilder_10_50 [CANON]   44516    +0.252    +0.2367     +0.0466 [+0.0378,+0.0547]   +0.0894 [+0.0016,+0.1517]
+               wilder_5_50   44516    +0.191    +0.1967     +0.0681 [+0.0584,+0.0779]   +0.0974 [+0.0111,+0.1615]
+              wilder_20_50   44516    +0.303    +0.2776     +0.0426 [+0.0337,+0.0512]   +0.1181 [+0.0418,+0.1848]
+             wilder_10_100   37099    +0.359    +0.3200     +0.0343 [+0.0247,+0.0428]   +0.0775 [+0.0082,+0.1316]
+             wilder_20_100   37099    +0.404    +0.3530     +0.0252 [+0.0170,+0.0347]   +0.0453 [-0.0343,+0.1089]
+    sma_19_99 [com=w10_50]   37099    +0.221    +0.1880     +0.0022 [-0.0072,+0.0116]   +0.0915 [+0.0044,+0.1506]
+
+--- cross-variant diagnostic: regress each metric on corr_lvl ---
+   ic_fwdvol = +0.0100 +0.9025*corr_lvl   r=+0.996  R2=0.992
+  ic_partial = +0.0049 +0.1754*corr_lvl   r=+0.704  R2=0.496
+    contrast = +0.1254 -0.1598*corr_lvl   r=-0.871  R2=0.759
+
+--- degenerate-limit control (pure level vs best ratio) ---
+   IC_fwdvol: best LEVEL +0.6130   best ratio +0.3530 (wilder_20_100)   -> LEVEL WINS
+  IC_partial: best LEVEL +0.1494   best ratio +0.0701 (wilder_5_25)   -> LEVEL WINS
+    contrast: best LEVEL +0.0225   best ratio +0.1181 (wilder_20_50)   -> ratio wins
+
+Reads: if corr_lvl explains IC_fwdvol (high R2) AND the pure level tops the IC_fwdvol
+column, that metric is scoring level-likeness and must not select a RATIO.
+artifacts -> C:\Users\VuDoa\Research\futures\nq\vei_exploration\artifacts\runs\EXP-0008

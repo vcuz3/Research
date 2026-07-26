@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0007",
+  "hypothesis_id": "HYP-0004",
+  "status": "completed",
+  "declared_utc": "2026-07-26T16:19:48.340974+00:00",
+  "config_path": "experiments\\hypotheses\\HYP-0004.md",
+  "data_scope": "NQ+ES clean Databento RTH 1m 2011-2026; consumed history",
+  "code_ref": "scripts\\hyp_0004_opening_seed.py; core\\vei.py; core\\analysis.py",
+  "run_command": "python -u -m futures.nq.vei_exploration.scripts.hyp_0004_opening_seed {NQ|ES}",
+  "primary_metric": "session-block-bootstrap controlled past_ret x quiet_open interaction and era-stratified session re-pairing p-value, both markets",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-07-26T16:32:50.509301+00:00",
+  "result_summary": "MECHANISM CONFIRMED / PREDICTIVE FEATURE REJECTED: seed bias tracks quiet opening (+0.551 NQ/+0.532 ES), but controlled CIs cross zero, ES re-pairing p=.137, dose response/eras fail, and shared 2020-03-16 zero-range opening is load-bearing; dropping it flips both coefficients negative.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}
