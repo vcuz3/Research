@@ -232,6 +232,42 @@ def causal_slot_percentile(df: pd.DataFrame, col: str, *, slot_col: str = "mfo",
     return out
 
 
+def causal_slot_stats(df: pd.DataFrame, col: str, *, slot_col: str = "mfo",
+                      date_col: str = "date", lookback: int = 90,
+                      min_obs: int = 60) -> tuple[pd.Series, pd.Series]:
+    """Trailing same-slot MEAN and SD of `col` from STRICTLY PRIOR sessions.
+
+    The magnitude-preserving sibling of `causal_slot_percentile`: same causal
+    trailing same-slot window, but it returns the location and scale rather than an
+    ordinal rank, so `col / mu` and `(col - mu) / sd` keep information about HOW FAR
+    from normal a reading is. This is the noise-area band construction applied to a
+    feature instead of to displacement.
+
+    Same fractional `min_obs` policy as `causal_slot_percentile` (rule 9a): requiring
+    the full `lookback` would delete decisions wherever same-slot history is thin, and
+    that deletion tracks time-of-day liquidity.
+
+    Returns `(mu, sd)` aligned to `df.index`; both NaN until `min_obs` prior
+    observations exist at that slot. `sd` uses ddof=1.
+    """
+    mu = pd.Series(np.nan, index=df.index, dtype=float)
+    sd = pd.Series(np.nan, index=df.index, dtype=float)
+    for _, g in df.groupby(slot_col, sort=False):
+        g = g.sort_values(date_col)
+        v = g[col].to_numpy(float)
+        m = np.full(len(v), np.nan)
+        s = np.full(len(v), np.nan)
+        for i in range(len(v)):
+            w = v[max(0, i - lookback):i]
+            w = w[np.isfinite(w)]
+            if len(w) >= min_obs:
+                m[i] = w.mean()
+                s[i] = w.std(ddof=1)
+        mu.loc[g.index] = m
+        sd.loc[g.index] = s
+    return mu, sd
+
+
 # --------------------------------------------------------------------------- #
 # forward / past realized-vol features at the decision clock
 # --------------------------------------------------------------------------- #

@@ -203,3 +203,68 @@ def test_partial_spearman_matches_manual_rank_residual_correlation():
     ey = ry - X @ np.linalg.lstsq(X, ry, rcond=None)[0]
     want = float(np.corrcoef(ex, ey)[0, 1])
     assert np.isclose(A.partial_spearman(x, y, z), want, atol=1e-10)
+
+
+def _slot_frame(n_sess=200, slots=(29, 59, 89), seed=0):
+    rng = np.random.default_rng(seed)
+    rows = []
+    for d in range(n_sess):
+        for s in slots:
+            # a deliberate per-slot LEVEL shift, which is exactly what the
+            # normalisation is supposed to remove
+            rows.append({"date": pd.Timestamp(2020, 1, 1) + pd.Timedelta(days=d),
+                         "mfo": s, "v": s / 30.0 + rng.normal(0, 0.1)})
+    return pd.DataFrame(rows)
+
+
+def test_causal_slot_stats_is_causal_and_matches_definition():
+    df = _slot_frame()
+    mu, sd = A.causal_slot_stats(df, "v", lookback=90, min_obs=60)
+
+    # matches a literal trailing-window computation, per slot, strictly prior
+    for _, g in df.groupby("mfo", sort=False):
+        g = g.sort_values("date")
+        v = g["v"].to_numpy(float)
+        for i in range(len(v)):
+            w = v[max(0, i - 90):i]
+            if len(w) >= 60:
+                assert np.isclose(mu.loc[g.index[i]], w.mean())
+                assert np.isclose(sd.loc[g.index[i]], w.std(ddof=1))
+            else:
+                assert np.isnan(mu.loc[g.index[i]])
+
+    # CAUSALITY: perturbing later sessions cannot change an earlier session's stats
+    cut = df["date"] > pd.Timestamp(2020, 1, 1) + pd.Timedelta(days=150)
+    pert = df.copy()
+    pert.loc[cut, "v"] *= 9.0
+    mu2, sd2 = A.causal_slot_stats(pert, "v", lookback=90, min_obs=60)
+    keep = ~cut.to_numpy()
+    assert np.allclose(mu[keep].to_numpy(), mu2[keep].to_numpy(), equal_nan=True)
+    assert np.allclose(sd[keep].to_numpy(), sd2[keep].to_numpy(), equal_nan=True)
+
+
+def test_slot_normalisation_removes_a_per_slot_level_shift():
+    """At a fixed global threshold, a per-slot LEVEL shift makes the RAW feature a
+    slot selector. Dividing by the trailing same-slot mean removes the location shift
+    but NOT a per-slot scale difference, so `rel` improves calibration without
+    perfecting it; the z-score removes both and is near-uniform.
+
+    This separation is the reason both variants are carried into the study: `rel`
+    preserves the natural "1.0 = normal for this time of day" reading, `z` is better
+    calibrated. Which one to prefer is an empirical question about whether VEI's
+    per-slot dispersion is proportional to its per-slot level.
+    """
+    df = _slot_frame(n_sess=400, seed=1)
+    mu, sd = A.causal_slot_stats(df, "v", lookback=90, min_obs=60)
+    d = df.assign(rel=df["v"] / mu, z=(df["v"] - mu) / sd).dropna(subset=["rel", "z"])
+
+    def spread(col):
+        thr = d[col].quantile(0.80)
+        share = d.assign(hi=d[col] >= thr).groupby("mfo")["hi"].mean()
+        return float(share.max() - share.min())
+
+    raw, rel, z = spread("v"), spread("rel"), spread("z")
+    assert raw > 0.5             # raw: the threshold is a TIME-OF-DAY selector
+    assert rel < 0.5 * raw       # location removed
+    assert z < 0.05              # location AND scale removed -> near-uniform
+    assert z < rel

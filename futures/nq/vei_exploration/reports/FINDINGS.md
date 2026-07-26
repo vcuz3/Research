@@ -469,12 +469,92 @@ its entire forward-vol score is level content.
 
 ---
 
+## I. The VEI threshold was a clock; the trailing same-slot z-score fixes it at no information cost
+
+- Status: **confirmed (NQ + ES)** for the calibration result; **provisional /
+  holdout-pending** for the contrast improvement — EXP-0009 / HYP-0006
+- Script: `scripts/s5_slot_normalised.py` → `artifacts/runs/EXP-0009/`
+- Origin: user proposal — apply the noise-area construction (a same-time-of-day
+  statistic over a trailing lookback of sessions) to VEI itself rather than to
+  displacement.
+
+Four features at MATCHED selection rate on one common sample: `raw` (canonical VEI),
+`rel` = VEI/mu_slot, `z` = (VEI − mu_slot)/sd_slot, `pct` (the ordinal percentile
+EXP-0005/0006 tested). `mu`/`sd` come from the new `analysis.causal_slot_stats` —
+strictly prior sessions at the same slot, 90-session lookback, fractional `min_obs`.
+
+**(a) The defect, sized.** At `VEI > 1.10` the raw feature selects **1.5% of the 10:30
+slot and 18.4% of the 15:30 slot** (NQ; ES 2.6% → 22.4%). Per-slot selection-rate spread
+0.169 NQ / 0.198 ES, CV 0.93 / 0.88. §A-corrected (b) said the 1.10 line is a time-of-day
+line; this quantifies it. Any regime label built on a fixed cut of the raw ratio was
+substantially a clock.
+
+| feature | slot-rate spread NQ / ES | CV NQ / ES |
+| --- | --- | --- |
+| `raw` | 0.1690 / 0.1981 | 0.933 / 0.882 |
+| `rel` | 0.0293 / 0.0307 | 0.135 / 0.105 |
+| **`z`** | **0.0115 / 0.0121** | **0.050 / 0.041** |
+| `pct` | 0.0093 / 0.0088 | 0.039 / 0.031 |
+
+**(b) `rel` only half-fixes it, and that is informative.** Dividing by the trailing
+same-slot MEAN removes per-slot LOCATION but not per-slot SCALE, leaving `rel` ~2.5×
+worse-calibrated than `z` on both markets. So **VEI's per-slot dispersion is not
+proportional to its per-slot level** — the two corrections are separable and both are
+needed.
+
+**(c) De-seasonalising does NOT destroy information — settled.** `rel` retains **88.1% NQ
+/ 92.5% ES** of raw's within-slot contrast, above the pre-declared 75% kill-test gate on
+both markets. Together with EXP-0006 this closes the EXP-0005 claim for good: that
+finding was an artefact of the warm-up bug, and the reversal now has a second,
+independent, magnitude-preserving confirmation.
+
+**(d) `z` is the only feature whose CI excludes zero on both markets in both metrics.**
+
+| feature | within-slot NQ | within-slot ES | pooled NQ | pooled ES |
+| --- | --- | --- | --- | --- |
+| `raw` | +0.0748 [−0.0002, +0.1352] | +0.0781 [−0.0040, +0.1442] | +0.0647 [−0.0097, +0.1443] | +0.0633 [−0.0119, +0.1405] |
+| `rel` | +0.0659 [−0.0154, +0.1277] | +0.0722 [−0.0019, +0.1368] | +0.0711 [−0.0042, +0.1452] | +0.0754 [+0.0017, +0.1556] |
+| **`z`** | **+0.0959 [+0.0187, +0.1544]** | **+0.0784 [+0.0052, +0.1377]** | **+0.0930 [+0.0096, +0.1680]** | **+0.0869 [+0.0046, +0.1638]** |
+| `pct` | +0.0805 [+0.0037, +0.1294] | +0.0626 [−0.0235, +0.1198] | +0.0795 [−0.0018, +0.1507] | +0.0699 [−0.0026, +0.1432] |
+
+4 cells of 4 for `z`, 0 of 4 for `raw`. **But read the mechanism, not the headline:** on
+NQ the point estimate rises (+28%) at unchanged CI width; on ES it is flat with a
+slightly narrower interval. This is a **better-conditioned measurement, not a bigger
+effect**, and the size of the gain does not transfer even though the significance pattern
+does.
+
+**Decision: adopt `z` as the project's regime label**, `rel` retained as the interpretable
+sibling ("1.0 = normal for this time of day"). Measurement improvement only.
+
+**(e) Limits.** Sensitivity lb {30, 90, 180} shows no cliff and no sharp optimum (180
+worst on both markets); the default 90 was inherited, not selected. Rule 9a: the trailing
+window costs 60 of 3710 sessions **uniformly across all 11 slots** (kept 0.9838
+everywhere) — uniformity is the pass signal. CIs are wide, overlapping, and 400-draw; two
+`z` ES calls sit near a CI edge, so the *pattern* is the claim, not any pairwise gap.
+
+**(f) This does not revive Study D.** D was downgraded because NQ's CI crossed zero; under
+`z` it does not, on either market or metric. That is real and cross-market-consistent —
+and it is still the **fifth** measurement of D on the same consumed history, with `z`
+chosen from four candidates *after* seeing D fail under the canonical feature. Rule 26
+applies exactly. **`z` makes Study D worth one clean forward test; it does not
+retroactively pass a test D already failed.**
+
+---
+
 ## Synthesis
 
 VEI is not a direction predictor, and as a volatility forecaster it is dominated by the
 volatility level. Effective **memory**, not estimator brand, explains Study A; use the
 repaired textbook Wilder seed when Wilder is specified, but Wilder(10/50) is not proven
 optimal. A fixed VEI=1 or 1.10 line is also not a universal calm/expansion boundary.
+
+§I repairs the last of the construct's three known defects. VEI's fixed `1.10` threshold
+was a time-of-day selector (1.5% of the 10:30 slot, 18.4% of 15:30); normalising against
+the trailing same-slot distribution removes that entirely and costs no information —
+which also settles, for good, the EXP-0005 "de-seasonalising destroys information" claim
+as a warm-up-bug artefact. The canonical regime label is now the trailing same-slot
+z-score. With the warm-up (EXP-0006), the selection metric (EXP-0008), and the threshold
+(EXP-0009) all repaired, any future test of this feature should use it in this form.
 
 §H settles what VEI is *for*. The two candidate roles turn out to be mutually exclusive,
 and only one of them is the ratio's: at forecasting volatility the level dominates and

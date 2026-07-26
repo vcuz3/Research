@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0009",
+  "hypothesis_id": "HYP-0006",
+  "status": "completed",
+  "declared_utc": "2026-07-26T17:27:09.576147+00:00",
+  "config_path": "scripts/s5_slot_normalised.py",
+  "data_scope": "NQ + ES clean Databento RTH 1-min 2011\u20132026, same sample as EXP-0001..0008",
+  "code_ref": "working-tree",
+  "run_command": "python -u -m futures.nq.vei_exploration.scripts.s5_slot_normalised {NQ|ES}",
+  "primary_metric": "see below (two co-primary metrics \u2014 calibration and information)",
+  "builder": "Claude",
+  "outputs": [],
+  "closed_utc": "2026-07-26T17:29:32.616706+00:00",
+  "result_summary": "KILL TEST 1 DID NOT FIRE; kill test 2 outcome = calibration FIXED at NO information cost, both markets. CO-PRIMARY 1 (calibration): the defect is confirmed at full size and is identical cross-market - at VEI>1.10 the raw feature selects 1.5% of the 10:30 slot vs 18.4% of 15:30 (NQ; ES 2.6%->22.4%), i.e. a TIME-OF-DAY selector wearing a volatility label. Per-slot selection-rate spread/CV: raw 0.169/0.933 NQ, 0.198/0.882 ES -> rel 0.029/0.135, 0.031/0.105 -> z 0.0115/0.050, 0.0121/0.041 -> pct 0.0093/0.039, 0.0088/0.031. Informative detail: rel is ~2.5x worse-calibrated than z on BOTH markets because dividing by the trailing same-slot MEAN removes per-slot LOCATION but not per-slot SCALE => VEI's per-slot dispersion is NOT proportional to its per-slot level. CO-PRIMARY 2 (information): rel retains 88.1% NQ / 92.5% ES of raw's within-slot contrast, above the pre-declared 75% gate on both => de-seasonalising does NOT destroy information. This SETTLES the EXP-0005/EXP-0006 flip-flop: the original 'de-seasonalising destroys info' claim was a warm-up-bug artefact, now independently reconfirmed by a magnitude-preserving variant. z = (VEI-mu_slot)/sd_slot is the standout and the ONLY feature of four whose CI excludes 0 on both markets in BOTH metrics (4/4 cells; raw 0/4): within-slot +0.0959 [+0.0187,+0.1544] NQ / +0.0784 [+0.0052,+0.1377] ES, pooled +0.0930 [+0.0096,+0.1680] / +0.0869 [+0.0046,+0.1638]. Mechanism differs by market though - NQ point estimate RISES +28% at unchanged CI width; ES point estimate FLAT with a slightly narrower interval => a BETTER-CONDITIONED MEASUREMENT, not a bigger effect. ADOPT z as the regime label (rel retained as the interpretable sibling, '1.0 = normal for this time of day'). Sensitivity lb{30,90,180} on rel: +0.067/+0.066/+0.059 NQ, +0.066/+0.072/+0.055 ES - no cliff, 180 worst on both; default 90 inherited for single-variable comparability, NOT selected on. Rule 9a: trailing window costs 60/3710 sessions UNIFORMLY across all 11 slots (kept 0.9838 everywhere) = pass signal. STUDY D: under z, NQ's CI no longer crosses zero on either market or metric - the specific reason EXP-0006 downgraded D. This is NOT a restoration: it is the 5th measurement of D on the same consumed history and z was chosen from 4 candidates AFTER seeing D fail under the canonical feature (rule 26). z makes D worth exactly ONE clean FORWARD test. EXP-0004's REJECT stands, no null spent, still no established directional edge. Three known defects of the construct are now all repaired (warm-up EXP-0006, selection metric EXP-0008, threshold calibration here). Bug caught by running: sensitivity sweep held min_obs=60 fixed while varying lookback, unreachable at lb=30; fixed by holding the FRACTION constant. Tests 15/15 (2 new). Wrote only to its own artifact dir.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

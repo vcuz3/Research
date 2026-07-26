@@ -19,6 +19,60 @@ kill them.
 
 ## Learnings
 
+### 2026-07-27 — A fixed threshold on a SESSION-RESET feature is a time-of-day selector; fix it with a trailing same-slot Z-SCORE, not a ratio-to-mean
+
+- Status: confirmed (calibration); provisional (the information gain — holdout-pending)
+- Applies to: any feature whose window RESETS each session (intraday ATR, running VWAP
+  distance, cumulative volume/RVOL, session-anchored ranges, opening-range extensions) and
+  is then compared against a FIXED constant to define a regime, a gate, or a filter.
+- Learning: a session-reset window is under-populated early and anchored on the opening's
+  conditions, so the feature carries a deterministic intraday drift and a fixed cut on it
+  selects wildly different fractions of the day at different times. On NQ/ES intraday
+  VEI = ATR(10)/ATR(50), the canonical `VEI > 1.10` regime cut selected **1.5% of the
+  10:30 decisions and 18.4% of the 15:30 decisions** (ES 2.6% → 22.4%); per-slot selection
+  rate CV **0.93 / 0.88**. The "volatility regime" label was substantially a clock. Note
+  this is NOT the same defect as a warm-up mis-initialisation — repairing the seed
+  explained only ~20% of the drift; the session-reset anchoring is the dominant cause and
+  survives any seeding fix.
+- **The fix, and the non-obvious part: normalise against the trailing SAME-SLOT
+  distribution (the noise-area construction applied to a feature), and use the Z-SCORE,
+  not the ratio-to-mean.** Dividing by the trailing same-slot mean removes per-slot
+  LOCATION but not per-slot SCALE, so it only half-works: selection-rate CV fell
+  0.93 → 0.135 (NQ) / 0.88 → 0.105 (ES) for `x/mu`, but 0.93 → **0.050** / 0.88 →
+  **0.041** for `(x-mu)/sd`. Empirically the feature's per-slot dispersion was not
+  proportional to its per-slot level, so the two corrections are separable and both are
+  needed. Keep `x/mu` only when an interpretable "1.0 = normal for this time of day"
+  reading matters more than calibration.
+- **Normalising did NOT destroy the feature's information** — the recurring fear, and here
+  it was wrong. The magnitude-preserving `x/mu` retained 88.1% (NQ) / 92.5% (ES) of the
+  raw feature's momentum contrast at matched selection rate, and the z-score was the only
+  variant of four whose CI excluded zero on both markets in both a within-slot and a
+  pooled metric. Caveat on reading that: the point estimate rose 28% on NQ but was FLAT on
+  ES with a slightly narrower interval — so it is a **better-conditioned measurement, not
+  a bigger effect**. The construction transfers; the size of the gain does not.
+- Method notes: (1) use an ORDINAL percentile only if magnitude genuinely does not matter —
+  it calibrates as well as the z-score but discards how far from normal a reading is, and
+  it scored worse than the z-score on both markets here; (2) apply the rule-9a fractional
+  `min_obs` (2/3 of the lookback, not the strict full window), and verify the coverage loss
+  is UNIFORM ACROSS SLOTS — here it cost 60 of 3710 sessions at every slot equally, which
+  is the pass signal; a loss that tracked time-of-day liquidity would be the tell; (3) when
+  sweeping the lookback, scale `min_obs` with it — holding it fixed made it unreachable at
+  the short end and silently defined nothing; (4) compare every candidate at a MATCHED
+  global selection rate, or you are reading a selectivity dial.
+- **Process caution learned alongside it:** changing a feature's normalisation *after*
+  seeing a finding fail, and then finding a normalisation under which it passes, is a
+  search — even when each step is individually principled. Here the repaired label removed
+  the exact reason the project's headline finding had been downgraded, and the honest
+  ruling was still that it earns **one clean forward test**, not a retroactive pass.
+- Evidence: `futures/nq/vei_exploration/scripts/s5_slot_normalised.py` →
+  `artifacts/runs/EXP-0009/`, `reports/FINDINGS.md` §I, `experiments/hypotheses/HYP-0006.md`.
+  Helper + tests: `core/analysis.py::causal_slot_stats`,
+  `tests/test_core.py::test_slot_normalisation_removes_a_per_slot_level_shift` (pins the
+  location-vs-scale distinction). Reproduce via
+  `python -u -m futures.nq.vei_exploration.scripts.s5_slot_normalised {NQ|ES}`.
+- Origin: user proposal (2026-07-27) to apply the noise-area same-time-of-day construction
+  to VEI itself rather than to displacement.
+
 ### 2026-07-27 — Never select a RATIO feature on a metric its own NUMERATOR maximises; test it with the degenerate no-denominator control
 
 - Status: confirmed

@@ -36,7 +36,11 @@ their contents.
   momentum regime the LEVEL contributes NOTHING (contrast ≈0, CI spans 0 on both
   markets) and only the RATIO carries anything.** So the ratio's reason to exist is
   vindicated on the momentum axis specifically — while Study D itself stays qualified.
-- Last verified: 2026-07-27 (EXP-0001..0008; EXP-0006 supersedes parts of A/C/D/F;
+  **EXP-0009 then repaired the last known defect of the construct — the threshold.**
+  `VEI>1.10` was a TIME-OF-DAY selector (1.5% of the 10:30 slot vs 18.4% of 15:30 on NQ);
+  normalising against the trailing same-slot distribution removes that at NO information
+  cost, and the canonical regime label is now the **trailing same-slot z-score**.
+- Last verified: 2026-07-27 (EXP-0001..0009; EXP-0006 supersedes parts of A/C/D/F;
   EXP-0007 closes the legacy-seed-as-predictor explanation; EXP-0008 retires
   `IC_fwdvol` as a selection metric and withdraws the `wilder_20_100` lead).
 - Lifecycle phase: exploration / hypothesis generation.
@@ -44,8 +48,10 @@ their contents.
 - Experiment ledger: `experiments/ledger.csv`.
 - Reproduction: `python -u -m futures.nq.vei_exploration.scripts.{s1_smoothing,
   s2_vol_forecast,s3_regime_dynamics,s4_term_structure} {NQ|ES}`.
-- Tests: **no pytest in this environment** — run
-  `python -m futures.nq.vei_exploration.tests.run_tests` (13/13 pass).
+- Tests: run `python -m futures.nq.vei_exploration.tests.run_tests` (15/15 pass).
+  (Correction 2026-07-27: pytest 9.1.1 IS installed — the older "no pytest in this
+  environment" claim was wrong. The runner is still the right path because the workspace
+  uses implicit namespace packages, so pytest cannot collect these modules by file path.)
 - Primary evidence: `reports/FINDINGS.md`.
 
 ## Confirmed findings (descriptive, cross-market NQ+ES)
@@ -81,8 +87,11 @@ their contents.
   expansion") does not hold for this implementation, A's whipsaw metric (crossings of
   1.0) is partly a time-of-day artefact, and `VEI>1.10` in D/E is largely a "late
   session" selector — which is exactly what EXP-0005 measured. **Does not overturn
-  Study D** (EXP-0005's within-slot audit retained 106%/105% of pooled), and do NOT
-  de-seasonalise (EXP-0005 showed that destroys the information).
+  Study D** (EXP-0005's within-slot audit retained 106%/105% of pooled). ~~Do NOT
+  de-seasonalise~~ — **that instruction is DEAD**: reversed by EXP-0006 (warm-up artefact)
+  and then settled by EXP-0009, which showed a magnitude-preserving same-slot
+  normalisation retains 88–93% of the contrast and fixes the calibration. **The fix for
+  this defect is finding I / EXP-0009: use the trailing same-slot z-score.**
 - **B / EXP-0002 — VEI adds little to vol forecasting.** The vol LEVEL forecasts
   forward realized vol strongly (rank IC +0.86, R² 0.60); adding log(VEI) raises R² only
   +0.004 (NQ)/+0.002 (ES). **EXP-0006 (repaired): the increment is even smaller,
@@ -188,6 +197,33 @@ their contents.
   the argmax `wilder_20_50` is NOT promoted — only the SLOPE is established.
   Evidence: `artifacts/runs/EXP-0008/review.md`, FINDINGS §H.
 
+- **I / EXP-0009 (HYP-0006) — the VEI THRESHOLD was a clock; the trailing same-slot
+  z-score fixes it at NO information cost.** User's proposal: apply the noise-area
+  construction (same-time-of-day statistic over a trailing session lookback) to VEI
+  itself. Four features at matched selection rate, one common sample. **(a)** Defect
+  sized: at `VEI>1.10` the raw feature selects **1.5% of the 10:30 slot vs 18.4% of
+  15:30** (NQ; ES 2.6%→22.4%); per-slot rate spread 0.169/0.198, CV 0.93/0.88. **(b)**
+  `rel`=VEI/mu_slot only HALF-fixes it (spread 0.029/0.031) because dividing by the mean
+  removes per-slot LOCATION but not SCALE → **VEI's per-slot dispersion is not
+  proportional to its per-slot level**; `z`=(VEI−mu)/sd is 2.5× better (0.0115/0.0121),
+  ≈`pct`. **(c) Kill test 1 did NOT fire** — `rel` retains 88.1% NQ / 92.5% ES of raw's
+  within-slot contrast (gate 75%), so **de-seasonalising does NOT destroy information**;
+  together with EXP-0006 this SETTLES the EXP-0005 claim as a warm-up-bug artefact, now
+  with a second magnitude-preserving confirmation. **(d)** `z` is the ONLY feature of four
+  whose CI excludes 0 on both markets in BOTH metrics (4/4 cells; raw 0/4): within-slot
+  +0.0959 [+0.0187,+0.1544] NQ / +0.0784 [+0.0052,+0.1377] ES; pooled +0.0930 / +0.0869.
+  BUT the mechanism differs by market — NQ's point estimate rises +28% at unchanged CI
+  width, ES's is FLAT with a slightly narrower interval ⇒ **a better-conditioned
+  measurement, not a bigger effect**; the significance pattern transfers, the gain size
+  does not. **DECISION: adopt `z` as the regime label**, `rel` retained as the
+  interpretable sibling ("1.0 = normal for this time of day"). Measurement improvement,
+  NOT edge evidence. **(e)** Sensitivity lb{30,90,180}: no cliff, 180 worst on both; 90
+  inherited not selected. Rule 9a: trailing window costs 60/3710 sessions UNIFORMLY across
+  all 11 slots (0.9838 everywhere) = pass signal. CIs wide/overlapping/400-draw; two ES
+  calls sit near a CI edge, so the PATTERN is the claim, not any pairwise gap.
+  **(f) Does NOT revive Study D** — see the risks section. Evidence:
+  `artifacts/runs/EXP-0009/review.md`, FINDINGS §I.
+
 ## Provisional hypotheses
 
 - None promoted. The accidental-opening-feature lead is CLOSED by EXP-0007. The H=60
@@ -200,7 +236,14 @@ their contents.
 
 ## Decisions and constraints
 
-- Canonical VEI = Wilder(10/50) **with the repaired warm-up** (`core/vei.py`
+- **Canonical REGIME LABEL = the trailing same-slot z-score of VEI** (EXP-0009):
+  `mu, sd = analysis.causal_slot_stats(d, "vei", lookback=90, min_obs=60)`, then
+  `z = (vei - mu) / sd`. Use `rel = vei / mu` when an interpretable reading is wanted
+  ("1.0 = normal for this time of day"), accepting ~2.5× worse calibration because it
+  corrects location but not scale. **Never threshold the raw ratio** — a fixed cut on it
+  is a time-of-day selector (1.5% of the 10:30 slot vs 18.4% of 15:30). The `1.10` line
+  in D/E is a legacy artefact retained only for reproduction.
+- Canonical VEI *feature* = Wilder(10/50) **with the repaired warm-up** (`core/vei.py`
   `seed='sma'`, the default). `seed='first'` reproduces EXP-0001..0005 exactly and exists
   only for that. The (10,50) CHOICE is still **not validated-optimal** — it was originally
   selected on a memory-confounded comparison. **EXP-0008 withdrew the `wilder_20_100`
@@ -220,6 +263,12 @@ their contents.
 
 ## Known risks and open questions
 
+- **Study D under the EXP-0009 `z` label: CI no longer crosses zero on either market or
+  metric** — the exact reason EXP-0006 downgraded D. This is NOT a restoration. It is the
+  FIFTH measurement of D on the same consumed history, and `z` was chosen from four
+  candidates AFTER seeing D fail under the canonical feature: precisely the search rule 26
+  exists to catch. **`z` makes D worth exactly ONE clean FORWARD test; it does not
+  retroactively pass a test D already failed.** D's status stays qualified/inconclusive.
 - Study D is a screen on consumed history (EXP-0004 already showed it does not monetize
   standalone). The time-of-day confound is now RESOLVED (EXP-0005), but consumed-history
   status is unchanged — only a future shadow is clean holdout.
@@ -248,11 +297,22 @@ their contents.
    withdrawn, canonical retained. Bonus result from the control: the pure vol LEVEL has
    momentum contrast ≈0 → **high vol alone does not select momentum, the ratio does**
    (FINDINGS §H). Note `10_100`'s F4 win was measured on this same discredited axis.
-0c. **Repair `futures/nq/noise_vwap/core/vei.py:58`**, which has the identical
-   `ewm(alpha=1/n, min_periods=n, adjust=False)` defect — EXP-0036's Wilder revisit ran the
-   mis-initialised feature and should not be cited until re-run.
-0d. **Commit this project to git** and stop re-running into study artifact directories —
-   EXP-0006 overwrote the EXP-0001..0005 outputs irrecoverably (see its review.md).
+0c. **DONE (2026-07-27): `futures/nq/noise_vwap/core/vei.py` repaired** — same
+   `seed='sma'` default / `seed='first'` legacy split, closed form pinned to a textbook
+   loop, 8/8 tests. EXP-0035 used `sma` and is unaffected; **EXP-0036's numbers are now
+   flagged UNVERIFIED in that project's MEMORY pending a re-run** (its NO-GO verdict is
+   not expected to flip — what needs re-measuring is the "estimator is load-bearing"
+   claim and the +0.105 dSharpe cell). **Remaining: actually re-run EXP-0036.**
+0d. **DONE (2026-07-27): project committed** (18fb6b0). Correction to the earlier note —
+   the project WAS already tracked; the problem was that its only commit (913da8d)
+   postdated the EXP-0006 overwrite, so the EXP-0001..0005 originals are confirmed
+   unrecoverable. Also fixed a workspace-wide defect found on the way: `.gitignore`'s
+   blanket `*.csv` under "data files" was excluding **every project's
+   `experiments/ledger.csv`** — the mandated run-level audit trail — in all 9 projects;
+   a `!**/experiments/ledger.csv` negation now keeps them tracked.
+0f. **DONE (EXP-0009):** threshold calibration repaired; canonical regime label is now the
+   trailing same-slot z-score. **Remaining from that run: `z` earns Study D exactly ONE
+   clean FORWARD test** — do not re-measure D on this history again.
 0e. **DONE (EXP-0007):** test whether the legacy seed's accidental opening anchor was
    useful prediction. Mechanical channel confirmed; prediction rejected and path closed.
 1. Backlog item 4 (daily/multi-day VEI + squeeze) — the largest untouched dimension, and
