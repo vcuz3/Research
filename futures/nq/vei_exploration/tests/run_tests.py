@@ -14,6 +14,7 @@ import traceback
 
 MODULES = [
     "futures.nq.vei_exploration.tests.test_core",
+    "futures.nq.vei_exploration.tests.test_forward_vol",
     "futures.nq.vei_exploration.tests.test_strategy",
 ]
 

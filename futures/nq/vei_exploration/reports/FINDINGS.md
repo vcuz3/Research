@@ -541,6 +541,269 @@ retroactively pass a test D already failed.**
 
 ---
 
+## J. Fresh expansion plus volume separates the tape, but does not monetize
+
+- Status: **mechanism qualified; standalone alpha rejected** — EXP-0010 / HYP-0007
+- Script: `scripts/hyp_0007_onset_volume.py` → `artifacts/runs/EXP-0010/`
+
+This was the first test built directly on EXP-0009's repaired regime label. On a
+five-minute clock, an onset is the first per-session upward crossing of the causal
+same-slot VEI `z >= 1.5`. Volume confirmation requires trailing five-minute volume to
+be above its same-slot norm and its volume z-score to strengthen from the prior block.
+The momentum rule follows the trailing 30-minute move, fills next-open, and holds 10
+minutes. Every horizon uses one contiguous common clock sample.
+
+**The pooled mechanism is clear on both markets.** At H=10, confirmed-onset aligned
+return is +0.639 bp NQ [+0.023,+1.252] / +0.781 ES [+0.265,+1.260], versus -1.317
+[-2.472,-0.229] / -0.958 [-1.773,-0.142] when unconfirmed. The confirmed-minus-
+unconfirmed difference is **+1.956 bp [+0.592,+3.149] NQ / +1.740 [+0.752,+2.694]
+ES**. The first mature-high confirmed observation is net negative on both markets, so
+onset and late expansion are descriptively different. Volume mostly identifies a bad
+subset, however: 79% NQ / 81% ES of onsets are “confirmed.”
+
+**The preregistered strategy is rejected.** The primary H=10 cell has daily Sharpe
++0.050, t +0.19, netR +1.12 NQ and Sharpe -0.199, t -0.76, netR -4.53 ES. Both beat
+unconfirmed onset, but neither clears the required daily t >= 2 and ES fails the
+positive-performance conditions. Nulls remain unspent. The declared H=30 sensitivity
+improves to Sharpe +0.527, t +2.02 NQ / +0.364, t +1.40 ES, but is not the primary,
+fails the both-market gate, and cannot replace it.
+
+**It is also era-dependent.** The primary strategy is negative on both markets in
+2011–19 and positive in 2020+; the pooled mechanism difference is strongest in 2020–22
+on both, but NQ and ES diverge in 2023+. Their apparent replication is highly dependent:
+84% of onset dates overlap and same-date/same-slot H=10 returns correlate 0.90. Preserve
+the positive recent cell for future shadow observation only.
+
+**Read:** VEI onset and volume participation improve the description of *what kind* of
+expansion is occurring. They do not establish a standalone trade. The defensible next
+use is as a veto or allocation variable inside an independently validated strategy,
+where incremental portfolio value can be tested against both no-VEI and absolute-vol
+controls.
+
+---
+
+## K–L. A two-input forward-volatility core is accurate AND conditionally skilful (EXP-0011, EXP-0012)
+
+*Builder: Codex. Summarised here because §M depends on it; lettering follows `MEMORY.md`
+(K = EXP-0011, L = EXP-0012).*
+
+The adopted forward-30-minute realised-volatility specification is deliberately small:
+a **causal trailing 90-session same-slot median of the target plus `range_rv_15m`**.
+
+- **K — EXP-0011 / HYP-0008** asked whether six extra multi-horizon volatility state
+  variables add to that core. On the locked 2024-01-01..2026-07-14 out-of-sample
+  interval they did, on every predeclared gate: normalized delta IC **+0.0088 NQ**
+  (90% CI [0.0055, 0.0124]) and **+0.0095 ES** ([0.0064, 0.0133]), every OOS year
+  positive, MAE and QLIKE both lower. **Confirmed but NOT adopted** — the gain is too
+  small for six extra state variables. Multi-horizon is a shadow benchmark only.
+- **L — EXP-0012 / HYP-0009** then answered the question that matters more, and answered it
+  emphatically: is the core's high pooled IC just the intraday volatility curve? No.
+  Within-slot IC is **0.878 (NQ) / 0.871 (ES)** against **0.418 / 0.383** for the causal
+  same-slot median alone, a delta of **+0.460 [+0.4365, +0.4833]** / **+0.489
+  [+0.4625, +0.5158]**, with log-MSE skill +73.6% / +74.2% and every year and all 11
+  slots positive. `range_rv_15m` carries real state information at a fixed decision
+  slot; the clock-composition explanation is rejected.
+
+**Caveat carried forward** (this project's review of EXP-0011): the Part-A shuffled-target
+placebo did **not** centre at zero — null mean +0.0101 NQ / +0.0042 ES against an observed
+Part-A delta of +0.0192 / +0.0160 — and the placebo was never rerun on Part B. NQ's OOS
+delta of +0.0088 therefore sits *inside* its own Part-A placebo band [+0.0075, +0.0127].
+The multi-horizon INCREMENT is "qualified-confirmed pending the OOS placebo". Nothing in
+the core specification depends on that increment, since the increment was not adopted.
+
+**Read:** the operational forecast is the two-input core. It is accurate, and §L's
+within-slot result means it is accurate in the way a decision maker needs. Whether that
+converts into money is a separate question, answered in §M.
+
+**QUALIFICATION added by §O (EXP-0015):** §L's +0.47 within-slot delta is measured against
+the causal same-slot median, which is a WEAK benchmark. Against trailing 30-minute
+realised volatility — the benchmark a practitioner would actually default to — the same
+delta is **+0.013**, because persistence alone already scores log-MSE skill +0.69/+0.71
+over seasonality. The core's advantage over persistence is a 19%/15% log-MSE reduction
+plus a real call on the CHANGE (§O), not a large advantage in ranking levels. Do not
+quote §L's +0.47 without §O's +0.013.
+
+---
+
+## M. Forecast volatility is a risk SCALE for the noise-VWAP book, not a tilt — sizing channel CLOSED (EXP-0013, HYP-0010)
+
+The cheapest possible test of the §K–L forecast's economic value: no new strategy, one
+regression on trades that already exist. Every trade of the frozen
+`futures/nq/noise_vwap` book was tagged with the canonical forecast at its own decision
+slot, and the **standardised edge** `net_points / forecast_points` was regressed on the
+**causal trailing same-slot percentile** of the forecast (never a full-sample quantile,
+so this cannot become the §I time-of-day defect).
+
+**Preregistered kill test fired on both markets — REJECT.** On the adopted
+`continuous_stop` config the slope is **−0.0047 [−0.1451, +0.1345] NQ** and **+0.0483
+[−0.0822, +0.1838] ES**: flat, CIs spanning zero, and the two markets disagreeing on the
+sign. Top-minus-bottom quintile difference likewise (+0.0062 / +0.0312). The `baseline`
+decision-clock cell agrees.
+
+The mechanism is visible directly in the quintile table (NQ, `continuous_stop`), and it
+is the reason the REJECT is a positive statement rather than a failure:
+
+| forecast pct | share | forecast pt | mean winner | mean loser | median | std_edge |
+| --- | --- | --- | --- | --- | --- | --- |
+| q1 (calmest) | 13.4% | 18.3 | +34.8 | −8.4 | −2.35 | +0.173 |
+| q3 | 16.4% | 25.0 | +46.7 | −12.3 | −3.85 | +0.122 |
+| q5 (most expansive) | 34.8% | 41.2 | +83.9 | −22.1 | −7.10 | +0.179 |
+
+Everything scales together. Per-trade expectancy is **proportional** to forecast
+volatility, so **sizing at `1/forecast` is the complete and optimal use of the forecast
+and no tilt remains**. This is the intraday-entry-level analogue of noise_vwap EXP-0040's
+day-level sizing NO-GO, and it is the fifth distinct volatility-conditioning route
+rejected on that book (with EXP-0019 exit cadence, EXP-0032 adaptive stop width,
+EXP-0035/0036 VEI entry gate, EXP-0040 day-level sizing).
+
+Two by-products are worth more than the primary:
+
+1. **The book already self-selects into high forecast-volatility slots.** 34.8% (NQ) /
+   37.3% (ES) of trades land in the top forecast quintile against 20% uniform, and only
+   ~12–13% in the calmest. A breakout rule defined against a same-slot noise band *is* a
+   volatility filter. That is a mechanical explanation for why volatility overlays keep
+   adding nothing to this family: the entry rule has already spent the information.
+2. **A rank IC on this P&L points the wrong way.** `IC(forecast, net_pt)` is **−0.357 NQ
+   / −0.316 ES** — large and negative — while the mean effect is flat-to-positive. With a
+   74–75% loser rate a rank statistic tracks the *median* trade, and the median simply
+   loses more points when volatility is higher. Read the mean/slope, never the rank IC,
+   on a skewed low-hit-rate P&L.
+
+**Denominator follow-on: do NOT switch the sizing scale.** Day-net t under size ∝ 1/scale
+— forecast / trailing ATR14 / unsized — is 5.13 / 4.67 / 3.69 (NQ cont.), 5.27 / 4.60 /
+3.21 (NQ base), 2.24 / 2.57 / 2.40 (ES cont.), 2.73 / 2.64 / 2.23 (ES base). Bootstrapped
+differences: forecast-minus-unsized is **+1.44 [+0.42, +2.39]** and **+2.07 [+1.01, +3.13]**
+on NQ but spans zero on both ES cells; forecast-minus-ATR14 spans zero on the primary
+config of **both** markets. So volatility-normalised sizing beats unsized sizing on NQ
+only, and the §K–L forecast is not distinguishable from the trailing ATR the project
+already deploys. Accuracy over ATR did not convert into a sizing advantage.
+
+Sub-sample cells are a sliced null and are **not** promoted: horizon-matched (hold ≤ 30m)
+is significantly negative (−0.069 / −0.150) while short-only is significantly positive on
+NQ (+0.397), across six sub-samples × two configs × two markets, with the long/short
+split cancelling to the flat pooled result. Era signs flip (2013–19 positive, 2020–26
+negative), which is further evidence of no effect. The short-side slope reproduces across
+both NQ configs and is recorded as an observation for a possible future preregistered
+look, not as a finding.
+
+Rule 23: the importable `core/forward_vol.py` reproduces the EXP-0011 notebook to
+|ΔIC| ≤ 1.7e-04 at **exact** row counts, and the sealed-read invariant is bit-identical
+(0.000e+00) — which independently proves EXP-0011's Part-A/Part-B split did not leak.
+Rule 9a: 85.5–87.1% of trades analysed with every drop accounted; per-slot coverage
+uniform at 0.9822–0.9827.
+
+**Read:** stop looking for economic value in applying this forecast to the existing
+directional book. Volatility sets *where* the edge lives; it does not tell you how to
+size or gate it. Evidence: `artifacts/runs/EXP-0013/`.
+
+---
+
+## N. Downside volatility is total volatility times one half — the recipe transfers, the SPLIT does not (EXP-0014, HYP-0011)
+
+Two independent preregistered claims, applying the frozen §K–L recipe unchanged (only the
+target and its own causal same-slot median change).
+
+**Claim A — CONFIRMED on both markets.** Within-slot IC delta over each target's own
+same-slot median:
+
+| target | NQ | ES |
+| --- | --- | --- |
+| total RV (reference) | +0.4622 [+0.4403, +0.4862] | +0.4912 [+0.4688, +0.5146] |
+| **downside semivariance** | **+0.4267 [+0.4054, +0.4499]** | **+0.4560 [+0.4337, +0.4791]** |
+| upside semivariance | +0.4587 [+0.4377, +0.4824] | +0.4869 [+0.4658, +0.5096] |
+| retention vs reference | **92.3%** | **92.8%** |
+
+Both clear the preregistered 75% retention gate with room to spare; log-MSE skill over
+the same-slot median is +0.626 / +0.648 and MAE falls 6.85 → 4.25 bp (NQ) / 5.55 → 3.36 bp
+(ES), positive in all eleven tested years on both markets. The downside leg is
+consistently the hardest of the three, which is the expected ordering (down-minutes are
+the sparser, more jump-driven half), but the shortfall is small. **The quantity that
+actually enters a stop or barrier calculation is available at no extra cost.**
+
+**Claim B — REJECTED on both markets.** Within-slot IC delta on `fwd_down_share`:
+−0.0064 [−0.0192, +0.0087] and +0.0045 [−0.0093, +0.0186] on NQ; +0.0044 [−0.0088,
++0.0199] and −0.0013 [−0.0160, +0.0139] on ES. All four span zero and the markets
+disagree on which of the two declared candidates is better.
+
+**The degenerate control is stronger evidence than the CIs.** The realised down-share has
+mean 0.4950 (NQ) / 0.4942 (ES), sd 0.166 / 0.158, and per-slot means spanning only
+0.4861–0.4998 / 0.4888–0.4979. Subtracting its causal trailing same-slot median
+*increases* the variance — the median removes **−2.1% / −2.0%** of it. A trailing
+statistic fitted to a constant-plus-noise quantity is worse than no statistic at all.
+
+The drift control (motivated by noise_vwap EXP-0022, where a real sibling-confirmed
+up/down band asymmetry merely restated drift and was harmful to act on) did not need to
+work, and confirms there is no drift channel either: corr(predicted down-share, trailing
+30-minute return) is −0.0004 / +0.0140, and within-slot deltas inside trailing-return
+terciles are all within ±0.011.
+
+The identity `fwd_rv_bp² == fwd_dsv_bp² + fwd_usv_bp²` is verified in-run to 2.9e-11 over
+41,458 rows, so the legs provably partition the reference target.
+
+**Read:** the same sentence now holds for the volatility FORECAST that the noise-band
+programme established for the BAND — the symmetric level is a sufficient statistic and
+the up/down split carries nothing. Take downside volatility from the recipe directly;
+expect no information from the asymmetry. Evidence: `artifacts/runs/EXP-0014/`.
+
+---
+
+## O. Persistence is a far harder benchmark than seasonality — and the core is a genuine but smaller TIMING instrument (EXP-0015, HYP-0012)
+
+§L measured the core against the causal same-slot median. This measures it against the
+benchmark a practitioner would actually default to: `P` = trailing 30-minute realised
+vol, built as the strict BACKWARD TWIN of the target (same estimator, same prices, window
+ending at the decision bar's own open, so `log(fwd/P)` carries no scale bias — asserted
+by `past_rv30_bp[p] == fwd_rv_bp[p−31]`).
+
+**The benchmark reframing, which qualifies §L:**
+
+| within-slot IC vs realised forward RV | NQ | ES |
+| --- | --- | --- |
+| model `F` | +0.8808 | +0.8740 |
+| **persistence `P`** | **+0.8674** | **+0.8610** |
+| seasonality `M` | +0.4186 | +0.3830 |
+
+§L's ~+0.47 delta over the same-slot median is **+0.013** over trailing 30-minute RV.
+Persistence alone scores log-MSE skill **+0.686 / +0.710** over seasonality; the model's
+skill over *persistence* is **+0.187 / +0.148**. §L is not wrong — it was measured against
+a weak benchmark. **The levels are nearly all persistence; the deltas are where the model
+lives.** Quote both numbers or neither.
+
+**PRIMARY — the model does call the change, and the gate holds.** Within-slot IC between
+the predicted log-change `log(F/P)` and the realised log-change `log(A/P)`: **+0.3766
+[+0.3690, +0.3841] NQ / +0.3901 [+0.3819, +0.3984] ES**. The preregistered
+expansion-only gate — stated in advance because contraction calls after a spike are
+nearly free — clears on both: **+0.2201 [+0.2050, +0.2351] / +0.2380 [+0.2240, +0.2520]**.
+Against the degenerate control (the same call made by seasonality alone, +0.2403 /
++0.2518) the model's marginal value is **+0.1363 / +0.1383**. Stable across all eleven
+years (0.350–0.436) and all eleven slots (0.345–0.421).
+
+**Skill rises monotonically with the size of the disagreement** — the opposite of the
+overconfidence failure the hypothesis flagged. NQ by |predicted log-change| decile:
+
+| decile | 1 | 4 | 7 | 10 |
+| --- | --- | --- | --- | --- |
+| IC(pc, rc) | +0.033 | +0.145 | +0.367 | **+0.643** |
+| log-MSE skill vs P | +0.001 | +0.026 | +0.190 | **+0.426** |
+
+The model is most right exactly where it would be used.
+
+**The honest caveat, and the reason it matters.** On expansion calls the *ranking* works
+(+0.220 / +0.238) but log-MSE skill over persistence is only **+0.008 (NQ) / +0.061 (ES)**,
+against **+0.300 / +0.211** on contraction calls. Nearly all of the error reduction comes
+from correctly anticipating decay. The direction-of-change call on expansions transfers;
+the magnitude call largely does not. The model calls an expansion 40.0% / 42.2% of the
+time, and mean realised log-change on those calls is +0.054 / +0.069, so the calls are
+right in sign on average.
+
+**Read:** the core is a timing instrument, not only a calibration instrument, but a
+smaller one than §L implied. Its weakest cell is also its most valuable — anticipated
+expansion — which makes the scheduled-calendar channel (backlog item 13) a *targeted*
+next step with a specific number to beat: expansion-call log-MSE skill over persistence
+of +0.008 NQ / +0.061 ES. Evidence: `artifacts/runs/EXP-0015/`.
+
+---
+
 ## Synthesis
 
 VEI is not a direction predictor, and as a volatility forecaster it is dominated by the
@@ -564,11 +827,11 @@ metric Study A was originally selected on — `IC_fwdvol` scores level-likeness 
 and ranks variants opposite to the primary metric — so no estimator change should be made
 on it, and the `wilder_20_100` lead is withdrawn.
 
-The best directional lead remains a **weak, qualified momentum tilt**: repaired high VEI
-has positive 30-minute continuation on both markets, and the time-of-day audit shows it
-is not merely a late-session clock effect, but NQ loses significance at the fixed 1.10
-cut. The standalone causal strategy remains rejected on daily risk-adjusted performance;
-modeled costs consume part, not all, of its positive high-cell gross expectancy.
+The best directional lead remains a **weak, qualified momentum tilt**. EXP-0010 refines
+it: fresh, volume-confirmed expansion differs sharply from unconfirmed or mature
+expansion in pooled historical returns, but the frozen H=10 strategy still fails daily
+risk-adjusted performance and the effect changes materially by era. Volume is therefore
+a possible strategy veto/allocator, not a new standalone entry signal.
 
 EXP-0007 closes the tempting explanation that the legacy seed was secretly a better
 predictor. It did mechanically encode the opening bar, but that opening component has no
@@ -576,10 +839,43 @@ monotone, era-stable, cross-market incremental information and is load-bearing o
 shared zero-range session. The honest verified role for VEI is therefore descriptive
 regime labelling and marginal risk information, not established directional alpha.
 
-Remaining leads, none started: the daily-timescale squeeze (backlog 4, deferred by Study
-C and untouched), expansion onset vs late-chase and volume participation (backlog 11, the
-"what kind of expansion" split), a regime-persistence exit that holds while VEI stays
-expanded (backlog 10), and VEI as a gate on an existing momentum book rather than
-standalone (backlog 3/7). The H=60 axis is now closed as a lead.
+§K–M then settle the *other* half of the project — the volatility-forecasting side
+— and they settle it in opposite directions, which is the cleanest result the project has
+produced. The two-input core is not merely accurate in a pooled sense: at a fixed decision
+slot it beats the free same-slot median by an IC delta of ~+0.47 on both markets (§L). And
+it is still worth **nothing** as a tilt on the existing directional book, because that
+book's expectancy is exactly proportional to it (§M). A forecast can be genuinely skilful
+and still have no economic application to the strategy you happen to own.
+
+That closes the volatility-as-overlay programme. Across the two projects, five distinct
+routes have now been rejected on the noise_vwap book — entry gate, exit cadence, adaptive
+stop width, day-level sizing, and now intraday entry-level sizing. §M also supplies the
+mechanical reason it keeps happening: the noise-band entry rule is *itself* a volatility
+filter, already placing ~35% of its trades in the top forecast quintile, so an overlay is
+re-spending information the entry has spent.
+
+§N and §O then closed two of the three directions §M pointed at, and sharpened the third.
+§N: the recipe transfers to downside volatility at 92–93% of its total-RV skill, so the
+decision-relevant leg is free — but the up/down SPLIT is a constant near one half plus
+noise, so there is no asymmetry information anywhere. The symmetric level is a sufficient
+statistic for the volatility FORECAST exactly as the noise-band programme found it to be
+for the BAND. §O: measured against persistence rather than seasonality, the core's
+advantage in ranking LEVELS is small (+0.013, not +0.47) but its call on the CHANGE is
+real, both-market, era-stable and strongest exactly where it disagrees most.
+
+Read §K–O together and the project's volatility-forecasting arc has a single shape: the
+forecast is skilful in the way a decision maker needs (§L), worth nothing as a tilt on the
+book we own (§M), free to extend to the downside leg but with no asymmetry to exploit
+(§N), and mostly a restatement of persistence in levels while carrying genuine information
+about changes (§O).
+
+Remaining leads: the **scheduled economic calendar** (backlog 13) — now a targeted step
+rather than a general one, because §O identifies the exact weak cell it should improve
+(expansion-call log-MSE skill over persistence, +0.008 NQ / +0.061 ES); a decision-shaped
+barrier/tail-probability target (backlog 15); the daily-timescale squeeze (backlog 4,
+deferred by Study C and untouched); and a regime-persistence exit that holds while VEI
+stays expanded (backlog 10). The standalone onset strategy, the H=60 axis, volatility
+sizing/gating as an overlay, downside-asymmetry, and the disagreement-set diagnostic are
+closed as leads.
 
 See `MEMORY.md` and `experiments/IDEA_BACKLOG.md` for the next dimensions.

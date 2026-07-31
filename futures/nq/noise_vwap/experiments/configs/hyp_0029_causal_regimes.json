@@ -1,0 +1,36 @@
+{
+  "instrument": "NQ",
+  "session": "RTH",
+  "indicator_lookbacks": [10, 20, 40],
+  "calibration_lookbacks": [252, 504, 756],
+  "calibration_min_fraction": 0.6666666666666666,
+  "primary": {"indicator_lookback": 20, "calibration_lookback": 504},
+  "primary_neighbourhood": [
+    {"indicator_lookback": 10, "calibration_lookback": 504},
+    {"indicator_lookback": 20, "calibration_lookback": 252},
+    {"indicator_lookback": 20, "calibration_lookback": 504},
+    {"indicator_lookback": 20, "calibration_lookback": 756},
+    {"indicator_lookback": 40, "calibration_lookback": 504}
+  ],
+  "volatility_bins": [0.0, 0.25, 0.5, 0.75, 1.0],
+  "trend_bins": [0.0, 0.3333333333333333, 0.6666666666666666, 1.0],
+  "calibration_score": {
+    "definition": "vol_annual_occupancy_mae + trend_annual_occupancy_mae + 0.5*(vol_singleton_rate + trend_singleton_rate) + 0.5*max(0, max_annual_vol_share - 0.25)",
+    "direction": "lower_is_better"
+  },
+  "hard_gates": {
+    "max_annual_vol_share": 0.6,
+    "minimum_median_vol_dwell_sessions": 3.0,
+    "maximum_post_warmup_label_loss": 0.15,
+    "causality_required": true
+  },
+  "baseline_strategy": {
+    "exit_check": "every_bar",
+    "noise_band_lookback": 90,
+    "slippage_ticks_per_side": 0.25,
+    "pnl_role": "descriptive_only"
+  },
+  "common_sample_for_ranking": true,
+  "recent_start_year": 2023,
+  "null_policy": "No Null C for calibration. Any later P&L claim must repeat the complete nine-configuration selection inside every null draw."
+}

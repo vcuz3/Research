@@ -1,0 +1,74 @@
+=== HYP-0012 / EXP-0015 -- the disagreement set (ES) ===
+
+data (rule 9a): 41,712 decision rows over 3,839 sessions 2011-08-01..2026-07-14; duplicate ts 0, out-of-order 0, missing target 225, missing past_rv30 25
+
+rule-23 reproduction of artifacts/runs/EXP-0011 (notebook sha256 ccb9f5e9..79606):
+  test years 2016..2023: n=22,277 IC +0.888434 vs published +0.8886  |diff| 1.66e-04  PASS
+  test years 2024..end: n=7,038 IC +0.841930 vs published +0.8419  |diff| 3.05e-05  PASS
+
+benchmark coverage: 29,311 of 29,315 walk-forward rows keep a defined trailing benchmark (99.99%); 4 dropped for a broken/zero trailing window. Per-slot coverage 0.9989..1.0000
+
+three-way accuracy against the realised forward RV (log-MSE, lower better):
+  model F                          log-MSE 0.07884   within-slot IC vs actual +0.8740
+  persistence P (trailing 30m)     log-MSE 0.09250   within-slot IC vs actual +0.8610
+  seasonal M (same-slot median)    log-MSE 0.31841   within-slot IC vs actual +0.3830
+  model skill vs persistence  +0.1478
+  model skill vs seasonality  +0.7524
+  persistence skill vs seasonality +0.7095   (>0 = persistence is the harder benchmark)
+
+disagreement pc = log(F/P): mean -0.0347, sd 0.1875, p10 -0.2580, p90 +0.1946; the model calls an EXPANSION 42.2% of the time. Realised rc: mean -0.0438, sd 0.3010.
+
+PRIMARY within-slot IC(predicted log-change, realised log-change): +0.3901 [+0.3819,+0.3984] EXCLUDES 0
+  (pooled equivalent +0.4163)
+
+sides -- the gate is the EXPANSION side on its own:
+  expansion calls (pc>0)     n=12,376  IC +0.2380 [+0.2240,+0.2520]  mean rc +0.0694  skill vs P +0.0606
+  contraction calls (pc<=0)  n=16,935  IC +0.2725 [+0.2598,+0.2840]  mean rc -0.1264  skill vs P +0.2112
+
+degenerate control -- the SAME statistic using the free same-slot median in place of the model:
+  within-slot IC(log(M/P), rc) +0.2518 [+0.2441,+0.2600]. The model's marginal value on this axis is +0.1383.
+
+skill by |disagreement| decile (does the model get better or WORSE exactly
+where it would actually be used?):
+  decile      n  |pc| mean  IC(pc,rc)  skill vs P   mean rc
+       1  2,932     0.0114    +0.0389     +0.0010   -0.0162
+       2  2,931     0.0336    +0.0565     +0.0021   -0.0245
+       3  2,931     0.0567    +0.1156     +0.0061   -0.0229
+       4  2,931     0.0811    +0.1802     +0.0318   -0.0329
+       5  2,931     0.1067    +0.2441     +0.0549   -0.0252
+       6  2,931     0.1344    +0.3135     +0.1187   -0.0384
+       7  2,931     0.1658    +0.3251     +0.1186   -0.0499
+       8  2,931     0.2056    +0.4263     +0.2084   -0.0565
+       9  2,931     0.2613    +0.4993     +0.2422   -0.0559
+      10  2,931     0.4097    +0.6287     +0.3600   -0.1151
+
+per-year within-slot IC(pc, rc):
+  2016  n=2,795  IC +0.4086   expansion-only +0.2607
+  2017  n=2,778  IC +0.4481   expansion-only +0.3113
+  2018  n=2,775  IC +0.3593   expansion-only +0.1638
+  2019  n=2,786  IC +0.4175   expansion-only +0.2761
+  2020  n=2,776  IC +0.3764   expansion-only +0.2293
+  2021  n=2,797  IC +0.4181   expansion-only +0.2648
+  2022  n=2,791  IC +0.3956   expansion-only +0.2510
+  2023  n=2,775  IC +0.4363   expansion-only +0.2643
+  2024  n=2,792  IC +0.4171   expansion-only +0.2012
+  2025  n=2,769  IC +0.3742   expansion-only +0.2575
+  2026  n=1,477  IC +0.3674   expansion-only +0.2197
+
+per-slot within-slot IC(pc, rc):
+  mfo  29 ( 599)  n=2,711  IC +0.3454
+  mfo  59 ( 629)  n=2,713  IC +0.4078
+  mfo  89 ( 659)  n=2,713  IC +0.4181
+  mfo 119 ( 689)  n=2,712  IC +0.3604
+  mfo 149 ( 719)  n=2,706  IC +0.3964
+  mfo 179 ( 749)  n=2,643  IC +0.3958
+  mfo 209 ( 779)  n=2,622  IC +0.3721
+  mfo 239 ( 809)  n=2,622  IC +0.4208
+  mfo 269 ( 839)  n=2,623  IC +0.3935
+  mfo 299 ( 869)  n=2,623  IC +0.3703
+  mfo 329 ( 899)  n=2,623  IC +0.4107
+
+=== VERDICT INPUTS (kill test needs BOTH markets) ===
+  primary within-slot IC(pc,rc) +0.3901 [+0.3819,+0.3984] -> clears 0
+  expansion side               +0.2380 [+0.2240,+0.2520] -> clears 0
+  ES gate: PASS

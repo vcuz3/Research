@@ -47,11 +47,10 @@ material run. Done items link to the run.
    is needed, only a new loader (+ a rule-9a gate on overnight coverage and rolls).
    Secondary payoff: a day-level VEI is a one-label-per-session regime classifier, which
    fits gating an existing book far better than Study E's 0.7-bets-per-session tilt.
-5. ~~**(short,long) surface + normalisation.**~~ **Done — folded into Study F (EXP-0005).**
-   At matched selectivity (10,50) with past_win=30 is the best cell on both markets and
-   past_win is load-bearing; the percentile-rank normalisation is WORSE than the raw ratio
-   (VEI's information is in its absolute level, not its time-of-day-relative rank). Do not
-   re-run.
+5. ~~**(short,long) surface + normalisation.**~~ **Done — EXP-0005, superseded in part by
+   EXP-0006/0009.** The old claim that percentile normalisation is worse was a warm-up-bug
+   artefact. EXP-0009 established the causal trailing same-slot z-score as the calibrated
+   regime label at no information cost. Do not re-run this surface on consumed history.
 6. **Threshold hysteresis.** The regime switch (D) at a hard VEI=1.1 line will chatter;
    test entry/exit hysteresis bands around the momentum-on threshold. Expect a small
    effect — Study A's Wilder AC1 of 0.55 means the chatter is already modest.
@@ -63,13 +62,12 @@ material run. Done items link to the run.
     construction, which also sidesteps the H=60 estimand problem. Caveat from F1: the
     information decays after ~30–60 min, so this is a *cost-efficiency* lever more than
     an edge lever — preregister it that way.
-11. **Expansion onset vs late-chase, and volume participation.** Everything so far uses
-    the VEI *level*; the *first crossing* of the threshold in a session is a different
-    object, and Study C's "low VEI keeps decelerating" says nothing about the moment
-    expansion begins. Pairs with a participation split (`volume` is loaded but used by
-    nothing here): expansion on rising volume = information, on falling volume = a
-    liquidity vacuum. F3c's per-slot detail hints at this — *rare* expansions (morning)
-    show the largest contrast.
+11. ~~**Expansion onset vs late-chase, and volume participation.**~~ **Done — EXP-0010 /
+    HYP-0007.** Pooled mechanism confirmed: volume-confirmed first crossings have positive
+    momentum alignment while unconfirmed crossings are negative, and mature-high cells
+    are weak on both markets. Standalone alpha rejected: primary H=10 t +0.19 NQ / -0.76
+    ES, with strong era dependence (negative 2011–19, positive 2020+). Preserve only as
+    a possible veto/allocator input for an independently validated strategy.
 12. **The 13:30 slot.** F3a/b found a VEI-independent momentum effect at the 13:30
     decision on both markets (+0.101 NQ / +0.108 ES, vs ≈0 at nearly every other slot),
     and it is also the largest high-VEI contrast cell. Unexplained; a candidate
@@ -77,13 +75,80 @@ material run. Done items link to the run.
     phase-sensitivity result. Descriptive first — do not treat one slot as an edge.
 
 ### On applying it (vol's role in every strategy)
-7. **Sizing / risk-targeting.** Even if VEI barely improves the vol forecast (B), test
-   VEI-scaled position sizing (cut size when VEI spikes) for drawdown/tail control on an
-   existing positive strategy — a risk lever, not an alpha claim (report per rule 22).
+7. ~~**Sizing / risk-targeting.**~~ **Done — EXP-0013 / HYP-0010. CLOSED.** Tested with
+   the stronger EXP-0011 forecast rather than VEI: the per-trade standardised edge
+   `net/forecast` on the frozen noise_vwap book is FLAT in the causal same-slot forecast
+   percentile (slope −0.005 NQ / +0.048 ES, both CIs spanning 0, signs disagreeing).
+   Expectancy is proportional to forecast volatility, so sizing at `1/forecast` is the
+   complete and optimal use and no tilt remains. The forecast is also NOT distinguishable
+   from the trailing ATR14 already deployed as the sizing denominator. Do not re-open
+   this as an alpha lever; risk-targeting remains a survival tool (rule 22).
 8. **Event / open behaviour.** Characterise VEI around the RTH open and scheduled
    macro releases; does a VEI spike mark exploitable post-event continuation?
+   *Superseded in priority by item 13, which is the same intuition made testable.*
 9. **Cross-instrument VEI divergence.** NQ vs ES VEI gap — does one index's vol
    expanding while the other's is calm carry information (a re-pairing null gate)?
+
+### New leads from EXP-0013 (the forecast has skill but no application here)
+13. **The scheduled-calendar residual — the highest-value untouched channel, and after
+    EXP-0015 a TARGETED one.** The number to beat is now specific: the core's expansion-call
+    log-MSE skill over persistence is only **+0.008 NQ / +0.061 ES** (against +0.300/+0.211
+    on contraction calls), i.e. it ranks expansions correctly but cannot size them. Scheduled
+    events are the anticipatable source of volatility EXPANSION, so this is the one channel
+    aimed straight at the weak cell. EXP-0011
+    showed six extra realised-volatility state variables buy only +0.009 IC, i.e. the
+    realised-vol channel is close to saturated; more lags will not help. The obvious
+    MISSING information is **scheduled** volatility, which is knowable in advance and
+    point-in-time safe: FOMC, CPI/NFP and other 08:30 releases, 10:00 releases, opex,
+    quarter-end, index rebalance. First step is diagnostic and cheap — rank the two-input
+    core's largest forecast errors and measure how much of the residual is
+    calendar-clustered, per era and per slot. Only if a material share is should a
+    calendar feature be built. Unlike volatility persistence, a scheduled dislocation is
+    the kind of thing that can plausibly monetize.
+14. ~~**Downside semivariance as the target.**~~ **Done — EXP-0014 / HYP-0011. Channel
+    CLOSED.** Claim A (transfer) CONFIRMED on both markets: the frozen recipe applied
+    unchanged to `fwd_dsv_bp` retains 92.3% (NQ) / 92.8% (ES) of the within-slot IC delta
+    it achieves on total RV, positive in all eleven tested years — so the leg a stop or
+    barrier calculation needs is available at no extra cost, and the downside leg is only
+    marginally harder than the upside one. Claim B (asymmetry) REJECTED on both: all four
+    `fwd_down_share` cells span zero and the markets disagree on which candidate is
+    better. The degenerate control settles it more firmly than the CIs — the realised
+    down-share is a constant near 0.494 whose per-slot means span only 0.486–0.500, and
+    subtracting its causal trailing same-slot median *increases* the variance by ~2%.
+    **Downside volatility is total volatility times one half.** The noise_vwap EXP-0022
+    drift trap was checked explicitly and there is no drift channel either. Do not
+    revisit the asymmetry on this pair at this horizon.
+15. **A decision-shaped target: P(|move| ≥ d) instead of E[RV].** A conditional mean is
+    not what any barrier decision consumes. Validate the QUANTILE calibration of the
+    two-input core (pinball loss, PIT histogram), especially the right tail, and convert
+    it into a barrier-reachability probability over the actual holding window. This is
+    the only bridge from "forecast" to "trade" that survives EXP-0013, because EXP-0013
+    closed the conditional-mean route specifically.
+16. ~~**The disagreement set.**~~ **Done - EXP-0015 / HYP-0012. PASS, and it
+    reframed EXP-0012.** The core IS a timing tool: within-slot IC between the predicted
+    and realised log-change from trailing 30-minute RV is +0.377 (NQ) / +0.390 (ES), the
+    preregistered expansion-only gate clears at +0.220/+0.238, and skill rises
+    MONOTONICALLY with the size of the disagreement (decile 1->10: IC +0.033->+0.643).
+    But the run's larger result is that PERSISTENCE is a far harder benchmark than
+    seasonality: within-slot IC vs realised RV is model +0.881, persistence +0.867,
+    seasonality +0.419, so EXP-0012's ~+0.47 delta over the same-slot median is only
+    +0.013 over persistence. Levels are nearly all persistence; deltas are where the
+    model lives. Weakest cell = expansion MAGNITUDE (log-MSE skill over persistence
+    +0.008 NQ / +0.061 ES), which is exactly what item 13 should improve.
+17. **Trade volatility as the object itself — DATA-BLOCKED, not research-blocked.** A
+    volatility forecast is first-order alpha only where volatility is the traded
+    quantity (short-dated ES/NQ option straddles, variance) or where it can be priced
+    against an implied benchmark. No options data exists in this workspace, and there is
+    no good intraday implied proxy from futures alone. Record as the highest-ceiling
+    direction whose blocking item is data acquisition; do not simulate it without a
+    real quote source.
+18. **Rerun the EXP-0011 shuffled-target placebo on Part B.** The Part-A placebo did not
+    centre at zero (null mean +0.0101 NQ / +0.0042 ES vs observed +0.0192 / +0.0160), and
+    NQ's confirmed OOS delta of +0.0088 sits inside that Part-A null band. The frozen
+    `oos_prediction_cache` makes this an evaluation-only rerun — no refit, no
+    specification change — so it cannot be re-tuning. Until it is run, EXP-0011's
+    multi-horizon INCREMENT should read "qualified-confirmed", not "confirmed". Does not
+    affect the adopted two-input core, which never depended on the increment.
 
 ## Standing cautions
 
@@ -93,6 +158,17 @@ material run. Done items link to the run.
   vol-selectivity screen (RVOL/gap/Hurst/ATR-buffer/VEI-gate) was a turnover lever, not
   alpha. A VEI edge must beat that prior by monetizing at the portfolio/Sharpe level,
   not just improving per-trade quality.
+- **Do not open a sixth volatility-overlay experiment on the noise_vwap book.** Entry
+  gate (EXP-0035/0036), exit cadence (EXP-0019), adaptive stop width (EXP-0032),
+  day-level sizing (EXP-0040) and intraday entry-level sizing (EXP-0013) have all been
+  rejected. EXP-0013 supplies the mechanical reason: the noise-band entry rule is itself
+  a volatility filter, already placing ~35% of its trades in the top forecast-volatility
+  quintile, so an overlay re-spends information the entry has already spent. A new
+  overlay proposal needs a mechanism that is not volatility level, expansion, or scale.
+- When a book has a low hit rate and a skewed P&L, do not read a **rank** IC of a
+  conditioning variable against per-trade P&L: it tracks the median trade, so a pure
+  scale effect prints a large negative IC while expectancy is flat (EXP-0013 measured
+  −0.36 NQ / −0.32 ES this way). Use the mean/slope in standardised units.
 
 ## IDEA-0001 — Legacy Wilder seed as an accidental opening-condition feature
 

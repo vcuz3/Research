@@ -1,0 +1,91 @@
+{
+  "ndraw": 40,
+  "eligible": 3628,
+  "labelled": 3628,
+  "real_diffusivity": 0.25,
+  "null_diffusivity_median": 0.25,
+  "cost_pt_rt": 0.35,
+  "variants": {
+    "baseline": {
+      "agg_real": 0.9609161474325244,
+      "agg_null_mean": 0.2789175566050443,
+      "agg_frac_null_ge_real": 0.0,
+      "highvol_cells": {
+        "vol:high": {
+          "real": 1.4752666846015452,
+          "null_mean": 0.3902325592914106,
+          "frac_null_ge_real": 0.0
+        },
+        "high x chop": {
+          "real": 1.8004429661116659,
+          "null_mean": 1.293982877482038,
+          "frac_null_ge_real": 0.15
+        },
+        "high x weak": {
+          "real": 2.2700288602893077,
+          "null_mean": 0.33098345902781123,
+          "frac_null_ge_real": 0.0
+        },
+        "high x trend": {
+          "real": 0.5564871179185551,
+          "null_mean": -0.5107597377918663,
+          "frac_null_ge_real": 0.05
+        }
+      }
+    },
+    "atr_buffer": {
+      "agg_real": 1.083618004383307,
+      "agg_null_mean": 0.35147965430925243,
+      "agg_frac_null_ge_real": 0.0,
+      "highvol_cells": {
+        "vol:high": {
+          "real": 1.7296653256376036,
+          "null_mean": 0.42739080599179335,
+          "frac_null_ge_real": 0.0
+        },
+        "high x chop": {
+          "real": 2.4027059585070285,
+          "null_mean": 1.4166105282498502,
+          "frac_null_ge_real": 0.075
+        },
+        "high x weak": {
+          "real": 2.144243992510621,
+          "null_mean": 0.33797448209651887,
+          "frac_null_ge_real": 0.0
+        },
+        "high x trend": {
+          "real": 0.8384891881011116,
+          "null_mean": -0.5531021628834404,
+          "frac_null_ge_real": 0.0
+        }
+      }
+    },
+    "partial_tp": {
+      "agg_real": 1.04768265781635,
+      "agg_null_mean": 0.2747851229180486,
+      "agg_frac_null_ge_real": 0.0,
+      "highvol_cells": {
+        "vol:high": {
+          "real": 1.6260693307526468,
+          "null_mean": 0.39760630412826303,
+          "frac_null_ge_real": 0.0
+        },
+        "high x chop": {
+          "real": 1.9903739121272708,
+          "null_mean": 1.3487283670567471,
+          "frac_null_ge_real": 0.1
+        },
+        "high x weak": {
+          "real": 2.2602847890679696,
+          "null_mean": 0.36149304668431226,
+          "frac_null_ge_real": 0.0
+        },
+        "high x trend": {
+          "real": 0.3881747679276957,
+          "null_mean": -0.8539129164614728,
+          "frac_null_ge_real": 0.075
+        }
+      }
+    }
+  }
+}

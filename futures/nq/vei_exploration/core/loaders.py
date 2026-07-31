@@ -34,8 +34,14 @@ _DEGRADED = {pd.Timestamp(d) for d in DEGRADED}
 
 def load_1m_rth(inst: str) -> pd.DataFrame:
     """RTH 1-min OHLCV with sdate, tod, mfo(0..389). Sorted by (sdate, mfo)."""
-    df = pd.read_parquet(ONE_MIN[inst],
-                         columns=["ts_utc", "open", "high", "low", "close", "volume"])
+    # Keep the contract/roll fields in the research frame.  Most feature code does
+    # not need them, but every material run must be able to report roll boundaries
+    # and prove that a short holding window did not unknowingly span one (rule 9a/11).
+    df = pd.read_parquet(
+        ONE_MIN[inst],
+        columns=["ts_utc", "symbol", "open", "high", "low", "close", "volume",
+                 "is_roll"],
+    )
     et = pd.to_datetime(df["ts_utc"], utc=True).dt.tz_convert("America/New_York")
     tod = et.dt.hour * 60 + et.dt.minute
     m = (tod >= RTH_START) & (tod < RTH_END)

@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0013",
+  "hypothesis_id": "HYP-0010",
+  "status": "completed",
+  "declared_utc": "2026-07-30T14:29:48.331940+00:00",
+  "config_path": "experiments/hypotheses/HYP-0010.md",
+  "data_scope": "NQ and ES clean Databento RTH 1-minute; frozen noise_vwap book; annual expanding walk-forward forecasts from first test year 2013; trades 2013-04-01 through 2026-07-14; consumed research history",
+  "code_ref": "core/forward_vol.py; scripts/hyp_0010_vol_scaling.py; tests/test_forward_vol.py",
+  "run_command": "python -u -m futures.nq.vei_exploration.scripts.hyp_0010_vol_scaling {NQ|ES}",
+  "primary_metric": "Session-block-bootstrapped OLS slope of per-trade standardised edge (net points / forecast points) on the causal trailing same-slot percentile of the forecast, continuous_stop config, both markets",
+  "builder": "Claude",
+  "outputs": [
+    "artifacts/runs/EXP-0013/vol_scaling_NQ.txt",
+    "artifacts/runs/EXP-0013/vol_scaling_ES.txt",
+    "artifacts/runs/EXP-0013/vol_scaling_NQ.csv",
+    "artifacts/runs/EXP-0013/vol_scaling_ES.csv",
+    "artifacts/runs/EXP-0013/review.md"
+  ],
+  "closed_utc": "2026-07-30T14:40:00.473735+00:00",
+  "result_summary": "KILL TEST FIRED BOTH MARKETS -> REJECT; intraday volatility-SIZING channel CLOSED. Primary slope(std_edge ~ causal same-slot forecast percentile) on the frozen noise_vwap continuous_stop book: -0.0047 [-0.1451,+0.1345] NQ and +0.0483 [-0.0822,+0.1838] ES -- flat, CIs span 0, signs disagree; top-minus-bottom quintile +0.0062 / +0.0312 also span 0; baseline config agrees. Positive reading: per-trade expectancy is PROPORTIONAL to forecast volatility (q1->q5 forecast 18.3->41.2 pt, mean winner 34.8->83.9, mean loser -8.4->-22.1, std_edge trendless), so sizing at 1/forecast is the complete and optimal use of the forecast and no tilt remains. Intraday analogue of noise_vwap EXP-0040's day-level sizing NO-GO; fifth distinct volatility-conditioning route rejected on this book. TWO BONUS RESULTS: (1) the book ALREADY self-selects into high forecast-vol slots (34.8% NQ / 37.3% ES of trades in the top quintile vs 20% uniform) -- the noise-band entry rule is itself a volatility filter, which is why overlays keep adding nothing; (2) rank IC(forecast, net_pt) is -0.357/-0.316, LARGE and NEGATIVE, purely because a rank statistic on a 74-75%-loser skewed P&L tracks the MEDIAN trade -- do not read it as signal. DENOMINATOR follow-on does NOT transfer: vol-normalised sizing beats unsized on NQ only (day-t delta +1.44 [+0.42,+2.39] cont / +2.07 [+1.01,+3.13] base) while ES spans 0 both configs, and the EXP-0011 forecast is NOT distinguishable from the deployed trailing ATR14 (delta +0.46 [-0.08,+1.01] NQ cont, -0.33 [-0.96,+0.28] ES cont) -> do NOT switch the sizing denominator. Sub-cells (hold<=30m negative, short-only positive) point opposite ways across 6x2x2 slices = a sliced null; not promoted. Rule 23: new core/forward_vol.py reproduces the EXP-0011 notebook to |dIC|<=1.7e-04 at EXACT row counts (22274/22277/7039/7038, tol 5e-4), and the sealed-read invariant is BIT-IDENTICAL (0.000e+00), which also proves EXP-0011's Part-A/Part-B split did not leak. Rule 9a: 85.5-87.1% of trades analysed, every drop accounted, per-slot percentile coverage uniform 0.9822-0.9827. Tests 24/24 (7 new). No null spent (real pass failed its primary).",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

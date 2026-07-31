@@ -1,0 +1,25 @@
+{
+  "instrument": "NQ",
+  "session": "RTH",
+  "indicator_lookback": 10,
+  "calibration_lookback": 504,
+  "calibration_min_fraction": 0.6666666666666666,
+  "hysteresis_grid": [0.0, 0.025, 0.05, 0.075, 0.1],
+  "primary_hysteresis": 0.05,
+  "selection_rule": "Choose the smallest h that clears every label-quality gate; do not use P&L.",
+  "hard_gates": {
+    "minimum_median_trend_dwell_sessions": 3.0,
+    "maximum_trend_singleton_rate": 0.1,
+    "maximum_annual_trend_bucket_share": 0.6,
+    "minimum_12_cell_days": 150,
+    "causality_required": true
+  },
+  "baseline_strategy": {
+    "exit_check": "every_bar",
+    "noise_band_lookback": 90,
+    "slippage_ticks_per_side": 0.25,
+    "pnl_role": "descriptive_only"
+  },
+  "recent_start_year": 2023,
+  "null_policy": "No Null C for label calibration. A later trading claim must rerun the complete selected rule inside Null C."
+}

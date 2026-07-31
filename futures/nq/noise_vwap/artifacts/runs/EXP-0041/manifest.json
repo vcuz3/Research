@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0041",
+  "hypothesis_id": "HYP-0029",
+  "status": "completed",
+  "declared_utc": "2026-07-27T15:16:27.963889+00:00",
+  "config_path": "experiments/configs/hyp_0029_causal_regimes.json",
+  "data_scope": "NQ clean Databento RTH 2011-12-08 through 2026-07-14; consumed history; common defined sample for ranking",
+  "code_ref": "scripts/hyp_0029_causal_regimes.py; tests/test_causal_regimes.py",
+  "run_command": "python -u -m futures.nq.noise_vwap.scripts.hyp_0029_causal_regimes",
+  "primary_metric": "Frozen calibration score plus hard gates; annual occupancy, singleton rate, dwell, coverage and 12-cell counts; strategy P&L descriptive only",
+  "builder": "Codex",
+  "outputs": [
+    "calibration_summary.csv",
+    "annual_occupancy.csv",
+    "primary_labels_thresholds.csv",
+    "pnl_by_regime.csv",
+    "pnl_by_year.csv",
+    "summary.json",
+    "review.md"
+  ],
+  "closed_utc": "2026-07-27T15:26:24.231108+00:00",
+  "result_summary": "QUALIFIED calibration result. P&L-blind 3x3 sweep selects i10_c504 as the only volatility-gate passer: score 0.403 vs fixed-control 0.619, max annual bucket share 55.2% vs 98.0%, median vol dwell 3, zero label loss, causal parity. Primary i20_c504 narrowly fails at 60.8%; 504 sessions is the local calibration sweet spot. Joint volxtrend rule not promoted because selected trend dwell is 2 sessions/singletons 17.1%. Descriptive P&L is nonmonotonic (low/normal/elevated/high Sharpe 1.18/1.47/1.14/0.73); no alpha claim or Null C.",
+  "reviewer": "unassigned",
+  "review_status": "not-reviewed"
+}

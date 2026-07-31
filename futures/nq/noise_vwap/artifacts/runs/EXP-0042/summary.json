@@ -1,0 +1,22 @@
+{
+  "experiment": "EXP-0042",
+  "common_sessions": 3173,
+  "common_start": "2013-10-08",
+  "common_end": "2026-07-14",
+  "selected": "h0.075",
+  "n_pass": 1,
+  "selection_used_pnl": false,
+  "selected_metrics": {
+    "h": 0.075,
+    "hard_pass": true,
+    "median_trend_dwell": 3.0,
+    "trend_singleton_rate": 0.07442447177546516,
+    "trend_transitions": 872,
+    "max_annual_trend_share": 0.43548387096774194,
+    "minimum_cell_days": 152,
+    "label_disagreement_rate_vs_raw": 0.12921525370312006,
+    "max_disagreement_run": 4,
+    "causality_prefix_pass": true
+  },
+  "null_run": false
+}

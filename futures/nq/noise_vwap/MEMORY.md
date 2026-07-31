@@ -16,7 +16,7 @@ the linked reports, code, and run artifacts.
 ## Current status
 
 - Verdict: qualified paper replication; research watchlist, not deployment-ready.
-- Last verified: 2026-07-19 from the current forensic and review reports plus
+- Last verified: 2026-07-28 from the current forensic and review reports plus
   the corrected faithful Null C run `EXP-0007`, 1-second execution run
   `EXP-0009`, the rejected exit/lookback studies `EXP-0008`/`EXP-0010`, and
   the rejected gap/RVOL veto and sizing studies `EXP-0016`/`EXP-0017`.
@@ -119,6 +119,146 @@ the linked reports, code, and run artifacts.
   (`review.md`, `clock_grid.csv`, `report.json`); reproduce
   `python -u -m futures.nq.noise_vwap.scripts.hyp_0024_decision_clock`.
 
+- `EXP-0038` (regime-coverage diagnostic, user request after reading
+  aligrithm.com/regime-coverage). Stratified the three exit variants (deployed
+  continuous-stop baseline, partial_tp tp1.0_50, atr_buffer N20_k1.5) by a CAUSAL
+  volatility regime (trailing-20d annualised σ, 4 quartile bins) × a CAUSAL trend/chop
+  regime (|t-stat| of the trailing-20d mean daily return, 3 terciles) = 12 cells, on one
+  common 3628-session RTH sample at 0.25 tick/side. Per cell: zero-day daily-$ Sharpe
+  @1c with a 5000-draw bootstrap 95% CI; article gate N_min=252 days & SR_min=0.
+  **All three variants share ONE profile and the SAME coverage gaps:** (1) aggregate
+  ~1.0 Sharpe is DOMINATED by the high-vol band (25% of days, $170-236/day) — the
+  article's "one cell carries the edge"; (2) the genuine SOFT SPOT is ELEVATED vol
+  (50-75th pct: Sharpe 0.1-0.45, ~$5-30/day), NOT high vol, matching the project's
+  "regime-dependent / 2025 weak" note; (3) daily-TREND cells are weakest within every
+  vol band (win-day 16-18%) — an intraday breakout underperforms on strongly daily-
+  trending days; (4) **8/12 cells pass, the SAME 4 fail — all for THIN coverage
+  (<252d: low×chop 157, low×weak 210, elevated×trend 208, high×trend 176), NONE for
+  negative Sharpe.** Vol/trend are correlated (calm→trend, crisis→chop) so the thin
+  corners are real market rarity, not a fixable data gap; every thin cell's CI spans
+  zero. Vol regimes are era-clustered (2013 has 0 high-vol days, 2022 ~98%; no year
+  samples >~2 of 4 vol states) — the reason the full 15y is needed and two corners stay
+  thin. **Exit comparison:** partial_tp tilts to calm/chop robustness (normal×chop
+  0.57→0.98), atr_buffer to high-vol/trend upside (high×chop 1.80→2.40, elevated×trend
+  0.37→1.16) but hurts low/normal chop — near mirror-image tilts; the exit is a
+  regime-tilt lever, not a coverage fix. Descriptive only — no null spent, no verdict
+  change; frozen configs; labels are 2-sided descriptive stratification (full-sample
+  quantiles) over causal measures. Evidence: `artifacts/runs/EXP-0038/` (`review.md`,
+  `cells_*.csv`, `per_year_*.csv`, `summary.json`); reproduce
+  `python -u -m futures.nq.noise_vwap.scripts.regime_coverage`.
+
+- `EXP-0039` (HYP-0027, Null C for the EXP-0038 regime profile; user follow-up).
+  Question: is the high-vol Sharpe concentration real exploitable structure or the
+  null-preserved vol-geometry that killed the vol conditioners EXP-0017/0019? Ran the
+  EXP-0038 vol×trend stratification through 40 drift-preserving Null-C draws
+  (`core/nulls.py::null_c_returns` + `_null_c_frame`), 3 variants. The null preserves
+  each session's opening anchor + net move → **daily closes and therefore the regime
+  LABELS are identical real-vs-null** (agreement 1.0000, asserted), so the test cleanly
+  isolates intraday-timing content within fixed cell membership. Diffusivity gate passed
+  (0.2500=0.2500). **RESULT — CONTRADICTS the machinery prior: the high-vol
+  concentration BEATS the null decisively.** Baseline marginal `vol:high` real 1.475 vs
+  null 0.390, z **4.26**, frac(null≥real) **0.000**; replicated on atr_buffer (z4.44)
+  and partial_tp (z4.12) → an entry/regime property, not an exit artifact. The timing
+  edge (real−null) is >2× larger in high vol (**+1.085**) than any other band
+  (~+0.49–0.53). Every band beats its null (edge is broadly real), but the EXCESS is
+  concentrated in high vol. Mechanistically coherent with the super-diffusive-morning
+  finding (intraday continuation, the thing the breakout monetizes, is stronger when vol
+  is high). **The EXP-0038 elevated-vol "soft spot" is mostly a DRIFT effect, not a
+  timing hole:** the null itself earns −0.255 in elevated vol (vs +0.192 low), so the
+  raw-Sharpe dip is unfavorable preserved drift; the strategy's own timing edge there
+  (+0.492) ≈ low/normal. The three `elevated×*` cells are the only ones sitting inside
+  their null (frac 0.10–0.28). **Refines, does NOT overturn, the "vol-independent"
+  prior:** you still cannot GATE on vol (elevated cells carry positive real edge →
+  skipping = turnover lever, consistent with VEI/RVOL/gap/Hurst NO-GOs), but the
+  risk-adjusted intraday edge is genuinely vol-DEPENDENT. Clears the preregistered gate
+  for a CAUSAL vol-sizing test (HYP-0028) — **but not a green light**: EXP-0028 (a real
+  per-unit Hurst signal) FAILED sizing by concentrating tail risk, and high vol IS the
+  drawdown regime, so a naive up-size chases real Sharpe into the tail. Any sizing
+  schedule needs its own Null C, specification against BOTH per-contract and vol-targeted
+  frames (vol-targeting already sizes down in high vol), maxDD/tail gating, and a forward
+  shadow (2nd look on consumed history, rule 26). No core engine change. Evidence:
+  `artifacts/runs/EXP-0039/` (`review.md`, `regime_nullc_*.csv`, `summary.json`);
+  reproduce `python -u -m futures.nq.noise_vwap.scripts.hyp_0027_regime_nullc null 40`.
+
+- `EXP-0040` (HYP-0028, causal vol-regime SIZING; the EXP-0039 follow-up): **NO-GO.**
+  Overlaid a causal vol-regime weight (expanding percentile of trailing-20d vol, shifted;
+  prior-mean-1 normalised, EXP-0017 protocol) on the deployed continuous-stop baseline.
+  Frame A (deployable per-contract overlay): PRIMARY `high_boost` (1.5x above the causal
+  75th vol pct — matches EXP-0039's "only high vol stood out") dSharpe **−0.006 (FLAT)**;
+  `vol_linear` −0.025; mirror `vol_down` −0.036. Direction is right (high_boost beats the
+  mirror by +0.030 → boosting high vol IS better than deweighting, as EXP-0039 predicts)
+  but the magnitude is inert: **levering the high-Sharpe/high-VARIANCE days raises std in
+  step with mean, so aggregate Sharpe is unmoved** — the unconditioned 1x book is already
+  ~Sharpe-optimal across vol. Only side effect: high_boost mildly shallows maxDD
+  (+$2,440) at flat Sharpe/higher mean$ (partly mean_w 1.037>1), tail slightly worse.
+  Frame B (vol-target book × tilt, descriptive) is CONFOUNDED — **every schedule
+  including the MIRROR raises Sharpe (vol_down +0.239)** = a generic reweighting/flooring
+  artifact of the integer-floored vol-target series; it fails its own mirror control and
+  is NOT evidence. Real fails the primary metric → **Null C NOT spent** (gate-nullc rule;
+  a real pass that misses the primary is already a REJECT). **Synthesis
+  EXP-0038/0039/0040:** the intraday edge is genuinely vol-DEPENDENT & concentrated in
+  high vol (null-confirmed, EXP-0039) but is neither GATEABLE (elevated cells still carry
+  positive edge → skipping = turnover lever) nor SIZEABLE (Frame A flat) — the EXP-0028
+  "real per-unit signal doesn't monetize" / quality-not-alpha pattern. Vol changes WHERE
+  the edge is measured, not how to size or gate it. Retain the unconditioned 1x book;
+  vol-targeting stays survival not alpha. No core engine change (overlay lives only in
+  `scripts/hyp_0028_vol_sizing.py`). Evidence: `artifacts/runs/EXP-0040/` (`review.md`,
+  `real.json`); reproduce `python -u -m futures.nq.noise_vwap.scripts.hyp_0028_vol_sizing real`.
+
+- **Cross-project confirmation of the sizing NO-GO at the INTRADAY entry level**
+  (`futures/nq/vei_exploration` EXP-0013 / HYP-0010, 2026-07-31). EXP-0040 tested
+  DAY-level vol banding; that study tested the remaining slice — per-ENTRY conditioning
+  on a genuinely skilful causal forward-30-minute volatility forecast (its EXP-0011/0012
+  two-input core). On this book's trades the standardised edge `net/forecast` is FLAT in
+  the causal same-slot forecast percentile: slope -0.005 [-0.145,+0.135] NQ and
+  +0.048 [-0.082,+0.184] ES on `continuous_stop`, CIs spanning zero with opposite signs;
+  `baseline` agrees. Expectancy is PROPORTIONAL to forecast volatility, so `1/forecast`
+  sizing is complete and optimal and no tilt remains. Two things this book should keep:
+  (1) **the noise-band entry rule is ITSELF a volatility filter** — 34.8% NQ / 37.3% ES of
+  trades land in the top forecast-vol quintile against 20% uniform, which is the
+  mechanical reason every overlay here re-spends information the entry already spent;
+  (2) the EXP-0011 forecast is **not** a better sizing denominator than the trailing ATR14
+  already in use (day-t difference +0.46 [-0.08,+1.01] NQ cont., -0.33 [-0.96,+0.28] ES
+  cont.) — do not switch. With EXP-0019, EXP-0032, EXP-0035/0036 and EXP-0040 this is the
+  fifth rejected volatility route; treat a sixth overlay proposal as needing a mechanism
+  that is not volatility level, expansion, or scale. Evidence:
+  `../vei_exploration/artifacts/runs/EXP-0013/review.md`.
+
+- `EXP-0041` (HYP-0029, causal regime calibration sweep): **QUALIFIED calibration
+  result; no alpha promotion.** Swept indicator horizon {10,20,40} × trailing empirical
+  calibration {252,504,756} on a common 3,173-session sample, selecting without P&L.
+  The fixed EXP-0038 full-sample buckets are strongly era-bound (worst annual vol-bucket
+  share 98.0%, calibration score 0.619). `10×504` is the only registered volatility-gate
+  survivor: score 0.403, max annual bucket share 55.2%, median vol dwell 3 sessions,
+  zero post-warm-up loss, causal prefix parity, and minimum 12-cell coverage 163 days.
+  Primary `20×504` ranks second but narrowly fails the <=60% concentration gate (60.8%
+  high in 2022); 252 days overreacts and 756 adapts too slowly, so 504 is the local
+  calibration sweet spot. **Caveat:** the selected trend axis is NOT operationally
+  stationary (median dwell 2 sessions; singleton rate 17.1%); treat `10×504` as a causal
+  RELATIVE-VOL reporting label only. Descriptive P&L did not select the winner and is
+  nonmonotonic: selected low/normal/elevated/high Sharpe = 1.18/1.47/1.14/0.73, so the
+  EXP-0038 absolute high-vol concentration does not transfer to causal relative-vol
+  labels and supplies no gate/size rationale (consistent with EXP-0040 NO-GO). No Null C.
+  New reusable default-off machinery: `core/causal_regimes.py`; 11 focused causal/null
+  tests pass. Evidence: `artifacts/runs/EXP-0041/`; reproduce
+  `python -u -m futures.nq.noise_vwap.scripts.hyp_0029_causal_regimes`.
+
+- `EXP-0042` (HYP-0030, causal trend-label hysteresis): **PASS for label calibration;
+  no alpha promotion.** Froze EXP-0041 `10×504` causal percentiles and swept trend
+  boundary buffers {0,2.5,5,7.5,10 percentage points}, selecting without P&L. `h=7.5%`
+  is the only complete pass: median trend dwell 2→3 sessions, singleton labels
+  17.1%→7.4%, transitions 1,201→872, maximum annual trend share 43.5%, minimum 12-cell
+  coverage 152 days, and causal prefix parity. The 5% buffer just misses the singleton
+  gate (10.34%>10%); 10% is too sticky (minimum cell 143<150), so the survivor is locally
+  bracketed. It differs from raw labels on 12.9% of days, never >4 consecutive sessions.
+  Descriptive P&L was downstream and cannot select/promote: raw chop/weak/trend Sharpe
+  0.88/1.48/0.76 becomes 0.46/1.79/0.83, but chop still changes sign across recent years.
+  Hysteresis fixes boundary flicker, not return stationarity. Adopt `h=0.075` only for
+  causal trend REPORTING alongside `10×504` relative vol; no entry gate, sizing overlay,
+  or Null C. Reusable default-off state machine: `core/causal_regimes.py::hysteresis_labels`;
+  14 focused tests pass. Evidence: `artifacts/runs/EXP-0042/`; reproduce
+  `python -u -m futures.nq.noise_vwap.scripts.hyp_0030_trend_hysteresis`.
+
 ## Provisional hypotheses
 
 - None currently promoted.
@@ -129,6 +269,23 @@ the linked reports, code, and run artifacts.
   the user's Volatility Expansion Index (VEI = intraday ATR(short)/ATR(long), baseline
   10/50, causal within-session `core/vei.py`) carries no robust, cross-market,
   monetizable info.
+  **EXP-0036's NUMBERS ARE UNVERIFIED pending a re-run (flagged 2026-07-27).** It ran a
+  MIS-INITIALISED Wilder ATR: `core/vei.py` used
+  `ewm(alpha=1/n, min_periods=n, adjust=False)`, which pandas seeds at the FIRST bar
+  rather than at the first n-bar SMA, and since this ATR resets every session the bias is
+  paid once per session and never washes out. **The defect is now repaired**
+  (`core/vei.py`, `seed='sma'` is the default; `seed='first'` reproduces EXP-0036 exactly
+  for rule 23; the closed form is pinned to a literal textbook loop by
+  `tests/test_vei.py::test_wilder_seed_matches_reference_loop`, 8/8 pass). In the sibling
+  `vei_exploration` project the identical repair was NOT cosmetic — it moved forward-vol
+  IC +0.157→+0.202, CUT apparent persistence (AC1 0.549→0.441; the shared seed was a
+  contaminating common component), carried a time-of-day gradient, and shrank that
+  project's headline finding until it failed its own preregistered kill test (EXP-0006).
+  **Do not cite EXP-0036's specific numbers until it is re-run under the default seed.**
+  EXP-0035 used `method='sma'`, which has no recursion to seed and is UNAFFECTED. The
+  HYP-0025 NO-GO verdict rests on EXP-0035 plus EXP-0036's Null-C failure and absent ES
+  transfer, so the *verdict* is not expected to flip; what needs re-measuring is the
+  "estimator is load-bearing" claim and the +0.105 dSharpe cell.
   **EXP-0036 (Wilder-RMA revisit, user request):** `vei_exploration` Study A showed the
   SMA ATR used in EXP-0035 is the jumpiest, least-informative VEI variant; the Wilder
   RMA is far more persistent. Re-running the exact gate sweep with `method="wilder"`
@@ -603,6 +760,12 @@ the linked reports, code, and run artifacts.
 
 - Preserve existing import paths and reports during migration to the standard
   project structure.
+- TradingView VEI visualization: `pinescript/vei_rth_eth.pine` ports the
+  session-reset short/long intraday ATR ratio with selectable SMA/Wilder/EMA,
+  repaired or legacy exponential seed, optional final-ratio EMA smoothing, and
+  independently reset 09:30--16:00 ET RTH and 18:00--16:00 ET ETH plots. Use a
+  1-minute chart with electronic hours enabled; exact parity still depends on
+  matching the research contract, roll treatment, OHLC feed, and session data.
 - No historical period may be relabelled as sealed holdout after inspection.
 - New strategy variants must use the audited engine and compare with the frozen
   faithful baseline.

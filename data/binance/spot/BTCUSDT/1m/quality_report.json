@@ -1,0 +1,153 @@
+{
+  "requested_start_utc": "2017-06-01T00:00:00+00:00",
+  "requested_end_exclusive_utc": "2026-07-31T01:26:00+00:00",
+  "first_candle_utc": "2017-08-17T04:00:00+00:00",
+  "last_candle_utc": "2026-07-31T01:25:00+00:00",
+  "rows": 4700085,
+  "duplicate_rows_across_parts": 0,
+  "out_of_order_rows_within_sorted_dataset": 0,
+  "gap_count": 34,
+  "missing_minutes": 8560,
+  "off_grid_timestamp_rows": 21602,
+  "first_off_grid_candle_utc": "2017-12-04T06:00:20.799000+00:00",
+  "invalid_ohlcv_rows": 0,
+  "parts": 137,
+  "gaps": [
+    {
+      "next_candle_utc": "2017-09-06T23:00:00+00:00",
+      "missing_minutes": 420
+    },
+    {
+      "next_candle_utc": "2017-12-18T10:14:00+00:00",
+      "missing_minutes": 12
+    },
+    {
+      "next_candle_utc": "2017-12-18T13:34:00+00:00",
+      "missing_minutes": 64
+    },
+    {
+      "next_candle_utc": "2018-01-04T05:06:00+00:00",
+      "missing_minutes": 125
+    },
+    {
+      "next_candle_utc": "2018-02-09T09:59:14.789000+00:00",
+      "missing_minutes": 2010
+    },
+    {
+      "next_candle_utc": "2018-02-10T06:15:00+00:00",
+      "missing_minutes": 14
+    },
+    {
+      "next_candle_utc": "2018-02-11T04:35:00+00:00",
+      "missing_minutes": 34
+    },
+    {
+      "next_candle_utc": "2018-06-26T12:00:00+00:00",
+      "missing_minutes": 600
+    },
+    {
+      "next_candle_utc": "2018-06-27T14:45:00+00:00",
+      "missing_minutes": 105
+    },
+    {
+      "next_candle_utc": "2018-07-04T08:00:00+00:00",
+      "missing_minutes": 457
+    },
+    {
+      "next_candle_utc": "2018-10-19T09:30:00+00:00",
+      "missing_minutes": 210
+    },
+    {
+      "next_candle_utc": "2018-11-14T09:00:00+00:00",
+      "missing_minutes": 420
+    },
+    {
+      "next_candle_utc": "2019-03-12T08:00:00+00:00",
+      "missing_minutes": 360
+    },
+    {
+      "next_candle_utc": "2019-05-15T13:00:00+00:00",
+      "missing_minutes": 600
+    },
+    {
+      "next_candle_utc": "2019-06-07T22:15:00+00:00",
+      "missing_minutes": 61
+    },
+    {
+      "next_candle_utc": "2019-08-15T10:00:00+00:00",
+      "missing_minutes": 480
+    },
+    {
+      "next_candle_utc": "2019-11-13T04:20:00+00:00",
+      "missing_minutes": 140
+    },
+    {
+      "next_candle_utc": "2019-11-13T05:33:00+00:00",
+      "missing_minutes": 3
+    },
+    {
+      "next_candle_utc": "2019-11-25T04:00:00+00:00",
+      "missing_minutes": 120
+    },
+    {
+      "next_candle_utc": "2020-02-09T03:00:00+00:00",
+      "missing_minutes": 60
+    },
+    {
+      "next_candle_utc": "2020-02-19T17:30:00+00:00",
+      "missing_minutes": 354
+    },
+    {
+      "next_candle_utc": "2020-03-04T11:30:00+00:00",
+      "missing_minutes": 128
+    },
+    {
+      "next_candle_utc": "2020-04-25T04:30:00+00:00",
+      "missing_minutes": 150
+    },
+    {
+      "next_candle_utc": "2020-06-28T05:30:00+00:00",
+      "missing_minutes": 210
+    },
+    {
+      "next_candle_utc": "2020-11-30T07:00:00+00:00",
+      "missing_minutes": 60
+    },
+    {
+      "next_candle_utc": "2020-12-21T18:00:00+00:00",
+      "missing_minutes": 230
+    },
+    {
+      "next_candle_utc": "2020-12-25T03:00:00+00:00",
+      "missing_minutes": 60
+    },
+    {
+      "next_candle_utc": "2021-02-11T05:00:00+00:00",
+      "missing_minutes": 79
+    },
+    {
+      "next_candle_utc": "2021-03-06T03:30:00+00:00",
+      "missing_minutes": 90
+    },
+    {
+      "next_candle_utc": "2021-04-20T04:30:00+00:00",
+      "missing_minutes": 150
+    },
+    {
+      "next_candle_utc": "2021-04-25T08:45:00+00:00",
+      "missing_minutes": 284
+    },
+    {
+      "next_candle_utc": "2021-08-13T06:30:00+00:00",
+      "missing_minutes": 270
+    },
+    {
+      "next_candle_utc": "2021-09-29T09:00:00+00:00",
+      "missing_minutes": 120
+    },
+    {
+      "next_candle_utc": "2023-03-24T14:00:00+00:00",
+      "missing_minutes": 80
+    }
+  ]
+}

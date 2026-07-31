@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0011",
+  "hypothesis_id": "HYP-0008",
+  "status": "completed",
+  "declared_utc": "2026-07-30T12:13:55.417406+00:00",
+  "config_path": "notebooks\\range_multihorizon_vol_confirmation.ipynb",
+  "data_scope": "NQ and ES clean Databento RTH 1-minute data; Part A pre-2024 and one-time Part B OOS 2024-01-01 through 2026-07-14.",
+  "code_ref": "notebooks/range_multihorizon_vol_confirmation.ipynb@sha256:ccb9f5e9243cad48e648e7bfaf5327f33823efe2dde2a50543607e8616e79606",
+  "run_command": "Execute notebook Part A; explicitly unlock and execute Part B once after specification freeze.",
+  "primary_metric": "Paired OOS delta Spearman IC on forward 30-minute realized volatility normalized by its causal same-slot median.",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-07-30T12:15:58.538189+00:00",
+  "result_summary": "INCREMENTAL VALUE CONFIRMED / NOT ADOPTED OPERATIONALLY. Frozen Part-B OOS 2024-01-01 through 2026-07-14: normalized delta IC +0.0088 NQ (90% CI [0.0055,0.0124]) and +0.0095 ES ([0.0064,0.0133]); every OOS yearly delta positive; normalized MAE and QLIKE lower on both. Raw delta IC +0.0100/+0.0113 and raw MAE lower by 0.176/0.189 bp. The gain is credible but marginal versus six additional state variables. Production verdict: causal trailing 90-session same-slot target median plus range_rv_15m; keep multi-horizon as shadow benchmark. OOS through 2026-07-14 is consumed.",
+  "reviewer": "Claude",
+  "review_status": "reviewed: QUALIFIED-CONFIRMED (2026-07-31) - operational non-adoption upheld; the multi-horizon INCREMENT is downgraded pending an OOS rerun of the shuffled-target placebo, whose Part-A null centred at +0.0101 NQ / +0.0042 ES with NQ's OOS delta (+0.0088) inside that band. See review.md objections."
+}

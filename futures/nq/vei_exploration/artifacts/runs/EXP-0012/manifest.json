@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0012",
+  "hypothesis_id": "HYP-0009",
+  "status": "completed",
+  "declared_utc": "2026-07-30T12:45:33.889748+00:00",
+  "config_path": "notebooks\\conditional_forward_vol_signal.py",
+  "data_scope": "NQ and ES clean Databento RTH 1-minute data; annual expanding-window OOS defaults to 2016 through latest 2026 data; consumed diagnostic history, not fresh holdout.",
+  "code_ref": "working-tree",
+  "run_command": "marimo run futures/nq/vei_exploration/notebooks/conditional_forward_vol_signal.py",
+  "primary_metric": "Within-slot rank IC delta of core forecast versus causal same-slot median, with session-block 90% CI; co-primary residualized log-vol correlation/R2 and log-MSE skill.",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-07-30T13:47:17.301086+00:00",
+  "result_summary": "CONDITIONAL VOLATILITY SIGNAL CONFIRMED. Annual expanding-window OOS 2016 through 2026-07-14: model/median within-slot IC 0.8782/0.4181 NQ and 0.8711/0.3825 ES; delta +0.4601 (90% session-block CI [0.4365,0.4833]) / +0.4886 ([0.4625,0.5158]). Same-slot x weekday deltas +0.4561/+0.4839. FWL residual log-vol corr 0.8562/0.8560, R2 0.7331/0.7328. Log-MSE skill +73.56%/+74.23%; raw MAE 9.01 to 4.78 NQ and 7.47 to 3.93 ES vol bp. Every year and all 11 slots positive. Clock-composition explanation rejected; range_rv_15m supplies powerful state information beyond the causal median. Forecast skill only, not directional alpha/economic value; history through 2026-07-14 consumed.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

@@ -87,3 +87,29 @@ Verified outputs:
 Databento emitted reduced-quality warnings for some degraded or missing dates
 inside the requested range. Treat those as data-quality findings to quantify
 before relying on affected periods.
+
+## Additional 1-minute futures download completed
+
+On 2026-07-30 Sydney time, 25 additional volume-ranked continuous futures were
+downloaded with schema `ohlcv-1m`, request range `[2010-06-06, 2026-07-28)`, and
+Databento cost estimate `$0.0000` for every symbol:
+
+- Energy: `CL.v.0`, `MCL.v.0`, `NG.v.0`, `RB.v.0`, `HO.v.0`, `BZ.v.0`.
+- Additional metals: `SI.v.0`, `HG.v.0`, `MGC.v.0`, `PL.v.0`, `PA.v.0`.
+- Interest rates: `ZN.v.0`, `ZB.v.0`, `ZF.v.0`, `ZT.v.0`, `UB.v.0`,
+  `SR3.v.0`, `ZQ.v.0`.
+- Exchange-traded FX: `6E.v.0`, `6B.v.0`, `6J.v.0`, `6A.v.0`, `6C.v.0`,
+  `6S.v.0`, `6N.v.0`.
+
+Verified outputs under `futures/data/databento/` contain 102,408,470 rows and
+1.307 GiB of Parquet data in total. Every file has a readable Parquet footer,
+its row count matches its metadata JSON, timestamps are ordered, and its roll
+map is present. Most contracts begin on 2010-06-07 and end on 2026-07-27; MGC
+begins 2010-10-03, MCL begins 2021-07-11, and SR3 begins 2018-05-06 because of
+their available contract histories.
+
+The downloader now retries each failed chunk up to four times with exponential
+backoff. This was added after Databento terminated one long response early with
+`Response ended prematurely`. The downloads also emitted Databento warnings for
+degraded dates; run the workspace data-quality gate before interpreting a
+backtest over affected periods.

@@ -133,6 +133,65 @@ def block_boot_ic(df: pd.DataFrame, xcol: str, ycol: str, rng,
     return real, float(lo), float(hi)
 
 
+def within_slot_ic_arrays(x: np.ndarray, y: np.ndarray, slot: np.ndarray,
+                          min_n: int = 30) -> float:
+    """Count-weighted mean of the per-slot Spearman ICs.
+
+    A pooled IC on an intraday panel is dominated by getting the TIME-OF-DAY ordering
+    right, which no decision ever requires: a decision is always made at one specific
+    slot on one specific day. This computes the IC the decision maker actually faces,
+    then count-weights the slots so the result is comparable with the pooled figure.
+    Slots with fewer than `min_n` observations are skipped.
+    """
+    num = den = 0.0
+    for s in np.unique(slot[np.isfinite(slot)]):
+        m = slot == s
+        if int(m.sum()) < min_n:
+            continue
+        ic = spearman(x[m], y[m])
+        if np.isfinite(ic):
+            num += ic * int(m.sum())
+            den += int(m.sum())
+    return num / den if den else np.nan
+
+
+def block_boot_within_slot_ic(df: pd.DataFrame, xcol: str, ycol: str, rng,
+                              nboot: int = 500, slot_col: str = "mfo",
+                              date_col: str = "date") -> tuple[float, float, float]:
+    """`within_slot_ic_arrays` + a 90% session-block-bootstrap CI."""
+    d = df.dropna(subset=[xcol, ycol, slot_col])
+    if len(d) < 100:
+        return np.nan, np.nan, np.nan
+    real = within_slot_ic_arrays(d[xcol].to_numpy(float), d[ycol].to_numpy(float),
+                                 d[slot_col].to_numpy(float))
+    boots = _block_boot(d, [xcol, ycol, slot_col], within_slot_ic_arrays, rng, nboot,
+                        date_col=date_col)
+    lo, hi = np.nanpercentile(boots, [5, 95])
+    return float(real), float(lo), float(hi)
+
+
+def block_boot_within_slot_ic_delta(df: pd.DataFrame, cand: str, base: str, target: str,
+                                    rng, nboot: int = 500, slot_col: str = "mfo",
+                                    date_col: str = "date") -> tuple[float, float, float]:
+    """PAIRED within-slot IC delta (candidate minus baseline) with a session-block CI.
+
+    Paired on identical rows and resampled by whole session, so the CI reflects the
+    dependence between the two forecasts as well as intraday clustering (rule 12).
+    """
+    d = df.dropna(subset=[cand, base, target, slot_col])
+    if len(d) < 100:
+        return np.nan, np.nan, np.nan
+
+    def _stat(c, b, t, s):
+        return within_slot_ic_arrays(c, t, s) - within_slot_ic_arrays(b, t, s)
+
+    real = _stat(*[d[c].to_numpy(float) for c in (cand, base, target, slot_col)])
+    boots = _block_boot(d, [cand, base, target, slot_col], _stat, rng, nboot,
+                        date_col=date_col)
+    lo, hi = np.nanpercentile(boots, [5, 95])
+    return float(real), float(lo), float(hi)
+
+
 def _resid_on(a: np.ndarray, z: np.ndarray) -> np.ndarray:
     """Residual of `a` after removing an intercept + linear term in `z`."""
     X = np.c_[np.ones(len(z)), z]
@@ -266,6 +325,29 @@ def causal_slot_stats(df: pd.DataFrame, col: str, *, slot_col: str = "mfo",
         mu.loc[g.index] = m
         sd.loc[g.index] = s
     return mu, sd
+
+
+def first_session_upcross(df: pd.DataFrame, col: str, threshold: float, *,
+                          date_col: str = "date", order_col: str = "mfo"
+                          ) -> pd.Series:
+    """Flag the first strictly causal upward threshold crossing in each session.
+
+    A crossing requires the immediately preceding decision reading in the same
+    session to be below ``threshold`` and the current reading to be at/above it.
+    Starting a session above the threshold is deliberately *not* an onset because
+    the transition was not observed.  When the feature chatters, only the first
+    observed crossing is retained.
+    """
+    out = pd.Series(False, index=df.index, dtype=bool)
+    for _, g in df.groupby(date_col, sort=False):
+        g = g.sort_values(order_col)
+        v = g[col].to_numpy(float)
+        prev = np.r_[np.nan, v[:-1]]
+        cross = np.isfinite(v) & np.isfinite(prev) & (prev < threshold) & (v >= threshold)
+        if cross.any():
+            cross[np.flatnonzero(cross)[1:]] = False
+        out.loc[g.index] = cross
+    return out
 
 
 # --------------------------------------------------------------------------- #

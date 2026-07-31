@@ -1,0 +1,75 @@
+{
+  "config": {
+    "cost_side_pts": 0.175,
+    "lookback": 90,
+    "vol_lb": 20,
+    "n_min": 252,
+    "sr_min": 0.0,
+    "eligible_common": 3628,
+    "labelled_sessions": 3628,
+    "vol_bins": [
+      "low",
+      "normal",
+      "elevated",
+      "high"
+    ],
+    "trend_bins": [
+      "chop",
+      "weak",
+      "trend"
+    ]
+  },
+  "variants": {
+    "baseline": {
+      "full_sample_sharpe": 0.9609161474325244,
+      "n_trades": 4209,
+      "cells_total": 12,
+      "cells_pass": 8,
+      "cells_thin": [
+        "low x chop",
+        "low x weak",
+        "elevated x trend",
+        "high x trend"
+      ],
+      "cells_negative_sharpe": [],
+      "worst_cell": "elevated x weak",
+      "worst_cell_sharpe": 0.1377873218502738,
+      "best_cell": "high x weak",
+      "best_cell_sharpe": 2.2700288602893077
+    },
+    "partial_tp": {
+      "full_sample_sharpe": 1.04768265781635,
+      "n_trades": 4209,
+      "cells_total": 12,
+      "cells_pass": 8,
+      "cells_thin": [
+        "low x chop",
+        "low x weak",
+        "elevated x trend",
+        "high x trend"
+      ],
+      "cells_negative_sharpe": [],
+      "worst_cell": "elevated x weak",
+      "worst_cell_sharpe": 0.2287858104014187,
+      "best_cell": "high x weak",
+      "best_cell_sharpe": 2.2602847890679696
+    },
+    "atr_buffer": {
+      "full_sample_sharpe": 1.083618004383307,
+      "n_trades": 3377,
+      "cells_total": 12,
+      "cells_pass": 8,
+      "cells_thin": [
+        "low x chop",
+        "low x weak",
+        "elevated x trend",
+        "high x trend"
+      ],
+      "cells_negative_sharpe": [],
+      "worst_cell": "elevated x weak",
+      "worst_cell_sharpe": 0.07038524709144718,
+      "best_cell": "high x chop",
+      "best_cell_sharpe": 2.4027059585070285
+    }
+  }
+}

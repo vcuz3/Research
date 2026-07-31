@@ -42,3 +42,8 @@ experiment scripts.
 Use `python tools/research_admin.py` for routine project, idea, hypothesis,
 experiment, closeout, and hygiene operations. Do not hand-edit generated IDs or
 create competing admin formats when the tool supports the operation.
+
+## Communication
+
+Explain research plans, results, and decisions in simple language. When technical
+terms or jargon are necessary, define them briefly the first time they are used.

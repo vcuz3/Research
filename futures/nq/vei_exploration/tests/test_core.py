@@ -268,3 +268,22 @@ def test_slot_normalisation_removes_a_per_slot_level_shift():
     assert rel < 0.5 * raw       # location removed
     assert z < 0.05              # location AND scale removed -> near-uniform
     assert z < rel
+
+
+def test_first_session_upcross_is_first_only_and_requires_observed_transition():
+    df = pd.DataFrame({
+        "date": [pd.Timestamp("2020-01-01")] * 6 + [pd.Timestamp("2020-01-02")] * 3,
+        "mfo": [49, 54, 59, 64, 69, 74, 49, 54, 59],
+        "z": [1.6, 1.7, 0.2, 1.5, 0.1, 2.0, 0.1, 1.5, 1.8],
+    })
+    got = A.first_session_upcross(df, "z", 1.5)
+    # Session 1 starts high (not an observed onset); only its later first crossing
+    # counts despite a second crossing. Session 2 has one ordinary crossing.
+    assert got.tolist() == [False, False, False, True, False, False,
+                            False, True, False]
+
+    # Perturbing later readings cannot change an already observed onset.
+    pert = df.copy()
+    pert.loc[pert["mfo"] >= 69, "z"] = 99.0
+    got2 = A.first_session_upcross(pert, "z", 1.5)
+    assert got2.iloc[:4].equals(got.iloc[:4])

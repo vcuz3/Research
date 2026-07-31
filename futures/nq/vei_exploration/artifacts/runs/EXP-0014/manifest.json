@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0014",
+  "hypothesis_id": "HYP-0011",
+  "status": "completed",
+  "declared_utc": "2026-07-30T16:15:56.341703+00:00",
+  "config_path": "experiments/hypotheses/HYP-0011.md",
+  "data_scope": "NQ and ES clean Databento RTH 1-minute; annual expanding walk-forward, first test year 2016, through 2026-07-14; consumed research history",
+  "code_ref": "core/forward_vol.py; core/analysis.py; scripts/hyp_0011_semivariance.py; tests/test_forward_vol.py",
+  "run_command": "python -u -m futures.nq.vei_exploration.scripts.hyp_0011_semivariance {NQ|ES}",
+  "primary_metric": "Paired within-slot Spearman IC delta of the frozen-recipe model over the target's own causal same-slot median, count-weighted across slots, 90% session-block-bootstrap CI",
+  "builder": "Claude",
+  "outputs": [
+    "artifacts/runs/EXP-0014/semivariance_NQ.txt",
+    "artifacts/runs/EXP-0014/semivariance_ES.txt",
+    "artifacts/runs/EXP-0014/semivariance_NQ.csv",
+    "artifacts/runs/EXP-0014/semivariance_ES.csv",
+    "artifacts/runs/EXP-0014/review.md"
+  ],
+  "closed_utc": "2026-07-30T16:19:38.531073+00:00",
+  "result_summary": "CLAIM A CONFIRMED both markets / CLAIM B REJECTED both markets. A (transfer): the frozen EXP-0011 recipe applied unchanged to the downside leg gives within-slot IC delta over its own causal same-slot median of +0.4267 [+0.4054,+0.4499] NQ and +0.4560 [+0.4337,+0.4791] ES = 92.3%/92.8% retention of the total-RV reference (+0.4622/+0.4912), clearing the preregistered 75% gate; log-MSE skill +0.626/+0.648, MAE 6.85->4.25 bp NQ and 5.55->3.36 bp ES, and every one of eleven tested years positive on both markets. The upside leg is slightly easier than the downside on both, the expected ordering. So the decision-relevant downside quantity is available at no extra cost - same recipe, same learner, only the target changed. B (asymmetry): all four cells span zero (NQ -0.0064 [-0.0192,+0.0087] and +0.0045 [-0.0093,+0.0186]; ES +0.0044 [-0.0088,+0.0199] and -0.0013 [-0.0160,+0.0139]) and the two markets disagree on which candidate is better = noise. DECISIVE EVIDENCE is the degenerate control, not the CIs: the realised down-share is mean 0.4950 NQ / 0.4942 ES, sd 0.166/0.158, per-slot means spanning only 0.4861-0.4998 / 0.4888-0.4979, and subtracting the causal trailing same-slot median INCREASES the variance (removes -2.1% / -2.0%) - a trailing statistic fitted to constant-plus-noise is worse than nothing. DOWNSIDE VOLATILITY IS TOTAL VOLATILITY TIMES A CONSTANT, AND THE CONSTANT IS 1/2. Drift control (noise_vwap EXP-0022 trap) found no drift channel either: corr(predicted share, trailing 30m return) -0.0004 NQ / +0.0140 ES, tercile deltas all ~0. The symmetric level is a sufficient statistic for the vol FORECAST just as it was for the noise BAND. Identity rv^2==dsv^2+usv^2 verified in-run to 2.9e-11 over 41,458 rows. Rule 23 reproduction re-passed at exact row counts after the target-construction edit. Tests 29/29 (5 new).",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

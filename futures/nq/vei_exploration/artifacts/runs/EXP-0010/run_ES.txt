@@ -1,0 +1,72 @@
+===== EXP-0010 fresh VEI onset x volume -- ES =====
+feature=repaired Wilder(10/50), trailing same-slot z(90,60); clock=5m, z_cut=1.5, past=30m, primary hold=10m
+bars=1446847 sessions=3710 decisions=255987 common_all-horizon_sample=222626
+
+--- RULE 9a DATA QUALITY ---
+rows=1446847 sessions=3710 bars/session min/median/max=376/390/390
+duplicates(date,mfo)=0 out_of_order_after_loader=0 missing_OHLC=0 zero_or_negative_volume=0
+sessions_with_gaps=4 total_gaps=4 roll_flagged_RTH_bars=0 symbols=61
+causal-window kept fraction by decision slot: min=0.9838 max=0.9838; policy=lookback 90, min_obs 60, strictly prior same-slot sessions
+decisions without a full contiguous m-30..m+31 clock window (including normal session-end truncation): 25983; construction=drop from every cell/horizon
+
+--- EVENT COUNTS ---
+sessions with observable first onset=2976 events=2976; confirmed=2415 (0.811)
+
+--- SUPPORTING MECHANISM: aligned forward return (bp) ---
+                    cell   H     n        mean [90% session CI]
+               onset_all   5  2976   +0.195 [-0.122,+0.542]
+               onset_all  10  2976   +0.453 [+0.021,+0.884]
+               onset_all  15  2976   +0.760 [+0.309,+1.229]
+               onset_all  30  2976   +1.336 [+0.650,+2.056]
+         onset_confirmed   5  2415   +0.356 [+0.050,+0.762]
+         onset_confirmed  10  2415   +0.781 [+0.265,+1.260]
+         onset_confirmed  15  2415   +1.103 [+0.559,+1.611]
+         onset_confirmed  30  2415   +1.715 [+0.924,+2.611]
+       onset_unconfirmed   5   561   -0.499 [-1.263,+0.253]
+       onset_unconfirmed  10   561   -0.958 [-1.773,-0.142]
+       onset_unconfirmed  15   561   -0.713 [-1.765,+0.453]
+       onset_unconfirmed  30   561   -0.292 [-1.748,+1.230]
+         onset_vol_above   5  2716   +0.259 [-0.060,+0.573]
+         onset_vol_above  10  2716   +0.614 [+0.159,+1.089]
+         onset_vol_above  15  2716   +0.884 [+0.355,+1.411]
+         onset_vol_above  30  2716   +1.590 [+0.829,+2.356]
+      onset_vol_strength   5  2583   +0.297 [-0.040,+0.651]
+      onset_vol_strength  10  2583   +0.648 [+0.171,+1.113]
+      onset_vol_strength  15  2583   +1.012 [+0.440,+1.588]
+      onset_vol_strength  30  2583   +1.521 [+0.829,+2.237]
+confirmed - unconfirmed at H=10: +1.740 bp [+0.752,+2.694]
+
+--- STABILITY CONTROL: H=10 confirmed-minus-unconfirmed (bp) ---
+     era       2011-15: n= 870 (689/181) diff=+0.806 [-0.491,+2.065]
+     era       2016-19: n= 813 (678/135) diff=+1.274 [-0.316,+2.716]
+     era       2020-22: n= 578 (448/130) diff=+4.526 [+1.579,+7.499]
+     era         2023+: n= 715 (600/115) diff=+0.965 [-1.046,+2.862]
+ daypart   10:24-11:59: n=1597 (1269/328) diff=+2.070 [+0.822,+3.302]
+ daypart   12:04-13:59: n= 984 (828/156) diff=+1.729 [-0.146,+3.947]
+ daypart   14:04-15:24: n= 395 (318/77) diff=+0.295 [-1.456,+2.107]
+
+--- CAUSAL STRATEGY CELLS (primary horizon H=10) ---
+       onset_all n= 2933 grossPt=   +646.5 netPt=    +15.9 net/t=+0.0054 netR=  -13.02 Sh=-0.524 t=-2.01 hit=0.469 maxDD= 21.09 23+Sh=+0.563
+ onset_confirmed n= 2391 grossPt=   +802.5 netPt=   +288.4 net/t=+0.1206 netR=   -4.53 Sh=-0.199 t=-0.76 hit=0.481 maxDD= 14.19 23+Sh=+0.581
+onset_unconfirmed n=  542 grossPt=   -156.0 netPt=   -272.5 net/t=-0.5028 netR=   -8.50 Sh=-0.859 t=-3.30 hit=0.417 maxDD=  8.96 23+Sh=+0.088
+ onset_vol_above n= 2687 grossPt=   +751.2 netPt=   +173.5 net/t=+0.0646 netR=   -8.77 Sh=-0.367 t=-1.41 hit=0.473 maxDD= 18.18 23+Sh=+0.552
+onset_vol_strength n= 2550 grossPt=   +730.5 netPt=   +182.2 net/t=+0.0715 netR=   -6.71 Sh=-0.285 t=-1.09 hit=0.478 maxDD= 15.68 23+Sh=+0.628
+mature1_confirmed n=  706 grossPt=    +63.5 netPt=    -88.3 net/t=-0.1251 netR=   -4.98 Sh=-0.335 t=-1.28 hit=0.450 maxDD=  6.44 23+Sh=-0.481
+confirmed_level_hi n= 1494 grossPt=   +682.0 netPt=   +360.8 net/t=+0.2415 netR=   -0.49 Sh=-0.024 t=-0.09 hit=0.479 maxDD= 10.87 23+Sh=+1.100
+confirmed_level_lo n=  897 grossPt=   +120.5 netPt=    -72.4 net/t=-0.0807 netR=   -4.04 Sh=-0.406 t=-1.56 hit=0.485 maxDD=  4.69 23+Sh=-0.925
+
+--- DECLARED HORIZON SENSITIVITY: confirmed onset ---
+    confirmed_H5 n= 2391 grossPt=   +361.0 netPt=   -153.1 net/t=-0.0640 netR=  -15.70 Sh=-0.955 t=-3.66 hit=0.458 maxDD= 17.73 23+Sh=-0.315
+   confirmed_H10 n= 2391 grossPt=   +802.5 netPt=   +288.4 net/t=+0.1206 netR=   -4.53 Sh=-0.199 t=-0.76 hit=0.481 maxDD= 14.19 23+Sh=+0.581
+   confirmed_H15 n= 2391 grossPt=  +1118.5 netPt=   +604.4 net/t=+0.2528 netR=   +3.63 Sh=+0.135 t=+0.52 hit=0.492 maxDD= 11.51 23+Sh=+1.045
+   confirmed_H30 n= 2391 grossPt=  +1741.8 netPt=  +1227.7 net/t=+0.5135 netR=  +13.45 Sh=+0.364 t=+1.40 hit=0.496 maxDD= 11.15 23+Sh=+1.466
+
+--- DECLARED ERA STABILITY: primary H=10 strategy ---
+ primary_2011-15 n=  679 grossPt=    +29.5 netPt=   -116.5 net/t=-0.1716 netR=   -8.47 Sh=-1.411 t=-2.94 hit=0.461 maxDD=  8.82 23+Sh=+0.000
+ primary_2016-19 n=  671 grossPt=    -18.8 netPt=   -163.0 net/t=-0.2429 netR=   -5.25 Sh=-0.789 t=-1.57 hit=0.429 maxDD=  5.39 23+Sh=+0.000
+ primary_2020-22 n=  445 grossPt=   +392.0 netPt=   +296.3 net/t=+0.6659 netR=   +6.06 Sh=+1.298 t=+2.24 hit=0.544 maxDD=  0.89 23+Sh=+0.000
+   primary_2023+ n=  596 grossPt=   +399.8 netPt=   +271.6 net/t=+0.4557 netR=   +3.13 Sh=+0.581 t=+1.08 hit=0.517 maxDD=  1.61 23+Sh=+0.581
+primary trades whose entry-to-exit interval contains an RTH roll flag: 0
+
+KILL TEST 1: primary netR>0, Sharpe>0, daily t>=2, and beats unconfirmed in netR+Sharpe: REJECT
+Real gate failed -> matched-count random and path-preserving nulls are unspent.

@@ -1,0 +1,84 @@
+=== HYP-0010 / EXP-0013 -- forecast-volatility scaling of the noise-VWAP edge (ES) ===
+
+data (rule 9a): 41,712 decision rows over 3,839 sessions 2011-08-01..2026-07-14; duplicate ts 0, out-of-order 0, roll rows 61, missing target 225, missing range_rv_15m 17, missing slot median 662
+
+rule-23 reproduction of artifacts/runs/EXP-0011 (notebook sha256 ccb9f5e9..79606):
+  test years 2016..2023: n=22,277 IC +0.888434 vs published +0.8886  |diff| 1.66e-04  PASS (tol 5e-04)
+  test years 2024..end: n=7,038 IC +0.841930 vs published +0.8419  |diff| 3.05e-05  PASS (tol 5e-04)
+
+conditioning variable = causal trailing 90-session same-slot percentile of the forecast (min_obs 60).
+  per-slot coverage 0.9822..0.9827 over 11 slots (uniform coverage is the rule-9a pass signal)
+
+--- ES / continuous_stop ---
+  trades total 4,326; dropped: 253 at the 15:29/15:59 slots (no 30-min forward window), 330 before the first walk-forward test year 2013, 43 for a missing forecast/percentile/ATR -> 3,700 analysed (85.5%), 1,804 sessions, 2013-04-01..2026-07-09
+  net +0.5439 pt/trade (round-trip cost 0.2150), forecast vol 7.12 pt, mean std_edge +0.0542
+  PRIMARY slope(std_edge ~ causal same-slot forecast pct): +0.0483 [-0.0822,+0.1838] spans 0
+  CO-PRIMARY top-minus-bottom quintile std_edge: +0.0312 [-0.0945,+0.1539] spans 0
+
+  quintiles of the causal same-slot forecast percentile:
+                            n     share   fvol_pt  net_mean  net_med   win_mean  lose_mean       hit  std_edge
+    _q                                                                                                        
+    q1 (calmest)          460  0.124324  3.664392  0.491522   -0.715   6.487991  -1.553921  0.254348  0.042536
+    q2                    514  0.138919  4.918268 -0.072977   -0.965   6.169328  -2.274211  0.260700 -0.022298
+    q3                    580  0.156757  5.786844  1.291034   -1.215  13.300101  -2.860592  0.256897  0.135638
+    q4                    766  0.207027  6.864569 -0.093916   -1.715  11.380238  -3.852348  0.246736  0.015594
+    q5 (most expansive)  1380  0.372973  9.782325  0.831196   -2.465  21.233302  -5.428542  0.234783  0.073698
+
+  companion slope(net_pt ~ forecast_pt): +0.1141 [-0.0174,+0.2551]   (>0 with std_edge flat = expectancy grows in step with volatility)
+  rank IC(forecast_pt, net_pt) -0.3163 [-0.3452,-0.2892]   (a RANK statistic on a 75%-loser skewed P&L tracks the MEDIAN trade, not expectancy -- read the mean column)
+
+  denominator comparison -- t of the per-trade P&L when size ~ 1/scale:
+    scale                   mean        sd  trade t   day t  day t 13-19  day t 20-26
+    forecast 30m vol     +0.0542    1.4873    +2.22   +2.24        +0.71        +2.45
+    trailing ATR14       +0.0127    0.3052    +2.52   +2.57        +1.13        +2.56
+    none (raw points)    +0.5439   14.2557    +2.32   +2.40        +1.24        +2.10
+    slope(atr_edge ~ forecast pct): +0.0239 [-0.0029,+0.0511]  (>0 = ATR under-sizes the expansive slots relative to the forecast)
+    day-t difference forecast vs ATR14    -0.333 [-0.963,+0.282] spans 0
+    day-t difference forecast vs unsized  -0.166 [-1.044,+0.636] spans 0
+
+  robustness (primary slope in sub-samples):
+    hold <= 30m (horizon-matched) n=2,108  slope -0.1496 [-0.1881,-0.1084]
+    hold > 30m                   n=1,592  slope -0.0071 [-0.2834,+0.2464]
+    2013-2019                    n=1,929  slope +0.2251 [+0.0603,+0.3889]
+    2020-2026                    n=1,771  slope -0.1625 [-0.3590,+0.0463]
+    long only                    n=1,915  slope +0.0618 [-0.1278,+0.2363]
+    short only                   n=1,785  slope +0.1271 [-0.0962,+0.3585]
+
+--- ES / baseline ---
+  trades total 2,996; dropped: 156 at the 15:29/15:59 slots (no 30-min forward window), 210 before the first walk-forward test year 2013, 40 for a missing forecast/percentile/ATR -> 2,590 analysed (86.4%), 1,804 sessions, 2013-04-01..2026-07-09
+  net +0.7913 pt/trade (round-trip cost 0.2150), forecast vol 7.33 pt, mean std_edge +0.1046
+  PRIMARY slope(std_edge ~ causal same-slot forecast pct): -0.0048 [-0.1966,+0.2105] spans 0
+  CO-PRIMARY top-minus-bottom quintile std_edge: -0.0511 [-0.2571,+0.1438] spans 0
+
+  quintiles of the causal same-slot forecast percentile:
+                           n     share   fvol_pt  net_mean  net_med   win_mean  lose_mean       hit  std_edge
+    _q                                                                                                       
+    q1 (calmest)         303  0.116988  3.836041  0.888135   -0.715   6.791098  -3.145556  0.405941  0.159197
+    q2                   364  0.140541  5.107175  0.146951   -1.215   8.273281  -4.260551  0.351648  0.014104
+    q3                   404  0.155985  6.029746  2.250347   -1.340  14.482712  -5.206036  0.378713  0.227280
+    q4                   542  0.209266  7.031565 -0.098764   -2.215  14.086075  -7.509944  0.343173  0.037291
+    q5 (most expansive)  977  0.377220  9.946687  0.891704   -2.965  22.313846 -10.439570  0.345957  0.108097
+
+  companion slope(net_pt ~ forecast_pt): +0.0159 [-0.1844,+0.2244]   (>0 with std_edge flat = expectancy grows in step with volatility)
+  rank IC(forecast_pt, net_pt) -0.1844 [-0.2206,-0.1475]   (a RANK statistic on a 64%-loser skewed P&L tracks the MEDIAN trade, not expectancy -- read the mean column)
+
+  denominator comparison -- t of the per-trade P&L when size ~ 1/scale:
+    scale                   mean        sd  trade t   day t  day t 13-19  day t 20-26
+    forecast 30m vol     +0.1046    1.9886    +2.68   +2.73        +1.48        +2.39
+    trailing ATR14       +0.0209    0.4117    +2.58   +2.64        +1.59        +2.16
+    none (raw points)    +0.7913   19.2214    +2.10   +2.23        +2.01        +1.60
+    slope(atr_edge ~ forecast pct): +0.0195 [-0.0240,+0.0640]  (>0 = ATR under-sizes the expansive slots relative to the forecast)
+    day-t difference forecast vs ATR14    +0.096 [-0.547,+0.728] spans 0
+    day-t difference forecast vs unsized  +0.509 [-0.390,+1.387] spans 0
+
+  robustness (primary slope in sub-samples):
+    hold <= 30m (horizon-matched) n=  885  slope -0.3429 [-0.4757,-0.2037]
+    hold > 30m                   n=1,705  slope -0.1061 [-0.3972,+0.1943]
+    2013-2019                    n=1,349  slope +0.2518 [-0.0374,+0.5294]
+    2020-2026                    n=1,241  slope -0.2961 [-0.5911,+0.0131]
+    long only                    n=1,333  slope -0.0176 [-0.3049,+0.2657]
+    short only                   n=1,257  slope +0.2160 [-0.1386,+0.5702]
+
+=== VERDICT INPUTS (kill test needs BOTH markets, primary config) ===
+  continuous_stop  slope +0.0483 [-0.0822,+0.1838] -> FLAT (CI spans 0); top-bottom +0.0312 [-0.0945,+0.1539]
+  baseline         slope -0.0048 [-0.1966,+0.2105] -> FLAT (CI spans 0); top-bottom -0.0511 [-0.2571,+0.1438]

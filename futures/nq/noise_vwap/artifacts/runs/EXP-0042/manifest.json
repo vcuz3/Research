@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0042",
+  "hypothesis_id": "HYP-0030",
+  "status": "completed",
+  "declared_utc": "2026-07-27T15:43:08.585405+00:00",
+  "config_path": "experiments/configs/hyp_0030_trend_hysteresis.json",
+  "data_scope": "NQ clean Databento RTH 2011-12-08 through 2026-07-14; EXP-0041 common 3173-session sample; consumed history",
+  "code_ref": "core/causal_regimes.py; scripts/hyp_0030_trend_hysteresis.py; tests/test_causal_regimes.py",
+  "run_command": "python -u -m futures.nq.noise_vwap.scripts.hyp_0030_trend_hysteresis",
+  "primary_metric": "Smallest h clearing all frozen label-quality gates; P&L descriptive only",
+  "builder": "Codex",
+  "outputs": [
+    "hysteresis_summary.csv",
+    "annual_trend_occupancy.csv",
+    "selected_labels.csv",
+    "pnl_by_regime.csv",
+    "pnl_by_year.csv",
+    "summary.json",
+    "review.md"
+  ],
+  "closed_utc": "2026-07-27T15:49:11.921227+00:00",
+  "result_summary": "PASS for label calibration. h=0.075 is the smallest complete pass: median trend dwell 2->3 sessions, singleton rate 17.1%->7.4%, transitions 1201->872, max annual trend share 43.5%, minimum 12-cell coverage 152, causal parity. h=0.05 just misses singleton gate (10.34%); h=0.10 is too sticky (min cell 143). P&L was excluded from selection; descriptive chop/weak/trend Sharpe changes 0.88/1.48/0.76 -> 0.46/1.79/0.83. Adopt for reporting only, not gating/sizing; no Null C.",
+  "reviewer": "unassigned",
+  "review_status": "not-reviewed"
+}

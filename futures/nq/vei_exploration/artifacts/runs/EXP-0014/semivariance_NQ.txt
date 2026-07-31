@@ -1,0 +1,58 @@
+=== HYP-0011 / EXP-0014 -- downside semivariance and the up/down split (NQ) ===
+
+data (rule 9a): 41,710 decision rows over 3,839 sessions 2011-08-01..2026-07-14; duplicate ts 0, out-of-order 0, roll rows 61, missing target 252, missing range_rv_15m 45, missing slot median 662, missing past_rv30 60
+
+rule-23 reproduction of artifacts/runs/EXP-0011 (notebook sha256 ccb9f5e9..79606):
+  test years 2016..2023: n=22,274 IC +0.899585 vs published +0.8996  |diff| 1.48e-05  PASS
+  test years 2024..end: n=7,039 IC +0.850367 vs published +0.8503  |diff| 6.75e-05  PASS
+
+decomposition identity rv^2 == dsv^2 + usv^2 over 41,458 rows: max |error| 2.910e-11  PASS
+realised down-share: mean 0.4950, sd 0.1662, slot means 0.4861..0.4998
+
+==============================================================================
+CLAIM A -- does the frozen recipe transfer to the semivariance legs?
+==============================================================================
+  target                           n  ws_model  ws_median  ws_delta               90% CI   skill        MAE m/med
+  total RV (reference)        29,313   +0.8803    +0.4181   +0.4622 [+0.4403,+0.4862]  +0.743    4.66/9.01    
+  downside semivariance       29,313   +0.8068    +0.3801   +0.4267 [+0.4054,+0.4499]  +0.626    4.25/6.85    
+  upside semivariance         29,313   +0.8679    +0.4092   +0.4587 [+0.4377,+0.4824]  +0.720    3.52/6.41    
+
+  downside delta +0.4267 vs total reference +0.4622 = retention 92.3% (gate 75%); CI excludes 0 -> claim A PASS on NQ
+
+  per-year within-slot delta (downside leg):
+    2016  n=2,793  delta +0.4043
+    2017  n=2,775  delta +0.6678
+    2018  n=2,777  delta +0.7583
+    2019  n=2,787  delta +0.5369
+    2020  n=2,779  delta +0.8469
+    2021  n=2,797  delta +0.6693
+    2022  n=2,791  delta +0.6937
+    2023  n=2,775  delta +0.4267
+    2024  n=2,792  delta +0.6748
+    2025  n=2,770  delta +0.6645
+    2026  n=1,477  delta +0.5896
+
+==============================================================================
+CLAIM B -- is the up/down SPLIT itself forecastable?
+==============================================================================
+  degenerate control: sd(share) 0.1664 -> sd(share - slot median) 0.1681; the per-slot median removes -2.1% of the variance. A share that is a per-slot constant plus noise has nothing left to forecast.
+  candidate                                n  ws_model  ws_median  ws_delta               90% CI   skill
+  slot_median + range_rv_15m          29,313   -0.0019    +0.0044   -0.0064 [-0.0192,+0.0087]  +0.029
+  slot_median + past_down_share_30m   29,313   +0.0089    +0.0044   +0.0045 [-0.0093,+0.0186]  +0.028
+
+  claim B FAIL on NQ (needs one candidate's CI above 0, and the same candidate on both markets)
+
+  drift control (noise_vwap EXP-0022: a real up/down asymmetry can merely
+  restate DRIFT, and acting on it was harmful there):
+    best candidate = slot_median + past_down_share_30m
+    corr(predicted down-share, trailing 30m RETURN)      = -0.0004   <- the drift channel
+    corr(predicted down-share, trailing 30m DOWN-SHARE)  = +0.0201   <- the persistence channel
+    corr(realised  down-share, trailing 30m RETURN)      = +0.0081
+    down 30m (drift-)          n= 9,770  within-slot delta -0.0021
+    flat 30m                   n= 9,769  within-slot delta +0.0053
+    up 30m (drift+)            n= 9,769  within-slot delta +0.0060
+
+=== VERDICT INPUTS ===
+  claim A (downside transfer): delta +0.4267 [+0.4054,+0.4499], retention 92.3% -> PASS
+  claim B [slot_median + range_rv_15m]: delta -0.0064 [-0.0192,+0.0087] -> spans 0
+  claim B [slot_median + past_down_share_30m]: delta +0.0045 [-0.0093,+0.0186] -> spans 0

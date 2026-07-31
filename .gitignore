@@ -28,6 +28,8 @@ ai_shared_memory/*.sqlite-wal
 *.png
 *.log
 *.ipynb
+# Keep the self-contained VEI research notebook requested for reproducible work.
+!futures/nq/vei_exploration/notebooks/vei_feature_ml_research.ipynb
 *.pdf
 
 # ignore folders
@@ -49,3 +51,7 @@ futures/es/
 futures/scripts/
 .vscode
 data/gc
+
+
+*.zip
+*.zip.CHECKSUM

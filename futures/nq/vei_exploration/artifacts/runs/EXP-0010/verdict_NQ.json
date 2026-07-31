@@ -1,0 +1,34 @@
+{
+  "inst": "NQ",
+  "cost_points": 0.35,
+  "primary": {
+    "horizon": 10,
+    "name": "onset_confirmed",
+    "trades": 2281,
+    "gross_pts": 2465.0,
+    "net_pts": 1666.6500000000003,
+    "net_pt_per_trade": 0.7306663743971944,
+    "net_r": 1.1229925135063343,
+    "sharpe": 0.05028111848756171,
+    "day_t": 0.19292637948702068,
+    "hit": 0.4655852696185883,
+    "max_dd": 8.26480211308151,
+    "recent_sharpe": 0.8660758068056345
+  },
+  "unconfirmed": {
+    "horizon": 10,
+    "name": "onset_unconfirmed",
+    "trades": 604,
+    "gross_pts": -1230.75,
+    "net_pts": -1442.1499999999999,
+    "net_pt_per_trade": -2.387665562913907,
+    "net_r": -8.112487373257824,
+    "sharpe": -0.8195654412395594,
+    "day_t": -3.144635562753933,
+    "hit": 0.38576158940397354,
+    "max_dd": 9.064379077514063,
+    "recent_sharpe": -1.3703040768152426
+  },
+  "gate1_passed": false,
+  "roll_crossings": 0
+}

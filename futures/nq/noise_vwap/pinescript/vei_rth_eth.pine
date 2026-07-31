@@ -1,0 +1,198 @@
+//@version=6
+// =============================================================================
+// Volatility Expansion Index (VEI) -- independently reset RTH and ETH versions
+//
+// Faithful visual port of:
+//   futures/nq/noise_vwap/core/vei.py
+// plus the optional final-ratio smoothing exposed by the sibling VEI exploration.
+//
+// Calculation:
+//   True Range  -> session-reset short ATR / session-reset long ATR -> optional EMA
+//
+// Research session clocks (America/New_York):
+//   RTH = 09:30 .. 16:00 (end exclusive)
+//   ETH = 18:00 prior evening .. 16:00 trade-date (end exclusive)
+//
+// For an exact RTH comparison, use a 1-minute chart and the same contract, roll,
+// OHLC source, and session data as the research parquet. TradingView's continuous-
+// contract adjustments or feed differences can otherwise create small differences.
+// The chart must include electronic/extended-hours bars for the ETH line to be real.
+// =============================================================================
+
+indicator("VEI -- RTH + ETH session reset", "VEI RTH/ETH", overlay = false)
+
+// ----- inputs ----------------------------------------------------------------
+string GROUP_CALC = "VEI calculation"
+int shortLen = input.int(10, "Short ATR", minval = 1, group = GROUP_CALC)
+int longLen  = input.int(50, "Long ATR", minval = 2, group = GROUP_CALC)
+string atrMethod = input.string("SMA", "ATR method",
+     options = ["SMA", "Wilder", "EMA"], group = GROUP_CALC,
+     tooltip = "SMA = rolling mean. Wilder uses alpha=1/n. EMA uses alpha=2/(n+1).")
+string seedMode = input.string("SMA seed", "Exponential warm-up",
+     options = ["SMA seed", "First bar (legacy)"], group = GROUP_CALC,
+     tooltip = "Used only by Wilder/EMA. SMA seed matches the repaired Python code. " +
+               "First bar reproduces the superseded pandas ewm(adjust=false) warm-up.")
+int smoothLen = input.int(0, "Final VEI smoothing", minval = 0, group = GROUP_CALC,
+     tooltip = "0 or 1 = raw VEI. Values above 1 apply an EMA to the final ATR ratio, " +
+               "reset independently at each session.")
+
+string GROUP_SESSION = "Sessions"
+string rthHours = input.session("0930-1600", "RTH hours (New York)", group = GROUP_SESSION)
+string ethHours = input.session("1800-1600", "ETH hours (New York)", group = GROUP_SESSION,
+     tooltip = "Research convention: Globex open at 18:00 ET through the 16:00 ET RTH close.")
+bool showRth = input.bool(true, "Show RTH VEI", group = GROUP_SESSION)
+bool showEth = input.bool(true, "Show ETH VEI", group = GROUP_SESSION)
+
+string GROUP_STYLE = "Style"
+color rthColor = input.color(color.new(color.aqua, 0), "RTH", inline = "colors", group = GROUP_STYLE)
+color ethColor = input.color(color.new(color.orange, 0), "ETH", inline = "colors", group = GROUP_STYLE)
+bool shadeExpansion = input.bool(true, "Shade VEI above 1", group = GROUP_STYLE)
+bool showStatus = input.bool(true, "Status table", group = GROUP_STYLE)
+
+if timeframe.in_seconds() != 60
+    runtime.error("This VEI port requires a 1-minute chart to match the research calculation.")
+
+if shortLen >= longLen
+    runtime.error("Short ATR must be smaller than Long ATR.")
+
+// ----- session clocks ---------------------------------------------------------
+string TZ = "America/New_York"
+bool inRth = not na(time(timeframe.period, rthHours, TZ))
+bool inEth = not na(time(timeframe.period, ethHours, TZ))
+
+int rthDateKey = year(time, TZ) * 10000 + month(time, TZ) * 100 + dayofmonth(time, TZ)
+
+// Match session.py: ETH trade date is (New York timestamp + 6 hours).date().
+// At 18:00 ET this rolls to the following trade date and remains there through RTH.
+int SIX_HOURS_MS = 6 * 60 * 60 * 1000
+int ethShiftedTime = time + SIX_HOURS_MS
+int ethDateKey = year(ethShiftedTime, TZ) * 10000 +
+                 month(ethShiftedTime, TZ) * 100 + dayofmonth(ethShiftedTime, TZ)
+
+bool newRth = inRth and (barstate.isfirst or not inRth[1] or
+                         na(rthDateKey[1]) or rthDateKey != rthDateKey[1])
+bool newEth = inEth and (barstate.isfirst or not inEth[1] or
+                         na(ethDateKey[1]) or ethDateKey != ethDateKey[1])
+
+// ----- session-reset ATR ------------------------------------------------------
+// Each written call has independent persistent state in Pine, so the four calls
+// below maintain separate RTH-short, RTH-long, ETH-short, and ETH-long histories.
+sessionAtr(bool active, bool reset, int length, string method, string seed) =>
+    var array<float> seedWindow = array.new_float()
+    var int count = 0
+    var float atr = na
+    var float firstSeededEwm = na
+
+    if reset
+        array.clear(seedWindow)
+        count := 0
+        atr := na
+        firstSeededEwm := na
+
+    float result = na
+    if active
+        // Python true_range() uses high-low on the first bar because there is no
+        // previous close inside that session. Later bars use the prior in-session close.
+        float tr = reset ? high - low :
+             math.max(high - low, math.max(math.abs(high - close[1]), math.abs(low - close[1])))
+
+        count += 1
+        array.push(seedWindow, tr)
+        if array.size(seedWindow) > length
+            array.shift(seedWindow)
+
+        if method == "SMA"
+            atr := count >= length ? array.avg(seedWindow) : na
+        else
+            float alpha = method == "Wilder" ? 1.0 / length : 2.0 / (length + 1.0)
+
+            // Legacy pandas path: recursion starts from the first bar, while the
+            // first length-1 outputs are only hidden.
+            firstSeededEwm := na(firstSeededEwm) ? tr :
+                 (1.0 - alpha) * firstSeededEwm + alpha * tr
+
+            if seed == "First bar (legacy)"
+                atr := count >= length ? firstSeededEwm : na
+            else
+                // Repaired/textbook path: publish the first length-bar SMA as the
+                // seed, then continue with the exponential recurrence.
+                if count == length
+                    atr := array.avg(seedWindow)
+                else if count > length
+                    atr := (1.0 - alpha) * atr + alpha * tr
+                else
+                    atr := na
+
+        result := atr
+    result
+
+// Optional EMA of the completed VEI ratio. It starts at the first valid ratio of
+// each session and never carries RTH/ETH state across their respective reset.
+sessionSmooth(float source, bool active, bool reset, int length) =>
+    var float smoothed = na
+    if reset
+        smoothed := na
+
+    float result = na
+    if active and not na(source)
+        if length <= 1
+            result := source
+        else
+            float alpha = 2.0 / (length + 1.0)
+            smoothed := na(smoothed) ? source :
+                 (1.0 - alpha) * smoothed + alpha * source
+            result := smoothed
+    result
+
+// ----- RTH and ETH VEI --------------------------------------------------------
+float rthAtrShort = sessionAtr(inRth, newRth, shortLen, atrMethod, seedMode)
+float rthAtrLong  = sessionAtr(inRth, newRth, longLen, atrMethod, seedMode)
+float ethAtrShort = sessionAtr(inEth, newEth, shortLen, atrMethod, seedMode)
+float ethAtrLong  = sessionAtr(inEth, newEth, longLen, atrMethod, seedMode)
+
+float rthRaw = inRth and not na(rthAtrShort) and not na(rthAtrLong) and rthAtrLong != 0.0 ?
+     rthAtrShort / rthAtrLong : na
+float ethRaw = inEth and not na(ethAtrShort) and not na(ethAtrLong) and ethAtrLong != 0.0 ?
+     ethAtrShort / ethAtrLong : na
+
+float rthVei = sessionSmooth(rthRaw, inRth, newRth, smoothLen)
+float ethVei = sessionSmooth(ethRaw, inEth, newEth, smoothLen)
+
+// ----- visualization ----------------------------------------------------------
+plot(showRth ? rthVei : na, "RTH VEI", color = rthColor, linewidth = 2,
+     style = plot.style_linebr)
+plot(showEth ? ethVei : na, "ETH VEI", color = ethColor, linewidth = 2,
+     style = plot.style_linebr)
+hline(1.0, "VEI = 1", color = color.new(color.gray, 35), linestyle = hline.style_dashed)
+
+float visibleMax = math.max(showRth and not na(rthVei) ? rthVei : 0.0,
+                            showEth and not na(ethVei) ? ethVei : 0.0)
+bgcolor(shadeExpansion and visibleMax > 1.0 ? color.new(color.teal, 92) : na,
+     title = "Expansion shading")
+
+// Track whether the loaded chart actually contains any overnight bars. On an
+// RTH-only chart the ETH calculation can only see RTH bars and is not meaningful.
+var bool sawOvernight = false
+if inEth and not inRth
+    sawOvernight := true
+
+if showStatus and barstate.islast
+    var table status = table.new(position.top_right, 2, 6, border_width = 1)
+    table.cell(status, 0, 0, "ATR", text_color = color.gray, text_size = size.small)
+    table.cell(status, 1, 0, atrMethod + " " + str.tostring(shortLen) + "/" +
+         str.tostring(longLen), text_size = size.small)
+    table.cell(status, 0, 1, "seed", text_color = color.gray, text_size = size.small)
+    table.cell(status, 1, 1, atrMethod == "SMA" ? "not applicable" : seedMode,
+         text_size = size.small)
+    table.cell(status, 0, 2, "VEI smoothing", text_color = color.gray, text_size = size.small)
+    table.cell(status, 1, 2, smoothLen <= 1 ? "off" : "EMA " + str.tostring(smoothLen),
+         text_size = size.small)
+    table.cell(status, 0, 3, "RTH VEI", text_color = rthColor, text_size = size.small)
+    table.cell(status, 1, 3, na(rthVei) ? "warming/closed" : str.tostring(rthVei, "#.####"),
+         text_size = size.small)
+    table.cell(status, 0, 4, "ETH VEI", text_color = ethColor, text_size = size.small)
+    table.cell(status, 1, 4, na(ethVei) ? "warming/closed" : str.tostring(ethVei, "#.####"),
+         text_size = size.small)
+    table.cell(status, 0, 5, "overnight data", text_color = color.gray, text_size = size.small)
+    table.cell(status, 1, 5, sawOvernight ? "detected" : "MISSING: enable ETH",
+         text_color = sawOvernight ? color.teal : color.red, text_size = size.small)
