@@ -1,0 +1,62 @@
+==============================================================================
+EXP-0004  HYP-0004  overnight dollar impulse under-reaction
+==============================================================================
+sessions 3,707   2011-08-02 -> 2026-07-14
+gap_days: 1=2903  >1=804   nboot=400
+declared in advance: primary market GC, expected sign POSITIVE
+
+--- how much of the overnight gap is the dollar? (scale of the decomposition) ---
+inst     sd(on) bp  sd(factor) bp  sd(short) bp   corr(on,on_dxy)  R^2 of factor
+GC           81.23          30.19         75.89           -0.3665         0.1271
+ES           69.53          28.47         65.92           -0.1398         0.1010
+NQ           80.61          34.20         77.53           -0.1100         0.0750
+
+--- PRIMARY (KT1): IC of the overnight SHORTFALL against the RTH move ---
+    positive = the unabsorbed dollar-implied move is completed during RTH
+inst        n  IC(short, rth)              IC(short, rth 1st hr)       IC(short, rth rest)         
+GC      3,672  -0.0301 [-0.0570,+0.0000]   -0.0526 [-0.0821,-0.0226]*  +0.0018 [-0.0279,+0.0305]   
+ES      3,702  -0.0302 [-0.0611,-0.0008]*  -0.0116 [-0.0399,+0.0154]   -0.0283 [-0.0558,+0.0019]   
+NQ      3,702  -0.0239 [-0.0542,+0.0070]   +0.0027 [-0.0265,+0.0325]   -0.0385 [-0.0682,-0.0090]*  
+
+--- KT2 (degenerate control): the two raw legs that SPAN the shortfall ---
+    short = beta*on_dxy - on, so any information in `short` must appear
+    in the unconstrained pair. If `on` alone does the work it is gap reversal.
+inst        n  IC(on_INST, rth)            IC(on_dxy, rth)             IC(factor_on, rth)          
+GC      3,674  +0.0301 [+0.0059,+0.0550]*  -0.0242 [-0.0497,+0.0032]   +0.0199 [-0.0081,+0.0475]   
+ES      3,702  +0.0230 [-0.0046,+0.0550]   -0.0033 [-0.0306,+0.0224]   +0.0002 [-0.0275,+0.0251]   
+NQ      3,702  +0.0236 [-0.0065,+0.0545]   -0.0057 [-0.0377,+0.0208]   +0.0049 [-0.0235,+0.0346]   
+
+    unconstrained OLS  rth ~ a + b1*on_INST + b2*on_dxy   (block-bootstrap CI)
+    mechanism requires b1 < 0 AND sign(b2) == sign(-beta_INST) i.e. b2 > 0
+inst  b1 (own gap)                b2 (dollar gap)                  R^2  median beta
+GC    +0.0261 [-0.0156,+0.0727]   -0.0338 [-0.1038,+0.0352]     0.0017       -0.902
+ES    +0.0449 [-0.0340,+0.1232]   -0.0279 [-0.1239,+0.0608]     0.0017       -0.190
+NQ    +0.0269 [-0.0441,+0.0890]   -0.0307 [-0.1495,+0.0649]     0.0006       -0.188
+
+--- splits of the primary IC(short, rth) ---
+inst  split                 n  IC                          
+GC    gap_days == 1     2,874  -0.0017 [-0.0381,+0.0326]   
+GC    gap_days > 1        800  -0.1347 [-0.1949,-0.0698]*  
+GC    2011-2018         1,819  +0.0075 [-0.0357,+0.0510]   
+GC    2019-2026         1,855  -0.0593 [-0.1020,-0.0236]*  
+ES    gap_days == 1     2,899  -0.0441 [-0.0754,-0.0126]*  
+ES    gap_days > 1        803  +0.0197 [-0.0500,+0.0945]   
+ES    2011-2018         1,835  -0.0347 [-0.0758,+0.0057]   
+ES    2019-2026         1,867  -0.0256 [-0.0684,+0.0159]   
+NQ    gap_days == 1     2,899  -0.0328 [-0.0658,+0.0014]   
+NQ    gap_days > 1        803  +0.0106 [-0.0510,+0.0695]   
+NQ    2011-2018         1,835  -0.0111 [-0.0566,+0.0325]   
+NQ    2019-2026         1,867  -0.0355 [-0.0751,+0.0078]   
+
+--- sensitivity: an OVERNIGHT-horizon beta instead of the RTH 1-min beta ---
+    (regress overnight instrument gap on overnight dollar gap over the
+     trailing 60 strictly prior sessions -- horizon-matched, still causal)
+inst    median beta_on  median beta_rth  IC(short_on, rth)           
+GC              -0.968           -0.902  -0.0260 [-0.0553,+0.0014]   
+ES              -0.172           -0.190  -0.0305 [-0.0560,-0.0026]*  
+NQ              -0.150           -0.188  -0.0248 [-0.0547,+0.0035]   
+
+--- economic size (rules 19/21): mean RTH move by shortfall quintile ---
+  GC   q1..q5 mean RTH move (bp):   +1.74   +1.54   -1.41   +1.93   -6.02   | q5-q1 =   -7.75 bp [-14.76, -0.85] =   -11.7 ticks = $  -117.18/contract
+  ES   q1..q5 mean RTH move (bp):   +6.66   -1.01   -0.50   +3.85   +0.83   | q5-q1 =   -5.83 bp [-14.72, +2.97] =    -7.1 ticks = $   -89.15/contract
+  NQ   q1..q5 mean RTH move (bp):   +2.12   +2.69   +1.86   +5.38   -1.27   | q5-q1 =   -3.39 bp [-15.03, +6.61] =   -10.1 ticks = $   -50.71/contract

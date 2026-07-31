@@ -52,6 +52,13 @@ SLOT_MEDIAN = "fwd_rv_bp_slot_median90"
 #: The adopted two-input core. Order matters for exact model reproduction.
 FEATURES = [SLOT_MEDIAN, "range_rv_15m"]
 
+#: Candidate state variables built only when `build_decision_frame(candidates=True)`.
+#: Definitions are copied verbatim from the EXP-0011 notebook, which computed all four
+#: and then dropped three of them from its kept columns, so they have never been
+#: through the walk-forward. Gated because the frozen core must not silently grow.
+CANDIDATE_FEATURES = ["jump_share_60m", "rv_ratio_15_60",
+                      "path_efficiency_15m", "overnight_rv_slot_z"]
+
 
 def decision_mfos() -> list[int]:
     """Decision slots with a fully-defined 30-minute forward window (09:59..14:59).
@@ -145,9 +152,78 @@ def _past_paths_for_session(group: pd.DataFrame) -> pd.DataFrame:
                          "past_ret30_bp": ret}, index=group.index)
 
 
-def build_decision_frame(inst: str, data_end_utc: pd.Timestamp | None = None
-                         ) -> tuple[pd.DataFrame, dict]:
+def _rolling_slot_z(frame: pd.DataFrame, column: str, lookback: int = SLOT_LOOKBACK,
+                    min_obs: int = SLOT_MIN_OBS) -> pd.Series:
+    """Trailing same-slot z-score, causal: `shift(1)` before the rolling window.
+
+    Verbatim from the EXP-0011 notebook's `rolling_slot_z`, and the same construction
+    EXP-0009 adopted as the canonical regime label (`analysis.causal_slot_stats`).
+    """
+    grouped = frame.groupby("mfo")[column]
+    mean = grouped.transform(lambda s: s.shift(1).rolling(lookback, min_periods=min_obs).mean())
+    std = grouped.transform(
+        lambda s: s.shift(1).rolling(lookback, min_periods=min_obs).std(ddof=1))
+    return (frame[column] - mean) / std.replace(0, np.nan)
+
+
+def _add_candidate_columns(raw: pd.DataFrame, ret_1m: pd.Series) -> None:
+    """Add the HYP-0013 candidate state variables to the CONTINUOUS one-minute frame.
+
+    Copied verbatim from the EXP-0011 notebook so the definitions are the ones the
+    correlation screen was read on. All are trailing windows ending at the decision
+    bar, exactly like `range_rv_15m`, so they are observable at the decision and never
+    touch the forward window (pinned in `tests/test_forward_vol.py`).
+
+    `ret_1m` is already masked at every timestamp gap, symbol change and roll, and every
+    window uses `min_periods=window`, so no window bridges a discontinuity. These are
+    60-minute windows on the CONTINUOUS series, so at the early decision slots they reach
+    back across the overnight session where bars are thin — the resulting per-slot null
+    rate is a rule-9a reportable, measured by the consuming script.
+    """
+    abs_ret = ret_1m.abs()
+    # rv_120m is not a candidate; it exists so EXP-0016 can build a REDUNDANT
+    # level-proxy control arm (the cheap analogue of EXP-0011's multi-horizon set).
+    for window in (15, 60, 120):
+        raw[f"rv_{window}m"] = np.sqrt(ret_1m.pow(2).rolling(window, min_periods=window).sum())
+
+    # Jump share: the fraction of trailing realised variance NOT explained by bipower
+    # variation, which is jump-robust. Barndorff-Nielsen & Shephard.
+    rv2_60 = ret_1m.pow(2).rolling(60, min_periods=60).sum()
+    bipower = abs_ret * abs_ret.shift(1)
+    bv60 = (np.pi / 2) * bipower.rolling(59, min_periods=59).sum()
+    raw["jump_share_60m"] = (rv2_60 - bv60).clip(lower=0) / rv2_60.replace(0, np.nan)
+
+    raw["rv_ratio_15_60"] = raw.rv_15m / raw.rv_60m.replace(0, np.nan)
+
+    # Path efficiency: distance travelled / ground covered. 1.0 = a straight line,
+    # near 0 = churn. `travelled` is masked, so a gap in the window nulls the ratio.
+    endpoint = np.log(raw.close / raw.close.shift(15)).abs()
+    travelled = abs_ret.rolling(15, min_periods=15).sum()
+    raw["path_efficiency_15m"] = endpoint / travelled.replace(0, np.nan)
+
+
+def _overnight_rv_bp(raw: pd.DataFrame, ret_1m: pd.Series) -> pd.Series:
+    """Realised vol of the COMPLETED Globex overnight session, keyed by its RTH date.
+
+    18:00 ET onward belongs to the next calendar day's RTH session; 00:00-09:29 belongs
+    to the same day's. The window closes at 09:29, before the first decision at 09:59,
+    so this is known in full at every decision (rule 7).
+    """
+    tod = raw.tod.to_numpy()
+    rth_date = raw.calendar_date + pd.to_timedelta((tod >= 18 * 60).astype(int), unit="D")
+    overnight = pd.DataFrame({"rth_date": rth_date, "ret": ret_1m}).loc[
+        (tod >= 18 * 60) | (tod < RTH_START)]
+    return 1e4 * overnight.groupby("rth_date").ret.apply(
+        lambda s: np.sqrt(np.nansum(np.square(s.to_numpy(float)))))
+
+
+def build_decision_frame(inst: str, data_end_utc: pd.Timestamp | None = None,
+                         candidates: bool = False) -> tuple[pd.DataFrame, dict]:
     """One row per decision slot with the two core features and the forward target.
+
+    `candidates=True` additionally builds the HYP-0013 candidate state variables
+    (`CANDIDATE_FEATURES`). It is OFF by default so the frozen core path stays
+    bit-identical and cheap for the studies that only need the adopted specification.
 
     `data_end_utc` seals the read at a timestamp (the notebook's Part-A seal). All
     features are backward-looking, so sealing must not change any surviving row —
@@ -171,6 +247,10 @@ def build_decision_frame(inst: str, data_end_utc: pd.Timestamp | None = None
     bad_link = link_gap | symbol_change | raw.is_roll.fillna(False)
     raw["range_log"] = np.log(raw.high / raw.low).mask(bad_link)
     raw["range_rv_15m"] = np.sqrt(raw.range_log.pow(2).rolling(15, min_periods=15).sum())
+    if candidates:
+        ret_1m = np.log(raw.close).diff().mask(bad_link)
+        _add_candidate_columns(raw, ret_1m)
+        overnight_rv = _overnight_rv_bp(raw, ret_1m)
 
     rth = raw.loc[(raw.tod >= RTH_START) & (raw.tod < RTH_END)].copy()
     rth["sdate"] = rth.calendar_date
@@ -195,6 +275,9 @@ def build_decision_frame(inst: str, data_end_utc: pd.Timestamp | None = None
         d[median_col] = d.groupby("mfo")[target].transform(
             lambda s: s.shift(1).rolling(SLOT_LOOKBACK, min_periods=SLOT_MIN_OBS).median())
         d[f"{target}_norm"] = d[target] / d[median_col].replace(0, np.nan)
+    if candidates:
+        d["overnight_rv_bp"] = d.sdate.map(overnight_rv)
+        d["overnight_rv_slot_z"] = _rolling_slot_z(d, "overnight_rv_bp")
     d["inst"] = inst
     d["year"] = d.sdate.dt.year
 
@@ -209,8 +292,12 @@ def build_decision_frame(inst: str, data_end_utc: pd.Timestamp | None = None
         "missing_slot_median": int(d[SLOT_MEDIAN].isna().sum()),
         "missing_past_rv30": int(d.past_rv30_bp.isna().sum()),
     }
+    if candidates:
+        quality.update({f"missing_{c}": int(d[c].isna().sum()) for c in CANDIDATE_FEATURES})
     keep = (["inst", "ts_utc", "sdate", "year", "mfo", "close", "range_rv_15m",
              "past_rv30_bp", "past_down_share_30m", "past_ret30_bp"]
+            + (CANDIDATE_FEATURES + ["overnight_rv_bp", "rv_15m", "rv_60m", "rv_120m"]
+               if candidates else [])
             + [c for c in d.columns if c.startswith("fwd_")])
     return d[list(dict.fromkeys(c for c in keep if c in d.columns))].copy(), quality
 

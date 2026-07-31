@@ -1,0 +1,75 @@
+==============================================================================
+EXP-0002  HYP-0002  cross-asset lead-lag: does the dollar lead?
+==============================================================================
+5-minute clock: 289,380 decision rows, 3,710 sessions, 78 slots grouped into 13 30-min blocks
+primary cell: GC  W=5  H=5   nboot=200
+expected sign: NEGATIVE (dollar up -> gold keeps falling)
+
+--- contemporaneous link, for scale (same 5-minute window) ---
+  GC   pearson -0.3075   within-block rank -0.3733   n=283,879
+  ES   pearson -0.1463   within-block rank -0.1665   n=285,191
+  NQ   pearson -0.1324   within-block rank -0.1470   n=285,191
+
+--- PRIMARY: within-block partial rank IC, 5-min clock, W=5 H=5 ---
+    forward : pIC(past_dxy, fwd_INST | past_INST)   'does the dollar lead?'
+    reverse : pIC(past_INST, fwd_dxy | past_dxy)    'does the instrument lead?'
+    KT2 fires if |reverse| is within a factor of 2 of |forward|.
+inst          n  FORWARD (dollar leads)      REVERSE (instrument leads)    ratio |rev|/|fwd|
+GC      279,747  -0.0049 [-0.0078,-0.0020]*  -0.0115 [-0.0146,-0.0083]*                 2.36
+ES      281,364  -0.0043 [-0.0075,-0.0011]*  -0.0059 [-0.0097,-0.0023]*                 1.37
+NQ      281,364  -0.0022 [-0.0053,+0.0006]   -0.0059 [-0.0088,-0.0030]*                 2.72
+
+--- for scale: the instrument's OWN 5-min momentum (what we control for) ---
+  GC   IC(past_GC_5, fwd_GC_5) = -0.0437 [-0.0463,-0.0406]*
+  ES   IC(past_ES_5, fwd_ES_5) = -0.0353 [-0.0383,-0.0323]*
+  NQ   IC(past_NQ_5, fwd_NQ_5) = -0.0202 [-0.0232,-0.0172]*
+
+--- ARTIFACT CONTROL: shared-endpoint (bid-ask bounce) at the 5-min horizon ---
+    `pastlag` ends at m-1 so no price is shared with the forward window.
+inst          n  IC(past_5, fwd_5)           IC(pastlag_5, fwd_5)          retained
+GC      280,160  -0.0437 [-0.0469,-0.0409]*  -0.0303 [-0.0334,-0.0274]*        0.69
+ES      281,945  -0.0353 [-0.0381,-0.0318]*  -0.0209 [-0.0239,-0.0177]*        0.59
+NQ      281,945  -0.0202 [-0.0234,-0.0175]*  -0.0131 [-0.0171,-0.0103]*        0.65
+DXY     281,303  -0.0472 [-0.0512,-0.0432]*  -0.0210 [-0.0245,-0.0176]*        0.44
+
+--- KT3 staleness controls: EUR-only basket, and dollar-fresh rows only ---
+    6E is forward-filled on 0.42% of minutes vs 4.70% for the 4-leg basket.
+inst  arm                     n  FORWARD                     REVERSE                     
+GC    4leg (primary)    279,747  -0.0049 [-0.0080,-0.0016]*  -0.0115 [-0.0147,-0.0079]*  
+GC    EUR only          280,252  -0.0044 [-0.0073,-0.0010]*  -0.0100 [-0.0131,-0.0074]*  
+GC    4leg dxy-fresh    258,704  -0.0047 [-0.0077,-0.0015]*  -0.0111 [-0.0143,-0.0076]*  
+ES    4leg (primary)    281,364  -0.0043 [-0.0080,-0.0012]*  -0.0059 [-0.0088,-0.0025]*  
+ES    EUR only          281,869  -0.0044 [-0.0073,-0.0007]*  -0.0040 [-0.0073,-0.0013]*  
+ES    4leg dxy-fresh    260,239  -0.0040 [-0.0074,-0.0009]*  -0.0061 [-0.0095,-0.0022]*  
+NQ    4leg (primary)    281,364  -0.0022 [-0.0052,+0.0013]   -0.0059 [-0.0095,-0.0025]*  
+NQ    EUR only          281,869  -0.0025 [-0.0054,+0.0005]   -0.0047 [-0.0079,-0.0014]*  
+NQ    4leg dxy-fresh    260,239  -0.0021 [-0.0051,+0.0011]   -0.0060 [-0.0095,-0.0027]*  
+
+--- horizon term structure of the FORWARD partial IC (descriptive) ---
+    a real transmission lag must DECAY with H; growth points elsewhere.
+    5-minute clock (W=5) then 30-minute clock (W=30), point estimates only.
+   5m clock  W=5
+    inst           H=5        H=10        H=30
+    GC         -0.0048     -0.0034     -0.0017
+    ES         -0.0044     -0.0048     -0.0031
+    NQ         -0.0022     -0.0030     -0.0013
+  30m clock  W=30
+    inst           H=5        H=10        H=30
+    GC         -0.0012     +0.0027     -0.0003
+    ES         -0.0071     -0.0065     -0.0039
+    NQ         -0.0067     -0.0059     -0.0055
+
+--- era split of the primary FORWARD partial IC ---
+  GC  2011-2018     139,051  -0.0032 [-0.0076,+0.0011] 
+  GC  2019-2026     140,819  -0.0069 [-0.0105,-0.0024]*
+  ES  2011-2018     139,841  -0.0036 [-0.0077,+0.0006] 
+  ES  2019-2026     141,646  -0.0029 [-0.0080,+0.0010] 
+  NQ  2011-2018     139,841  -0.0031 [-0.0080,+0.0008] 
+  NQ  2019-2026     141,646  -0.0005 [-0.0049,+0.0041] 
+
+--- economic size (rule 19/21): forward move by quintile of the trailing ---
+--- dollar return, WITHIN quintiles of the instrument's own trailing move ---
+    (double sort, so the number is the dollar's marginal contribution)
+  GC   top-vs-bottom dollar quintile => forward 5-min move   -0.18 bp [ -0.25, -0.09]  =  -0.27 ticks = $  -2.70/contract (round trip approx $20.00)
+  ES   top-vs-bottom dollar quintile => forward 5-min move   -0.08 bp [ -0.18, +0.02]  =  -0.10 ticks = $  -1.21/contract (round trip approx $25.00)
+  NQ   top-vs-bottom dollar quintile => forward 5-min move   -0.04 bp [ -0.17, +0.07]  =  -0.12 ticks = $  -0.60/contract (round trip approx $10.00)

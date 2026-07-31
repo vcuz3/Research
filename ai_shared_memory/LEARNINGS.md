@@ -19,6 +19,83 @@ kill them.
 
 ## Learnings
 
+### 2026-07-31 — Three cheap controls that each flipped a confident, correctly-signed, CI-excluding-zero result: the MEAN alongside the rank, the REVERSED direction, and a VOLATILITY-matched split
+
+- Status: provisional (all three are single-project; each is supported by an executed
+  control-bearing run and each CHANGED that run's verdict). Confirm or kill by re-running
+  the named test in a second project — the first one is listed below and is
+  evaluation-only.
+- Applies to: (1) any rank IC reported against a return or a P&L; (2) any cross-asset or
+  cross-instrument lead-lag claim; (3) any regime/conditioning split, including ones
+  already matched on time of day.
+- **(a) Rank IC and MEAN quintile spread can give OPPOSITE readings on the same rows, and
+  in opposite directions across asset classes.** On NQ/ES/GC 1-min RTH, 30-min trailing
+  return vs next 30-min return, 40k decisions each: **GC rank IC −0.0360 [CI excludes 0]
+  with a mean q5−q1 spread of −0.15 ticks [CI spans 0]**; **ES/NQ rank IC ≈ 0 [CIs span 0]
+  with mean spreads +1.09 / +3.34 ticks [CIs exclude 0]**. Gold has significant *rank*
+  reversion with no expectancy; the indices have no *rank* momentum but real positive
+  expectancy. The reconciliation is distributional: **equity intraday momentum lives in
+  the TAILS** — large moves continue, typical moves do not — and a rank statistic weights
+  the median observation, so it cannot see it. This is the mechanical reason a **breakout**
+  rule works on NQ/ES while an unconditional momentum tilt does not, and it extends
+  `vei_exploration` EXP-0013's "rank IC tracks the median trade" warning from *trade P&L*
+  to *raw returns*, where it flips the sign of the conclusion rather than merely deflating
+  it. **Report both, every time, and say which one the decision consumes** (equal-risk
+  per-bet sizing consumes the mean; a barrier-truncated book may consume something closer
+  to the median). Confirming test: recompute the headline ICs of `vei_exploration`
+  EXP-0011/0012/0015 alongside their mean-based twins on the frozen predictions —
+  evaluation-only, no refit, so it cannot be re-tuning.
+- **(b) For any lead-lag claim, run the REVERSE direction before anything else — it is one
+  line and it beats the staleness control, the horizon surface and the sibling split
+  combined.** A genuine lead is ASYMMETRIC; a symmetric "each predicts the other" result
+  is the signature of shared or non-synchronous contemporaneous information. Testing
+  whether the dollar leads gold at a 5-minute non-overlapping clock, within-block partial
+  Spearman IC controlling for own momentum: forward **−0.0049 [−0.0078,−0.0020]** —
+  correctly signed, CI excluding zero, decaying with horizon exactly as a transmission lag
+  should, and NOT a stale-price artifact (an EUR-only basket at 0.42% forward-filled
+  minutes vs 4.70% retained the whole effect). But the **REVERSE was −0.0115, i.e. 2.36x
+  LARGER** (ES 1.37x, NQ 2.72x): gold "leads" the dollar more than the dollar leads gold.
+  Without the reverse arm this prints as a clean confirmed lead-lag. Read the
+  contemporaneous link for scale too — here it was ~**75x** the 5-minute lagged one, which
+  is what efficient transmission looks like.
+- **(c) Matching a regime split on TIME OF DAY is not sufficient — match it on VOLATILITY
+  as well.** Almost every intraday label is correlated with volatility, so cells selected
+  by it inherit a volatility gradient even when slot composition is matched *exactly*. A
+  cross-asset "factor coherence" label (trailing 60-min |corr| of the index with a
+  synthetic DXY, same-slot z-scored, split at a matched 30% rate thresholded WITHIN each
+  slot, so both cells had identical sizes and identical time-of-day mixes) gave a gold
+  momentum contrast of **+0.0496 [+0.0069,+0.0853]** whose re-pairing null centred at zero.
+  Re-running the split within **volatility quintiles** as well as within slots collapsed it
+  to **−0.0047 [−0.0274,+0.0272]**, and the null's frac≥real went 0.067 → 0.600. The
+  collapse was NOT a weakened split: the coherence spread between cells was unchanged
+  (0.451/0.093 → 0.439/0.095) while the volatility ratio fell 1.46 → 1.11. Always run the
+  MIRROR arm too (the other label conditioned on this one); here it was +0.0020, so neither
+  label carried anything once the other was fixed. Sub-lesson, arriving from the SELECTION
+  side of `vei_exploration` finding P: **a modest pairwise correlation between two labels
+  does not imply the cells they select are matched.**
+- **(d) Bonus control from the same runs — the shared decision-bar close manufactures
+  reversion.** `past` ends and `fwd` starts at the same close, so pricing error there
+  (bid-ask bounce, a stale or one-tick print) enters with +1 and −1 and induces mechanical
+  negative correlation. Lagging the past window by one bar so the two share no price:
+  **31-56% of measured reversion is artifact at a 5-minute horizon** (GC 0.69 / ES 0.59 /
+  NQ 0.65 / synthetic DXY 0.44 retained) and **12-33% at 30 minutes**. Worst on a synthetic
+  forward-filled index. The majority survives everywhere, so such reversions are real — but
+  any short-horizon reversal quoted without this control is inflated by a third to a half.
+- Meta-point worth as much as the three controls: across five runs, a normal exploratory
+  pass would have reported **three** confident, correctly-signed, CI-excluding-zero results
+  that a single extra control then destroyed. The controls cost a few lines each. Same
+  family as `vei_exploration` findings H and P (score the degenerate limit; always run the
+  redundant control), now confirmed from three new directions.
+- Evidence: `futures/nq/claude_exploration_1/reports/FINDINGS.md` §B, §C, §E, §G and its
+  closing section "What would have been concluded without the controls";
+  `artifacts/runs/EXP-0001/`, `EXP-0002/`, `EXP-0005/`. Helpers + tests:
+  `core/stats.py::within_slot_partial_ic`, `regime_contrast`, `_split_by_rate`,
+  `repair_sessions`; `core/features.py` (`pastlag_*`, `slot_zscore`);
+  `tests/test_core.py` (30 checks). Reproduce via
+  `python -u -m futures.nq.claude_exploration_1.scripts.{s1_residual_momentum,s2_lead_lag,s3b_gold_coherence}`.
+- Origin: user asked for hypotheses on DXY/gold/ES and a test of them (2026-07-31). All
+  four preregistered hypotheses were rejected; these controls are what did the rejecting.
+
 ### 2026-07-27 — A fixed threshold on a SESSION-RESET feature is a time-of-day selector; fix it with a trailing same-slot Z-SCORE, not a ratio-to-mean
 
 - Status: confirmed (calibration); provisional (the information gain — holdout-pending)

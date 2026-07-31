@@ -1,0 +1,58 @@
+==============================================================================
+EXP-0005  follow-up: is gold's coherence contrast just VOLATILITY?
+==============================================================================
+rows 48,230  sessions 3,710  rate=30%  nboot=400  null draws=100
+EXP-0003 result being followed up: GC cohz contrast +0.0496 [+0.0077,+0.0945],
+re-pairing null centred at -0.0029, frac>=real 0.067 on 30 draws.
+GC was a DECLARED SECONDARY market in HYP-0003. This is a screen, not a pass.
+
+--- how entangled are the two labels? ---
+inst     corr(cohz,rvz)   rank corr   mean rv|high coh   mean rv|low coh   ratio
+GC               0.1639      0.1405              16.75             13.33    1.26
+ES               0.2967      0.2991              21.90             15.05    1.46
+NQ               0.2916      0.2793              26.64             18.30    1.46
+
+--- the contrast under progressively stricter matching ---
+    slot        : matched on time of day only (EXP-0003's number)
+    slot x rv   : ALSO matched on volatility quintile  <- confound-free
+    mirror      : volatility selector, matched on slot x coherence quintile
+inst  arm                     selector         n  contrast                    
+GC    slot (reproduction)     cohz_GC     38,766  +0.0496 [+0.0069,+0.0853]*  
+GC    slot x rv (primary)     cohz_GC     38,746  -0.0047 [-0.0274,+0.0272]   
+GC    mirror: vol|coherence   rvz_GC      38,746  +0.0020 [-0.0244,+0.0341]   
+ES    slot (reproduction)     cohz_ES     39,036  +0.0179 [-0.0318,+0.0676]   
+ES    slot x rv (primary)     cohz_ES     39,036  -0.0100 [-0.0347,+0.0212]   
+ES    mirror: vol|coherence   rvz_ES      39,036  +0.0058 [-0.0260,+0.0369]   
+NQ    slot (reproduction)     cohz_NQ     39,036  +0.0191 [-0.0323,+0.0632]   
+NQ    slot x rv (primary)     cohz_NQ     39,036  -0.0348 [-0.0630,-0.0045]*  
+NQ    mirror: vol|coherence   rvz_NQ      39,036  -0.0104 [-0.0400,+0.0244]   
+
+--- vol-neutral cells: confirming volatility really is matched ---
+inst  cell          n  mean coh  mean rv bp  mean |past| bp  corr(past,fwd)
+GC    high     11,637     0.565       15.90           11.55         -0.0045
+GC    low      11,637     0.190       14.17           10.71         +0.0002
+ES    high     11,723     0.439       18.54           13.91         +0.0131
+ES    low      11,723     0.095       16.63           12.65         +0.0231
+NQ    high     11,723     0.423       22.97           17.92         -0.0038
+NQ    low      11,723     0.087       20.35           16.32         +0.0310
+
+--- economic dose-response (rules 19/21): a naive causal momentum tilt ---
+    side = sign(trailing 30-min move); pnl = side * next 30-min move.
+    Non-overlapping decisions, no costs applied -- this is GROSS expectancy,
+    reported so the contrast can be read in ticks rather than correlation.
+inst  cell                       n  gross bp/bet    ticks   $/contract  t (session-clustered)
+GC    high coh (vol-ntl)    11,637         0.157    0.238         2.38                   2.61
+GC    low coh (vol-ntl)     11,637        -0.017   -0.025        -0.25                  -0.43
+GC    all                   38,746         0.060    0.091         0.91                   0.58
+ES    high coh (vol-ntl)    11,723         0.211    0.258         3.22                  -0.65
+ES    low coh (vol-ntl)     11,723         0.204    0.250         3.12                   1.59
+ES    all                   39,036         0.107    0.131         1.64                   1.02
+NQ    high coh (vol-ntl)    11,723         0.004    0.013         0.06                  -0.27
+NQ    low coh (vol-ntl)     11,723         0.452    1.353         6.76                   3.59
+NQ    all                   39,036         0.159    0.475         2.38                   1.32
+
+--- rule-18 re-pairing null, 100 draws, on the VOL-NEUTRAL arm ---
+inst        real   null mean   null sd  null p05  null p95       z  frac >= real
+GC       -0.0047     -0.0012    0.0172   -0.0299   +0.0240   -0.20         0.600
+ES       -0.0100     +0.0025    0.0212   -0.0299   +0.0329   -0.59         0.700
+NQ       -0.0348     +0.0011    0.0194   -0.0352   +0.0291   -1.86         0.940

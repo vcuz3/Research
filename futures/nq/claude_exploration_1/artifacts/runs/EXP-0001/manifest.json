@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0001",
+  "hypothesis_id": "HYP-0001",
+  "status": "completed",
+  "declared_utc": "2026-07-31T03:57:41.563306+00:00",
+  "config_path": "scripts/s1_residual_momentum.py",
+  "data_scope": "NQ+ES+GC 1-min RTH 09:30-16:00 ET 2011-08-01..2026-07-15, 3710 sessions; synthetic 4-leg DXY from CME 6E/6J/6B/6C",
+  "code_ref": "core/data.py; core/features.py; core/stats.py; scripts/s1_residual_momentum.py",
+  "run_command": "python -u -m futures.nq.claude_exploration_1.scripts.s1_residual_momentum",
+  "primary_metric": "paired within-slot Spearman IC delta IC(resid_GC_30,fwd_GC_30)-IC(past_GC_30,fwd_GC_30), 90% session-block bootstrap CI",
+  "builder": "Claude",
+  "outputs": [],
+  "closed_utc": "2026-07-31T06:05:28.682749+00:00",
+  "result_summary": "REJECTED (KT3 fired). Paired within-slot IC delta +0.0044 [+0.0005,+0.0078] GC but -0.0017 ES / -0.0027 NQ = sign disagrees with BOTH siblings. Metric also mis-signed for the effect present: gold REVERTS at 30m, so on the hypothesis' actual |IC| claim the residual is WORSE (0.0360->0.0317 = 87.9% of raw). Degenerate factor leg carries the SAME-signed reversion (|IC| 0.0155) and the undecomposed sum carries most = nothing is isolated. By-products worth more than the primary: (1) rank IC and MEAN quintile spread give OPPOSITE readings on both asset classes - GC rank -0.036 with mean spread -0.15 ticks [CI spans 0], ES/NQ rank ~0 with mean spread +1.09/+3.34 ticks [CIs exclude 0] => equity intraday momentum lives in the TAILS, which is why a BREAKOUT rule works on NQ/ES; (2) reversion ordering DXY -0.031 > GC -0.032 > ES/NQ ~0 (endpoint-corrected); (3) the dollar-hedged-target cells (+0.019/+0.020) are a mechanical -beta^2*corr(past_dxy,fwd_dxy) artifact, quarantined.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

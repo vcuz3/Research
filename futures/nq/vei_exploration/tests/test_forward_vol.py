@@ -209,3 +209,105 @@ def test_sealing_the_read_does_not_change_earlier_rows():
         assert (a[col].isna() == b[col].isna()).all(), col
         m = a[col].notna()
         assert np.allclose(a.loc[m, col], b.loc[m, col], rtol=0, atol=0), col
+
+
+# ---- HYP-0013 candidate state variables -------------------------------------- #
+
+def _toy_continuous(n=600, seed=3, price=100.0):
+    """A continuous one-minute frame with no gaps, for the candidate features."""
+    rng = np.random.default_rng(seed)
+    px = price + np.cumsum(rng.normal(0, 0.05, n))
+    return pd.DataFrame({
+        "ts_utc": pd.date_range("2020-01-02", periods=n, freq="1min", tz="UTC"),
+        "open": px, "high": px + 0.02, "low": px - 0.02, "close": px})
+
+
+def _candidates(frame, bad_link=None):
+    raw = frame.copy()
+    ret = np.log(raw.close).diff()
+    if bad_link is not None:
+        ret = ret.mask(bad_link)
+    FV._add_candidate_columns(raw, ret)
+    return raw
+
+
+def test_candidate_features_are_causal_in_both_directions():
+    """Each candidate must ignore bars after the decision and use bars before it."""
+    base = _candidates(_toy_continuous())
+    p = 400
+    later = _toy_continuous()
+    later.loc[later.index > p, ["open", "high", "low", "close"]] *= 1.05
+    later = _candidates(later)
+    earlier = _toy_continuous()
+    earlier.loc[earlier.index == p - 3, ["open", "high", "low", "close"]] *= 1.01
+    earlier = _candidates(earlier)
+    for col in ["jump_share_60m", "rv_ratio_15_60", "path_efficiency_15m"]:
+        assert np.isfinite(base.loc[p, col]), col
+        assert np.isclose(base.loc[p, col], later.loc[p, col]), f"{col} saw the future"
+        assert not np.isclose(base.loc[p, col], earlier.loc[p, col]), f"{col} ignored its window"
+
+
+def test_candidate_windows_do_not_bridge_a_discontinuity():
+    """A masked link inside the trailing window must void the feature, not span it."""
+    frame = _toy_continuous()
+    bad = pd.Series(False, index=frame.index)
+    bad.loc[380] = True                                   # a gap / roll / symbol change
+    out = _candidates(frame, bad_link=bad)
+    assert not np.isfinite(out.loc[385, "path_efficiency_15m"])   # 15m window spans it
+    assert not np.isfinite(out.loc[420, "jump_share_60m"])        # 60m window spans it
+    assert np.isfinite(out.loc[460, "jump_share_60m"])            # clear of it again
+
+
+def test_path_efficiency_separates_a_trend_from_churn():
+    """1.0 = every step in the same direction; near 0 = travelled far, went nowhere."""
+    n = 40
+    trend, churn = _toy_continuous(n=n), _toy_continuous(n=n)
+    for col in ["open", "high", "low", "close"]:
+        trend[col] = np.arange(100.0, 100.0 + n)
+        churn[col] = 100.0 + (np.arange(n) % 2)
+    assert np.isclose(_candidates(trend).loc[30, "path_efficiency_15m"], 1.0)
+    assert _candidates(churn).loc[30, "path_efficiency_15m"] < 0.1
+
+
+def test_jump_share_is_a_bounded_fraction_and_rises_with_a_jump():
+    frame = _toy_continuous()
+    quiet = _candidates(frame)
+    jumped = _toy_continuous()
+    jumped.loc[jumped.index >= 380, ["open", "high", "low", "close"]] *= 1.02  # one jump
+    jumped = _candidates(jumped)
+    col = "jump_share_60m"
+    finite = quiet[col].dropna()
+    assert ((finite >= 0) & (finite <= 1)).all()
+    assert jumped.loc[400, col] > quiet.loc[400, col]
+
+
+def test_overnight_rv_is_keyed_to_the_following_rth_session():
+    """18:00 ET onward belongs to the NEXT session; RTH bars are excluded entirely."""
+    tods = [18 * 60, 18 * 60 + 1, 60, 61, FV.RTH_START, FV.RTH_START + 1]
+    dates = [pd.Timestamp(2020, 1, 2)] * 2 + [pd.Timestamp(2020, 1, 3)] * 4
+    raw = pd.DataFrame({"tod": tods, "calendar_date": dates,
+                        "close": [100.0, 101.0, 102.0, 103.0, 104.0, 120.0]})
+    ret = np.log(raw.close).diff()
+    out = FV._overnight_rv_bp(raw, ret)
+    # every overnight bar above rolls up into the 2020-01-03 RTH session
+    assert list(out.index) == [pd.Timestamp(2020, 1, 3)]
+    # the 104 -> 120 RTH move is excluded; only the overnight returns contribute
+    overnight_only = np.sqrt(np.nansum(np.square(ret.to_numpy()[1:4])))
+    assert np.isclose(out.iloc[0], 1e4 * overnight_only)
+
+
+def test_candidate_frame_keeps_the_core_columns_bit_identical():
+    """Turning candidates ON must not perturb the frozen two-input core."""
+    if not FV.ONE_MIN["NQ"].exists():                     # pragma: no cover
+        print("      (skipped: clean parquet not present)")
+        return
+    seal = pd.Timestamp("2014-01-01", tz="America/New_York").tz_convert("UTC")
+    off, _ = FV.build_decision_frame("NQ", data_end_utc=seal)
+    on, q = FV.build_decision_frame("NQ", data_end_utc=seal, candidates=True)
+    assert len(off) == len(on) and off["ts_utc"].equals(on["ts_utc"])
+    for col in [FV.SLOT_MEDIAN, "range_rv_15m", FV.TARGET, "past_rv30_bp"]:
+        assert (off[col].isna() == on[col].isna()).all(), col
+        m = off[col].notna()
+        assert np.allclose(off.loc[m, col], on.loc[m, col], rtol=0, atol=0), col
+    for col in FV.CANDIDATE_FEATURES:
+        assert col in on.columns and f"missing_{col}" in q

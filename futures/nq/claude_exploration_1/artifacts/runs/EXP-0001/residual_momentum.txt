@@ -1,0 +1,93 @@
+==============================================================================
+EXP-0001  HYP-0001  dollar-decomposed residual momentum
+==============================================================================
+decision rows 48,230   sessions 3,710   slots [np.int64(29), np.int64(59), np.int64(89), np.int64(119), np.int64(149), np.int64(179), np.int64(209), np.int64(239), np.int64(269), np.int64(299), np.int64(329), np.int64(359), np.int64(389)]
+primary cell: GC  W=30  H=30   nboot=400
+
+[identity] beta=0 reproduces raw momentum exactly: max|diff|=0.000e+00
+[identity] resid_GC_30 + factor_GC_30 == past_GC_30 : max|diff|=1.735e-18
+[identity] resid_ES_30 + factor_ES_30 == past_ES_30 : max|diff|=1.735e-18
+[identity] resid_NQ_30 + factor_NQ_30 == past_NQ_30 : max|diff|=1.735e-18
+
+--- causal dollar beta (20 strictly prior sessions, through the origin) ---
+inst      median       p10       p90        sd   contemp corr 30m
+GC        -0.902    -1.467    -0.072     0.547            -0.3974
+ES        -0.190    -1.476     0.328     0.699            -0.2022
+NQ        -0.190    -1.787     0.419     0.856            -0.1860
+
+--- ARTIFACT CONTROL: shared-endpoint (bid-ask bounce) ---
+    `past` shares the close at m with `fwd`; `pastlag` ends at m-1 and shares
+    no price. A reversal that survives the lag is a property of the tape.
+inst         n  IC(past, fwd)             IC(pastlag, fwd)            retained
+GC      40,527  -0.0359 [-0.0437,-0.0270]*-0.0315 [-0.0397,-0.0224]*      0.88
+ES      40,810  +0.0003 [-0.0075,+0.0093] +0.0040 [-0.0047,+0.0132]      15.75
+NQ      40,810  -0.0040 [-0.0133,+0.0032] -0.0033 [-0.0124,+0.0051]       0.82
+
+--- ARTIFACT CONTROL: the dollar's own autocorrelation ---
+  IC(past_dxy_30, fwd_dxy_30)     = -0.0464 [-0.0543,-0.0376]*   n=40,712
+  IC(pastlag_dxy_30, fwd_dxy_30)  = -0.0311 [-0.0404,-0.0228]*   (shared endpoint removed)
+  => any IC of a beta-scaled dollar predictor against a beta-hedged target
+     inherits -beta^2 times this number and is NOT equity/gold information.
+
+--- within-slot Spearman IC vs RAW forward return, W=30 H=30 ---
+inst         n  IC(raw past)              IC(residual)              IC(factor leg)            PAIRED delta resid-raw      
+GC      40,398  -0.0360 [-0.0440,-0.0264]*-0.0317 [-0.0401,-0.0230]*-0.0155 [-0.0246,-0.0074]*+0.0044 [+0.0005,+0.0078]*  
+ES      40,657  +0.0004 [-0.0074,+0.0083] -0.0014 [-0.0105,+0.0078] +0.0097 [+0.0009,+0.0177]*-0.0017 [-0.0046,+0.0012]   
+NQ      40,657  -0.0040 [-0.0119,+0.0052] -0.0067 [-0.0151,+0.0019] +0.0115 [+0.0027,+0.0196]*-0.0027 [-0.0053,-0.0002]*  
+  |IC| reading (the hypothesis' actual claim: residual predicts BETTER):
+    GC   |IC| raw 0.0360 -> residual 0.0317   (  87.9% of raw)   residual WORSE
+    ES   |IC| raw 0.0004 -> residual 0.0014   ( 387.8% of raw)   residual BETTER
+    NQ   |IC| raw 0.0040 -> residual 0.0067   ( 168.1% of raw)   residual BETTER
+
+--- within-slot Spearman IC vs DOLLAR-HEDGED forward return (fwd - beta*fwd_dxy), W=30 H=30 ---
+inst         n  IC(raw past)              IC(residual)              IC(factor leg)            PAIRED delta resid-raw      
+GC      40,398  -0.0383 [-0.0473,-0.0298]*-0.0423 [-0.0503,-0.0329]*-0.0003 [-0.0077,+0.0084] -0.0040 [-0.0082,-0.0003]*  
+ES      40,657  -0.0006 [-0.0099,+0.0079] -0.0055 [-0.0141,+0.0036] +0.0193 [+0.0106,+0.0275]*-0.0049 [-0.0078,-0.0023]*  
+NQ      40,657  -0.0058 [-0.0161,+0.0023] -0.0114 [-0.0201,-0.0022]*+0.0202 [+0.0123,+0.0290]*-0.0056 [-0.0084,-0.0028]*  
+  |IC| reading (the hypothesis' actual claim: residual predicts BETTER):
+    GC   |IC| raw 0.0383 -> residual 0.0423   ( 110.4% of raw)   residual BETTER
+    ES   |IC| raw 0.0006 -> residual 0.0055   ( 868.6% of raw)   residual BETTER
+    NQ   |IC| raw 0.0058 -> residual 0.0114   ( 195.8% of raw)   residual BETTER
+
+--- (W,H) surface of the paired delta [resid - raw], raw forward target ---
+    DESCRIPTIVE SEARCH (9 cells x 3 markets). Point estimates only; the
+    preregistered cell is W=30/H=30 and is the only confirmatory number.
+  GC:
+    W\H             10          30          60   |  IC raw @H=30
+    15         +0.0053     +0.0049     +0.0029           -0.0368
+    30         +0.0033     +0.0044     +0.0032           -0.0360
+    60         +0.0007     +0.0019     +0.0013           -0.0392
+  ES:
+    W\H             10          30          60   |  IC raw @H=30
+    15         +0.0000     -0.0001     -0.0013           -0.0050
+    30         -0.0009     -0.0017     -0.0011           +0.0004
+    60         -0.0019     -0.0001     +0.0019           +0.0141
+  NQ:
+    W\H             10          30          60   |  IC raw @H=30
+    15         +0.0000     -0.0002     -0.0018           -0.0015
+    30         -0.0012     -0.0027     -0.0016           -0.0040
+    60         -0.0021     -0.0017     +0.0005           +0.0061
+
+--- era split (paired delta, W=30 H=30, raw target) ---
+inst  era                  n  IC raw                    IC resid                  PAIRED delta                
+GC    2011-2018       20,048  -0.0475 [-0.0597,-0.0348]*-0.0484 [-0.0614,-0.0363]*-0.0009 [-0.0050,+0.0038]   
+GC    2019-2026       20,350  -0.0279 [-0.0392,-0.0170]*-0.0190 [-0.0306,-0.0081]*+0.0089 [+0.0028,+0.0155]*  
+ES    2011-2018       20,167  -0.0131 [-0.0257,-0.0012]*-0.0139 [-0.0255,-0.0017]*-0.0008 [-0.0032,+0.0016]   
+ES    2019-2026       20,490  +0.0113 [-0.0009,+0.0230] +0.0089 [-0.0036,+0.0199] -0.0024 [-0.0072,+0.0023]   
+NQ    2011-2018       20,167  -0.0083 [-0.0208,+0.0030] -0.0089 [-0.0213,+0.0046] -0.0006 [-0.0028,+0.0018]   
+NQ    2019-2026       20,490  -0.0013 [-0.0148,+0.0120] -0.0054 [-0.0175,+0.0070] -0.0041 [-0.0091,+0.0003]   
+
+--- dollar-fresh decisions only (no forward-filled dollar at either endpoint) ---
+inst         n    kept  IC raw                    IC resid                  PAIRED delta                
+GC      40,398   0.948  -0.0369 [-0.0466,-0.0278]*-0.0323 [-0.0411,-0.0235]*+0.0045 [+0.0004,+0.0081]*  
+ES      40,657   0.948  +0.0025 [-0.0069,+0.0125] +0.0007 [-0.0094,+0.0098] -0.0018 [-0.0049,+0.0009]   
+NQ      40,657   0.948  -0.0019 [-0.0102,+0.0072] -0.0045 [-0.0136,+0.0047] -0.0026 [-0.0053,+0.0003]   
+
+--- magnitude in tradable units (rule 19/21): quintile spread of the ---
+--- primary predictor against the mean forward move, W=30 H=30        ---
+  GC  past_GC_30         q5-q1 fwd move =   -0.10 bp [ -0.57, +0.38] =  -0.15 ticks = $   -1.54/contract (1 tick round-trip approx $20.00)
+  GC  resid_GC_30        q5-q1 fwd move =   +0.16 bp [ -0.38, +0.71] =  +0.24 ticks = $   +2.42/contract (1 tick round-trip approx $20.00)
+  ES  past_ES_30         q5-q1 fwd move =   +0.89 bp [ +0.19, +1.63] =  +1.09 ticks = $  +13.65/contract (1 tick round-trip approx $25.00)
+  ES  resid_ES_30        q5-q1 fwd move =   +0.72 bp [ +0.01, +1.31] =  +0.88 ticks = $  +11.04/contract (1 tick round-trip approx $25.00)
+  NQ  past_NQ_30         q5-q1 fwd move =   +1.12 bp [ +0.22, +1.95] =  +3.34 ticks = $  +16.71/contract (1 tick round-trip approx $10.00)
+  NQ  resid_NQ_30        q5-q1 fwd move =   +0.72 bp [ -0.10, +1.50] =  +2.15 ticks = $  +10.75/contract (1 tick round-trip approx $10.00)

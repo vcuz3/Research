@@ -91,6 +91,11 @@ material run. Done items link to the run.
 
 ### New leads from EXP-0013 (the forecast has skill but no application here)
 13. **The scheduled-calendar residual — the highest-value untouched channel, and after
+    EXP-0016 the ONLY one aimed at an axis that can still move: every feature tested so far
+    (the two-input core, EXP-0011's multi-horizon set, EXP-0016's decorrelated six and its
+    redundant-level control) is a function of PAST PRICE, and they all converge to the same
+    level-IC ceiling. Scheduled events are the one information source none of them contain.
+    Originally, and after
     EXP-0015 a TARGETED one.** The number to beat is now specific: the core's expansion-call
     log-MSE skill over persistence is only **+0.008 NQ / +0.061 ES** (against +0.300/+0.211
     on contraction calls), i.e. it ranks expansions correctly but cannot size them. Scheduled
@@ -150,6 +155,23 @@ material run. Done items link to the run.
     multi-horizon INCREMENT should read "qualified-confirmed", not "confirmed". Does not
     affect the adopted two-input core, which never depended on the increment.
 
+19. **Re-score EXP-0011's ACTUAL multi-horizon set on the expansion cell.** EXP-0016
+    showed the LEVEL axis is saturated at +0.009..+0.011 for every feature set tried, so
+    the metric EXP-0011 used to decline the multi-horizon variables could not discriminate
+    — while the expansion-magnitude cell moved from +0.006/+0.056 to +0.100/+0.120 for a
+    three-variable redundant analogue. EXP-0011's own six variables were never measured on
+    that cell. Evaluation-only on frozen predictions if they can be regenerated; cheap,
+    and it decides whether the "confirmed but not adopted" ruling was made on the wrong
+    axis. Note this cannot be re-tuning: no feature or parameter changes.
+20. **Choose the scoring metric BEFORE the next feature test, and always run the redundant
+    control.** Two decisions in this project have now been taken on a metric that could not
+    discriminate: `IC_fwdvol` (finding H, retired) and level IC for feature selection
+    (finding P). Before any further feature work, declare a decision-shaped metric that is
+    demonstrably still moving — the expansion-call log-MSE skill over persistence is the
+    obvious candidate — and pair every clever candidate with a deliberately REDUNDANT
+    control set. In both cases the degenerate control was the most informative arm in the
+    run.
+
 ## Standing cautions
 
 - Every promotion needs a preregistered kill test + a claim-matched null run through the
@@ -165,6 +187,13 @@ material run. Done items link to the run.
   a volatility filter, already placing ~35% of its trades in the top forecast-volatility
   quintile, so an overlay re-spends information the entry has already spent. A new
   overlay proposal needs a mechanism that is not volatility level, expansion, or scale.
+- **A saturated metric cannot select between candidates.** EXP-0016: three unrelated
+  feature sets — six redundant multi-horizon variables, four orthogonal new dimensions,
+  and three redundant level proxies — all buy +0.009..+0.011 of within-slot level IC on
+  both markets. When every candidate scores the same, the score is measuring the target's
+  ceiling, not the candidates. Check that the metric MOVES before searching on it, and run
+  the deliberately redundant/degenerate control alongside the clever one; in this project
+  it has twice been the arm that decided the run.
 - When a book has a low hit rate and a skewed P&L, do not read a **rank** IC of a
   conditioning variable against per-trade P&L: it tracks the median trade, so a pure
   scale effect prints a large negative IC while expectancy is flat (EXP-0013 measured

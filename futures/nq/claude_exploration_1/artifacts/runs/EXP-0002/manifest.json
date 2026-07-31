@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0002",
+  "hypothesis_id": "HYP-0002",
+  "status": "completed",
+  "declared_utc": "2026-07-31T03:57:41.683701+00:00",
+  "config_path": "scripts/s2_lead_lag.py",
+  "data_scope": "NQ+ES+GC 1-min RTH 09:30-16:00 ET 2011-08-01..2026-07-15, 3710 sessions; synthetic 4-leg DXY from CME 6E/6J/6B/6C; 5-minute non-overlapping clock",
+  "code_ref": "core/data.py; core/features.py; core/stats.py; scripts/s2_lead_lag.py",
+  "run_command": "python -u -m futures.nq.claude_exploration_1.scripts.s2_lead_lag",
+  "primary_metric": "within-block partial Spearman IC pIC(past_dxy_5, fwd_GC_5 | past_GC_5), 90% session-block bootstrap CI",
+  "builder": "Claude",
+  "outputs": [],
+  "closed_utc": "2026-07-31T06:05:28.782941+00:00",
+  "result_summary": "REJECTED (KT2 symmetry fired decisively). Forward pIC(past_dxy,fwd_GC|past_GC) = -0.0049 [-0.0078,-0.0020] correctly signed and significant, KT1 does NOT fire - but the REVERSE pIC is -0.0115, i.e. 2.36x LARGER (ES 1.37x, NQ 2.72x). Gold appears to lead the dollar more than the reverse = shared/non-synchronous contemporaneous information, not transmission. KT3 does NOT fire: EUR-only basket (0.42% stale vs 4.70%) retains the whole effect, so it is NOT a stale-price artifact - the measurement is sound, the interpretation fails. Mechanism's own differential prediction also fails (ES -0.0043 ~ GC -0.0049 despite ES being far more liquid). Economically -0.27 ticks vs ~$20 round trip; contemporaneous link is ~75x the 5-min lagged one. Also produced the 5-min shared-endpoint magnitudes: 31-56% of measured reversion is bid-ask-bounce artifact, worst (56%) on the synthetic dollar.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0004",
+  "hypothesis_id": "HYP-0004",
+  "status": "completed",
+  "declared_utc": "2026-07-31T03:57:41.928763+00:00",
+  "config_path": "scripts/s4_overnight_impulse.py",
+  "data_scope": "NQ+ES+GC 1-min RTH 09:30-16:00 ET 2011-08-01..2026-07-15, 3710 sessions; synthetic 4-leg DXY from CME 6E/6J/6B/6C; one row per session (3707)",
+  "code_ref": "core/data.py; core/features.py; core/stats.py; scripts/s4_overnight_impulse.py",
+  "run_command": "python -u -m futures.nq.claude_exploration_1.scripts.s4_overnight_impulse",
+  "primary_metric": "Spearman IC(short_GC, rth_GC) with 90% session bootstrap CI; sign declared POSITIVE in advance",
+  "builder": "Claude",
+  "outputs": [],
+  "closed_utc": "2026-07-31T06:05:28.983426+00:00",
+  "result_summary": "REJECTED - all three kill tests fired, the cleanest rejection of the four. KT1: IC(short_GC,rth_GC) = -0.0301 [-0.0570,+0.0000], CI touches zero AND the sign is negative (declared in advance as a rejection). KT2: unconstrained rth ~ b1*on_GC + b2*on_dxy gives b1 +0.0261 / b2 -0.0338, both wrong-signed, both CIs spanning 0, R2 0.0017. KT3: -0.0301 GC / -0.0302 ES / -0.0239 NQ, indistinguishable, but the liquidity mechanism requires ES to be much weaker. Root cause and the generalisable lesson: the dollar explains only R2 0.127 of gold's overnight gap, so the shortfall degenerates into the negative of the raw gap (ICs print -0.0301 and +0.0301) - A FACTOR DECOMPOSITION IS ONLY INFORMATIVE WHERE THE FACTOR'S R2 IS LARGE. Horizon-matched overnight beta (-0.968 vs -0.902) checked and clears the pre-declared objection. Descriptive residue (sign-reversed from the hypothesis): gold's idiosyncratic overnight move CONTINUES into the first RTH hour and is spent by mid-session.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

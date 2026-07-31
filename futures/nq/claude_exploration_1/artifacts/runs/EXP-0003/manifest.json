@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0003",
+  "hypothesis_id": "HYP-0003",
+  "status": "completed",
+  "declared_utc": "2026-07-31T03:57:41.803065+00:00",
+  "config_path": "scripts/s3_factor_coherence.py",
+  "data_scope": "NQ+ES+GC 1-min RTH 09:30-16:00 ET 2011-08-01..2026-07-15, 3710 sessions; synthetic 4-leg DXY from CME 6E/6J/6B/6C",
+  "code_ref": "core/data.py; core/features.py; core/stats.py; scripts/s3_factor_coherence.py",
+  "run_command": "python -u -m futures.nq.claude_exploration_1.scripts.s3_factor_coherence 30",
+  "primary_metric": "within-slot momentum contrast top-30% minus bottom-30% of cohz at matched rate and identical slot composition, 90% session-block CI",
+  "builder": "Claude",
+  "outputs": [],
+  "closed_utc": "2026-07-31T06:05:28.883499+00:00",
+  "result_summary": "REJECTED on both preregistered markets (KT1 + KT3 fired). Contrast ES +0.0179 [-0.0326,+0.0743], NQ +0.0191 [-0.0337,+0.0637], both CIs span zero; rule-18 re-pairing null centres at ~0 on all three markets (well-behaved) with real ES/NQ inside the band (frac 0.367/0.300). Same-slot z-score calibration transferred exactly as vei_exploration finding I predicts (raw cut selects 33.7% of the 10:29 slot vs 26.1% of 13:29; z holds 28-31% everywhere). Selection-rate dial swings ES +0.0806/+0.0179/-0.0031 at 20/30/40% = unstable. GC (a DECLARED THIRD market) printed +0.0496 [+0.0077,+0.0945] with null frac 0.067 - carried to EXP-0005 as a screen and killed there.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

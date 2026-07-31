@@ -74,14 +74,23 @@ their contents.
   seasonality by log-MSE skill +0.69/+0.71 - but its call on the CHANGE is real
   (+0.377/+0.390), survives the preregistered expansion-only gate (+0.220/+0.238), and
   strengthens monotonically with the size of the disagreement.
-- Last verified: 2026-07-31 (EXP-0001..0015; EXP-0006 supersedes parts of A/C/D/F;
+  **EXP-0016 then closed the feature-search question.** A user-proposed six-feature set
+  chosen for LOW MUTUAL CORRELATION does beat the core (+0.0090/+0.0099 within-slot,
+  11/11 years and slots) but misses the +0.010 adoption bar, and a post-hoc control of
+  three DELIBERATELY REDUNDANT level proxies matches or beats it with fewer features -
+  so decorrelation was never the binding constraint, having only ONE state variable was.
+  Three independent feature sets now buy the same +0.009..+0.011 on the LEVEL axis, which
+  is therefore SATURATED as a property of the target; the EXPANSION-MAGNITUDE cell is not,
+  moving +0.006/+0.056 -> +0.100/+0.120. **Net: stop scoring feature sets on level IC.**
+- Last verified: 2026-07-31 (EXP-0001..0016; EXP-0006 supersedes parts of A/C/D/F;
   EXP-0007 closes the legacy-seed-as-predictor explanation; EXP-0008 retires
   `IC_fwdvol`; EXP-0009 calibrates the regime label; EXP-0010 closes standalone onset;
   EXP-0011 confirms but does not operationally adopt multi-horizon volatility state;
   EXP-0012 confirms the range core's information is conditional, not a clock effect;
   EXP-0013 closes the volatility-sizing channel and the overlay programme; EXP-0014
   closes the downside-asymmetry channel; EXP-0015 qualifies EXP-0012's benchmark and
-  establishes the core as a genuine but smaller timing instrument).
+  establishes the core as a genuine but smaller timing instrument; EXP-0016 saturates
+  the level axis and refutes decorrelation as the constraint).
 - Lifecycle phase: exploration / hypothesis generation.
 - Holdout status: consumed research history. EXP-0011 additionally consumed
   2024-01-01 through 2026-07-14 for the forward-volatility specification; only data
@@ -91,14 +100,14 @@ their contents.
 - Reproduction: `python -u -m futures.nq.vei_exploration.scripts.{s1_smoothing,
   s2_vol_forecast,s3_regime_dynamics,s4_term_structure} {NQ|ES}`; forecast-vs-book
   conditioning via `... .scripts.{hyp_0010_vol_scaling,hyp_0011_semivariance,
-  hyp_0012_disagreement} {NQ|ES}`.
+  hyp_0012_disagreement,hyp_0013_decorrelated_features} {NQ|ES}`.
 - **The canonical forward-vol forecast is now importable, tested code:**
   `core/forward_vol.py` (`build_decision_frame`, `walkforward_forecast`). It reproduces
   the EXP-0011 notebook to |ΔIC| <= 1.7e-04 at exact row counts (tolerance 5e-4, asserted
   at the top of every run that uses it), and its sealed-read invariant is bit-identical.
   Use this rather than re-executing or mutating the notebook, which stays the immutable
   EXP-0011 record.
-- Tests: run `python -m futures.nq.vei_exploration.tests.run_tests` (29/29 pass).
+- Tests: run `python -m futures.nq.vei_exploration.tests.run_tests` (35/35 pass).
   (Correction 2026-07-27: pytest 9.1.1 IS installed — the older "no pytest in this
   environment" claim was wrong. The runner is still the right path because the workspace
   uses implicit namespace packages, so pytest cannot collect these modules by file path.)
@@ -383,6 +392,36 @@ their contents.
   +0.300/+0.211 on contractions - the direction-of-change call transfers, the magnitude
   call largely does not. Evidence: `artifacts/runs/EXP-0015/review.md`, FINDINGS section O.
 
+- **P / EXP-0016 (HYP-0013) - DECORRELATION is not the binding constraint; the LEVEL axis
+  is SATURATED at +0.01 and the EXPANSION cell is not.** A user-proposed set chosen for low
+  mutual correlation - `[jump_share_60m, rv_ratio_15_60, path_efficiency_15m,
+  overnight_rv_slot_z, range_rv_15m, fwd_abs_bp_slot_median90]`. **KT1 PASS both markets:**
+  paired within-slot IC delta over core **+0.0090 [+0.0082,+0.0099] NQ / +0.0099
+  [+0.0091,+0.0109] ES**, positive in 11/11 years and 11/11 slots. **KT2 FAIL both** against
+  the +0.010 bar set in advance from EXP-0011's precedent. **MECHANISM REFUTED by a post-hoc
+  control:** `core_levels3` (core + rv_15m/rv_60m/rv_120m, three deliberately REDUNDANT
+  measurements of the same quantity) matches or beats the decorrelated six on every axis
+  with fewer added features - delta +0.0093/+0.0107, log-MSE 0.07134/0.07423 vs
+  0.07241/0.07473, MAE 4.454/3.657 vs 4.490/3.686, expansion skill vs persistence
+  **+0.100/+0.120 vs +0.058/+0.094**. The constraint was that the core had exactly ONE state
+  variable, not that its features were redundant. **Attribution:** all of it is the four
+  ADDITIONS (`core_plus4` +0.0090/+0.0098); the SEASONAL SWAP is a near no-op
+  (`swap_only` +0.0005/+0.0006) because the two seasonals correlate **+0.937/+0.910**;
+  `new4_only` collapses to +0.4491/+0.5251 = supplements, not standalone. **Premise measured
+  and half wrong:** the four new variables are genuinely near-orthogonal to each other
+  (jump~ratio +0.000, overnight~path +0.009) but overnight~range_rv_15m is +0.429/+0.460.
+  Low correlation is necessary for incremental value, NOT sufficient (same conclusion as
+  finding H, from the other direction). **THE RESULT WORTH KEEPING:** three independent
+  feature sets now buy +0.009..+0.011 on the level (EXP-0011 multi-horizon +0.0088/+0.0095,
+  user6 +0.0090/+0.0099, levels3 +0.0093/+0.0107) - the level is saturated as a property of
+  the TARGET - while EXP-0015's expansion cell moves an order of magnitude. **EXP-0011
+  rejected multi-horizon on the one metric that cannot discriminate between feature sets;**
+  the operational ruling may stand but its stated ground was the wrong axis (caveat: that
+  exact six-variable set was not re-run, `core_levels3` is a three-variable analogue).
+  Rule 9a common sample 97.3%/97.7%, per-slot retention 0.955-0.983 uniform, all arms on
+  identical rows. Consumed history. Evidence: `artifacts/runs/EXP-0016/review.md`,
+  FINDINGS section P.
+
 ## Provisional hypotheses
 
 - None promoted. The opening-seed lead is CLOSED by EXP-0007, H=60 by Study F, the
@@ -453,6 +492,11 @@ their contents.
 - The `core/forward_vol.py` reproduction leaves an unexplained |ΔIC| <= 1.7e-04 against
   the notebook. Inputs are proved bit-identical, so the residual is inside the fitted
   learner. Carried as a limitation under a declared 5e-4 tolerance (rule 23).
+- **Do NOT score feature sets on level IC.** EXP-0016 shows it is saturated at
+  +0.009..+0.011 for every set tried, so it cannot discriminate; the project has now twice
+  decided using a non-discriminating metric (finding H's `IC_fwdvol`, and this). Score the
+  expansion-magnitude cell or another decision-shaped metric instead, and always run the
+  REDUNDANT control alongside the clever candidate.
 - **EXP-0012's headline is benchmark-dependent and must not be quoted alone.** Its
   within-slot delta of ~+0.47 is over the causal same-slot MEDIAN; over trailing
   30-minute realised volatility the same delta is +0.013 (EXP-0015). Both numbers are
@@ -539,6 +583,9 @@ their contents.
    is CLOSED. Old backlog item 7 (sizing/risk-targeting) is retired as an alpha lever.
    Also produced the importable, tested `core/forward_vol.py` and a rule-23 harness that
    pins any future use of the forecast to the EXP-0011 notebook.
+0m. **DONE (EXP-0016):** the decorrelated feature set. KT1 passed, KT2 failed, mechanism
+   refuted by a redundant-level control. Level axis saturated at +0.01 from three
+   directions; expansion-magnitude cell is the one still capable of moving.
 1. Backlog item 13 — **the scheduled-calendar residual.** The highest-value untouched
    channel, and after EXP-0015 a TARGETED one with a specific number to beat: the
    expansion-call log-MSE skill over persistence is only +0.008 NQ / +0.061 ES, and

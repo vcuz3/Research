@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0005",
+  "hypothesis_id": "HYP-0003",
+  "status": "completed",
+  "declared_utc": "2026-07-31T04:01:27.092623+00:00",
+  "config_path": "scripts/s3b_gold_coherence.py",
+  "data_scope": "NQ+ES+GC 1-min RTH 2011-08-01..2026-07-15, 3710 sessions; synthetic 4-leg DXY",
+  "code_ref": "core/features.py; core/stats.py; scripts/s3b_gold_coherence.py",
+  "run_command": "python -u -m futures.nq.claude_exploration_1.scripts.s3b_gold_coherence 100",
+  "primary_metric": "within-(slot x volatility-quintile) momentum contrast on cohz at matched 30% rate, 90% session-block CI, plus a 100-draw rule-18 re-pairing null",
+  "builder": "Claude",
+  "outputs": [],
+  "closed_utc": "2026-07-31T06:05:29.087595+00:00",
+  "result_summary": "KILL TEST FIRED - EXP-0003's gold screen was the VOLATILITY confound. Gold's contrast collapses +0.0496 [+0.0069,+0.0853] -> -0.0047 [-0.0274,+0.0272] once the top/bottom coherence split is made within VOLATILITY QUINTILES as well as within slots; the mirror arm (volatility given coherence) is +0.0020, also zero. 100-draw re-pairing null centres at 0 on all three markets and gold's frac>=real goes 0.067 -> 0.600. The collapse is NOT a weakened split: coherence spread between cells is unchanged (0.451/0.093 -> 0.439/0.095) while the volatility ratio falls 1.46 -> 1.11. METHOD CLAIM (the run's real output): matching a regime split on TIME OF DAY is not sufficient - EXP-0003 matched slot composition EXACTLY (identical cell sizes and slot mixes) and it still was not enough, because almost every intraday label is correlated with volatility. Sub-lesson from the selection side of vei_exploration finding P: a modest pairwise correlation between two labels does NOT imply the cells they select are matched. Economically the three markets point three ways (GC high-coherence t2.61, NQ LOW-coherence t3.59 = opposite, ES flat) and gold's surviving cell is +0.238 ticks = $2.38 vs a ~$20 round trip.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

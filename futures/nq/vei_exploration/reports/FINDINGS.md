@@ -804,6 +804,100 @@ of +0.008 NQ / +0.061 ES. Evidence: `artifacts/runs/EXP-0015/`.
 
 ---
 
+## P. Decorrelation is NOT the binding constraint — the LEVEL axis is saturated at +0.01 while the EXPANSION cell is not (EXP-0016, HYP-0013)
+
+**Verdict: KT1 CONFIRMED both markets, KT2 FAILED both markets, the proposed MECHANISM
+REFUTED. Disposition: confirmed, NOT adopted** — the same ruling EXP-0011's multi-horizon
+set received.
+
+The proposal, from the correlation structure in `notebooks/forward_vol_factor_research.ipynb`,
+was that EXP-0011's multi-horizon set bought only +0.009 because its six variables were
+six measurements of the SAME quantity. A set chosen for low mutual correlation should span
+dimensions the core cannot see: jump versus diffusive composition (`jump_share_60m`), the
+short-versus-long term structure (`rv_ratio_15_60`), travel versus churn
+(`path_efficiency_15m`), and volatility that arrived while the market was shut
+(`overnight_rv_slot_z`), plus `range_rv_15m` and the endpoint seasonal
+`fwd_abs_bp_slot_median90`.
+
+### The set does add information
+
+Paired within-slot IC delta over the two-input core, identical rows, 90% session-block CI:
+
+| | NQ | ES |
+| --- | --- | --- |
+| core within-slot IC | +0.8802 | +0.8735 |
+| `user6` within-slot IC | +0.8892 | +0.8834 |
+| **paired delta (PRIMARY)** | **+0.0090 [+0.0082,+0.0099]** | **+0.0099 [+0.0091,+0.0109]** |
+| positive years / slots | 11/11, 11/11 | 11/11, 11/11 |
+
+KT1 passes cleanly. KT2 — the +0.010 adoption bar, set before the run from EXP-0011's
+precedent — fails on both.
+
+### But the mechanism is refuted by the control
+
+`core_levels3` (core + `rv_15m`, `rv_60m`, `rv_120m` — three deliberately REDUNDANT
+measurements of the same quantity, exactly what the proposal was designed to avoid) was
+added AFTER the preregistered arms ran. It is a control, not a candidate; gates stayed on
+`user6`.
+
+| | NQ: user6 / levels3 | ES: user6 / levels3 |
+| --- | --- | --- |
+| delta over core | +0.0090 / **+0.0093** | +0.0099 / **+0.0107** |
+| log-MSE (lower better) | 0.07241 / **0.07134** | 0.07473 / **0.07423** |
+| MAE bp | 4.490 / **4.454** | 3.686 / **3.657** |
+| **expansion skill vs persistence** | +0.0580 / **+0.1000** | +0.0943 / **+0.1195** |
+| features added | 4 (+1 swap) / **3** | 4 (+1 swap) / **3** |
+
+Three redundant level proxies match or beat four orthogonal dimensions everywhere except a
+tied change-IC. **The binding constraint was never redundancy — it was that the core had
+exactly ONE state variable.** Add a second piece of local state of almost any kind and you
+collect essentially the whole available gain. This is the §H pattern recurring: the
+persuasive explanation loses to a deliberately degenerate control.
+
+### Attribution and the measured premise
+
+- The gain is entirely the four ADDITIONS: `core_plus4` +0.0090 / +0.0098.
+- The SEASONAL SWAP is a near no-op: `swap_only` +0.0005 / +0.0006, because the two
+  seasonals correlate **+0.937 NQ / +0.910 ES**.
+- `new4_only` collapses to +0.4491 / +0.5251, below the seasonal median alone — the new
+  variables are supplements, not standalone predictors.
+- The premise is half right. Genuinely orthogonal: `jump_share_60m` ~ `rv_ratio_15_60`
+  **+0.000**, `overnight_rv_slot_z` ~ `path_efficiency_15m` **+0.009**. Not low at all:
+  `overnight_rv_slot_z` ~ `range_rv_15m` +0.429 / +0.460, and the two seasonals above.
+  **Low mutual correlation is necessary for incremental value, not sufficient** — the same
+  conclusion §H reached from the other direction.
+
+### The result worth keeping
+
+| feature set | level-IC delta over core, NQ / ES |
+| --- | --- |
+| EXP-0011 multi-horizon (6 redundant) | +0.0088 / +0.0095 |
+| EXP-0016 `user6` (4 orthogonal + a swap) | +0.0090 / +0.0099 |
+| EXP-0016 `core_levels3` (3 redundant) | +0.0093 / +0.0107 |
+
+Everything lands at +0.009..+0.011. **The LEVEL axis is saturated — confirmed from three
+independent directions — and the saturation is a property of the TARGET, not of any
+feature set.** Meanwhile §O's expansion-magnitude cell is NOT saturated: core +0.006 /
++0.056 rises to +0.100 / +0.120 on the best arm, an order of magnitude on NQ against ~1%
+on the level.
+
+**EXP-0011 therefore rejected multi-horizon on the one metric that cannot discriminate
+between feature sets.** The operational ruling may still be right; its stated ground was
+the wrong axis. Caveat: EXP-0011's actual six-variable set was not re-run here, so the
+implication for that set is suggestive, not proven — `core_levels3` is a three-variable
+analogue.
+
+This project has now twice decided using a metric that could not discriminate — §H's
+`IC_fwdvol`, and now level IC for feature selection. **Before running a feature search,
+check that the scoring metric still MOVES.**
+
+Rule 9a: common sample 97.3% / 97.7% of decision rows, per-slot retention 0.955–0.983
+(spread < 0.03, uniform — the pass signal), all arms on identical rows. Rule 23
+reproduction passed at 1.5e-05 / 6.8e-05. Consumed history (rule 26): 2024-01-01 through
+2026-07-14 was already spent by EXP-0011 on feature selection, so this is a second search
+on the same window and nothing here is confirmatory. Evidence:
+`artifacts/runs/EXP-0016/review.md`, `experiments/hypotheses/HYP-0013.md`.
+
 ## Synthesis
 
 VEI is not a direction predictor, and as a volatility forecaster it is dominated by the
@@ -863,15 +957,24 @@ for the BAND. §O: measured against persistence rather than seasonality, the cor
 advantage in ranking LEVELS is small (+0.013, not +0.47) but its call on the CHANGE is
 real, both-market, era-stable and strongest exactly where it disagrees most.
 
-Read §K–O together and the project's volatility-forecasting arc has a single shape: the
+§P: a decorrelated six-feature set beats the core by +0.009/+0.010 on both markets and in
+every year and slot — but three deliberately REDUNDANT level proxies do it better with
+fewer features, so decorrelation was not the constraint; the level axis is saturated at
++0.01 from three independent directions while the expansion-magnitude cell moves an order
+of magnitude.
+
+Read §K–P together and the project's volatility-forecasting arc has a single shape: the
 forecast is skilful in the way a decision maker needs (§L), worth nothing as a tilt on the
 book we own (§M), free to extend to the downside leg but with no asymmetry to exploit
-(§N), and mostly a restatement of persistence in levels while carrying genuine information
-about changes (§O).
+(§N), mostly a restatement of persistence in levels while carrying genuine information
+about changes (§O), and — on the level axis — improvable by no feature set anyone has
+tried, while the change/expansion axis remains open (§P).
 
 Remaining leads: the **scheduled economic calendar** (backlog 13) — now a targeted step
 rather than a general one, because §O identifies the exact weak cell it should improve
-(expansion-call log-MSE skill over persistence, +0.008 NQ / +0.061 ES); a decision-shaped
+(expansion-call log-MSE skill over persistence, +0.008 NQ / +0.061 ES) and §P shows that
+cell is the one still capable of moving, and that every feature tried so far is a function
+of past price; a decision-shaped
 barrier/tail-probability target (backlog 15); the daily-timescale squeeze (backlog 4,
 deferred by Study C and untouched); and a regime-persistence exit that holds while VEI
 stays expanded (backlog 10). The standalone onset strategy, the H=60 axis, volatility

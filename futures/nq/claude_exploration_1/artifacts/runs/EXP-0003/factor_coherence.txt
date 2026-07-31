@@ -1,0 +1,80 @@
+==============================================================================
+EXP-0003  HYP-0003  macro factor coherence as a momentum regime
+==============================================================================
+rows 48,230  sessions 3,710  W=30 H=30 matched rate=30%  nboot=400  null draws=30
+
+--- the coherence label: |corr(1-min INST, 1-min DXY)| over the trailing 60m ---
+inst       mean       sd      p10      p90   coverage   slot-mean spread
+ES        0.266    0.193    0.042    0.552      0.901              0.036
+NQ        0.252    0.186    0.039    0.529      0.901              0.032
+GC        0.375    0.194    0.104    0.631      0.899              0.101
+
+--- rule 9a: is a fixed cut on RAW coherence a clock? (selection rate by slot) ---
+    mfo        ES raw     ES z     NQ raw     NQ z
+    29          0.000    0.000      0.000    0.000
+    59          0.337    0.309      0.313    0.299
+    89          0.315    0.300      0.309    0.297
+    119         0.281    0.294      0.277    0.296
+    149         0.275    0.290      0.271    0.292
+    179         0.268    0.294      0.264    0.290
+    209         0.261    0.287      0.260    0.288
+    239         0.273    0.289      0.277    0.288
+    269         0.288    0.283      0.290    0.281
+    299         0.314    0.264      0.320    0.274
+    329         0.313    0.280      0.325    0.281
+    359         0.295    0.269      0.305    0.272
+    389         0.295    0.270      0.304    0.271
+    (the z-score column is the calibrated label; the raw column is the clock)
+
+--- unconditional within-slot momentum corr(past_30, fwd_30) ---
+  ES   +0.0139   n=40,810
+  NQ   +0.0125   n=40,810
+  GC   +0.0072   n=40,551
+
+--- PRIMARY contrast (KT1) and the DEGENERATE volatility-level control (KT2) ---
+    contrast = within-slot corr(past,fwd) in the TOP 30% of the label
+               minus the BOTTOM 30%, thresholded per slot so both cells
+               have identical size and identical time-of-day composition.
+inst  selector                         n  contrast                    
+ES    cohz (coherence z)          39,036  +0.0179 [-0.0326,+0.0743]   
+ES    coh  (raw coherence)        39,970  +0.0146 [-0.0341,+0.0647]   
+ES    rvz  (VOLATILITY, KT2)      40,150  +0.0040 [-0.0347,+0.0400]   
+NQ    cohz (coherence z)          39,036  +0.0191 [-0.0337,+0.0637]   
+NQ    coh  (raw coherence)        39,970  +0.0241 [-0.0286,+0.0774]   
+NQ    rvz  (VOLATILITY, KT2)      40,150  -0.0079 [-0.0414,+0.0210]   
+GC    cohz (coherence z)          38,766  +0.0496 [+0.0077,+0.0945]*  
+GC    coh  (raw coherence)        39,700  +0.0698 [+0.0332,+0.1054]*  
+GC    rvz  (VOLATILITY, KT2)      39,863  +0.0170 [-0.0144,+0.0506]   
+
+--- inside the cells (cohz selector): what differs besides momentum? ---
+inst  cell           n  mean coh  mean rv(bp)  corr(past,fwd)  mean |past| bp
+ES    high      11,715     0.451        21.55         +0.0046           16.53
+ES    low       11,715     0.093        14.73         -0.0133           11.04
+NQ    high      11,715     0.434        26.40         -0.0037           20.88
+NQ    low       11,715     0.086        18.13         -0.0228           14.41
+
+--- sensitivity: matched selection rate (descriptive slope, not an argmax) ---
+    inst        rate 20%      rate 30%      rate 40%
+    ES           +0.0806       +0.0179       -0.0031
+    NQ           +0.0129       +0.0191       +0.0143
+    GC           +0.0560       +0.0496       +0.0436
+
+--- era split (cohz selector, rate 30%) ---
+  ES  2011-2018     18,745  +0.0430 [-0.0171,+0.0844] 
+  ES  2019-2026     20,291  +0.0156 [-0.0607,+0.0794] 
+  NQ  2011-2018     18,745  -0.0009 [-0.0600,+0.0636] 
+  NQ  2019-2026     20,291  +0.0526 [-0.0340,+0.1069] 
+  GC  2011-2018     18,620  +0.0368 [-0.0298,+0.1013] 
+  GC  2019-2026     20,146  +0.0649 [+0.0021,+0.1230]*
+
+--- KT3: rule-18 re-pairing null (dollar path swapped to another session ---
+---      of the same calendar year; whole pipeline recomputed) ---
+inst        real   null mean   null sd  null p05  null p95       z  frac >= real
+ES       +0.0179     +0.0044    0.0342   -0.0605   +0.0545    0.39         0.367
+NQ       +0.0191     +0.0033    0.0236   -0.0308   +0.0382    0.67         0.300
+GC       +0.0496     -0.0029    0.0373   -0.0615   +0.0505    1.41         0.067
+
+    Reading the null (workspace convention): a null CENTRED AT THE REAL VALUE
+    means the label is a rarity/turnover filter -- any similar-shaped label
+    would do as well. A null centred at ZERO with the real value outside the
+    band means genuine contemporaneous cross-asset information.

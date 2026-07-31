@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0016",
+  "hypothesis_id": "HYP-0013",
+  "status": "completed",
+  "declared_utc": "2026-07-31T02:31:18.971915+00:00",
+  "config_path": "experiments/hypotheses/HYP-0013.md",
+  "data_scope": "NQ and ES clean Databento RTH 1-minute; annual expanding walk-forward, first test year 2016, through 2026-07-14; consumed research history (2024-01-01..2026-07-14 already spent by EXP-0011 on feature selection)",
+  "code_ref": "core/forward_vol.py; core/analysis.py; scripts/hyp_0013_decorrelated_features.py; tests/test_forward_vol.py",
+  "run_command": "python -u -m futures.nq.vei_exploration.scripts.hyp_0013_decorrelated_features {NQ|ES}",
+  "primary_metric": "Paired within-slot Spearman IC delta of the requested six-feature set over the two-input core against realised fwd_rv_bp, identical rows, 90% session-block-bootstrap CI, both markets",
+  "builder": "Claude",
+  "outputs": [
+    "artifacts/runs/EXP-0016/decorrelated_NQ.txt",
+    "artifacts/runs/EXP-0016/decorrelated_ES.txt",
+    "artifacts/runs/EXP-0016/decorrelated_NQ.csv",
+    "artifacts/runs/EXP-0016/decorrelated_ES.csv",
+    "artifacts/runs/EXP-0016/review.md"
+  ],
+  "closed_utc": "2026-07-31T02:45:58.165902+00:00",
+  "result_summary": "KT1 PASS BOTH MARKETS, KT2 FAIL BOTH, MECHANISM REFUTED -> CONFIRMED, NOT ADOPTED. Paired within-slot IC delta of the requested six-feature set over the two-input core: +0.0090 [+0.0082,+0.0099] NQ and +0.0099 [+0.0091,+0.0109] ES, positive in 11/11 years and at 11/11 slots on both markets, so the set genuinely adds information (KT1 pass). It misses the +0.010 adoption bar set before the run from EXP-0011's precedent (KT2 fail on both). THE DECIDING EVIDENCE IS A POST-HOC CONTROL: core_levels3 (core + rv_15m/rv_60m/rv_120m, three DELIBERATELY REDUNDANT measurements of the same quantity - exactly the redundancy the proposal was designed to avoid) MATCHES OR BEATS the decorrelated six on every axis with fewer added features: delta +0.0093/+0.0107, log-MSE 0.07134/0.07423 vs 0.07241/0.07473, MAE 4.454/3.657 vs 4.490/3.686, and expansion-call skill vs persistence +0.100/+0.120 vs +0.058/+0.094. So the binding constraint was never redundancy - it was that the core had exactly ONE state variable; adding a second piece of local state of almost any kind collects the whole available gain. Attribution arms: the gain is entirely the four ADDITIONS (core_plus4 +0.0090/+0.0098), the SEASONAL SWAP is a near no-op (swap_only +0.0005/+0.0006) because the two seasonals correlate +0.937/+0.910, and new4_only collapses to +0.4491/+0.5251 (supplements, not standalone). PREMISE MEASURED AND PARTLY WRONG: the four new variables are genuinely near-orthogonal to each other (jump~ratio +0.000, overnight~path_efficiency +0.009) but overnight_rv_slot_z~range_rv_15m is +0.429/+0.460 and the two seasonals +0.937/+0.910. THE FINDING WORTH KEEPING: three independent feature sets now buy the same +0.009..+0.011 on the LEVEL axis (EXP-0011 multi-horizon +0.0088/+0.0095, user6 +0.0090/+0.0099, core_levels3 +0.0093/+0.0107) = the level is SATURATED, a property of the target not of any feature set - while EXP-0015's expansion-magnitude cell is NOT saturated and moves from +0.006/+0.056 to +0.100/+0.120. EXP-0011 therefore rejected multi-horizon on the one metric that cannot discriminate; that ruling may still be right operationally but its stated ground was the wrong axis. Rule 9a: common sample 97.3%/97.7%, per-slot retention 0.955-0.983 UNIFORM. Rule 23 reproduction passed at 1.5e-05/6.8e-05. Consumed history, rule 26: not confirmatory. Tests 35/35.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

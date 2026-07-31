@@ -1,0 +1,100 @@
+=== HYP-0013 / EXP-0016 -- decorrelated feature set vs the core (NQ) ===
+
+data: 41,710 decision rows over 3,839 sessions 2011-08-01..2026-07-14; duplicate ts 0, out-of-order 0, missing target 252
+
+rule-23 reproduction of artifacts/runs/EXP-0011 (notebook sha256 ccb9f5e9..79606):
+  test years 2016..2023: n=22,274 IC +0.899585 vs published +0.8996  |diff| 1.48e-05  PASS
+  test years 2024..end: n=7,039 IC +0.850367 vs published +0.8503  |diff| 6.75e-05  PASS
+
+--- rule 9a: candidate-feature coverage (share of decision rows DEFINED) ---
+the 60-minute windows run on the CONTINUOUS series, so at the early slots they
+reach back across the thin overnight session. A null rate that tracks time of
+day is a reportable finding, not an implementation detail.
+
+  mfo   fwd_abs_bp_slot_  fwd_rv_bp_slot_m    jump_share_60m  overnight_rv_slo  path_efficiency_      range_rv_15m           rv_120m            rv_15m            rv_60m    rv_ratio_15_60
+   29             0.9844            0.9844            0.9904            0.9844            0.9982            0.9982            0.9711            0.9982            0.9904            0.9904
+   59             0.9844            0.9844            0.9961            0.9844            0.9987            0.9987            0.9820            0.9987            0.9961            0.9961
+   89             0.9841            0.9841            0.9969            0.9844            0.9984            0.9984            0.9901            0.9984            0.9969            0.9969
+  119             0.9841            0.9841            0.9971            0.9844            0.9990            0.9990            0.9950            0.9990            0.9971            0.9971
+  149             0.9843            0.9843            0.9979            0.9843            0.9982            0.9982            0.9974            0.9982            0.9979            0.9979
+  179             0.9843            0.9843            0.9961            0.9843            0.9971            0.9971            0.9958            0.9971            0.9961            0.9961
+  209             0.9843            0.9843            0.9961            0.9843            0.9992            0.9992            0.9956            0.9992            0.9961            0.9961
+  239             0.9839            0.9839            0.9995            0.9839            1.0000            1.0000            0.9995            1.0000            0.9995            0.9995
+  269             0.9839            0.9839            0.9995            0.9839            0.9997            0.9997            0.9992            0.9997            0.9995            0.9995
+  299             0.9839            0.9839            0.9997            0.9839            1.0000            1.0000            0.9992            1.0000            0.9997            0.9997
+  329             0.9839            0.9839            0.9997            0.9839            0.9997            0.9997            0.9992            0.9997            0.9997            0.9997
+
+  overall          0.9841           0.9841           0.9971           0.9842           0.9989           0.9989           0.9930           0.9989           0.9971           0.9971
+
+common sample: 40,585 of 41,710 decision rows (97.30%); every arm trains and tests on these rows, so
+no arm can win by being evaluated on an easier subset.
+  retention by slot: 29:0.955, 59:0.966, 89:0.974, 119:0.978, 149:0.980, 179:0.963, 209:0.955, 239:0.983, 269:0.983, 299:0.983, 329:0.983
+  worst slot retains 0.955, best 0.983 -> UNIFORM (pass signal)
+  retention by year: 2011:0.432, 2012:0.982, 2013:0.976, 2014:0.978, 2015:0.983, 2016:0.987, 2017:0.990, 2018:0.995, 2019:0.995, 2020:0.985, 2021:0.994, 2022:0.994, 2023:0.994, 2024:0.994, 2025:0.993, 2026:0.993
+
+--- the PREMISE under test: Spearman correlation among the candidate set ---
+        fwd_abs_bp_slo  fwd_rv_bp_slot  jump_share_60m  overnight_rv_s  path_efficienc    range_rv_15m         rv_120m          rv_15m          rv_60m  rv_ratio_15_60
+  fwd_abs_bp_slo        +1.000          +0.937          -0.060          -0.140          +0.020          +0.505          +0.416          +0.454          +0.481          +0.024
+  fwd_rv_bp_slot        +0.937          +1.000          -0.055          -0.149          +0.023          +0.518          +0.413          +0.467          +0.487          +0.042
+  jump_share_60m        -0.060          -0.055          +1.000          -0.031          +0.038          -0.081          -0.081          -0.064          -0.069          +0.000
+  overnight_rv_s        -0.140          -0.149          -0.031          +1.000          +0.009          +0.430          +0.475          +0.415          +0.438          +0.023
+  path_efficienc        +0.020          +0.023          +0.038          +0.009          +1.000          +0.052          +0.030          +0.049          +0.032          +0.042
+  range_rv_15m          +0.505          +0.518          -0.081          +0.430          +0.052          +1.000          +0.866          +0.967          +0.938          +0.224
+  rv_120m               +0.416          +0.413          -0.081          +0.475          +0.030          +0.866          +1.000          +0.831          +0.932          -0.068
+  rv_15m                +0.454          +0.467          -0.064          +0.415          +0.049          +0.967          +0.831          +1.000          +0.908          +0.358
+  rv_60m                +0.481          +0.487          -0.069          +0.438          +0.032          +0.938          +0.932          +0.908          +1.000          -0.030
+  rv_ratio_15_60        +0.024          +0.042          +0.000          +0.023          +0.042          +0.224          -0.068          +0.358          -0.030          +1.000
+
+  strongest pairs: range_rv_15m~rv_15m +0.967; range_rv_15m~rv_60m +0.938; fwd_abs_bp_slot_median90~fwd_rv_bp_slot_median90 +0.937; rv_120m~rv_60m +0.932
+  weakest  pairs: fwd_abs_bp_slot_median90~path_efficiency_15m +0.020; overnight_rv_slot_z~path_efficiency_15m +0.009; jump_share_60m~rv_ratio_15_60 +0.000
+  the two SEASONALS fwd_rv_bp_slot_median90 ~ fwd_abs_bp_slot_median90: +0.9370   <- if near 1.0 the 'swap' is close to a no-op and `user6` is really core+4 with a noisier seasonal
+
+--- walk-forward, expanding window, first tested year 2016, one frozen learner ---
+  core        2 feature(s): fwd_rv_bp_slot_median90, range_rv_15m
+  user6       6 feature(s): jump_share_60m, rv_ratio_15_60, path_efficiency_15m, overnight_rv_slot_z, range_rv_15m, fwd_abs_bp_slot_median90
+  core_plus4  6 feature(s): fwd_rv_bp_slot_median90, range_rv_15m, jump_share_60m, rv_ratio_15_60, path_efficiency_15m, overnight_rv_slot_z
+  swap_only   2 feature(s): fwd_abs_bp_slot_median90, range_rv_15m
+  new4_only   4 feature(s): jump_share_60m, rv_ratio_15_60, path_efficiency_15m, overnight_rv_slot_z
+  core_levels3 5 feature(s): fwd_rv_bp_slot_median90, range_rv_15m, rv_15m, rv_60m, rv_120m
+  evaluated on 29,254 rows, 2,711 sessions, 2016..2026
+
+--- PRIMARY: within-slot IC vs realised forward RV, and the PAIRED delta over `core` ---
+arm          within-slot IC   pooled IC   delta vs core                 90% CI   log-MSE   MAE bp
+core                +0.8802     +0.8893                             (baseline)   0.07694    4.637
+user6               +0.8892     +0.8973         +0.0090    [+0.0082,+0.0099] *   0.07241    4.490
+core_plus4          +0.8891     +0.8974         +0.0090    [+0.0082,+0.0098] *   0.07230    4.488
+swap_only           +0.8807     +0.8897         +0.0005    [+0.0002,+0.0008] *   0.07643    4.628
+new4_only           +0.4491     +0.4374         -0.4311    [-0.4475,-0.4112] *   0.29611    9.280
+core_levels3         +0.8895     +0.8960         +0.0093    [+0.0086,+0.0101] *   0.07134    4.454
+  * = 90% session-block CI excludes zero
+
+  reference  persistence P within-slot IC +0.8668; seasonal M +0.4199
+
+KT1 (NQ): delta +0.0090 [+0.0082,+0.0099] -> PASS (positive, CI excludes 0)
+KT2 (NQ): delta vs the +0.010 adoption bar -> FAIL  (EXP-0011 confirmed +0.009 and declined to adopt)
+
+--- attribution: which of the two changes moved it? ---
+  core_plus4  +0.8891 (+0.0090 vs core)   the four ADDITIONS, RV seasonal retained
+  swap_only   +0.8807 (+0.0005 vs core)   the SEASONAL SWAP alone, no additions
+  new4_only   +0.4491 (-0.4311 vs core)   the four additions with NO seasonal (degenerate)
+  core_levels3 +0.8895 (+0.0093 vs core)   POST-HOC CONTROL: 3 REDUNDANT level proxies instead -- is it the dimensions or just more features?
+
+--- stability of the user6-minus-core within-slot IC delta ---
+  by year: 2016:+0.0155, 2017:+0.0202, 2018:+0.0069, 2019:+0.0118, 2020:+0.0057, 2021:+0.0104, 2022:+0.0185, 2023:+0.0159, 2024:+0.0162, 2025:+0.0072, 2026:+0.0130
+  positive in 11/11 years
+  by slot: 29:+0.0074, 59:+0.0079, 89:+0.0059, 119:+0.0088, 149:+0.0087, 179:+0.0089, 209:+0.0110, 239:+0.0102, 269:+0.0064, 299:+0.0134, 329:+0.0108
+
+--- KT3: does it lift the EXP-0015 WEAK CELL (expansion calls)? ---
+EXP-0015 found the core ranks expansions well but barely beats persistence at
+their MAGNITUDE: log-MSE skill over P of +0.008 NQ / +0.061 ES, against
++0.300/+0.211 on contractions. That is the cell with the economic value.
+
+arm          expansion n   skill vs P  contraction n   skill vs P   change-IC  exp change-IC
+core              11,753      +0.0063         17,501      +0.2983     +0.3764        +0.2179
+user6             12,114      +0.0580         17,140      +0.3421     +0.4299        +0.2570
+core_plus4        12,006      +0.0587         17,248      +0.3427     +0.4313        +0.2492
+swap_only         11,728      +0.0173         17,526      +0.3002     +0.3781        +0.2246
+new4_only         11,692      -2.0349         17,562      -2.2048     +0.2109        +0.1447
+core_levels3       11,369      +0.1000         17,885      +0.3252     +0.4301        +0.2550
+
+KT3 (NQ): user6 expansion skill +0.0580 vs core +0.0063 -> LIFTS the weak cell (+0.0517)
