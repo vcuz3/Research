@@ -1,0 +1,113 @@
+================================================================================================
+EXP-0002  HYP-0002  anchor deviation -> forward return   6E  (EUR/USD future)
+================================================================================================
+entry |dev_z| >= 1.0, FADE the displacement; entry = open(m+1), exit = close(m+H). P&L in pips ($12.50/pip).
+decisions 158,056   sessions 3,436   2010-06-07 -> 2023-12-29   (holdout (2024, 2025, 2026) sealed)
+
+-- PRIMARY (declared in HYP-0002): anchor=vwap, H=30min, pooled ----------
+   per-bet mean    +0.1309 pip   cluster-t +2.66   n 58,198   boot95 [+0.0311, +0.2220]
+   rank IC (dev_z vs fwd)  -0.03142       quintile mean spread q5-q1  -0.2641 pip
+   quintile profile of fwd_30 by dev_z:  q1 +0.065  q2 -0.010  q3 +0.016  q4 +0.065  q5 -0.200
+
+   ESTIMAND CONTRAST (LEARNINGS 2026-08-01) -- reported, not used:
+     per-bet mean +0.1309 (t +2.66, n 58,198)  vs  session-averaged +0.7769 (t +15.92, 3,381 sessions)
+     corr(session mean, session count) = -0.4613   [non-zero => the two estimands are not the same quantity]
+
+-- CONTROL A: all four anchors x all horizons, pooled --------------------
+   `open` and `pclose` are DEGENERATE anchors (no averaging at all). If they
+   match `vwap`, the effect is about displacement from any fixed reference.
+
+   `past30` is the NO-ANCHOR degenerate arm: fade the trailing 30-min return,
+   z-scored identically. No anchor, no averaging, no volume.
+
+   anchor    H       n       per-bet pip   cl-t     rank IC    q5-q1 pip
+   vwap     30       58,198       +0.1309    +2.66   -0.03142     -0.2641  [+0.041,+0.231]
+   vwap     60       57,011       +0.1116    +1.42   -0.02526     -0.2333
+   vwap     120      54,405       +0.1053    +0.74   -0.01417     -0.2259
+   vwap     close    58,987       +0.9573    +1.69   -0.01660     -1.8934
+   twap     30       57,027       +0.1391    +2.81   -0.02984     -0.2723  [+0.050,+0.238]
+   twap     60       55,814       +0.1568    +1.91   -0.02547     -0.3342
+   twap     120      53,216       +0.1996    +1.32   -0.01591     -0.4063
+   twap     close    57,755       +1.3149    +2.08   -0.01865     -2.6495
+   open     30       57,268       +0.0822    +1.73   -0.02491     -0.1686  [-0.014,+0.174]
+   open     60       56,002       +0.0971    +1.17   -0.02164     -0.2044
+   open     120      53,352       +0.1616    +1.02   -0.01432     -0.3333
+   open     close    57,986       +0.8701    +1.09   -0.01222     -1.7318
+   pclose   30       54,056       +0.0847    +1.67   -0.02156     -0.1654  [-0.019,+0.192]
+   pclose   60       52,804       +0.1026    +1.20   -0.01816     -0.2086
+   pclose   120      50,145       +0.1781    +1.09   -0.01208     -0.3834
+   pclose   close    54,696       +1.7418    +2.08   -0.01906     -3.3312
+   past30   30       52,232       +0.1971    +3.92   -0.03928     -0.3899  [+0.098,+0.292]
+   past30   60       51,090       +0.1685    +2.46   -0.02815     -0.3547
+   past30   120      48,809       +0.2560    +2.53   -0.02130     -0.5091
+   past30   close    52,841       +0.5693    +2.84   -0.01039     -1.0343
+
+-- CONTROL B: liquidity block (the SHAPE the mechanism predicts) ---------
+   HYP-0002 predicts reversion STRONGEST in `asia`, weakest in `overlap`.
+
+   anchor   block      H=30 per-bet     cl-t      n        rank IC
+   vwap     asia           +0.2883    +5.18    21,620   -0.05204   boot95 [+0.184,+0.397]
+   vwap     ldn_am         +0.1416    +1.51    13,722   -0.02894   boot95 [-0.054,+0.314]
+   vwap     overlap        -0.2823    -1.88    11,027   -0.00753   boot95 [-0.603,+0.017]
+   vwap     ny_pm          +0.2157    +1.82    11,829   -0.02327   boot95 [+0.014,+0.461]
+   twap     asia           +0.3131    +5.41    20,812   -0.05544
+   twap     ldn_am         +0.1099    +1.16    13,366   -0.02459
+   twap     overlap        -0.2578    -1.73    10,952   -0.00616
+   twap     ny_pm          +0.2330    +2.06    11,897   -0.01751
+   open     asia           +0.2373    +4.34    20,776   -0.05008
+   open     ldn_am         +0.0433    +0.45    13,419   -0.02145
+   open     overlap        -0.3224    -2.23    11,046   -0.00198
+   open     ny_pm          +0.2292    +2.09    12,027   -0.01053
+   past30   asia           +0.3181    +5.53    18,681   -0.04646
+   past30   ldn_am         +0.1318    +1.45    13,046   -0.03709
+   past30   overlap        -0.1841    -1.18    10,198   -0.01861
+   past30   ny_pm          +0.4376    +3.67    10,307   -0.05175
+
+-- CONTROL C: is this just a plain reversal? partial out trailing return --
+   partial_spearman(dev_z, fwd_30 | past_30): if the anchor adds nothing
+   beyond the last 30 minutes of price change, this collapses toward zero.
+
+   anchor    raw IC     IC | past_30    corr(dev_z, past_30)
+   vwap      -0.02983       -0.01459              +0.41869
+   twap      -0.02808       -0.01520              +0.34968
+   open      -0.02329       -0.01429              +0.23767
+   pclose    -0.02062       -0.01246              +0.21315
+   for reference, past_30 itself:  IC(past_30, fwd_30) = -0.03902
+
+-- CONTROL D: size the shared-decision-bar artifact on this data ---------
+   The honest target enters at open(m+1). The naive one enters at close(m),
+   which shares a print with the feature and manufactures reversion.
+   honest  entry=open(m+1)  per-bet +0.1309 pip  t +2.66   IC -0.03142
+   naive   entry=close(m)   per-bet +0.4038 pip  t +6.68   IC -0.03828
+   -> the honest estimate retains 32.4% of the naive one; the remainder is the shared-print artifact
+
+-- CONTROL E: era stability (vwap, H=30, pooled) -------------------------
+   year      n      per-bet pip    cl-t      rank IC
+   2010    2,051       -0.1628    -0.53   -0.02500
+   2011    4,577       +0.1313    +0.45   -0.02476
+   2012    3,926       +0.1075    +0.55   -0.05301
+   2013    4,092       +0.4032    +2.04   -0.05391
+   2014    3,976       +0.2902    +1.27   -0.04512
+   2015    4,243       -0.1009    -0.36   -0.02574
+   2016    4,191       +0.0833    +0.53   -0.03494
+   2017    4,215       +0.0977    +0.85   -0.02436
+   2018    4,762       +0.1270    +1.08   -0.02171
+   2019    3,828       +0.1661    +1.72   -0.03865
+   2020    4,765       +0.0941    +0.70   -0.03111
+   2021    4,475       +0.1577    +1.58   -0.01881
+   2022    4,987       +0.2487    +1.73   -0.02510
+   2023    4,110       +0.0376    +0.32   -0.01160
+   sign stability: 2/14 years negative (reversion)
+
+-- CONTROL F: costs, in the units actually traded (rules 19, 20) ---------
+   2010-2015: tick 0.00010 = 1.0 pip = $12.50;  gross +0.1340 pip/bet, optimistic round trip 2.0 pip  -> net -1.8660 pip ($-23.32/bet)
+   2016-2023: tick 0.00005 = 0.5 pip = $6.25;  gross +0.1288 pip/bet, optimistic round trip 1.0 pip  -> net -0.8712 pip ($-10.89/bet)
+   [a bet is one contract; the round trip assumes a 1-tick-wide market and a
+    fill at the touch on both sides, i.e. the most optimistic model available]
+
+-- KILL TEST (declared in HYP-0002 before the run) -----------------------
+   1. sign     reversion (fade P&L > 0)?          PASS   (per-bet +0.1309)
+   2. signif.  |t|>=2 and CI excludes 0?          PASS   (t +2.66, CI [+0.0311,+0.2220])
+   3. shape    asia > overlap?                    PASS   (asia +0.2883 vs overlap -0.2823)
+   4. anchor   `open` outside vwap's CI?          FAIL   (open +0.0822 vs vwap CI [+0.0311,+0.2220])
+   4b. degenerate `past30` (NO anchor at all) +0.1971 pip, t +3.92  -> BEATS the VWAP arm: the anchor machinery is decoration

@@ -1,0 +1,117 @@
+=== HYP-0014 / EXP-0017 -- intraday IMPLIED volatility (VIX) vs the core (NQ) ===
+
+futures: 41,710 decision rows over 3,839 sessions 2011-08-01..2026-07-14
+
+rule-23 reproduction of artifacts/runs/EXP-0011 (notebook sha256 ccb9f5e9..79606):
+  test years 2016..2023: n=22,274 IC +0.899585 vs published +0.8996  |diff| 1.48e-05  PASS
+  test years 2024..end: n=7,039 IC +0.850367 vs published +0.8503  |diff| 6.75e-05  PASS
+
+--- rule 9a: the causal VIX join ---
+  source: 10 contiguous TradingView tiles, 101,981 bars 2011-08-01..2026-07-17, duplicate ts 0
+  median bars/session 27; frozen bars 882; repeated closes 3,719; VIX range 8.96..84.56
+  joined 41,134/41,710 decision rows (0.9862); quote staleness median 0.0 min, p99 0.0 min, >20 min on 4 rows
+  UNJOINED: 576 rows over 87 sessions, of which 86 are PARTIAL futures sessions (<11 decisions).
+  These are US market holidays: CME trades a shortened session, cash VIX does not
+  publish at all. The loss is therefore WHOLE-SESSION, not slot-selective, and the
+  holiday calendar is known in advance, so the exclusion is causal.
+  join rate by slot: 29:0.9776, 59:0.9784, 89:0.9778, 119:0.9778, 149:0.9796, 179:0.9791, 209:0.9794, 239:1.0000, 269:1.0000, 299:1.0000, 329:1.0000
+
+common sample: 40,263 of 41,710 decision rows (96.53%); every arm trains and tests on these rows.
+  retention by slot: 29:0.939, 59:0.950, 89:0.957, 119:0.961, 149:0.964, 179:0.963, 209:0.955, 239:0.983, 269:0.983, 299:0.983, 329:0.983
+  worst 0.939, best 0.983 -> UNIFORM (pass signal)
+
+--- DESCRIPTIVE: univariate association with realised forward 30-min RV ---
+feature                     pooled IC  within-slot IC   note
+past_rv30_bp                  +0.8594         +0.8453   persistence benchmark (not a core feature)
+range_rv_15m                  +0.8733         +0.8586   the core's only state variable
+fwd_rv_bp_slot_median90       +0.4815         +0.3946   the core's seasonal
+vix_fwd30_bp                  +0.6339         +0.6739   VIX rescaled to a 30-min expected move, bp
+vix_slot_z                    +0.4522         +0.4789   VIX vs its own trailing same-slot norm
+vrp_log                       -0.6648         -0.6112   log(implied30/realised30) -- see the denominator warning
+vrp_log_slot_z                -0.5037         -0.5269   
+vix_chg_15m                   +0.0453         +0.0589   
+vix_chg_60m                   +0.1038         +0.1045   
+vix_chg_since_open            +0.1895         +0.1658   
+vix_overnight_chg             +0.0677         +0.0738   
+vix_intraday_range            +0.5211         +0.4561   
+
+--- the VARIANCE RISK PREMIUM is mostly its own DENOMINATOR (finding H) ---
+  corr(vrp_log, past_rv30_bp)   = -0.8566
+  corr(vix_fwd30_bp, past_rv30) = +0.6023
+  corr(vix_chg_15m, past_ret30) = -0.4658   <- VIX CHANGE is substantially a restatement of past price
+  VIX is a daily-scale quantity: it barely moves across a 30-minute decision
+  clock, so log(implied)-log(realised) is dominated by the realised leg. The
+  degenerate control is the bare denominator, exactly as in finding H.
+
+--- and the RAW premium is a CLOCK (finding I): implied is flat, realised decays ---
+    mfo   vrp_log  implied bp  realised bp   fwd bp  imp/real
+     29    -0.113       31.46        37.10    30.61     0.848
+     59    +0.091       31.36        30.54    25.76     1.027
+     89    +0.264       31.30        25.81    22.83     1.212
+    119    +0.394       31.25        22.85    20.62     1.368
+    149    +0.499       31.36        20.83    19.13     1.505
+    179    +0.589       31.34        19.18    17.92     1.634
+    209    +0.666       31.36        17.94    18.30     1.748
+    239    +0.656       31.36        18.29    17.65     1.715
+    269    +0.689       31.35        17.66    19.80     1.776
+    299    +0.598       31.34        19.78    19.25     1.585
+    329    +0.627       31.32        19.22    20.09     1.629
+  A fixed threshold on the raw premium is therefore a time-of-day selector;
+  the slot-z form is the one used as a feature.
+
+--- walk-forward, expanding window, first tested year 2016, one frozen learner ---
+  core           2 feature(s): fwd_rv_bp_slot_median90, range_rv_15m
+  core_vix       5 feature(s): fwd_rv_bp_slot_median90, range_rv_15m, vix_fwd30_bp, vix_slot_z, vrp_log_slot_z
+  core_vix_all   11 feature(s): fwd_rv_bp_slot_median90, range_rv_15m, vix_fwd30_bp, vix_slot_z, vrp_log, vrp_log_slot_z, vix_chg_15m, vix_chg_60m, vix_chg_since_open, vix_overnight_chg, vix_intraday_range
+  core_pastrv    3 feature(s): fwd_rv_bp_slot_median90, range_rv_15m, past_rv30_bp
+  core_levels3   5 feature(s): fwd_rv_bp_slot_median90, range_rv_15m, rv_15m, rv_60m, rv_120m
+  vix_only       3 feature(s): vix_fwd30_bp, vix_slot_z, vrp_log_slot_z
+  evaluated on 28,942 rows, 2,646 sessions, 2016..2026
+
+--- SECONDARY: within-slot IC vs realised forward RV, paired delta over `core` ---
+finding P: this axis is SATURATED at +0.009..+0.011 for every feature set tried,
+so it is reported for comparability and CANNOT decide between arms.
+arm            within-slot IC  pooled IC  delta vs core                90% CI  log-MSE  MAE bp
+core                  +0.8777    +0.8877                           (baseline)  0.07615   4.657
+core_vix              +0.8811    +0.8932        +0.0034   [+0.0024,+0.0044] *  0.07235   4.541
+core_vix_all          +0.8828    +0.8945        +0.0051   [+0.0041,+0.0060] *  0.07133   4.507
+core_pastrv           +0.8807    +0.8893        +0.0030   [+0.0024,+0.0035] *  0.07443   4.589
+core_levels3          +0.8872    +0.8945        +0.0095   [+0.0087,+0.0103] *  0.07073   4.473
+vix_only              +0.8069    +0.7672        -0.0708   [-0.0752,-0.0657] *  0.14166   6.468
+  * = 90% session-block CI excludes zero
+
+  reference  persistence P within-slot IC +0.8639; seasonal M +0.4290
+
+--- PRIMARY: the EXPANSION cell (the metric declared in HYP-0014) ---
+EXP-0015: the core ranks expansions well but cannot SIZE them -- log-MSE skill
+over persistence +0.008 NQ / +0.061 ES, against +0.300/+0.211 on contractions.
+Reported twice: on each arm's OWN expansion set (EXP-0016's definition, so the
+numbers are comparable to that run) and on the COMMON set the CORE calls, so the
+arms are also compared on identical rows.
+
+arm            own exp n  skill vs P contr skill  common-set skill  change-IC exp change-IC
+core              11,583     +0.0164     +0.2988           +0.0164    +0.3768       +0.2182
+core_vix          11,758     +0.0656     +0.3361           +0.0756    +0.4039       +0.2426
+core_vix_all      11,445     +0.0897     +0.3338           +0.0968    +0.4150       +0.2532
+core_pastrv        9,719     +0.0717     +0.2766           +0.0630    +0.3597       +0.1957
+core_levels3      11,224     +0.1069     +0.3255           +0.1109    +0.4299       +0.2554
+vix_only          12,061     -0.6494     -0.4061           -0.6296    +0.2077       +0.1385
+
+=== GATES (declared in experiments/hypotheses/HYP-0014.md before the run) ===
+KT1 statistical (NQ): within-slot IC delta +0.0034 [+0.0024,+0.0044] -> PASS  (necessary only; saturated axis)
+KT2 decision   (NQ): expansion skill +0.0656 vs the REDUNDANT-control bar +0.100 -> FAIL
+    (core here +0.0164; core_levels3 here +0.1069; EXP-0016 published +0.100)
+KT4 degenerate (NQ): core_vix +0.0656 vs core_pastrv +0.0717 -> FAIL
+    (if VIX cannot beat simply handing the model its own persistence benchmark,
+     the gain is not implied-volatility information)
+KT3 mechanism: compare the core_vix expansion skill across markets after both runs. VIX is an SPX measure, so the mechanism predicts ES >= NQ.
+
+--- stability of the core_vix-minus-core within-slot IC delta ---
+  by year: 2016:+0.0080, 2017:+0.0111, 2018:+0.0091, 2019:+0.0111, 2020:+0.0035, 2021:+0.0025, 2022:+0.0129, 2023:+0.0004, 2024:+0.0021, 2025:+0.0047, 2026:+0.0067
+  positive in 11/11 years
+  by slot: 29:+0.0032, 59:+0.0033, 89:+0.0019, 119:+0.0049, 149:+0.0012, 179:+0.0012, 209:+0.0052, 239:+0.0025, 269:+0.0024, 299:+0.0052, 329:+0.0059
+
+--- ROBUSTNESS: lag the VIX quote a further 15 minutes (lag_bars=1) ---
+the decision cutoff coincides exactly with a VIX bar close, so this shows whether
+anything depended on that boundary.
+  n=28,941  within-slot IC +0.8807 (fresh +0.8811);  expansion skill +0.0691 (fresh +0.0656)

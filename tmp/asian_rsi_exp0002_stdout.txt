@@ -1,0 +1,30 @@
+Loading locked-era data for EURUSD ...
+  midpoint: 618 trades
+Loading locked-era data for GBPUSD ...
+  midpoint: 624 trades
+EXP-0002 HYP-0002 locked-era run
+Verdict: FAIL_LOCKED_ERA_KILL_TEST
+Scope: 2021-2023 only; configuration frozen before run.
+This interval is strategy-specific locked evidence, not a pristine market holdout.
+
+SUMMARY
+slice   target   pair  cost_pips  trades  trading_days  trades_per_day  mean_gross_pips  mean_net_pips  median_net_pips  win_rate_net  mean_gross_r  daily_mean_pips  daily_sharpe  max_drawdown_pips
+  all midpoint EURUSD        0.0     618           768        0.804688         0.476058       0.476058        -4.506325      0.305825      0.032535         0.383078      0.515904        -204.416683
+  all midpoint EURUSD        0.5     618           768        0.804688         0.476058      -0.023942        -5.006325      0.305825      0.032535        -0.019266     -0.025949        -282.905737
+  all midpoint EURUSD        1.0     618           768        0.804688         0.476058      -0.523942        -5.506325      0.305825      0.032535        -0.421610     -0.567780        -394.296950
+  all midpoint GBPUSD        0.0     624           768        0.812500         0.807777       0.807777        -6.019840      0.309295      0.054717         0.656319      0.694966        -313.618066
+  all midpoint GBPUSD        0.5     624           768        0.812500         0.807777       0.307777        -6.519840      0.309295      0.054717         0.250069      0.264844        -358.618066
+  all midpoint GBPUSD        1.0     624           768        0.812500         0.807777      -0.192223        -7.019840      0.309295      0.054717        -0.156181     -0.165412        -521.778634
+ long midpoint EURUSD        0.0     315           768        0.410156         0.586475       0.586475        -4.250538      0.295238      0.004327         0.240547      0.453838        -192.340647
+ long midpoint EURUSD        0.5     315           768        0.410156         0.586475       0.086475        -4.750538      0.295238      0.004327         0.035468      0.066957        -238.340647
+ long midpoint EURUSD        1.0     315           768        0.410156         0.586475      -0.413525        -5.250538      0.295238      0.004327        -0.169610     -0.320096        -288.306543
+ long midpoint GBPUSD        0.0     338           768        0.440104         0.287497       0.287497        -6.132737      0.298817      0.026163         0.126529      0.187351        -230.016281
+ long midpoint GBPUSD        0.5     338           768        0.440104         0.287497      -0.212503        -6.632737      0.298817      0.026163        -0.093523     -0.138486        -239.985437
+ long midpoint GBPUSD        1.0     338           768        0.440104         0.287497      -0.712503        -7.132737      0.298817      0.026163        -0.313576     -0.464101        -301.312868
+short midpoint EURUSD        0.0     303           768        0.394531         0.361268       0.361268        -4.742347      0.316832      0.061861         0.142531      0.273945        -209.549372
+short midpoint EURUSD        0.5     303           768        0.394531         0.361268      -0.138732        -5.242347      0.316832      0.061861        -0.054734     -0.105219        -227.549372
+short midpoint EURUSD        1.0     303           768        0.394531         0.361268      -0.638732        -5.742347      0.316832      0.061861        -0.252000     -0.484107        -250.097546
+short midpoint GBPUSD        0.0     286           768        0.372396         1.422653       1.422653        -5.753852      0.321678      0.088463         0.529790      0.802067        -162.663915
+short midpoint GBPUSD        0.5     286           768        0.372396         1.422653       0.922653        -6.253852      0.321678      0.088463         0.343592      0.520826        -243.931188
+short midpoint GBPUSD        1.0     286           768        0.372396         1.422653       0.422653        -6.753852      0.321678      0.088463         0.157394      0.238754        -329.431188
+Artifacts: C:\Users\VuDoa\Research\forex\asian_range_reversal\artifacts\runs\EXP-0002

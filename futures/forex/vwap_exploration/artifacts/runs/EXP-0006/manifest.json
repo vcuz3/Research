@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0006",
+  "hypothesis_id": "HYP-0006",
+  "status": "completed",
+  "declared_utc": "2026-08-03T02:52:59.070948+00:00",
+  "config_path": "core/rsi.py",
+  "data_scope": "6E, 6B and 6J, CME trade dates 2010-06-07 .. 2023-12-29 (EXPLORE),",
+  "code_ref": "working-tree",
+  "run_command": "python -u -m futures.forex.vwap_exploration.scripts.hyp_0006_rsi",
+  "primary_metric": "per-bet mean of fading the RSI(14) extreme, in the product's",
+  "builder": "Claude (Opus 5)",
+  "outputs": [],
+  "closed_utc": "2026-08-03T03:03:01.738768+00:00",
+  "result_summary": "REJECTED on 6E, 6B and 6J. RSI(n) = 50 + 50*A_n(dp)/A_n(|dp|) EXACTLY (verified to 3e-14), i.e. a smoothed trailing return over a trailing absolute-return volatility; on this 30-min grid the increments ARE past_30, so RSI(14) is a re-NORMALISED sibling of finding B's incumbent, not a new quantity. At matched ~11% selection rate on a common sample: rsi_14 +0.1099 (t+1.13) / -0.0526 / -0.0173, bare numerator +0.1148 / -0.1515 / +0.1235, INCUMBENT dev_past30_z +0.2306 (t+2.03) / +0.2462 (t+1.54) / +0.0332. Arm 1 FAIL 3/3 (all CIs span zero); arm 2 FAIL on 6E and 6J, technical pass on 6B only because both cells are negative; arm 3 (beats incumbent) FAIL 3/3; arm 4 (partial IC >= 50% of raw) PASS 3/3 at 62.6/51.2/50.9 pct. MECHANISM, predicted in advance: the fixed 70/30 cut is a TIME-OF-DAY SELECTOR because the denominator is a trailing window that lags volatility transitions -- per-slot selection-rate CV 0.3637/0.3331/0.2226 vs the incumbent's 0.0639/0.0600/0.0632 (3.5-5.7x worse), firing 6.40 pct in asia vs 16.07 pct in overlap on 6E while the incumbent is flat near 11 pct; extreme slots mfo 479 (ET 01:59) and 989/1019 (ET 10:29/10:59). Per finding C the overlap is where fading LOSES, so the threshold concentrates bets in the worst block. The ratio is barely a ratio: corr(RSI, numerator) +0.9732, corr(RSI, denominator) +0.0144. NEW RULE-9a RESULT (finding J): a RECURSIVE feature's gap damage is DISPLACED by its memory length -- under a reset policy asia's 5.78 pct missing bars collapsed ldn_am coverage to 0.7305 despite ldn_am having only 0.25 pct missing, because 14 periods is ~7 hours; bridging increments across gaps cuts the across-block spread 0.4010->0.0575 (6E) and 0.7255->0.1835 (6B). Two script defects found and fixed mid-run (arms scored on different denominators; structurally impossible slots inflating the CV). Not tradable: -23.31 usd/bet pre-2016, -11.32 usd/bet after, on 6E. Constructive residual (keep the smoothing, swap in the same-slot normaliser) logged as IDEA-0010 and deliberately NOT run.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

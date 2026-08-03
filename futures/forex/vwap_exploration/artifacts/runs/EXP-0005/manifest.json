@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0005",
+  "hypothesis_id": "HYP-0005",
+  "status": "completed",
+  "declared_utc": "2026-08-03T02:31:18.410500+00:00",
+  "config_path": "core/data.py",
+  "data_scope": "6E, 6B and **6J**, CME trade dates 2010-06-07 .. 2023-12-29",
+  "code_ref": "working-tree",
+  "run_command": "python -u -m futures.forex.vwap_exploration.scripts.hyp_0005_liquidity_vs_clock",
+  "primary_metric": "the risk-equalised, volatility-matched `asia` \u2212 `overlap`",
+  "builder": "Claude (Opus 5)",
+  "outputs": [],
+  "closed_utc": "2026-08-03T02:42:32.464177+00:00",
+  "result_summary": "INCONCLUSIVE on the declared metric (arm 3). R(6J) = -0.0038 boot95 [-0.0331,+0.0255] vs benchmark B=+0.0331 and gate 0.60*B=+0.0198; the CI contains both 0 and the gate. Point estimate is -0.11x B, i.e. marginally INVERTED not merely attenuated. Design fault owned: B was the mean of 6E and 6B, and 6B's own contrast spans zero (+0.0073 [-0.0677,+0.0712]), so averaging a precise estimate with a null one made the gate noisier than assumed and forced arm 3. WHAT THE RUN DID ESTABLISH (post-hoc arms, labelled): H_clock WEAKENED -- R(6E)-R(6J) = +0.0627 [+0.0103,+0.1107] CI excludes zero, and 6J's per-slot rank profile agrees with 6E/6B (+0.283/+0.489) LESS than they agree with each other (+0.646); crude block-volume H_liquidity ALSO WEAKENED -- 6J's ny_pm has identical CME volume intensity to 6E/6B's (0.82x vs 0.80x/0.82x) yet 2-3x their reversion, so total contract volume is NOT the operative liquidity measure. The mechanism behind finding C is therefore OPEN. POST-HOC pattern logged as IDEA-0008 (not promoted): every product's strongest reversion sits in the block where the COUNTER CURRENCY's home market is shut -- 6E/6B in asia (London night), 6J in ny_pm (Tokyo night) -- and the overlap cell, where both home markets are open, is near-identical on all three (-0.0153/-0.0159/-0.0151). Premise and gates passed: 6J asia/overlap liquidity ratio 0.314 vs 0.129/0.132 (2.40x as declared); rule-9a clean on a never-before-loaded archive, Asia rv coverage 0.867 vs 6B 0.703; rule-23 reproduction of 6E/6B exact to 4dp and byte-identical. New: per-product reporting unit (6J = 1e-6 = $12.50, NOT the conventional USD/JPY pip) and 6J tick halving 1e-6->5e-7 mid-2015 verified against the price grid. Not tradable: 6J is ~19x under its cost floor ($0.65/bet vs $12.50 round trip), worse than 6E.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

@@ -1,0 +1,149 @@
+==============================================================================
+6E  (EUR/USD future, 125,000 notional, $12.50 per pip)
+==============================================================================
+raw rows                     5,546,426
+raw span (ET)                2010-06-06 20:00:00-04:00  ->  2026-07-27 19:59:00-04:00
+duplicate timestamps         0
+out-of-order timestamps      0
+bars inside 17:00-17:59 ET   36  (0.000649%)   [maintenance halt; expected ~0]
+zero-volume bars             0  (0.000%)
+negative/NaN volume          0   [spot FX archives are -1 on 100% of rows; futures must be 0]
+OHLC ordering violations     0
+
+trade dates                  4,158
+  with >1 instrument_id      64  (1.54%)  [DROPPED: a session-anchored VWAP across a roll averages two contracts]
+  with <400 bars             4  [DROPPED: holiday half-days / partial first session]
+bars per session  min/p05/median/max   1 / 1215 / 1355 / 1380   [a full session is 1380]
+
+EXPLORE scope (holdout (2024, 2025, 2026) sealed)
+  rows                       4,584,315   (82.65% of raw)
+  sessions                   3,436
+  span                       2010-06-07 -> 2023-12-29
+  holdout sessions withheld  654 (2024-01-02 -> 2026-07-27)
+
+minute coverage by ET hour (share of sessions with a bar at that minute)
+   hour   mean    min     share of minutes <95%     median volume/bar
+   00:00  0.918  0.894              93.3%           17
+   01:00  0.958  0.941              31.7%           27
+   02:00  0.993  0.988               0.0%           82
+   03:00  0.997  0.996               0.0%          160
+   04:00  0.997  0.995               0.0%          138
+   05:00  0.996  0.994               0.0%          120
+   06:00  0.997  0.995               0.0%          102
+   07:00  0.998  0.996               0.0%          115
+   08:00  0.999  0.998               0.0%          226
+   09:00  1.000  0.998               0.0%          265
+   10:00  1.000  0.999               0.0%          284
+   11:00  0.998  0.994               0.0%          192
+   12:00  0.995  0.991               0.0%          112
+   13:00  0.969  0.962               0.0%           80
+   14:00  0.967  0.962               0.0%           77
+   15:00  0.962  0.954               0.0%           56
+   16:00  0.920  0.866              76.7%           19
+   18:00  0.886  0.840              93.3%           12
+   19:00  0.905  0.879              98.3%           16
+   20:00  0.964  0.950               1.7%           28
+   21:00  0.958  0.944              16.7%           27
+   22:00  0.940  0.921              81.7%           21
+   23:00  0.921  0.903              98.3%           17
+   355 minutes below 95% coverage; top minute-of-hour: {28: np.int64(9), 22: np.int64(8), 26: np.int64(8)}
+   [a spike concentrated on one minute-of-hour is a download chunk artifact, not liquidity -- see forex/noise_vwap]
+
+same-slot scale (lookback 60 sessions, min_periods = ceil(0.667 * lookback) = 40)
+  decision points with a defined z   4,519,491 / 4,584,315  (98.59%)
+  lost to the warm-up (first sessions) 504 sessions
+  loss by ET hour   [rule 9a: the PASS signal is a UNIFORM loss; a loss that tracks time-of-day liquidity is a hidden filter]
+   00h=0.022  01h=0.014  02h=0.012  03h=0.012  04h=0.012  05h=0.012  06h=0.012  07h=0.012  08h=0.012  09h=0.012  10h=0.012  11h=0.012  12h=0.012  13h=0.012  14h=0.012  15h=0.012  16h=0.013  18h=0.025  19h=0.028  20h=0.013  21h=0.012  22h=0.016  23h=0.020
+  loss spread across hours: max-min = 0.0167
+
+per-year coverage and economics
+   year  sessions   bars/sess   median vol/bar   tick      $/tick
+   2010       146       1353.2            104   0.00010     12.50
+   2011       254       1355.3            107   0.00010     12.50
+   2012       254       1332.1             85   0.00010     12.50
+   2013       248       1317.5             76   0.00010     12.50
+   2014       246       1255.9             60   0.00010     12.50
+   2015       255       1320.9             79   0.00010     12.50
+   2016       254       1325.3             59   0.00005      6.25
+   2017       253       1347.7             71   0.00005      6.25
+   2018       254       1355.0             91   0.00005      6.25
+   2019       254       1332.5             65   0.00005      6.25
+   2020       255       1344.9             73   0.00005      6.25
+   2021       255       1334.0             64   0.00005      6.25
+   2022       254       1359.5             76   0.00005      6.25
+   2023       254       1350.2             69   0.00005      6.25
+
+==============================================================================
+6B  (GBP/USD future, 62,500 notional, $6.25 per pip)
+==============================================================================
+raw rows                     5,177,538
+raw span (ET)                2010-06-06 20:00:00-04:00  ->  2026-07-27 19:58:00-04:00
+duplicate timestamps         0
+out-of-order timestamps      0
+bars inside 17:00-17:59 ET   15  (0.000290%)   [maintenance halt; expected ~0]
+zero-volume bars             0  (0.000%)
+negative/NaN volume          0   [spot FX archives are -1 on 100% of rows; futures must be 0]
+OHLC ordering violations     0
+
+trade dates                  4,157
+  with >1 instrument_id      63  (1.52%)  [DROPPED: a session-anchored VWAP across a roll averages two contracts]
+  with <400 bars             3  [DROPPED: holiday half-days / partial first session]
+bars per session  min/p05/median/max   1 / 1081 / 1265 / 1380   [a full session is 1380]
+
+EXPLORE scope (holdout (2024, 2025, 2026) sealed)
+  rows                       4,284,068   (82.74% of raw)
+  sessions                   3,437
+  span                       2010-06-07 -> 2023-12-29
+  holdout sessions withheld  654 (2024-01-02 -> 2026-07-27)
+
+minute coverage by ET hour (share of sessions with a bar at that minute)
+   hour   mean    min     share of minutes <95%     median volume/bar
+   00:00  0.750  0.709             100.0%            7
+   01:00  0.840  0.797             100.0%           11
+   02:00  0.971  0.957               0.0%           33
+   03:00  0.992  0.989               0.0%           66
+   04:00  0.992  0.989               0.0%           63
+   05:00  0.990  0.985               0.0%           53
+   06:00  0.990  0.985               0.0%           48
+   07:00  0.991  0.986               0.0%           52
+   08:00  0.996  0.992               0.0%           94
+   09:00  0.998  0.995               0.0%          114
+   10:00  0.998  0.996               0.0%          126
+   11:00  0.995  0.991               0.0%           88
+   12:00  0.985  0.977               0.0%           51
+   13:00  0.949  0.935              63.3%           34
+   14:00  0.950  0.930              60.0%           35
+   15:00  0.930  0.902              85.0%           24
+   16:00  0.775  0.675              98.3%           10
+   18:00  0.710  0.631              98.3%            6
+   19:00  0.741  0.683             100.0%            8
+   20:00  0.856  0.816              98.3%           11
+   21:00  0.835  0.804             100.0%           10
+   22:00  0.791  0.749             100.0%            8
+   23:00  0.750  0.717             100.0%            7
+   662 minutes below 95% coverage; top minute-of-hour: {17: np.int64(12), 18: np.int64(12), 20: np.int64(12)}
+   [a spike concentrated on one minute-of-hour is a download chunk artifact, not liquidity -- see forex/noise_vwap]
+
+same-slot scale (lookback 60 sessions, min_periods = ceil(0.667 * lookback) = 40)
+  decision points with a defined z   4,047,381 / 4,284,068  (94.48%)
+  lost to the warm-up (first sessions) 3341 sessions
+  loss by ET hour   [rule 9a: the PASS signal is a UNIFORM loss; a loss that tracks time-of-day liquidity is a hidden filter]
+   00h=0.175  01h=0.061  02h=0.012  03h=0.012  04h=0.012  05h=0.012  06h=0.012  07h=0.012  08h=0.012  09h=0.012  10h=0.012  11h=0.012  12h=0.012  13h=0.012  14h=0.012  15h=0.013  16h=0.157  18h=0.297  19h=0.210  20h=0.043  21h=0.071  22h=0.109  23h=0.177
+  loss spread across hours: max-min = 0.2849
+
+per-year coverage and economics
+   year  sessions   bars/sess   median vol/bar   tick      $/tick
+   2010       146       1243.6             32   0.00010      6.25
+   2011       255       1264.1             35   0.00010      6.25
+   2012       254       1239.8             33   0.00010      6.25
+   2013       248       1246.5             37   0.00010      6.25
+   2014       246       1147.0             32   0.00010      6.25
+   2015       255       1179.9             32   0.00010      6.25
+   2016       254       1224.9             38   0.00010      6.25
+   2017       253       1250.2             40   0.00010      6.25
+   2018       254       1279.8             41   0.00010      6.25
+   2019       254       1246.5             38   0.00010      6.25
+   2020       255       1283.0             37   0.00010      6.25
+   2021       255       1257.1             34   0.00010      6.25
+   2022       254       1310.6             39   0.00010      6.25
+   2023       254       1273.0             34   0.00010      6.25

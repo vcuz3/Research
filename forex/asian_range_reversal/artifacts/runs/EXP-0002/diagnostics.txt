@@ -1,0 +1,23 @@
+FROZEN-RESULT DIAGNOSTICS — NO PARAMETER SEARCH
+
+20-DAY MOVING-BLOCK INTERVALS
+  pair direction  trades  net_0p5_mean  block20_ci_low  block20_ci_high  positive_ci
+EURUSD       all     618     -0.023942       -0.994970         1.042111        False
+EURUSD      long     315      0.086475       -1.362479         1.700213        False
+EURUSD     short     303     -0.138732       -1.681527         1.463269        False
+GBPUSD       all     624      0.307777       -1.112181         1.738457        False
+GBPUSD      long     338     -0.212503       -2.031267         1.462791        False
+GBPUSD     short     286      0.922653       -1.171894         3.036803        False
+
+EQUAL-RISK AND BREAK-EVEN COST
+  pair direction  trades  gross_r_mean  net_0p5_r_mean  break_even_cost_pips
+EURUSD       all     618      0.032535       -0.052556              0.476058
+EURUSD      long     315      0.004327       -0.084087              0.586475
+EURUSD     short     303      0.061861       -0.019776              0.361268
+GBPUSD       all     624      0.054717       -0.009576              0.807777
+GBPUSD      long     338      0.026163       -0.037573              0.287497
+GBPUSD     short     286      0.088463        0.023510              1.422653
+
+TWO-PAIR ONE-UNIT PORTFOLIO
+ days  mean_daily_net_pips  daily_sharpe  max_drawdown_pips
+  768             0.230803      0.178916        -450.492525

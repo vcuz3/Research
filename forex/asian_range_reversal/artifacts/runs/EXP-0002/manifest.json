@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0002",
+  "hypothesis_id": "HYP-0002",
+  "status": "completed",
+  "declared_utc": "2026-08-03T05:39:44.223363+00:00",
+  "config_path": "baseline_replication/configs/hyp_0002.json",
+  "data_scope": "EURUSD/GBPUSD, 2021-01-01 through 2023-12-31 only. Do not use 2012-2020",
+  "code_ref": "working-tree",
+  "run_command": "python forex/asian_range_reversal/scripts/run_hyp_0002.py --experiment-id EXP-0002",
+  "primary_metric": "0.5-pip-cost mean pips/trade, separately for each pair.",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-08-03T05:43:31.767952+00:00",
+  "result_summary": "FAIL: 0.5-pip net -0.024/+0.308 EURUSD/GBPUSD; EUR short and GBP long directional gates fail; all block intervals include zero",
+  "reviewer": "unassigned",
+  "review_status": "not-reviewed"
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0007",
+  "hypothesis_id": "HYP-0007",
+  "status": "completed",
+  "declared_utc": "2026-08-03T03:23:24.125562+00:00",
+  "config_path": "core/home.py",
+  "data_scope": "6E, 6B, 6J (consumed) and **6A, 6C, 6N, 6S (fresh)**, CME trade",
+  "code_ref": "working-tree",
+  "run_command": "python -u -m futures.forex.vwap_exploration.scripts.hyp_0007_home_market",
+  "primary_metric": "pooled, within-product-demeaned rank correlation between",
+  "builder": "Claude (Opus 5)",
+  "outputs": [],
+  "closed_utc": "2026-08-03T03:35:37.177979+00:00",
+  "result_summary": "REJECTED, wrong-signed. The counter-currency home-market account from EXP-0005 was preregistered (uniform 08:00-17:00 LOCAL, real per-currency DST, NO free parameters) and tested on 6A/6C/6N/6S -- four products never previously loaded. 6E/6B/6J generated the hypothesis and were excluded from the primary (rule 26). Pooled within-product-demeaned Spearman(home-market openness, risk-equalised reversion) over 46 slots: FRESH FOUR +0.0526 (H_home predicts NEGATIVE), circular-shift null p 0.7103 -- both kill-test arms FAIL. Against CONSUMED THREE -0.2342: the pattern exists only in the sample that generated it. 6A IS AN OUTRIGHT COUNTEREXAMPLE: Sydney is OPEN during asia (openness 0.842, 2nd highest) yet asia is 6A's STRONGEST reversion block (+0.0423); block-level rho +0.9487, exact-permutation p 1.000 = the maximum possible score in the wrong direction. Under H_home 6A should resemble 6J; it resembles 6E. THE MOTIVATING ARGMAX WAS A BASE-RATE ILLUSION: asia is the best block for 5 of 7 products (71 pct), so predicting asia is nearly free -- fresh argmax 1/4 against an EXPECTED 1.00 under the observed marginal = zero information; the original 3/3 should never have been read as p~1/64. Volatility partial does not rescue it (fresh +0.0211 -> +0.0055). What survives: asia is best for 5/7 regardless of home tz (clock-like), EXP-0005's product DIFFERENCES still stand (6J and 6N have negative asia cells) but do not align with home-market hours -- finding C's mechanism is OPEN with the leading candidate ELIMINATED. Rule 23: 6E/6B/6J reproduce EXP-0005 to 4dp. Rule 9a: 6N/6S materially thinner (bar cov 0.758/0.798 vs 6E 0.971) = least powered cells; the two best-covered fresh products 6A/6C sit at opposite ends of the openness range and split 1-1. All four new products' ticks halved mid-sample at four different dates (6C 2016, 6A 2020, 6N 2021, 6S 2022) verified against the price grid -- SIX OF SEVEN products change tick somewhere in the sample. Bug found and fixed mid-run: stats.spearman's n>=10 guard returned NaN for the 4-block cells and the permutation comparison scored NaN<=NaN as False, printing p=0.0000 for all seven (would have read as seven significant results). COST FLOOR NOW ON SEVEN PRODUCTS: best block net -8.90/-11.78/-7.35/-8.25/-9.07/-8.72/-10.93 usd per bet; the NO-GO is no longer a two-product result.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

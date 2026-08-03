@@ -1,0 +1,60 @@
+EXP-0002 HYP-0002 locked-era run
+Verdict: FAIL_LOCKED_ERA_KILL_TEST
+Scope: 2021-2023 only; configuration frozen before run.
+This interval is strategy-specific locked evidence, not a pristine market holdout.
+
+SUMMARY
+slice   target   pair  cost_pips  trades  trading_days  trades_per_day  mean_gross_pips  mean_net_pips  median_net_pips  win_rate_net  mean_gross_r  daily_mean_pips  daily_sharpe  max_drawdown_pips
+  all midpoint EURUSD        0.0     618           768        0.804688         0.476058       0.476058        -4.506325      0.305825      0.032535         0.383078      0.515904        -204.416683
+  all midpoint EURUSD        0.5     618           768        0.804688         0.476058      -0.023942        -5.006325      0.305825      0.032535        -0.019266     -0.025949        -282.905737
+  all midpoint EURUSD        1.0     618           768        0.804688         0.476058      -0.523942        -5.506325      0.305825      0.032535        -0.421610     -0.567780        -394.296950
+  all midpoint GBPUSD        0.0     624           768        0.812500         0.807777       0.807777        -6.019840      0.309295      0.054717         0.656319      0.694966        -313.618066
+  all midpoint GBPUSD        0.5     624           768        0.812500         0.807777       0.307777        -6.519840      0.309295      0.054717         0.250069      0.264844        -358.618066
+  all midpoint GBPUSD        1.0     624           768        0.812500         0.807777      -0.192223        -7.019840      0.309295      0.054717        -0.156181     -0.165412        -521.778634
+ long midpoint EURUSD        0.0     315           768        0.410156         0.586475       0.586475        -4.250538      0.295238      0.004327         0.240547      0.453838        -192.340647
+ long midpoint EURUSD        0.5     315           768        0.410156         0.586475       0.086475        -4.750538      0.295238      0.004327         0.035468      0.066957        -238.340647
+ long midpoint EURUSD        1.0     315           768        0.410156         0.586475      -0.413525        -5.250538      0.295238      0.004327        -0.169610     -0.320096        -288.306543
+ long midpoint GBPUSD        0.0     338           768        0.440104         0.287497       0.287497        -6.132737      0.298817      0.026163         0.126529      0.187351        -230.016281
+ long midpoint GBPUSD        0.5     338           768        0.440104         0.287497      -0.212503        -6.632737      0.298817      0.026163        -0.093523     -0.138486        -239.985437
+ long midpoint GBPUSD        1.0     338           768        0.440104         0.287497      -0.712503        -7.132737      0.298817      0.026163        -0.313576     -0.464101        -301.312868
+short midpoint EURUSD        0.0     303           768        0.394531         0.361268       0.361268        -4.742347      0.316832      0.061861         0.142531      0.273945        -209.549372
+short midpoint EURUSD        0.5     303           768        0.394531         0.361268      -0.138732        -5.242347      0.316832      0.061861        -0.054734     -0.105219        -227.549372
+short midpoint EURUSD        1.0     303           768        0.394531         0.361268      -0.638732        -5.742347      0.316832      0.061861        -0.252000     -0.484107        -250.097546
+short midpoint GBPUSD        0.0     286           768        0.372396         1.422653       1.422653        -5.753852      0.321678      0.088463         0.529790      0.802067        -162.663915
+short midpoint GBPUSD        0.5     286           768        0.372396         1.422653       0.922653        -6.253852      0.321678      0.088463         0.343592      0.520826        -243.931188
+short midpoint GBPUSD        1.0     286           768        0.372396         1.422653       0.422653        -6.753852      0.321678      0.088463         0.157394      0.238754        -329.431188
+
+YEARLY
+  pair direction  year  trades  gross_mean  gross_r_mean  target_rate  net_0p5_mean
+EURUSD      long  2021     115   -1.004089     -0.242661     0.234783     -1.504089
+EURUSD      long  2022     103    3.422834      0.370880     0.368932      2.922834
+EURUSD      long  2023      97   -0.539607     -0.092079     0.278351     -1.039607
+EURUSD     short  2021      90   -0.286944      0.063430     0.300000     -0.786944
+EURUSD     short  2022     104    0.386139     -0.006960     0.298077     -0.113861
+EURUSD     short  2023     109    0.872759      0.126229     0.348624      0.372759
+GBPUSD      long  2021     111    0.666453      0.035905     0.288288      0.166453
+GBPUSD      long  2022     113    0.614346      0.114367     0.309735      0.114346
+GBPUSD      long  2023     114   -0.405468     -0.070754     0.289474     -0.905468
+GBPUSD     short  2021      95   -1.040599     -0.062978     0.263158     -1.540599
+GBPUSD     short  2022      93    2.719832      0.200180     0.354839      2.219832
+GBPUSD     short  2023      98    2.579504      0.129252     0.346939      2.079504
+
+EXIT MIX
+  target   pair direction exit_reason  trades
+midpoint EURUSD      long         eod       1
+midpoint EURUSD      long        stop     222
+midpoint EURUSD      long      target      92
+midpoint EURUSD     short         eod       2
+midpoint EURUSD     short        stop     205
+midpoint EURUSD     short      target      96
+midpoint GBPUSD      long         eod       2
+midpoint GBPUSD      long        stop     236
+midpoint GBPUSD      long      target     100
+midpoint GBPUSD     short         eod       1
+midpoint GBPUSD     short        stop     193
+midpoint GBPUSD     short      target      92
+
+STATE AUDIT
+  target   pair  entries  ignored_signals  capped_signals  ambiguous_signals  invalid_geometry
+midpoint EURUSD      618                0            2158                  0                 0
+midpoint GBPUSD      624                0            2272                  0                 0

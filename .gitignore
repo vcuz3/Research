@@ -33,7 +33,6 @@ ai_shared_memory/*.sqlite-wal
 *.pdf
 
 # ignore folders
-forex/
 polymarket/
 polymarket_bitcoin/
 polymarket_weather/

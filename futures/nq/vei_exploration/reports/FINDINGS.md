@@ -37,6 +37,22 @@ to **Wilder's RMA** (the textbook ATR, an EMA with α=1/n) transforms it:
 
 ES identical in shape (Wilder AC1 0.51, whipsaw 0.26, IC +0.195 vs SMA +0.069).
 
+> **⚠ AC1 MAGNITUDE QUALIFIED 2026-08-03 by `futures/nq/estimator_bias` EXP-0001
+> (finding B). About HALF of this column is the intraday clock, not persistence.**
+> `persistence_and_whipsaw` pools consecutive decision pairs across all 13 slots, and
+> VEI has a deterministic per-slot level profile (0.745 → 1.165, see A-corrected part 3),
+> so two consecutive readings covary partly because both are late-session. Removing the
+> per-slot mean first: `wilder_10_50` **+0.4411 → +0.2198 (NQ)** / +0.4036 → +0.2007 (ES);
+> `L:wilder_10_50` +0.5495 → +0.2777 / +0.5062 → +0.2548; `L:ema_10_50` **+0.1609 → +0.0048
+> / +0.1386 → +0.0002 (entirely clock)**; `sma_10_50_raw` −0.0112 → −0.1160 / −0.0151 →
+> −0.1138. The **ranking wilder > ema > sma survives on both markets, so the estimator
+> choice below is unaffected** — but "a steady, persistent regime read" is roughly half
+> as steady as this table implies. Separately, the OLS small-sample bias is NOT an issue
+> here: at 40,806 pooled pairs it moves AC1 by ≤0.00006. The rule-23 reproduction of all
+> eight published cells was exact to 1e-4.
+
+
+
 Reads: (1) Wilder ATR nearly **triples** the forward-vol information and makes VEI a
 steady, persistent regime read instead of a jittery one. (2) EMA-smoothing the *ratio*
 at 1-min granularity barely helps the 30-min-decision persistence (a short EMA has
@@ -897,6 +913,122 @@ reproduction passed at 1.5e-05 / 6.8e-05. Consumed history (rule 26): 2024-01-01
 2026-07-14 was already spent by EXP-0011 on feature selection, so this is a second search
 on the same window and nothing here is confirmatory. Evidence:
 `artifacts/runs/EXP-0016/review.md`, `experiments/hypotheses/HYP-0013.md`.
+
+## Q. Implied volatility is an ANCHOR, not an ANTICIPATOR — real information, rejected for adoption (EXP-0017, HYP-0014)
+
+Backlog item 17 recorded "trade volatility as the object itself" as DATA-BLOCKED for want
+of an intraday implied series. `futures/data/vix/` — ten contiguous TradingView
+`CBOE_DLY_VIX, 15` exports covering 2011-08-01..2026-07-17, 101,981 bars, **zero duplicate
+timestamps** — supplies one, so the item is now tested rather than blocked. Backlog item
+13 names the same gap from the other side: every feature this project has tested is a
+function of PAST PRICE, and §P showed they all converge on one saturated level-IC ceiling.
+VIX is the first available input that is not past price, hence the first that can contain
+volatility which has been *scheduled* but has not yet happened.
+
+Per backlog item 20 the deciding metric was fixed before the run and is **not** level IC
+(saturated) but the **expansion-call log-MSE skill over persistence**, with the bar set at
+EXP-0016's deliberately REDUNDANT control rather than at the bare core.
+
+### The information is real
+
+Paired within-slot IC delta of `core_vix` over `core`: **+0.0034 [+0.0024,+0.0044] NQ**
+and **+0.0063 [+0.0053,+0.0074] ES**, positive in **11/11 years and 11/11 slots on both
+markets**, and essentially unchanged when the quote is lagged a further full 15 minutes
+(expansion skill +0.0691 vs +0.0656 NQ, +0.0890 vs +0.0972 ES). KT1 passes on both.
+
+The mechanism's cross-market prediction also holds. VIX is an **SPX** measure — native
+implied volatility for ES, only a proxy for NQ, whose own index VXN is not in this
+workspace — so the mechanism predicted ES ≥ NQ, and ES gets roughly twice as much
+(expansion skill +0.0972 vs +0.0656; level delta +0.0063 vs +0.0034). What is being
+measured genuinely is implied-volatility content, not a generic artifact.
+
+### It is nevertheless beaten by one column the project already computes
+
+Expansion-call log-MSE skill over persistence:
+
+| arm | NQ | ES |
+|---|---|---|
+| `core` | +0.0164 | +0.0638 |
+| **`core_vix`** | **+0.0656** | **+0.0972** |
+| `core_pastrv` — core + `past_rv30_bp` (**degenerate control**) | +0.0717 | +0.1061 |
+| `core_levels3` — core + `rv_15m/60m/120m` (**redundant control**, §P) | +0.1069 | +0.1311 |
+| `vix_only` | −0.6494 | −0.8811 |
+
+KT2 fails on both (the bar was +0.100/+0.120). **KT4 is the decisive arm and it fails on
+both**: simply handing the model its own persistence benchmark — one column, containing
+no implied-volatility information whatsoever — beats three VIX features. Three redundant
+measurements of *past* realised volatility beat *implied* volatility outright.
+
+### The mechanism is REVERSED, identically on both markets
+
+EXP-0017b (post-hoc, not a gate) asked whether the aggregate metric hid a pocket. The
+hypothesis was ANTICIPATION: implied rich against realised is the pre-announcement
+signature, so VIX should pay where the premium is extreme. `core_vix − core` by premium
+quintile is **monotone decreasing**:
+
+| | q1 (implied cheapest) | q2 | q3 | q4 | q5 (richest) |
+|---|---|---|---|---|---|
+| NQ | **+0.2220** | +0.0933 | +0.0971 | +0.0528 | **+0.0189** |
+| ES | **+0.2746** | +0.1068 | +0.0616 | +0.0269 | **+0.0121** |
+
+VIX pays most immediately **after** a realised-volatility spike, where the past-price core
+over-extrapolates (its skill in q1 is −0.187 NQ / −0.203 ES, *worse* than persistence) and
+a slow daily-scale level pulls the forecast back toward normal. Three confirmations:
+
+- **The announcement window is VIX's worst slot.** At mfo 269 (13:59, forecasting
+  14:00–14:30 ET, the FOMC statement window) the gap is **+0.0004 NQ / +0.0237 ES** — at
+  or near the bottom of eleven slots — while its best are the *morning* slots (+0.1678 /
+  +0.2028 NQ at 09:59 / 10:29), where past-price state is thinnest.
+- **It makes easy calls worse and hard calls better.** By decile of the core's own error,
+  `core_vix − core` is negative in d1–d5 (−0.18..−0.05) and positive in d7–d10
+  (+0.04..+0.13). A redistribution of accuracy, not a uniform gain.
+- **Even in its best cell the redundant control matches it**: q1 `core_levels3` +0.0381 NQ
+  against `core_vix` +0.0351 — a longer *realised* window does the same anchoring job.
+
+Caveat on the follow-up's own precondition test: `vrp_log_slot_z` has within-slot IC
++0.322 / +0.339 with the realised log-change, but **that number is inflated by a shared
+term** — the premium is `log(implied) − log(past)` and the target `log(fwd) − log(past)`,
+so both carry `−log(past)`. Same family as `claude_exploration_1`'s shared-decision-bar
+artifact. The quintile table is the load-bearing evidence; the IC is not.
+
+### Structure: two prior findings reproduce in a new domain
+
+- **The naive variance risk premium is mostly its own DENOMINATOR** —
+  `corr(vrp_log, past_rv30_bp)` is **−0.857 NQ / −0.843 ES**, because VIX is a daily-scale
+  quantity that barely moves across a 30-minute clock. This is **§H in a new costume**,
+  and the same degenerate control settles it: the bare denominator (|IC| 0.845) beats the
+  ratio (|IC| 0.611). Residualising the premium on realised volatility leaves the VIX
+  level plus noise, so there is **no separate premium dimension** to exploit.
+- **The raw premium is a CLOCK** (**§I**): mean `vrp_log` runs −0.110 → +0.689 across the
+  eleven NQ slots (implied/realised 0.85 → 1.78; ES 1.23 → 2.12) because implied is flat
+  by construction while realised decays. The levels also validate the units: NQ's opening
+  half-hour realises *more* than the daily-average VIX implies while ES sits above 1.0 all
+  day, exactly as expected for an SPX measure applied to a more volatile index.
+- `vix_chg_15m` correlates −0.47 / −0.51 with the market's own trailing return, so a "VIX
+  change" feature is substantially a restatement of past price.
+
+### Rule 9a and reproduction
+
+Causal join asserted in code: a bar stamped `T` covers `[T, T+15m)` and is admissible only
+if `T + 15m ≤ ts_utc + 1m`. The clocks align exactly, so **staleness is 0 minutes on
+41,115 of 41,134 joined rows**. Join rate 98.62%; the 576 unjoined rows are **87 US
+holidays** on which CME trades a shortened session while cash VIX does not publish at all
+(86/87 are partial futures sessions) — whole-session, calendar-known, causal, and the
+apparent "morning joins worse" pattern is entirely this. Common sample 96.5% / 96.8%,
+per-slot retention 0.939–0.984, uniform. Rule 23 reproduction 1.5e-05 / 6.8e-05. Tests
+43/43 including eight new ones pinning the join causality.
+
+### Surviving objection and consequence
+
+Spot VIX is **30-day** implied volatility. VIX1D/VIX9D would encode "the next few hours
+specifically are dangerous" in a way a 30-day measure structurally cannot, and the
+announcement-window failure is evidence *for* that objection rather than against it. This
+is recorded as the surviving lead, not as a rescue.
+
+**Consequence for backlog item 13: VIX is not a usable proxy for the scheduled-event
+channel.** That channel now requires an explicit event calendar or a tenor-matched implied
+series. Consumed history; nothing promoted. Evidence:
+`artifacts/runs/EXP-0017/review.md`, `experiments/hypotheses/HYP-0014.md`.
 
 ## Synthesis
 

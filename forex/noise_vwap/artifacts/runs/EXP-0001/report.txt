@@ -1,0 +1,113 @@
+==========================================================================================================================
+HYP-0001 / EXP-0001 — Noise-Area + TWAP port to FX majors
+lookback=90 decision step=30min  fills=next bar open  primary cost=0.5 pip/side
+==========================================================================================================================
+
+## PRIMARY configuration (published rule, TWAP substituted: gate=on, stop_ref=both, every_bar)
+
+  -- session=fxday
+  label                             n  per-sess     gross       net    hit   day_net       t     Sh0     ShR      netR      maxDD
+  fxday|both|gate=1|every_bar n= 17173 (4.53/s) gross= -0.520p net= -1.520p hit=0.135 | day= -6.877p t=-13.12 Sh0=-3.380 ShR=-3.336 | netR=  -303.3 dd= -26200.9p
+  fxday|both|gate=1|every_bar n= 16636 (4.38/s) gross= -0.471p net= -1.471p hit=0.142 | day= -6.449p t= -8.94 Sh0=-2.304 ShR=-2.381 | netR=  -224.2 dd= -24519.1p
+  fxday|both|gate=1|every_bar n= 15709 (4.14/s) gross= -0.576p net= -1.576p hit=0.137 | day= -6.522p t=-14.22 Sh0=-3.664 ShR=-3.720 | netR=  -337.9 dd= -24852.0p
+  fxday|both|gate=1|every_bar n= 14960 (4.05/s) gross= -0.601p net= -1.601p hit=0.141 | day= -6.487p t=-15.23 Sh0=-3.980 ShR=-3.854 | netR=  -335.4 dd= -24026.9p
+
+  -- session=active
+  label                             n  per-sess     gross       net    hit   day_net       t     Sh0     ShR      netR      maxDD
+  active|both|gate=1|every_bar n=  9182 (2.42/s) gross= -0.525p net= -1.525p hit=0.175 | day= -3.689p t= -9.07 Sh0=-2.338 ShR=-2.257 | netR=  -169.9 dd= -14005.5p
+  active|both|gate=1|every_bar n=  8912 (2.35/s) gross= -0.142p net= -1.142p hit=0.181 | day= -2.681p t= -5.04 Sh0=-1.299 ShR=-1.342 | netR=  -103.4 dd= -10312.2p
+  active|both|gate=1|every_bar n=  8453 (2.23/s) gross= -0.404p net= -1.404p hit=0.167 | day= -3.125p t=-10.13 Sh0=-2.609 ShR=-2.732 | netR=  -185.6 dd= -12095.1p
+  active|both|gate=1|every_bar n=  8213 (2.23/s) gross= -0.507p net= -1.507p hit=0.167 | day= -3.355p t=-11.63 Sh0=-3.038 ShR=-2.961 | netR=  -193.9 dd= -12402.2p
+
+## KILL TEST (declared in HYP-0001 before the run)
+
+  session=fxday   gate1 median gross/trade = -0.5477 pips -> FAIL
+  session=fxday   gate2 pairs with Sh0 >= +0.30 = 0/4 -> FAIL
+  session=fxday   VERDICT = REJECT
+
+  session=active  gate1 median gross/trade = -0.4554 pips -> FAIL
+  session=active  gate2 pairs with Sh0 >= +0.30 = 0/4 -> FAIL
+  session=active  VERDICT = REJECT
+
+## STOP REFERENCE — the user's question (gate=on, every_bar, 0.5 pip/side)
+
+  session pair                           both                      band                    anchor
+  fxday   EURUSD       -3.380/ -1.520p/ 17173    -3.240/ -1.525p/ 16677    -1.606/ -1.546p/  9106
+  fxday   GBPUSD       -2.304/ -1.471p/ 16636    -2.213/ -1.468p/ 16112    -0.949/ -1.317p/  8720
+  fxday   AUDUSD       -3.664/ -1.576p/ 15709    -3.504/ -1.617p/ 15069    -2.075/ -1.803p/  8564
+  fxday   NZDUSD       -3.980/ -1.601p/ 14960    -3.694/ -1.608p/ 14234    -2.441/ -2.011p/  8271
+  active  EURUSD       -2.338/ -1.525p/  9182    -1.929/ -1.399p/  8492    -1.479/ -1.663p/  5916
+  active  GBPUSD       -1.299/ -1.142p/  8912    -1.060/ -1.032p/  8290    -0.627/ -0.953p/  5746
+  active  AUDUSD       -2.609/ -1.404p/  8453    -2.360/ -1.416p/  7863    -1.765/ -1.614p/  5548
+  active  NZDUSD       -3.038/ -1.507p/  8213    -2.741/ -1.505p/  7599    -2.245/ -1.883p/  5480
+  (cells: net zero-day Sharpe / net pips per trade / trades)
+
+## DRIFT CONTROLS — always-long and always-short, held to the close
+   (the RTY diagnostic: is there any intraday drift for a breakout to ride?)
+
+  label                             n  per-sess     gross       net    hit   day_net       t     Sh0     ShR      netR      maxDD
+  fxday|long_hold            n=  3795 (1.00/s) gross= -0.226p net= -1.226p hit=0.488 | day= -1.226p t= -1.36 Sh0=-0.351 ShR=-0.460 | netR=   -71.8 dd=  -5886.6p
+  fxday|short_hold           n=  3795 (1.00/s) gross= +0.226p net= -0.774p hit=0.496 | day= -0.774p t= -0.86 Sh0=-0.221 ShR=-0.165 | netR=   -25.8 dd=  -4545.2p
+  fxday|long_hold            n=  3795 (1.00/s) gross= -0.047p net= -1.047p hit=0.493 | day= -1.047p t= -0.88 Sh0=-0.227 ShR=-0.260 | netR=   -41.0 dd=  -6874.6p
+  fxday|short_hold           n=  3795 (1.00/s) gross= +0.047p net= -0.953p hit=0.490 | day= -0.953p t= -0.80 Sh0=-0.207 ShR=-0.220 | netR=   -34.6 dd=  -4794.9p
+  fxday|long_hold            n=  3795 (1.00/s) gross= +0.569p net= -0.431p hit=0.513 | day= -0.431p t= -0.56 Sh0=-0.145 ShR=-0.200 | netR=   -30.5 dd=  -3604.6p
+  fxday|short_hold           n=  3795 (1.00/s) gross= -0.569p net= -1.569p hit=0.472 | day= -1.569p t= -2.05 Sh0=-0.529 ShR=-0.541 | netR=   -82.3 dd=  -6358.6p
+  fxday|long_hold            n=  3692 (1.00/s) gross= +0.700p net= -0.300p hit=0.497 | day= -0.300p t= -0.42 Sh0=-0.111 ShR=-0.172 | netR=   -25.0 dd=  -2049.4p
+  fxday|short_hold           n=  3692 (1.00/s) gross= -0.700p net= -1.700p hit=0.483 | day= -1.700p t= -2.40 Sh0=-0.628 ShR=-0.619 | netR=   -90.1 dd=  -7006.9p
+
+  active|long_hold           n=  3797 (1.00/s) gross= -1.153p net= -2.153p hit=0.475 | day= -2.153p t= -2.67 Sh0=-0.689 ShR=-0.717 | netR=  -106.6 dd=  -8247.6p
+  active|short_hold          n=  3797 (1.00/s) gross= +1.153p net= +0.153p hit=0.504 | day= +0.153p t= +0.19 Sh0=+0.049 ShR=+0.021 | netR=    +3.1 dd=  -2991.5p
+  active|long_hold           n=  3797 (1.00/s) gross= +0.430p net= -0.570p hit=0.490 | day= -0.570p t= -0.55 Sh0=-0.143 ShR=-0.175 | netR=   -26.1 dd=  -5016.4p
+  active|short_hold          n=  3797 (1.00/s) gross= -0.430p net= -1.430p hit=0.496 | day= -1.430p t= -1.39 Sh0=-0.358 ShR=-0.362 | netR=   -53.9 dd=  -5931.5p
+  active|long_hold           n=  3797 (1.00/s) gross= -0.619p net= -1.619p hit=0.481 | day= -1.619p t= -2.66 Sh0=-0.685 ShR=-0.777 | netR=  -104.2 dd=  -7118.3p
+  active|short_hold          n=  3797 (1.00/s) gross= +0.619p net= -0.381p hit=0.491 | day= -0.381p t= -0.63 Sh0=-0.161 ShR=-0.170 | netR=   -22.8 dd=  -1928.4p
+  active|long_hold           n=  3690 (1.00/s) gross= -0.256p net= -1.256p hit=0.475 | day= -1.256p t= -2.18 Sh0=-0.571 ShR=-0.611 | netR=   -78.6 dd=  -4827.8p
+  active|short_hold          n=  3690 (1.00/s) gross= +0.256p net= -0.744p hit=0.496 | day= -0.744p t= -1.29 Sh0=-0.338 ShR=-0.387 | netR=   -49.8 dd=  -3252.8p
+
+## ENTRY-GATE ABLATION (stop_ref=both, every_bar) — anchor as a FILTER
+
+  session pair                          gate=on                    gate=off   delta Sh0
+  fxday   EURUSD      -3.380/ -1.520p/  17173   -3.460/ -1.494p/  17889      +0.080
+  fxday   GBPUSD      -2.304/ -1.471p/  16636   -2.372/ -1.453p/  17366      +0.068
+  fxday   AUDUSD      -3.664/ -1.576p/  15709   -3.790/ -1.540p/  16684      +0.127
+  fxday   NZDUSD      -3.980/ -1.601p/  14960   -4.130/ -1.556p/  16038      +0.150
+  active  EURUSD      -2.338/ -1.525p/   9182   -2.453/ -1.470p/  10024      +0.116
+  active  GBPUSD      -1.299/ -1.142p/   8912   -1.372/ -1.111p/   9694      +0.073
+  active  AUDUSD      -2.609/ -1.404p/   8453   -2.748/ -1.363p/   9253      +0.138
+  active  NZDUSD      -3.038/ -1.507p/   8213   -3.202/ -1.456p/   9012      +0.164
+
+## COST SENSITIVITY (primary cell: gate=on, stop_ref=both, every_bar)
+
+  session pair        gross/trade     net@0.25p      net@0.5p      net@1.0p   Sh0@0.5
+  fxday   EURUSD          -0.5198       -1.0198       -1.5198       -2.5198    -3.380
+  fxday   GBPUSD          -0.4712       -0.9712       -1.4712       -2.4712    -2.304
+  fxday   AUDUSD          -0.5757       -1.0757       -1.5757       -2.5757    -3.664
+  fxday   NZDUSD          -0.6009       -1.1009       -1.6009       -2.6009    -3.980
+  active  EURUSD          -0.5253       -1.0253       -1.5253       -2.5253    -2.338
+  active  GBPUSD          -0.1424       -0.6424       -1.1424       -2.1424    -1.299
+  active  AUDUSD          -0.4035       -0.9035       -1.4035       -2.4035    -2.609
+  active  NZDUSD          -0.5073       -1.0073       -1.5073       -2.5073    -3.038
+
+## FULL GRID at the primary cost, ranked by net zero-day Sharpe (top 20)
+
+  label                             n  per-sess     gross       net    hit   day_net       t     Sh0     ShR      netR      maxDD
+  GBPUSD active|anchor|gate=1|decision n=  4489 (1.18/s) gross= +0.241p net= -0.759p hit=0.337 | day= -0.897p t= -1.38 Sh0=-0.356 ShR=-0.333 | netR=   -31.2 dd=  -3710.2p
+  GBPUSD active|anchor|gate=0|decision n=  4706 (1.24/s) gross= +0.217p net= -0.783p hit=0.339 | day= -0.971p t= -1.49 Sh0=-0.384 ShR=-0.363 | netR=   -34.2 dd=  -3956.6p
+  GBPUSD active|band|gate=1|decision n=  5574 (1.47/s) gross= +0.234p net= -0.766p hit=0.270 | day= -1.125p t= -1.86 Sh0=-0.480 ShR=-0.501 | netR=   -43.5 dd=  -4434.6p
+  GBPUSD active|band|gate=0|decision n=  5633 (1.48/s) gross= +0.198p net= -0.802p hit=0.270 | day= -1.189p t= -1.96 Sh0=-0.505 ShR=-0.521 | netR=   -45.4 dd=  -4678.9p
+  GBPUSD active|both|gate=1|decision n=  5803 (1.53/s) gross= +0.156p net= -0.844p hit=0.276 | day= -1.290p t= -2.17 Sh0=-0.559 ShR=-0.562 | netR=   -48.2 dd=  -5076.9p
+  GBPUSD active|both|gate=0|decision n=  6021 (1.59/s) gross= +0.140p net= -0.860p hit=0.280 | day= -1.364p t= -2.29 Sh0=-0.589 ShR=-0.593 | netR=   -51.0 dd=  -5334.5p
+  GBPUSD active|anchor|gate=1|every_bar n=  5746 (1.51/s) gross= +0.047p net= -0.953p hit=0.279 | day= -1.443p t= -2.43 Sh0=-0.627 ShR=-0.638 | netR=   -55.0 dd=  -5602.6p
+  GBPUSD fxday|anchor|gate=1|decision n=  7109 (1.87/s) gross= -0.234p net= -1.234p hit=0.280 | day= -2.312p t= -2.64 Sh0=-0.680 ShR=-0.662 | netR=   -76.1 dd=  -9275.4p
+  GBPUSD active|anchor|gate=0|every_bar n=  6528 (1.72/s) gross= +0.070p net= -0.930p hit=0.279 | day= -1.598p t= -2.69 Sh0=-0.693 ShR=-0.704 | netR=   -60.7 dd=  -6186.2p
+  GBPUSD fxday|anchor|gate=0|decision n=  7331 (1.93/s) gross= -0.258p net= -1.258p hit=0.282 | day= -2.429p t= -2.77 Sh0=-0.714 ShR=-0.686 | netR=   -79.0 dd=  -9698.8p
+  EURUSD active|anchor|gate=1|decision n=  4592 (1.21/s) gross= -0.385p net= -1.385p hit=0.338 | day= -1.675p t= -3.50 Sh0=-0.903 ShR=-0.862 | netR=   -76.5 dd=  -7136.3p
+  EURUSD active|anchor|gate=0|decision n=  4813 (1.27/s) gross= -0.347p net= -1.347p hit=0.342 | day= -1.707p t= -3.56 Sh0=-0.916 ShR=-0.880 | netR=   -78.4 dd=  -7267.4p
+  GBPUSD fxday|anchor|gate=1|every_bar n=  8720 (2.30/s) gross= -0.317p net= -1.317p hit=0.239 | day= -3.026p t= -3.68 Sh0=-0.949 ShR=-0.907 | netR=   -97.9 dd= -11707.9p
+  GBPUSD fxday|anchor|gate=0|every_bar n=  9450 (2.49/s) gross= -0.295p net= -1.295p hit=0.237 | day= -3.225p t= -3.92 Sh0=-1.011 ShR=-0.967 | netR=  -104.4 dd= -12420.8p
+  GBPUSD active|band|gate=1|every_bar n=  8290 (2.18/s) gross= -0.032p net= -1.032p hit=0.179 | day= -2.253p t= -4.11 Sh0=-1.060 ShR=-1.064 | netR=   -84.2 dd=  -8684.0p
+  EURUSD active|band|gate=1|decision n=  5777 (1.52/s) gross= -0.247p net= -1.247p hit=0.266 | day= -1.897p t= -4.26 Sh0=-1.097 ShR=-1.053 | netR=   -86.3 dd=  -7444.5p
+  GBPUSD active|band|gate=0|every_bar n=  8493 (2.24/s) gross= -0.045p net= -1.045p hit=0.177 | day= -2.337p t= -4.26 Sh0=-1.098 ShR=-1.105 | netR=   -87.5 dd=  -8980.6p
+  EURUSD active|band|gate=0|decision n=  5829 (1.54/s) gross= -0.253p net= -1.253p hit=0.266 | day= -1.924p t= -4.31 Sh0=-1.110 ShR=-1.065 | netR=   -87.5 dd=  -7511.2p
+  EURUSD active|both|gate=1|decision n=  6032 (1.59/s) gross= -0.313p net= -1.313p hit=0.272 | day= -2.085p t= -4.81 Sh0=-1.240 ShR=-1.179 | netR=   -94.3 dd=  -8119.4p
+  EURUSD active|both|gate=0|decision n=  6255 (1.65/s) gross= -0.291p net= -1.291p hit=0.278 | day= -2.127p t= -4.89 Sh0=-1.259 ShR=-1.202 | netR=   -96.6 dd=  -8287.3p

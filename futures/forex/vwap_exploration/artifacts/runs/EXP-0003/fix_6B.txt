@@ -1,0 +1,106 @@
+============================================================================================
+EXP-0003  HYP-0003  WM/Reuters 16:00 London fix   6B  (GBP/USD future)
+============================================================================================
+sessions 3,437   2010-06-07 -> 2023-12-29   (holdout (2024, 2025, 2026) sealed)
+
+-- the fix clock (Europe/London 16:00 expressed in ET) -------------------
+   ET 11:00   3,227 sessions  (93.89%)
+   ET 12:00     210 sessions  (6.11%)
+   [the 12:00 ET sessions are the US/UK daylight-saving shoulder weeks;
+    hardcoding 11:00 ET would file them under a placebo hour]
+   usable fix events 3,404 / 3,437
+
+-- unconditional behaviour around the fix -------------------------------
+   pre-fix drift  (30min into the fix): mean +0.067 pip, sd 18.78, mean|.| 13.23
+   post-fix move  (30min after):        mean +0.115 pip, sd 14.82
+   corr(pre, post)   pearson -0.0495   spearman -0.1063   [negative = reversal]
+
+-- ARM 1: does fading the pre-fix drift pay? ----------------------------
+   per-bet +1.5516 pip   cluster-t +3.54   n 1,307   boot95 [+0.7013, +2.3858]
+
+-- ARM 2 (DECISIVE): is the fix hour special, or an ordinary hour? -------
+   The identical construction at every other candidate hour of the session.
+   EXP-0002 already found a general short-horizon reversal on this data, so
+   the fix must beat that background, not merely be positive.
+
+   ET hour   per-bet pip    cl-t       n
+   00:00       +0.5093    +1.31      593
+   01:00       +0.1027    +0.35      769
+   02:00       +0.0632    +0.18    1,107
+   03:00       +0.5581    +1.25    1,317
+   04:00       +0.1645    +0.30    1,307
+   05:00       +1.1381    +2.76    1,238
+   06:00       +0.3183    +0.77    1,282
+   07:00       +0.5607    +1.33    1,236
+   08:00       +0.0015    +0.00    1,292
+   09:00       +0.5645    +1.17    1,263
+   10:00       +0.2424    +0.47    1,341
+   11:00       +1.1534    +2.63    1,310   <-- fix hour on 94% of sessions
+   12:00       -0.0071    -0.02    1,271   <-- fix hour on 6% of sessions
+   13:00       +0.1246    +0.33    1,196
+   14:00       +0.4280    +0.79    1,035
+   15:00       -0.0416    -0.10    1,009
+   16:00       +0.6164    +2.07      855
+   19:00       -0.5575    -0.93      617
+   20:00       -0.0613    -0.19      815
+   21:00       +0.0517    +0.15      851
+   22:00       -0.2627    -0.46      807
+   23:00       +0.3638    +1.47      657
+
+   fix per-bet +1.5516  vs placebo hours (excl. 11,12): median +0.2034, p90 +0.5697, max +1.1381
+   the fix beats 100% of placebo hours   (arm 2 needs > 90%)
+
+-- ARM 2b: the placebo distribution SPLIT BY ERA -------------------------
+   Arm 4 asks whether the fix effect concentrates in one era. That is only
+   readable against the background reversal IN THAT ERA -- if every hour got
+   more reversionary after 2015, the fix did not.
+
+   era                    fix per-bet   placebo median   placebo p90   beats
+   before 2015-02-15          -0.1079          +0.4565       +1.1860     30%
+   after  2015-02-15          +2.4084          +0.2305       +0.5868    100%
+
+-- CONTROL (CRITICAL): entry-lag sensitivity ----------------------------
+   Since 2015-02-15 the fix window runs to 16:02:30 London, so an entry at
+   f+2 is still INSIDE the benchmark window. If the result is the tail of
+   the fix flow rather than a post-fix reversal, it dies as the lag grows.
+
+   entry lag   all         t       before 2015    after 2015
+   f+2          +1.5516   +3.54       -0.1079       +2.4084
+   f+3          +0.2775   +0.66       -0.7059       +0.7794
+   f+5          +0.3552   +0.81       +0.0203       +0.5265
+   f+10         +0.1892   +0.43       +1.1258       -0.2921
+   f+15         +0.3880   +0.91       +1.1865       -0.0219
+   f+30         -0.6458   -1.33       -0.0471       -0.9539
+
+   holding-horizon decomposition at a FIXED f+2 entry:
+   hold        all         t       before 2015    after 2015
+     1min      +1.3201   +7.02       -0.1261       +2.0599
+     2min      +1.2046   +4.53       +0.2937       +1.6720
+     3min      +1.3163   +6.28       +0.0874       +1.9471
+     5min      +1.6664   +6.25       +0.3161       +2.3610
+    10min      +1.3905   +4.22       +0.3191       +1.9411
+    30min      +1.5516   +3.54       -0.1079       +2.4084
+
+-- ARM 3: month-end amplification (the index-rebalancing mechanism) ------
+   month-end sessions 163   other 3,274
+   month-end    per-bet   +5.0515  t  +3.08  n    97   boot95 [+2.163,+8.096]
+   other        per-bet   +1.2711  t  +2.80  n 1,210
+   pre-fix mean|drift|:  month-end 23.57 pip   other 12.72 pip
+
+-- ARM 4: the 2015-02-15 window widening (1min -> 5min) ------------------
+   before 2015-02-15      per-bet   -0.1079  t  -0.14  n   445  boot95 [-1.694,+1.387]
+   after  2015-02-15      per-bet   +2.4084  t  +4.56  n   862  boot95 [+1.303,+3.362]
+
+-- CONTROL: does the DST-correct fix clock matter? -----------------------
+   DST-correct (Europe/London) per-bet +1.5516  t +3.54
+   naive hardcoded 11:00 ET    per-bet +1.1534  t +2.63
+
+-- CONTROL: costs (rules 19, 20) ----------------------------------------
+   2010-2015: gross +0.0672 pip/bet (t +0.09, n 536); optimistic round trip 2.0 pip -> net -1.9328 pip ($-12.08)
+   2016-2023: gross +2.5837 pip/bet (t +5.05, n 771); optimistic round trip 2.0 pip -> net +0.5837 pip ($+3.65)
+
+-- KILL TEST (declared in HYP-0003 before the run) -----------------------
+   1. reversal   fade pays, |t|>=2?           PASS   (+1.5516 pip, t +3.54)
+   2. special    beats >90% of placebo hours? PASS   (beats 100%)
+   3. month-end  larger than other days?      PASS   (+5.0515 vs +1.2711)
+   4. 2015 break larger before the widening?  FAIL   (-0.1079 vs +2.4084)

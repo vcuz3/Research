@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0003",
+  "hypothesis_id": "HYP-0003",
+  "status": "completed",
+  "declared_utc": "2026-08-02T10:34:45.112624+00:00",
+  "config_path": "core/fix.py",
+  "data_scope": "6E and 6B, CME trade dates 2010-06-07 .. 2023-12-29 (EXPLORE),",
+  "code_ref": "3d21fe1+worktree",
+  "run_command": "python -u -m futures.forex.vwap_exploration.scripts.hyp_0003_london_fix",
+  "primary_metric": "per-bet mean pip of fading the pre-fix drift over sessions with |pre_z|>=1.0, session cluster-robust SE + block-bootstrap CI",
+  "builder": "Claude (Opus 5)",
+  "outputs": [],
+  "closed_utc": "2026-08-02T10:37:47.187786+00:00",
+  "result_summary": "REJECTED on arm 4, inverted. Arms 1-3 PASS cleanly (fade pays +0.905 t2.48 / +1.552 t3.54; beats 100% of 21 placebo hours both; month-end 4x on 6B +5.05 t3.08). Arm 4 FAILS inverted: entire effect is POST-2015-02-15 (6E -0.00 vs +1.36; 6B -0.11 vs +2.41). Diagnosed: entry open(f+2)=16:02 London is INSIDE the post-2015 5-min fix window (closes 16:02:30). Entry at f+3 kills it on both; 1-minute hold captures the whole 30-min result at higher t. This measures price impact reverting INSIDE the benchmark averaging window, not a post-fix reversal. Not tradable at any honest entry.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

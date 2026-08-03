@@ -1,0 +1,28 @@
+
+===== Study 2 (Cell B): pooled AC1 audit -- NQ =====
+sessions=3710  decision clock=30m  slots=13
+
+Pooled AC1 = one corrcoef over every within-session consecutive pair
+(reproduces vei_exploration/scripts/s1_smoothing.py::persistence_and_whipsaw)
+
+         variant   pairs  published   pooled   repro  kendall   d_kend  slot-dm   d_slot
+   sma_10_50_raw   40806    -0.0112  -0.0112      OK  -0.0112  +0.0000  -0.1160  -0.1048
+  L:wilder_10_50   40806    +0.5495  +0.5495      OK  +0.5495  +0.0001  +0.2777  -0.2718
+    wilder_10_50   40806    +0.4411  +0.4411      OK  +0.4412  +0.0001  +0.2198  -0.2213
+     L:ema_10_50   40806    +0.1609  +0.1609      OK  +0.1609  +0.0000  +0.0048  -0.1561
+
+----- the same statistic computed PER SESSION (T=13 pairs) -----
+Study 1 says a T=13 lag-1 estimate is biased -0.10 to -0.28. This is what a
+per-session persistence column would have reported, and its repair:
+
+         variant  sessions  mean AC1      sd  kendall  bootstrap
+   sma_10_50_raw      3710   -0.0173  0.3851  +0.0775    +0.0336
+  L:wilder_10_50      3710   +0.6133  0.3640  +0.8972    +0.7483
+    wilder_10_50      3710   +0.5255  0.4120  +0.7831    +0.6595
+     L:ema_10_50      3710   +0.1627  0.3742  +0.3114    +0.2684
+
+----- verdict inputs -----
+  max |kendall - pooled| over variants: 0.00006   (Cell B kill threshold 0.01)
+  max |slot-demeaned - pooled|:         0.27179
+
+artifacts -> C:\Users\VuDoa\Research\futures\nq\estimator_bias\artifacts\runs\EXP-0001\pooled_ac1_NQ.csv

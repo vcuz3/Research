@@ -1,0 +1,89 @@
+
+--- executing source notebook cell 1 ---
+Project root: C:\Users\VuDoa\Research\forex\exploration_1
+Pairs: ['EURUSD', 'GBPUSD']; horizon=30m; decision interval=30m
+Holdout seal: retained rows must be strictly before 2024-01-01 00:00:00+00:00
+Mode: FULL
+Runner override: pairs=['EURUSD', 'GBPUSD', 'AUDUSD', 'NZDUSD']; data_dir=C:\Users\VuDoa\Research\forex\data\archive
+
+--- executing source notebook cell 3 ---
+
+--- executing source notebook cell 6 ---
+
+--- executing source notebook cell 7 ---
+Building EURUSD ...
+  154,834 decisions; 3,230 sessions; 2011-07-19 to 2023-12-29
+Building GBPUSD ...
+  154,826 decisions; 3,230 sessions; 2011-07-19 to 2023-12-29
+Building AUDUSD ...
+  154,831 decisions; 3,230 sessions; 2011-07-19 to 2023-12-29
+Building NZDUSD ...
+  149,997 decisions; 3,130 sessions; 2011-12-06 to 2023-12-29
+pair                                                 EURUSD                     GBPUSD                     AUDUSD                     NZDUSD
+file_gb                                            0.366417                   0.363629                   0.364404                   0.354504
+rows                                                4596928                    4596710                    4596885                    4454286
+first                             2011-07-19 00:00:00+00:00  2011-07-19 00:00:00+00:00  2011-07-19 00:00:00+00:00  2011-12-06 20:00:00+00:00
+last_retained                     2023-12-29 20:59:00+00:00  2023-12-29 20:59:00+00:00  2023-12-29 20:59:00+00:00  2023-12-29 20:59:00+00:00
+sessions                                               3230                       3230                       3230                       3130
+boundary_reached                                       True                       True                       True                       True
+duplicate_ts                                              0                          0                          0                          0
+out_of_order_ts                                           0                          0                          0                          0
+one_minute_links                                    4593698                    4593480                    4593655                    4451212
+gaps_gt_1m                                             3229                       3229                       3229                       3073
+largest_gap_min                                      4501.0                     4501.0                     4501.0                     4501.0
+nonpositive_price_rows                                    0                          0                          0                          0
+ohlc_invariant_failures                                   0                          0                          0                          0
+flat_ohlc_rows                                        39458                      48994                      36221                      70229
+volume_minus_one_share                                  1.0                        1.0                        1.0                        1.0
+volume_distinct_values                                    1                          1                          1                          1
+decision_rows                                        154834                     154826                     154831                     149997
+valid_targets                                        148374                     148366                     148372                     143849
+target_missing                                         6460                       6460                       6459                       6148
+excursion_missing                                      6460                       6460                       6459                       6148
+sessions_with_internal_gap                                0                          0                          0                       2421
+median_session_rows                                  1425.0                     1425.0                     1425.0                     1425.0
+min_session_rows                                        540                        540                        540                        120
+max_session_rows                                       1425                       1425                       1425                       1440
+median_first_session_minute                            15.0                       15.0                       15.0                        0.0
+median_last_session_minute                           1439.0                     1439.0                     1439.0                     1439.0
+vei_warmup_missing                                     6425                       6419                       6422                       8592
+vei_slot_history_missing                               9185                       9179                       9182                      14468
+target_slot_history_missing                            9181                       9180                       9181                       8558
+decision_rows_after_internal_gap                          0                          0                          0                      13764
+Holdout seal passed: no retained decision is from 2024 onward.
+
+Primary VEI summary:
+  pair               era  regime   q1_ic   q5_ic  strength_q5_minus_q1  bin_strength_monotonic_rho  interaction_beta  interaction_t  interaction_p  interaction_q
+AUDUSD early_exploration vei_pct -0.0422 -0.0865                0.0443                         0.9           -0.0467        -4.5429         0.0000         0.0000
+AUDUSD  late_exploration vei_pct -0.0087 -0.0363                0.0276                         0.9           -0.0337        -1.7814         0.0749         0.2526
+EURUSD early_exploration vei_pct -0.0289 -0.0825                0.0536                         0.9           -0.0472        -4.4384         0.0000         0.0000
+EURUSD  late_exploration vei_pct -0.0236 -0.0661                0.0425                         0.9           -0.0460        -2.4388         0.0147         0.0249
+GBPUSD early_exploration vei_pct -0.0334 -0.0841                0.0508                         0.9           -0.0357        -3.2837         0.0010         0.0019
+GBPUSD  late_exploration vei_pct -0.0269 -0.0702                0.0433                         0.9           -0.0536        -2.8569         0.0043         0.0111
+NZDUSD early_exploration vei_pct -0.0419 -0.0851                0.0432                         1.0           -0.0512        -4.5621         0.0000         0.0000
+NZDUSD  late_exploration vei_pct -0.0119 -0.0592                0.0473                         0.7           -0.0577        -2.9669         0.0030         0.0076
+
+Top stability rows:
+               regime  cells  q5_stronger_cells  strengthening_interaction_cells  median_strength_q5_minus_q1  median_interaction_beta  median_abs_interaction_t  min_interaction_q  max_interaction_q
+             vei_z_90      8                  8                                8                       0.0490                  -0.0467                    3.2181             0.0000             0.2325
+              vei_pct      8                  8                                8                       0.0438                  -0.0470                    3.1253             0.0000             0.2526
+        rv_ratio_5_30      8                  8                                8                       0.0578                  -0.0432                    2.8937             0.0000             0.2325
+       rv_ratio_15_60      8                  8                                8                       0.0375                  -0.0335                    2.1548             0.0001             0.3245
+        bar_range_atr      8                  8                                8                       0.0515                  -0.0272                    1.6499             0.0000             0.7603
+  abs_bollinger_z_60m      8                  8                                7                       0.0492                  -0.0217                    1.3654             0.0001             0.9835
+    concentration_30m      8                  8                                7                       0.0399                  -0.0126                    1.1986             0.0088             0.9919
+       jump_share_30m      8                  8                                6                       0.0336                  -0.0099                    0.9185             0.2513             0.8477
+  return_autocorr_30m      8                  8                                6                       0.0099                  -0.0089                    0.8053             0.1897             0.8306
+                rv_5m      8                  7                                8                       0.0127                  -0.0800                    6.1249             0.0000             0.2325
+        rv_30m_slot_z      8                  7                                8                       0.0337                  -0.0641                    3.5764             0.0000             0.6317
+  abs_dist_twap_atr14      8                  7                                8                       0.0232                  -0.0495                    2.8928             0.0000             0.2048
+  path_efficiency_30m      8                  7                                7                       0.0481                  -0.0113                    1.0251             0.0237             0.9840
+   variance_ratio_30m      8                  7                                6                       0.0442                  -0.0108                    1.0005             0.0189             0.7757
+          abs_ret_30m      8                  6                                7                       0.0253                  -0.0495                    3.6427             0.0000             0.3245
+zero_return_share_30m      6                  6                                1                       0.0290                   0.0274                    1.8578             0.0008             0.5916
+               rv_15m      8                  5                                8                       0.0013                  -0.0748                    5.7385             0.0000             0.3038
+               rv_60m      8                  4                                8                      -0.0057                  -0.0642                    4.4580             0.0000             0.6852
+     prior_session_rv      8                  4                                7                      -0.0008                  -0.0265                    2.2789             0.0000             0.9840
+        daily_vol_pct      8                  4                                7                       0.0006                  -0.0144                    1.0549             0.0316             0.9433
+
+Saved C:\Users\VuDoa\Research\forex\exploration_1\rsi_regime_test_results.json

@@ -82,7 +82,20 @@ their contents.
   Three independent feature sets now buy the same +0.009..+0.011 on the LEVEL axis, which
   is therefore SATURATED as a property of the target; the EXPANSION-MAGNITUDE cell is not,
   moving +0.006/+0.056 -> +0.100/+0.120. **Net: stop scoring feature sets on level IC.**
-- Last verified: 2026-07-31 (EXP-0001..0016; EXP-0006 supersedes parts of A/C/D/F;
+  **EXP-0017 then brought in the first input that is NOT past price - intraday VIX - and
+  it is REJECTED with its mechanism REVERSED.** VIX carries real information (within-slot
+  IC delta +0.0034 NQ / +0.0063 ES, positive in 11/11 years AND 11/11 slots on both
+  markets, robust to a further 15-minute quote lag), and the SPX-native asymmetry
+  predicted in advance holds (ES gets ~2x NQ). But on the decision metric declared before
+  the run it is beaten by adding `past_rv30_bp` ALONE - one column the project already
+  computes, containing no implied-vol information at all - and beaten more decisively by
+  three redundant realised-vol windows. **And it pays where implied is unusually CHEAP,
+  not rich: it is an ANCHOR against realised-vol shocks, not an ANTICIPATOR of scheduled
+  events**, with the 14:00-14:30 FOMC window its single worst slot and the
+  information-poor morning its best. Net: the forecast-side implied-vol channel is
+  CLOSED, backlog item 17's data block is lifted, and item 13 must not use VIX as its
+  proxy.
+- Last verified: 2026-07-31 (EXP-0001..0017; EXP-0006 supersedes parts of A/C/D/F;
   EXP-0007 closes the legacy-seed-as-predictor explanation; EXP-0008 retires
   `IC_fwdvol`; EXP-0009 calibrates the regime label; EXP-0010 closes standalone onset;
   EXP-0011 confirms but does not operationally adopt multi-horizon volatility state;
@@ -100,14 +113,22 @@ their contents.
 - Reproduction: `python -u -m futures.nq.vei_exploration.scripts.{s1_smoothing,
   s2_vol_forecast,s3_regime_dynamics,s4_term_structure} {NQ|ES}`; forecast-vs-book
   conditioning via `... .scripts.{hyp_0010_vol_scaling,hyp_0011_semivariance,
-  hyp_0012_disagreement,hyp_0013_decorrelated_features} {NQ|ES}`.
+  hyp_0012_disagreement,hyp_0013_decorrelated_features,hyp_0014_implied_vol,
+  hyp_0014b_premium_cell} {NQ|ES}`.
+- **Intraday IMPLIED volatility is available and wired up:** `futures/data/vix/` holds ten
+  contiguous TradingView `CBOE_DLY_VIX, 15` tiles covering 2011-08-01..2026-07-17.
+  `core/vix.py` joins them causally to the decision clock (`attach_vix`), with the
+  no-lookahead invariant asserted in code and pinned by `tests/test_vix.py`. Use it rather
+  than re-parsing the CSVs. Note the join drops 87 US holidays (cash VIX does not publish
+  while CME trades a short session) and that spot VIX is 30-DAY implied, so it cannot
+  express near-term scheduled risk.
 - **The canonical forward-vol forecast is now importable, tested code:**
   `core/forward_vol.py` (`build_decision_frame`, `walkforward_forecast`). It reproduces
   the EXP-0011 notebook to |ΔIC| <= 1.7e-04 at exact row counts (tolerance 5e-4, asserted
   at the top of every run that uses it), and its sealed-read invariant is bit-identical.
   Use this rather than re-executing or mutating the notebook, which stays the immutable
   EXP-0011 record.
-- Tests: run `python -m futures.nq.vei_exploration.tests.run_tests` (35/35 pass).
+- Tests: run `python -m futures.nq.vei_exploration.tests.run_tests` (43/43 pass).
   (Correction 2026-07-27: pytest 9.1.1 IS installed — the older "no pytest in this
   environment" claim was wrong. The runner is still the right path because the workspace
   uses implicit namespace packages, so pytest cannot collect these modules by file path.)
@@ -118,7 +139,8 @@ their contents.
 - **A / EXP-0001 — ~~the ATR estimator dominates smoothing~~ → CORRECTED 2026-07-26:
   effective MEMORY dominates, and the shipped Wilder is mis-initialised.** The original
   observation holds (SMA(10/50) VEI is near-noise: AC1 ≈ 0, whipsaw 46%, fwd-vol IC
-  +0.06; Wilder(10/50) → AC1 0.55, whipsaw 0.23, IC +0.157 NQ / +0.195 ES), but the
+  +0.06; Wilder(10/50) → AC1 0.55, whipsaw 0.23, IC +0.157 NQ / +0.195 ES — **but see
+  the AC1 qualification below**), but the
   *attribution* was wrong — the comparison changed estimator form and effective memory
   together (SMA(n) com = (n−1)/2, Wilder(n) com = n−1, so wilder_10_50 has ~2× the
   memory of sma_10_50). Missing controls, both directions: **SMA(19/99)** (com-matched)
@@ -138,6 +160,19 @@ their contents.
   Evidence: `scripts/s1b_estimator_controls.py` →
   `artifacts/runs/A_smoothing/estimator_controls_{NQ,ES}.txt`, `reports/FINDINGS.md`
   §A-corrected. NOTE unchanged: noise_vwap EXP-0035 used the jumpiest SMA variant.
+- **A / AC1 MAGNITUDE QUALIFIED 2026-08-03 by `futures/nq/estimator_bias` EXP-0001
+  (finding B) — about HALF the AC1 column is the intraday clock.** `persistence_and_whipsaw`
+  pools consecutive decision pairs across all 13 slots, and per A-corrected (b) VEI has a
+  deterministic per-slot profile (0.745 → 1.165), so consecutive readings covary partly
+  because both are late-session. Slot-demeaned: `wilder_10_50` **+0.4411 → +0.2198 (NQ)**
+  / +0.4036 → +0.2007 (ES); `L:wilder_10_50` +0.5495 → +0.2777 / +0.5062 → +0.2548;
+  `L:ema_10_50` **+0.1609 → +0.0048 / +0.1386 → +0.0002 (entirely clock)**. The **ranking
+  wilder > ema > sma survives on both markets, so the canonical-VEI choice is unaffected**
+  — but "a steady, persistent regime read" is roughly half as steady as published. The
+  OLS small-sample bias is NOT the issue (≤0.00006 at 40,806 pooled pairs), and all eight
+  published cells reproduced exactly to 1e-4. This is the same disease as A-corrected (b),
+  reached through the persistence statistic instead of the threshold.
+  Evidence: `futures/nq/estimator_bias/reports/FINDINGS.md` §B.
 - **A-corrected (b) — VEI=1 is a TIME-OF-DAY line, not a calm line.** Mean VEI 0.893 NQ
   / 0.924 ES; the mis-init explains only ~0.024 of it (SMA VEI has no seed and is also
   <1 at 0.973/0.986). The real cause is the session-reset ATR anchoring the long window
@@ -422,15 +457,54 @@ their contents.
   identical rows. Consumed history. Evidence: `artifacts/runs/EXP-0016/review.md`,
   FINDINGS section P.
 
+- **Q / EXP-0017 (HYP-0014) - IMPLIED volatility is an ANCHOR, not an ANTICIPATOR: real
+  information, REJECTED for adoption.** The first input tested here that is not PAST
+  PRICE. New data source `futures/data/vix/` - ten contiguous TradingView
+  `CBOE_DLY_VIX, 15` tiles, 2011-08-01..2026-07-17, 101,981 bars, ZERO duplicate
+  timestamps - joined by new tested module `core/vix.py`. **KT1 PASS both:** within-slot
+  IC delta over the core **+0.0034 [+0.0024,+0.0044] NQ / +0.0063 [+0.0053,+0.0074] ES**,
+  positive in 11/11 years and 11/11 slots on both, unchanged by a further 15-minute quote
+  lag. **KT3 mechanism direction HOLDS** - VIX is an SPX measure so ES was predicted to
+  gain more, and it does (expansion skill +0.0972 vs +0.0656), so this genuinely is
+  implied-vol content. **KT2 FAIL both** on the metric declared in advance (expansion-call
+  log-MSE skill over persistence): +0.0656/+0.0972 against the +0.100/+0.120 bar taken
+  from EXP-0016's REDUNDANT control, which scored +0.1069/+0.1311 here. **KT4 FAIL both
+  and it is the decisive arm:** `core_pastrv` - the core plus `past_rv30_bp`, ONE column
+  already computed, with no implied-vol content whatever - scores +0.0717/+0.1061 and
+  BEATS three VIX features. **THE MECHANISM IS REVERSED (EXP-0017b, post-hoc, both
+  markets):** `core_vix - core` by premium quintile is MONOTONE DECREASING, q1 +0.2220 NQ
+  / +0.2746 ES (implied unusually CHEAP) down to q5 +0.0189/+0.0121 (richest). VIX pays
+  right AFTER a realised-vol spike, where the past-price core over-extrapolates (skill
+  there -0.187/-0.203, worse than persistence) and a slow daily-scale level pulls it
+  back. Confirmed three ways: the 13:59 slot forecasting the **14:00-14:30 FOMC window is
+  VIX's WORST slot** (+0.0004/+0.0237) while the morning slots are its best
+  (+0.1678/+0.2028); by decile of the core's own error VIX makes EASY calls worse
+  (d1-d5, -0.18..-0.05) and HARD calls better (d7-d10, +0.04..+0.13); and even in q1 the
+  redundant control matches it. **Two prior findings reproduce in a new domain:** the
+  naive variance risk premium `log(implied30/realised30)` is **-0.857/-0.843 correlated
+  with its own DENOMINATOR** (VIX barely moves across a 30-minute clock) = **finding H in
+  a new costume**, and the bare denominator beats the ratio, so there is no separate
+  premium dimension; and the raw premium is a **CLOCK** (**finding I**), mean `vrp_log`
+  running -0.110 -> +0.689 across the eleven NQ slots. Rule 9a: join rate 98.62%,
+  staleness 0 min on 41,115/41,134 rows; the 576 unjoined rows are **87 US HOLIDAYS**
+  where CME trades a short session and cash VIX does not publish (86/87 partial) -
+  whole-session, calendar-known, causal. Tests 43/43. **Surviving objection:** spot VIX is
+  30-DAY implied; VIX1D/VIX9D could carry near-term scheduled risk, and the
+  announcement-window failure is evidence FOR that objection. Evidence:
+  `artifacts/runs/EXP-0017/review.md`, FINDINGS section Q.
+
 ## Provisional hypotheses
 
 - None promoted. The opening-seed lead is CLOSED by EXP-0007, H=60 by Study F, the
   standalone onset+volume lead by EXP-0010, and **the volatility sizing/allocator lead
-  (old backlog item 7) by EXP-0013**. Remaining: daily-timescale squeeze (item 4),
-  regime-persistence exit (item 10), the unexplained 13:30 slot (item 12), and the four
+  (old backlog item 7) by EXP-0013**, and **the forecast-side implied-volatility lead
+  (item 17) by EXP-0017**. Remaining: daily-timescale squeeze (item 4),
+  regime-persistence exit (item 10), the unexplained 13:30 slot (item 12), and the
   scheduled-calendar residual (item 13, now a TARGETED step — EXP-0015 identifies the
-  exact weak cell it must improve) and a decision-shaped barrier-probability target
-  (item 15). Items 14 and 16 are DONE and closed by EXP-0014 / EXP-0015. The 2020+ onset improvement is
+  exact weak cell it must improve, and EXP-0017 rules VIX out as its proxy, leaving an
+  explicit event calendar or a tenor-matched implied series) and a decision-shaped
+  barrier-probability target (item 15). Items 14, 16 and 17 are DONE and closed by
+  EXP-0014 / EXP-0015 / EXP-0017. The 2020+ onset improvement is
   forward-watch, not a hypothesis pass.
 
 ## Decisions and constraints
@@ -586,14 +660,25 @@ their contents.
 0m. **DONE (EXP-0016):** the decorrelated feature set. KT1 passed, KT2 failed, mechanism
    refuted by a redundant-level control. Level axis saturated at +0.01 from three
    directions; expansion-magnitude cell is the one still capable of moving.
-1. Backlog item 13 — **the scheduled-calendar residual.** The highest-value untouched
-   channel, and after EXP-0015 a TARGETED one with a specific number to beat: the
-   expansion-call log-MSE skill over persistence is only +0.008 NQ / +0.061 ES, and
+0n. **DONE (EXP-0017, backlog 17):** intraday IMPLIED volatility. The data block is lifted
+   — `futures/data/vix/` existed all along and `core/vix.py` now joins it causally. VIX
+   carries real information (11/11 years, 11/11 slots, both markets) but loses the
+   decision metric to `past_rv30_bp` alone, and its mechanism is REVERSED: an anchor
+   against realised-vol shocks, not an anticipator of scheduled events. Forecast-side
+   implied-vol channel CLOSED.
+1. Backlog item 13 — **the scheduled-calendar residual.** Still the highest-value
+   untouched channel, and after EXP-0015 a TARGETED one with a specific number to beat:
+   the expansion-call log-MSE skill over persistence is only +0.008 NQ / +0.061 ES, and
    scheduled events are the anticipatable source of volatility EXPANSION. EXP-0011 showed the realised-vol channel
    is near-saturated (six extra state variables bought +0.009 IC), so the missing
    information is the part of volatility that is SCHEDULED and knowable in advance.
-   Diagnostic first: rank the two-input core's largest errors and measure how much of the
-   residual is calendar-clustered, per era and per slot. Build a feature only if it is.
+   **EXP-0017 narrows this materially: do NOT use VIX as the proxy.** Spot VIX was tested
+   as exactly that and was at its WORST in the 14:00–14:30 FOMC window (+0.0004 NQ /
+   +0.0237 ES, the bottom of eleven slots). The residual-ranking diagnostic this item
+   asked for is already built (`scripts/hyp_0014b_premium_cell.py` §4). What remains is an
+   **explicit event calendar** — or a tenor-matched implied series (VIX1D/VIX9D), the one
+   instrument that could carry near-term scheduled risk, which 30-day VIX structurally
+   cannot. That is a data-acquisition step, not a modelling one.
 2. Backlog item 4 (daily/multi-day VEI + squeeze) — still the largest untouched dimension
    on the VEI side, and a day-level regime label suits gating an existing book better than
    an intraday tilt.

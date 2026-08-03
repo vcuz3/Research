@@ -1,0 +1,120 @@
+====================================================================================================
+EXP-0004  HYP-0004  is finding C a VOLATILITY gradient?   6E  (EUR/USD future)
+====================================================================================================
+Finding C: anchor displacement REVERTS in the thin blocks, CONTINUES in the
+London/NY overlap. The split is matched on time of day only. This run asks
+whether it survives being taken WITHIN strata of absolute realised volatility.
+
+bet unchanged from EXP-0002: fade |z| >= 1.0, entry open(m+1), exit close(m+30), pips ($12.50/pip).
+decisions 158,056   sessions 3,436   2010-06-07 -> 2023-12-29   (holdout (2024, 2025, 2026) sealed)
+
+-- RULE 9a: coverage of the volatility measure, BY BLOCK ------------------
+   A confounder that is missing preferentially in the thin blocks would
+   re-create finding G's hidden filter inside the very control meant to
+   remove a bias. Read this before any contrast below.
+
+   block      decisions   rv_60 present   rv_lag_60 present   loose present   mean rv_60 (pip/min)
+   asia          61,848       0.8633         0.8079        0.8849            0.8582
+   ldn_am        34,360       0.9985         0.9983        0.9987            1.4540
+   overlap       27,488       0.9997         0.9999        0.9998            1.8927
+   ny_pm         34,360       0.9767         0.9808        0.9818            1.4470
+   across-block coverage spread: 0.1363  (loose floor 0.25: 0.1149)   *** NON-UNIFORM: the sensitivity arm below is the test of whether it matters
+   Cause: rv needs BOTH minutes of a 1-minute change, so pairwise coverage
+   is roughly the square of the per-minute coverage. On thin 6B Asia hours
+   that lands near the 0.5 floor. The deletion is SELECTIVE -- it removes
+   the QUIETEST decisions of the thinnest block, i.e. one tail of the very
+   variable being conditioned on. Finding G on a new statistic.
+
+-- THE CONFOUND, sized before it is removed -----------------------------
+   Mean absolute 1-minute change over the 60 minutes ending at close(m).
+
+   block      mean rv (pip/min)   vs asia
+   asia             0.8582          1.00x
+   ldn_am           1.4540          1.69x
+   overlap          1.8927          2.21x
+   ny_pm            1.4470          1.69x
+
+-- RULE 23: reproduce finding C's unadjusted block table -----------------
+   anchor    block       per-bet pip    cl-t        n       mean rv
+   vwap      asia           +0.2883     +5.18    21,620     0.9896
+   vwap      ldn_am         +0.1416     +1.51    13,722     1.6392
+   vwap      overlap        -0.2823     -1.88    11,027     2.1857
+   vwap      ny_pm          +0.2157     +1.82    11,829     1.9266
+   past30    asia           +0.3181     +5.53    18,681     0.9870
+   past30    ldn_am         +0.1318     +1.45    13,046     1.5928
+   past30    overlap        -0.1841     -1.18    10,198     2.1601
+   past30    ny_pm          +0.4376     +3.67    10,307     1.7833
+
+-- PRIMARY (declared in HYP-0004): vwap, asia - overlap, rv_60, 5 strata --
+   C_raw  +0.5300 pip   boot95 [+0.2190, +0.8241]     (n_asia 19,530  n_overlap 11,027)
+   C_adj  +0.5657 pip   boot95 [+0.2302, +0.8952]
+   retained  106.7% of the unadjusted contrast
+
+   Did the control remove a confound, or merely weaken the split?
+     volatility ratio asia/overlap   RAW 0.4527  ->  ADJUSTED 0.9037   (1.0 = perfectly matched)
+     effective bet count             n_eff 4,584.2 vs pooled harmonic 7,047.7  = 65.0% retained
+
+   per-stratum detail (the estimate lives only where BOTH cells are populated):
+      q   n_asia  n_overlap    mean_asia  mean_overlap    rv_asia  rv_overlap      weight
+     q1    6,058         54      +0.1444       -0.4444     0.4739      0.5660        53.5
+     q2    5,492        615      +0.2290       -0.4610     0.7663      0.8107       553.1
+     q3    3,986      2,128      +0.1666       -0.0392     1.0840      1.1249      1387.3
+     q4    2,546      3,565      +0.3584       +0.2251     1.5448      1.5856      1485.3
+     q5    1,448      4,665      +0.7797       -0.7555     2.7574      3.3282      1105.0
+
+-- MIRROR ARM (mandatory): the OTHER label conditioned on this one -------
+   Volatility contrast q5 - q1, taken WITHIN blocks and standardised across
+   them. If block dies within volatility and volatility survives within
+   block, the operative variable is volatility; if both die, neither label
+   carries anything.
+
+   volatility contrast (q5 - q1)   raw -0.3455 pip   within-block-standardised +0.1332 pip   retained 54.3%
+      block      n_hi    n_lo     mean_hi    mean_lo
+      overlap     4,487     142     -0.7677    -0.4331
+      asia        1,366   7,748     +0.7936    +0.1662
+      ldn_am      3,213     676     +0.0949    +0.3299
+      ny_pm       2,155   2,649     +0.0956    +0.2180
+
+-- ROBUSTNESS: 2 anchors x 3 volatility measures x 3 stratum counts ------
+   `rv_lag_60` covers minutes (m-90, m-30], so it shares NO minute with the
+   30-minute signal window and cannot attenuate the past30 arm mechanically.
+   `rv_60_loose` is the rule-9a sensitivity arm: identical statistic at a
+   0.25 coverage floor instead of 0.5, which restores most of the
+   deleted thin-block decisions. If the contrast moves materially between the
+   two floors, the answer is a function of the coverage rule, not the market.
+
+   anchor   cov          bins    C_raw      C_adj    adj/raw   rv ratio raw->adj   n_eff%
+   vwap     rv_60        5       +0.5300    +0.5657     +1.07   0.453 -> 0.904     65.0%
+   vwap     rv_60        3       +0.5300    +0.6042     +1.14   0.453 -> 0.831     67.4%
+   vwap     rv_60        10      +0.5300    +0.5434     +1.03   0.453 -> 0.957     63.9%
+   vwap     rv_lag_60    5       +0.5172    +0.5590     +1.08   0.444 -> 0.921     62.5%
+   vwap     rv_lag_60    3       +0.5172    +0.5854     +1.13   0.444 -> 0.835     65.5%
+   vwap     rv_lag_60    10      +0.5172    +0.5090     +0.98   0.444 -> 0.971     61.4%
+   vwap     rv_60_loose  5       +0.5315    +0.5751     +1.08   0.453 -> 0.905     65.1%
+   vwap     rv_60_loose  3       +0.5315    +0.6161     +1.16   0.453 -> 0.833     67.3%
+   vwap     rv_60_loose  10      +0.5315    +0.5537     +1.04   0.453 -> 0.959     63.9%
+   past30   rv_60        5       +0.4931    +0.5336     +1.08   0.457 -> 0.919     63.7%
+   past30   rv_60        3       +0.4931    +0.5070     +1.03   0.457 -> 0.845     65.9%
+   past30   rv_60        10      +0.4931    +0.4793     +0.97   0.457 -> 0.972     62.3%
+   past30   rv_lag_60    5       +0.4957    +0.5827     +1.18   0.446 -> 0.929     61.8%
+   past30   rv_lag_60    3       +0.4957    +0.5588     +1.13   0.446 -> 0.845     64.7%
+   past30   rv_lag_60    10      +0.4957    +0.5469     +1.10   0.446 -> 0.982     60.5%
+   past30   rv_60_loose  5       +0.4926    +0.5294     +1.07   0.456 -> 0.919     63.6%
+   past30   rv_60_loose  3       +0.4926    +0.5077     +1.03   0.456 -> 0.845     65.9%
+   past30   rv_60_loose  10      +0.4926    +0.4793     +0.97   0.456 -> 0.971     62.3%
+
+-- BLOCK-FREE VIEW: across the 46 decision slots, does P&L track vol? ----
+   This does not use the four-block partition at all.
+   43 slots   Spearman(mean rv, mean per-bet pip) -0.4305   Pearson -0.2893
+   past30: 43 slots   Spearman -0.2720   Pearson -0.2750
+
+-- KILL TEST (declared in HYP-0004 before the run) -----------------------
+   1. sign       C_adj > 0?                        PASS   (C_adj +0.5657)
+   2. magnitude  C_adj >= 0.50 * C_raw?            PASS   (+0.5657 vs +0.2650)
+   3. signif.    C_adj CI excludes 0?              PASS   ([+0.2302,+0.8952])
+   4. control    vol ratio moved to 1 AND n_eff>=50%?  PASS   (|0.904-1| vs 0.5*|0.453-1|, n_eff 65.0%)
+
+   Arms 1-2 are the REJECT gate (finding C invalidated as a liquidity
+   effect). Arms 3-4 gate the UPGRADE from provisional to confirmed; arm 4
+   failing alone means the control was uninformative, not that C is dead.
+   SECONDARY (not part of the kill): dissociation survives? NO   (vwap C_adj +0.5657, past30 C_adj +0.5336)

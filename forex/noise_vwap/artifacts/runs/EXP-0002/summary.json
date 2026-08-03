@@ -1,0 +1,24 @@
+{
+  "inversion_confirmed": false,
+  "fx_pairs_inverted": 2,
+  "futures_positive": true,
+  "futures_mean_ticks": {
+    "NQ": 14.615259436506312,
+    "ES": 2.0215630568191947
+  },
+  "fade_beats_momo_gross": 4,
+  "fade_gross_exit_neutral": {
+    "EURUSD": 0.668,
+    "GBPUSD": 0.414,
+    "AUDUSD": 1.573,
+    "NZDUSD": 1.67
+  },
+  "tradable": false,
+  "fade_pairs_net_positive": 2,
+  "fade_net_exit_neutral": {
+    "EURUSD": -0.332,
+    "GBPUSD": -0.586,
+    "AUDUSD": 0.573,
+    "NZDUSD": 0.67
+  }
+}

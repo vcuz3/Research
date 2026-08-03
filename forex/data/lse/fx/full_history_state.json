@@ -1,0 +1,109 @@
+{
+  "created_utc": "2026-08-03T08:19:38.993867+00:00",
+  "updated_utc": "2026-08-03T09:01:10.464807+00:00",
+  "row_cap_per_export": 2500000,
+  "exports_cap_per_hour": 5,
+  "next_symbol_index": 1,
+  "pairs": {
+    "EUR/USD": {
+      "advertised_first_utc": "2009-09-25T04:00:08+00:00",
+      "advertised_last_utc": "2026-07-31T20:59:05+00:00",
+      "parts": [
+        {
+          "file": "fx_EUR_USD_1s.parquet",
+          "rows": 2500000,
+          "bytes": 28916496,
+          "first_utc": "2009-09-25T04:00:08+00:00",
+          "last_utc": "2010-03-16T08:27:52+00:00",
+          "sha256": "fbaeb10efdffac5a2d8bfa5f29e9c5871d89fa4a4d6349ec41f95f477b8bc31b"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_001.parquet",
+          "rows": 2495856,
+          "bytes": 26384320,
+          "first_utc": "2010-03-16T08:27:54+00:00",
+          "last_utc": "2010-08-03T19:35:26+00:00",
+          "sha256": "f476e44d75e9c0d46b9ced3e78fcbf3c04f6b0e41808f361f41541152bc96ee8"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_002.parquet",
+          "rows": 2468975,
+          "bytes": 25422088,
+          "first_utc": "2010-08-03T19:35:28+00:00",
+          "last_utc": "2010-11-01T12:20:11+00:00",
+          "sha256": "3daaeb88abaf0e910cd1b33449be8154cb9755a35d34a11d2e5968b120110efd"
+        }
+      ],
+      "complete": false
+    },
+    "GBP/USD": {
+      "advertised_first_utc": "2009-09-25T04:00:08+00:00",
+      "advertised_last_utc": "2026-07-31T20:59:05+00:00",
+      "parts": [
+        {
+          "file": "fx_GBP_USD_1s.parquet",
+          "rows": 2500000,
+          "bytes": 29419188,
+          "first_utc": "2009-09-25T04:00:08+00:00",
+          "last_utc": "2010-03-26T00:13:54+00:00",
+          "sha256": "cc981b5790b5b0e2e73e5b412911b9651eed81acca635964f99adb6cfc51e7e3"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_001.parquet",
+          "rows": 2499767,
+          "bytes": 26637219,
+          "first_utc": "2010-03-26T00:14:00+00:00",
+          "last_utc": "2010-08-19T13:50:09+00:00",
+          "sha256": "9e5e6715bb43472d5f9b59c3de45b901b1fd6a8318252ad1351c9c66700bc0ac"
+        }
+      ],
+      "complete": false
+    },
+    "AUD/USD": {
+      "advertised_first_utc": "2009-09-25T04:00:00+00:00",
+      "advertised_last_utc": "2026-07-31T20:59:05+00:00",
+      "parts": [
+        {
+          "file": "fx_AUD_USD_1s.parquet",
+          "rows": 2500000,
+          "bytes": 27904371,
+          "first_utc": "2009-09-25T04:00:00+00:00",
+          "last_utc": "2010-05-05T11:01:26+00:00",
+          "sha256": "2caff1e800dd3c033f481695b0ac6746c3fd41699f6da1d2cbad06771058deaf"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_001.parquet",
+          "rows": 2490506,
+          "bytes": 26153259,
+          "first_utc": "2010-05-05T11:01:28+00:00",
+          "last_utc": "2010-09-14T16:01:35+00:00",
+          "sha256": "8a5bfda2a341b1cdb7b4e73a3faa6e9870445486356fcc912fbf10b4ca3a3b2e"
+        }
+      ],
+      "complete": false
+    },
+    "NZD/USD": {
+      "advertised_first_utc": "2009-09-25T04:00:04+00:00",
+      "advertised_last_utc": "2026-07-31T20:59:05+00:00",
+      "parts": [
+        {
+          "file": "fx_NZD_USD_1s.parquet",
+          "rows": 2500000,
+          "bytes": 29043992,
+          "first_utc": "2009-09-25T04:00:04+00:00",
+          "last_utc": "2010-08-12T17:01:39+00:00",
+          "sha256": "9ba671de689bc3ff5fd6ef01a2cc1f274f1ae8250e491afe9bc388b6cbed7f80"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_001.parquet",
+          "rows": 2483960,
+          "bytes": 25128116,
+          "first_utc": "2010-08-12T17:01:41+00:00",
+          "last_utc": "2011-01-04T06:14:46+00:00",
+          "sha256": "9fc3349944049b14dc7e196dcf9ff240882089619fdb305065c73ab6e740c3a5"
+        }
+      ],
+      "complete": false
+    }
+  }
+}

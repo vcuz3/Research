@@ -1,0 +1,112 @@
+====================================================================================================
+EXP-0007  HYP-0007  does reversion track the COUNTER CURRENCY's home market?
+====================================================================================================
+Every contract is USD-quoted on a US venue, so the USD leg and the venue
+calendar are common to all seven. The only thing that varies is the OTHER
+currency's home time zone. That is the lever.
+
+PRIMARY IS THE FRESH FOUR ONLY (6A/6C/6N/6S). 6E/6B/6J generated this
+hypothesis from inspected data and cannot test it (rule 26).
+
+-- RULE 9a: four never-before-loaded archives, gated BEFORE any contrast --
+   product  sessions  decisions  bar cov  rv_60 cov  scale cov  slots used
+   6E          3,436    158,056   0.9706   0.9411     0.9575      45
+   6B          3,437    158,102   0.9143   0.8731     0.8991      45
+   6J          3,437    158,102   0.9657   0.9386     0.9526      45
+   6A          3,436    158,056   0.9547   0.9329     0.9416      45  <- FRESH
+   6C          3,437    158,102   0.8906   0.8371     0.8721      45  <- FRESH
+   6N          3,404    156,584   0.7576   0.6446     0.7034      45  <- FRESH
+   6S          3,435    158,010   0.7984   0.6731     0.7328      44  <- FRESH
+   (all seven share the CME FX session and the 17:00-18:00 ET halt is empty;
+    roll and short sessions are dropped by the same loader rule)
+
+-- RULE 23: the three consumed products must reproduce EXP-0005 ----------
+   product   asia     ldn_am   overlap  ny_pm    vs EXP-0005
+   6E       +0.0522  +0.0119  -0.0153  +0.0069   PASS
+   6B       +0.0202  +0.0002  -0.0159  +0.0104   PASS
+   6J       -0.0024  -0.0021  -0.0151  +0.0207   PASS
+   -> reproduced to 4dp
+
+-- THE PREREGISTERED PREDICTION: home-market openness by block ------------
+   Uniform 08:00-17:00 LOCAL, Mon-Fri, from each currency's OWN tz with real
+   DST. No per-product schedule, so no free parameters.
+
+   product  home market        asia   ldn_am  overlap  ny_pm   predicted best
+   6E       Frankfurt (EUR)    0.104   0.997   0.765   0.000   ny_pm
+   6B       London (GBP)       0.000   0.981   0.997   0.012   asia
+   6J       Tokyo (JPY)        0.888   0.131   0.000   0.000   overlap
+   6A       Sydney (AUD)       0.842   0.000   0.000   0.049   ldn_am
+   6C       Toronto (CAD)      0.000   0.000   0.997   0.953   asia
+   6N       Wellington (NZD)   0.417   0.000   0.000   0.212   ldn_am
+   6S       Zurich (CHF)       0.095   0.950   0.758   0.000   ny_pm
+
+-- OBSERVED risk-equalised reversion by block ----------------------------
+   product      asia   ldn_am  overlap   ny_pm   observed best  PREDICTED  hit
+   6E       +0.0522  +0.0119  -0.0153  +0.0069   asia         ny_pm      no
+   6B       +0.0202  +0.0002  -0.0159  +0.0104   asia         asia       YES
+   6J       -0.0024  -0.0021  -0.0151  +0.0207   ny_pm        overlap    no
+   6A       +0.0423  -0.0024  -0.0046  +0.0137   asia         ldn_am     no FRESH
+   6C       +0.0259  +0.0133  +0.0075  +0.0169   asia         asia       YES FRESH
+   6N       -0.0040  -0.0059  -0.0021  +0.0073   ny_pm        ldn_am     no FRESH
+   6S       +0.0258  +0.0147  +0.0053  +0.0084   asia         ny_pm      no FRESH
+   argmax agreement: FRESH 1/4   consumed 1/3   (p=1/4 per product under a uniform null)
+   observed BEST-block marginal across all seven: asia 71%, ny_pm 29%
+   expected FRESH hits under that marginal: 1.00 vs 1 observed
+   [if one block wins for most products, an argmax 'hit' on it is nearly
+    free and the uniform 1/4 null materially overstates the evidence]
+
+-- PRIMARY (declared in HYP-0007): fresh four, slot level ----------------
+   Pooled within-product-demeaned Spearman(home_open, per-bet reversion)
+   across the 46 decision slots. Negative = reversion falls as the home
+   market opens = H_home supported.
+
+   rho_fresh = +0.0526
+     circular-shift null  mean +0.0009  sd 0.0935   p(null <= real) = 0.7103   <- PRIMARY NULL
+     plain-shuffle null   mean -0.0004  sd 0.0756   p = 0.7605   [anti-conservative, contrast only]
+
+-- SECONDARIES (declared, reported, not part of the kill test) -----------
+   all seven products      rho -0.0722   circular p 0.1758   [3 of 7 are consumed data]
+   consumed three only     rho -0.2342   [the sample that generated the hypothesis]
+
+   per-product Spearman(openness, reversion) at BLOCK level, exact 24-perm null:
+   product   rho      p(exact)   n blocks
+   6E       +0.0000    0.5417   4
+   6B       -1.0000    0.0417   4
+   6J       -0.1054    0.5000   4
+   6A       +0.9487    1.0000   4  FRESH
+   6C       -0.6325    0.2500   4  FRESH
+   6N       +0.2108    0.6667   4  FRESH
+   6S       +0.0000    0.5417   4  FRESH
+
+   per-product Spearman at SLOT level (46 slots, circular-shift p):
+   product   rho      p(circ)
+   6E       -0.2138   0.2889
+   6B       -0.2704   0.1333
+   6J       -0.2185   0.0889
+   6A       +0.2908   0.7556  FRESH
+   6C       +0.0176   0.5333  FRESH
+   6N       -0.1529   0.2667  FRESH
+   6S       +0.0561   0.7500  FRESH
+
+-- CONTROL: partial out per-slot volatility (EXP-0004's confound) --------
+   fresh four  raw +0.0211   | volatility +0.0055
+   all seven   raw -0.0819   | volatility -0.0992
+
+-- COSTS (rules 19, 20): six of seven products changed tick mid-sample ---
+   product  era        tick     best block gross  optimistic RT   net $/bet
+   6E       2016-2023  5e-05            +0.2883           1.0       -8.90
+   6B       2016-2023  0.0001           +0.1146           2.0      -11.78
+   6J       2016-2023  5e-07            +0.4118           1.0       -7.35
+   6A       2016-2023  5e-05            +0.1755           1.0       -8.25
+   6C       2016-2023  5e-05            +0.0927           1.0       -9.07
+   6N       2016-2023  5e-05            +0.1278           1.0       -8.72
+   6S       2016-2023  5e-05            +0.1260           1.0      -10.93
+   [gross is the product's BEST block in native units; RT assumes a 1-tick
+    market and a fill at the touch both sides -- the most optimistic model]
+
+-- KILL TEST (declared before the fresh archives were loaded) ------------
+   1. sign   rho_fresh < 0 ?                FAIL   (rho +0.0526)
+   2. null   circular-shift p < 0.05 ?      FAIL   (p 0.7103)
+
+   => H_home REJECTED. The post-hoc pattern from EXP-0005 does not
+      survive on fresh products, and finding C's mechanism stays OPEN.

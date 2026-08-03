@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0001",
+  "hypothesis_id": "HYP-0001",
+  "status": "completed",
+  "declared_utc": "2026-08-02T10:34:44.218251+00:00",
+  "config_path": "core/vwap.py",
+  "data_scope": "6E and 6B, 1-minute Databento `GLBX.MDP3` continuous front, CME trade",
+  "code_ref": "3d21fe1+worktree",
+  "run_command": "python -u -m futures.forex.vwap_exploration.scripts.hyp_0001_anatomy",
+  "primary_metric": "R_sep = median over decisions of |VWAP-TWAP| / scale_vwap (causal trailing same-slot mean |close-VWAP|)",
+  "builder": "Claude (Opus 5)",
+  "outputs": [],
+  "closed_utc": "2026-08-02T10:37:46.335420+00:00",
+  "result_summary": "NOT KILLED both products: R_sep 0.2592 (6E) / 0.2493 (6B) vs 0.10 kill line; corr(dev_vwap,dev_twap) 0.957/0.958 vs 0.99 kill line; anchors disagree on side 7.1% of decisions. Volume weighting is a real non-degenerate operation on FX futures (it is NOT on spot). Separation grows 7.4-8.0x through the session and is era-stable.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

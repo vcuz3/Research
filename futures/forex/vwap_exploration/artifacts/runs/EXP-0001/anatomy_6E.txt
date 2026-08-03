@@ -1,0 +1,65 @@
+==============================================================================
+EXP-0001  HYP-0001  VWAP vs TWAP anatomy   6E  (EUR/USD future)
+==============================================================================
+decisions 158,056   sessions 3,436   2010-06-07 -> 2023-12-29   (holdout (2024, 2025, 2026) sealed)
+
+-- 1. intraday volume profile (share of session volume by 30-min slot) ----
+   ET     share    ET     share    ET     share    ET     share
+    18:00   0.51%         18:30   0.32%         19:00   0.46%         19:30   0.50%       
+    20:00   0.78%         20:30   0.79%         21:00   0.70%         21:30   0.71%       
+    22:00   0.59%         22:30   0.56%         23:00   0.49%         23:30   0.45%       
+    00:00   0.43%         00:30   0.50%         01:00   0.64%         01:30   0.80%       
+    02:00   1.83%         02:30   2.00%         03:00   3.80%         03:30   3.16%       
+    04:00   3.16%         04:30   2.90%         05:00   2.83%         05:30   2.50%       
+    06:00   2.44%         06:30   2.28%         07:00   2.52%         07:30   2.88%       
+    08:00   3.95%         08:30   6.35%         09:00   4.87%         09:30   5.73%       
+    10:00   6.38%         10:30   5.84%         11:00   4.98%         11:30   3.40%       
+    12:00   2.75%         12:30   2.28%         13:00   2.01%         13:30   1.80%       
+    14:00   2.16%         14:30   2.30%         15:00   1.58%         15:30   1.35%       
+    16:00   0.65%         16:30   0.48%       
+   flat profile would be 2.17% per slot; observed max 6.38% at ET 10:00, min 0.32%
+   concentration: top-4 slots hold 24.3% of session volume; HHI 0.0354 vs 0.0217 if flat (= 1.63x)
+
+-- 2. |VWAP - TWAP| against the displacement it is used to measure --------
+   R_sep = |VWAP - TWAP| / (causal trailing same-slot mean |close - VWAP|)
+
+   block      n        med |sep| pip   med scale pip   med R_sep   p90 R_sep
+   asia        57,464          0.774           5.684       0.148       0.602
+   ldn_am      33,823          4.369          12.348       0.356       1.086
+   overlap     27,108          7.242          18.818       0.389       1.100
+   ny_pm       32,939          7.299          21.571       0.331       0.926
+   POOLED     151,334          2.976          12.577       0.259       0.918
+   16:29 ET      3,189          6.640          22.112       0.287       0.786
+   shape control: median |sep| is 1.103 pip in the Asia block and 7.304 pip in ny_pm (6.62x)
+
+-- 3. do the two deviations carry the same numbers? ----------------------
+   corr(dev_vwap, dev_twap)      pearson 0.95691   spearman 0.95026
+   corr(dev_vwap_z, dev_twap_z)  pearson 0.95810
+     asia      pearson 0.96509   n 58,274
+     ldn_am    pearson 0.95647   n 34,273
+     overlap   pearson 0.95790   n 27,468
+     ny_pm     pearson 0.95799   n 33,389
+   the two anchors put price on OPPOSITE sides 7.12% of the time (a VWAP gate and a TWAP gate would disagree this often)
+
+-- 4. era control ---------------------------------------------------------
+   year      n     med |sep| pip   med R_sep   corr(dev,dev)   med vol/bar
+   2010    4,518          6.413       0.348         0.95831           122
+   2011   11,484          6.219       0.284         0.95449           121
+   2012   11,294          4.323       0.291         0.95622            97
+   2013   10,937          3.103       0.272         0.95498            93
+   2014   10,451          2.689       0.300         0.94382            76
+   2015   11,261          4.470       0.286         0.95734            94
+   2016   11,307          3.089       0.270         0.94803            71
+   2017   11,392          2.694       0.258         0.95759            86
+   2018   11,498          3.100       0.280         0.96147           109
+   2019   11,314          1.395       0.182         0.96905            78
+   2020   11,479          2.545       0.246         0.96410            87
+   2021   11,412          1.976       0.227         0.96687            78
+   2022   11,549          3.184       0.271         0.95989            89
+   2023   11,438          2.252       0.214         0.96501            83
+
+-- KILL TEST (declared in HYP-0001 before the run) ------------------------
+   R_sep pooled median   0.2592   (kill if < 0.1;  'materially different' if > 0.25)
+   corr(dev_vwap,dev_twap) 0.95691   (kill if > 0.99)
+   -> R_sep kill triggered:  False
+   -> corr  kill triggered:  False

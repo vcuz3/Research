@@ -1,0 +1,19 @@
+{
+  "pairs": ["EURUSD", "GBPUSD"],
+  "validation_start": "2021-01-01T00:00:00Z",
+  "validation_end": "2024-01-01T00:00:00Z",
+  "min_session_coverage": 0.95,
+  "rsi_length": 14,
+  "rsi_low": 30.0,
+  "rsi_low_floor": 25.0,
+  "rsi_high": 70.0,
+  "rsi_high_cap": 75.0,
+  "atr_length": 14,
+  "atr_multiplier": 2.0,
+  "targets": ["midpoint"],
+  "signal_start_slot": 420,
+  "signal_end_slot_start": 775,
+  "max_trades_per_day": 1,
+  "cost_pips": [0.0, 0.5, 1.0],
+  "pip_size": {"EURUSD": 0.0001, "GBPUSD": 0.0001}
+}

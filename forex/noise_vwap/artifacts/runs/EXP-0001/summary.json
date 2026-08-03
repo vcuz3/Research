@@ -1,0 +1,33 @@
+{
+  "lookback": 90,
+  "step": 30,
+  "primary_cost": 0.5,
+  "costs": [
+    0.25,
+    0.5,
+    1.0
+  ],
+  "kill_test": {
+    "fxday": {
+      "median_gross_pips_per_trade": -0.547713403833989,
+      "gross_gate_pass": false,
+      "pairs_over_sharpe_0p30": 0,
+      "net_gate_pass": false,
+      "verdict": "REJECT"
+    },
+    "active": {
+      "median_gross_pips_per_trade": -0.4553883835572783,
+      "gross_gate_pass": false,
+      "pairs_over_sharpe_0p30": 0,
+      "net_gate_pass": false,
+      "verdict": "REJECT"
+    }
+  },
+  "n_cells": 288,
+  "pairs": [
+    "EURUSD",
+    "GBPUSD",
+    "AUDUSD",
+    "NZDUSD"
+  ]
+}

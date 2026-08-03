@@ -1,0 +1,118 @@
+====================================================================================================
+EXP-0006  HYP-0006  RSI(14) vs the trailing return it is built from   6E  (EUR/USD future)
+====================================================================================================
+RSI(n) = 50 + 50*A_n(dp)/A_n(|dp|) EXACTLY. On this grid dp IS past_30, so
+RSI(14) is a re-NORMALISED sibling of finding B's incumbent, not a new idea.
+
+bet: fade the extreme (short >= 70, long <= 30), entry open(m+1),
+exit close(m+30). Unit = 0.0001 of quote = $12.50.
+decisions 158,056   sessions 3,436   2010-06-07 -> 2023-12-29   (holdout (2024, 2025, 2026) sealed)
+
+-- RULE 9a: where is RSI undefined, and does it track liquidity? ----------
+   A 14-period feature that resets at session-sequence breaks deletes
+   decisions. If the deletion tracks time-of-day liquidity it is a hidden
+   filter (finding G).
+
+   A recursive feature does not merely drop the bar it is missing: under a
+   RESET policy the run needs n fresh increments, and on a 30-minute grid
+   n=14 is ~7 HOURS, so the deletion lands in a DIFFERENT BLOCK from the gap
+   that caused it. Both policies are reported; `bridge` is used throughout.
+
+   block      decisions  missing bar   rsi BRIDGE   rsi RESET   reset cost
+   asia          61,848       0.0578       0.9418      0.5773   +0.3645
+   ldn_am        34,360       0.0025       0.9975      0.7305   +0.2669
+   overlap       27,488       0.0007       0.9993      0.9782   +0.0210
+   ny_pm         34,360       0.0283       0.9717      0.9544   +0.0173
+   across-block coverage spread   BRIDGE 0.0575   RESET 0.4010
+   NOTE the displacement: the block with the most missing bars is NOT the
+   block whose RSI coverage collapses under `reset`.
+
+-- THE DECOMPOSITION, on real bars ---------------------------------------
+   corr(rsi, its own numerator)            +0.9732
+   corr(rsi, past_30)  [ONE increment]     +0.3039
+   corr(numerator, past_30)                +0.2970
+   corr(rsi, its own denominator)          +0.0144
+   [if rsi ~ numerator, the denominator is not separating anything]
+
+-- COMMON SAMPLE and the selection rate set by the canonical 70/30 cut ----
+   common rows (y30 and ALL four signals defined): 138,798 of 158,056 decisions = 87.82%
+   70/30 fires on 14,854 of 138,798 = 10.7019%
+   Every comparator below is matched to THIS rate ON THESE ROWS
+   (LEARNINGS 2026-07-27): an unmatched comparison, or one taken on a
+   different denominator, reads a selectivity dial rather than a signal.
+
+-- CALIBRATION: is the fixed 70/30 cut a TIME-OF-DAY selector? ------------
+   RSI's denominator is a TRAILING window, so it lags volatility
+   transitions. The incumbent's denominator is a causal SAME-SLOT scale,
+   which is the construction that exists to prevent exactly this.
+
+   44 slots with >=100 common decisions
+   per-slot selection-rate CV   RSI 70/30 0.3637   incumbent same-slot z 0.0639   ratio 5.69x
+   worst/best slot rate:
+     RSI 70/30   min 4.2772% @ mfo 479   max 17.4247% @ mfo 989   max/min 4.1x
+     incumbent   min 9.5117% @ mfo 1349   max 12.7355% @ mfo 89   max/min 1.3x
+   selection rate by block:
+     asia      RSI 6.3968%   incumbent 10.9761%
+     ldn_am    RSI 11.9123%   incumbent 10.4885%
+     overlap   RSI 16.0728%   incumbent 11.0475%
+     ny_pm     RSI 11.5187%   incumbent 10.1692%
+
+-- PRIMARY and the two mandatory controls, ALL at matched selection rate --
+
+   signal                          n      per-bet unit    cl-t    boot95
+   rsi_14 (70/30)                  14,854        +0.1099   +1.13  [-0.0773,+0.3100]
+   rsi_num_14 (bare NUMERATOR)     14,854        +0.1148   +0.87  [-0.1437,+0.3685]
+   dev_past30_z (INCUMBENT)        14,854        +0.2306   +2.03  [+0.0188,+0.4498]
+   past_30 raw (no normaliser)     15,116        +0.0415   +0.32  [-0.1933,+0.3194]
+   rsi_14 at matched rate          14,854        +0.1099   +1.13  [-0.0770,+0.3076]
+
+-- INCREMENTAL INFORMATION: partial out the trailing return --------------
+   IC(rsi_14, fwd_30)              -0.03003
+   IC(rsi_14, fwd_30 | past_30)    -0.01879   retained 62.6%
+   for reference, incumbent IC      -0.03926
+
+-- NEIGHBOURING WINDOWS (rule 18) ----------------------------------------
+   n      sel rate    per-bet unit    cl-t
+   7       25.1934%        +0.1887   +2.97
+   14      10.7019%        +0.1099   +1.13
+   28       2.4799%        +0.1229   +0.57
+
+-- CONTROL: size the shared-decision-bar artifact on this signal ----------
+   honest entry=open(m+1)  +0.1099  t +1.13
+   naive  entry=close(m)   +0.2053  t +2.17
+   -> honest retains 53.5% of the naive estimate
+
+-- CONTROL: estimand contrast (reported, never used) ---------------------
+   per-bet +0.1099 (t +1.13)  vs  session-averaged +2.9368 (t +19.06, 2,342 sessions)
+   corr(session mean, session count) = -0.4432
+
+-- CONTROL: era stability and era-appropriate costs (rules 19, 20) -------
+   year       n    per-bet unit    cl-t
+   2010     531        +0.2957   +0.52
+   2011   1,039        +0.0318   +0.05
+   2012   1,145        +0.0419   +0.11
+   2013   1,033        +0.0048   +0.01
+   2014     915        +1.0142   +1.99
+   2015   1,091        -0.3621   -0.91
+   2016   1,094        +0.0233   +0.07
+   2017   1,145        -0.1004   -0.40
+   2018   1,211        +0.3782   +1.49
+   2019   1,090        -0.0573   -0.28
+   2020   1,073        +0.3089   +1.20
+   2021   1,089        +0.1837   +0.79
+   2022   1,086        +0.2753   +0.79
+   2023   1,312        -0.2134   -0.92
+   sign stability: 10/14 years positive
+
+   2010-2015: tick 0.0001 = 1.0 unit; gross +0.1349 vs optimistic round trip 2.0 -> net -1.8651 unit ($-23.31/bet)
+   2016-2023: tick 5e-05 = 0.5 unit; gross +0.0941 vs optimistic round trip 1.0 -> net -0.9059 unit ($-11.32/bet)
+
+-- KILL TEST (declared in HYP-0006 before RSI touched real bars) ---------
+   1. sign/signif  M>0 and CI excludes 0?     FAIL   (+0.1099, CI [-0.0773,+0.3100])
+   2. bare NUMER.  RSI beats its numerator?   FAIL   (+0.1099 vs +0.1148)
+   3. INCUMBENT    RSI beats past30_z?        FAIL   (+0.1099 vs +0.2306)
+   4. incremental  partial IC >= 50% of raw?  PASS   (-0.01879 vs -0.03003)
+
+   Arms 2 and 3 are the ones that matter: a signal that cannot beat its own
+   numerator, or the incumbent it is a re-normalisation of, has added
+   nothing regardless of whether it clears zero.

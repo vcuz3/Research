@@ -1,0 +1,64 @@
+=== EXP-0017b -- POST-HOC: where does implied volatility pay? (NQ) ===
+NOT a gate. The preregistered gates are in hyp_0014_implied_vol.py; KT2 and KT4
+failed on both markets. This asks whether the aggregate metric hid a pocket.
+
+evaluated on 28,942 rows, 2,646 sessions, 2016..2026
+
+--- 1. expansion-call skill over persistence, BY PREMIUM QUINTILE ---
+q5 = options unusually rich vs what the last 30 minutes realised, for this slot.
+If VIX pays anywhere, the core_vix-minus-core gap should WIDEN toward q5.
+
+quintile         n  mean vrp_z realised/pred           core       core_vix    core_pastrv   core_levels3   vix-core
+q1             707      -1.573         0.992        -0.1869        +0.0351        -0.0569        +0.0381    +0.2220
+q2           1,187      -0.518         1.044        -0.0487        +0.0447        +0.0094        +0.0691    +0.0933
+q3           1,940      +0.059         1.060        -0.0702        +0.0269        -0.0163        +0.0417    +0.0971
+q4           3,139      +0.600         1.111        +0.0160        +0.0688        +0.0397        +0.0869    +0.0528
+q5           4,610      +1.422         1.169        +0.0901        +0.1090        +0.1333        +0.1689    +0.0189
+
+--- 2. the mechanism's precondition: does a rich premium PRECEDE expansion? ---
+if log(realised_fwd / realised_past) does not rise with the premium, there is no
+anticipation channel for any model to exploit, however it is featurised.
+quintile         n  mean log(fwd/past)  P(expansion)  mean fwd bp
+q1           5,789             -0.1953         0.226        34.35
+q2           5,788             -0.1218         0.303        24.85
+q3           5,788             -0.0728         0.360        20.53
+q4           5,788             -0.0161         0.434        17.39
+q5           5,789             +0.0699         0.575        14.26
+
+  within-slot IC(vrp_log_slot_z, log(fwd/past)) = +0.3216
+  (positive = a rich premium does mark forward expansion, which is the
+   precondition; it does not by itself mean the model can USE it)
+
+--- 3. the 13:59 slot (mfo 269), which forecasts 14:00-14:30 ET ---
+the FOMC statement window: the most concentrated scheduled intraday volatility
+event in the session, and the place a forward-looking measure should earn most.
+
+slot           n   exp n           core       core_vix    core_pastrv   core_levels3   vix-core
+29         2,630     301        -0.1382        +0.0297        -0.0318        +0.0429    +0.1678
+59         2,635     607        -0.1866        +0.0163        -0.0454        -0.1093    +0.2028
+89         2,639     798        -0.1255        -0.0066        -0.0061        -0.0744    +0.1190
+119        2,640     940        -0.1943        -0.0561        -0.0592        -0.0990    +0.1382
+149        2,645   1,051        -0.0875        +0.0012        +0.0108        +0.0209    +0.0887
+179        2,643   1,160        -0.2099        -0.1229        -0.0937        -0.0536    +0.0870
+209        2,622   1,353        +0.0891        +0.1221        +0.1027        +0.1715    +0.0330
+239        2,622   1,249        -0.0690        -0.0201        +0.0112        +0.1113    +0.0489
+269        2,622   1,410        +0.2295        +0.2300        +0.1925        +0.2324    +0.0004  <-- announcement window
+299        2,622   1,308        -0.1503        -0.0904        -0.0660        +0.0574    +0.0599
+329        2,622   1,406        +0.1846        +0.2343        +0.1836        +0.2759    +0.0497
+
+--- 4. backlog item 13's diagnostic: the core's WORST calls ---
+rank |log(realised/core forecast)| and ask whether implied volatility helps more
+in the tail than in the body. A calendar feature is only worth building if the
+residual is concentrated somewhere identifiable.
+
+error decile         n  mean |log err|           core       core_vix    core_pastrv   vix-core
+d1               2,895          0.0157        +0.9900        +0.8095        +0.9251    -0.1805
+d2               2,894          0.0468        +0.9354        +0.7780        +0.8835    -0.1575
+d3               2,894          0.0790        +0.8365        +0.7038        +0.8022    -0.1327
+d4               2,894          0.1137        +0.7011        +0.6102        +0.6759    -0.0909
+d5               2,894          0.1500        +0.5413        +0.4873        +0.5351    -0.0540
+d6               2,894          0.1902        +0.3774        +0.3781        +0.3891    +0.0007
+d7               2,894          0.2365        +0.2752        +0.3124        +0.2904    +0.0372
+d8               2,894          0.2934        +0.1125        +0.1985        +0.1506    +0.0860
+d9               2,894          0.3749        +0.0078        +0.1153        +0.0591    +0.1074
+d10              2,895          0.5977        -0.0909        +0.0042        -0.0608    +0.0952

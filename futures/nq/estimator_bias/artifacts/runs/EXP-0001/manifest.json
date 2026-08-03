@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0001",
+  "hypothesis_id": "HYP-0001",
+  "status": "completed",
+  "declared_utc": "2026-08-03T09:15:05.459158+00:00",
+  "config_path": "core/arbias.py (GHE_LAGS, H_GRID, lookback=90/min_obs=45)",
+  "data_scope": "NQ/ES 1-minute RTH clean 2011-08..2026-07 (already-consumed exploratory data) plus synthetic AR(1) and fBm. No holdout is involved.",
+  "code_ref": "futures/nq/estimator_bias core/arbias.py + scripts/s1,s2,s3",
+  "run_command": "python -u -m futures.nq.estimator_bias.scripts.{s1_bias_table,s2_pooled_ac1,s3_hurst_gate}",
+  "primary_metric": "per-slot selection-rate CV of the fixed-threshold expanding-window Hurst gate, versus a same-slot z-scored H at matched global selection rate, on NQ and ES.",
+  "builder": "claude",
+  "outputs": [],
+  "closed_utc": "2026-08-03T09:29:27.261370+00:00",
+  "result_summary": "HYP-0001 NOT killed on all 3 cells. Cell A (positive): fixed-threshold expanding-window Hurst gate per-slot selection-rate CV is 2.88-45.59x (NQ, median 23.93x) / 5.90-46.48x (ES, median 21.75x) a matched same-slot z, at all 7 published thresholds; kill threshold was 2.0x. At H>=0.55 the gate fires on 33.5% of 10:00 vs 8.4% of 15:59 NQ decisions (31.7%->5.2% ES). Mechanism is DISPERSION not level (sd compresses 3.80x/3.54x, mean moves 0.02). Degenerate signflip null (true H=0.50) reproduces ~half the ramp. Cell B (predicted null): rule-23 reproduction exact 8/8 to 1e-4; bias correction moves pooled AC1 by <=0.00006 vs a 0.01 threshold -- BUT slot-demeaning cuts it ~half (wilder_10_50 0.4411->0.2198 NQ), ranking preserved. Cell C bounded analytically (max bias 0.00025 at T=44516), not re-run -- declared deviation.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0002",
+  "hypothesis_id": "HYP-0002",
+  "status": "completed",
+  "declared_utc": "2026-08-02T10:34:44.681697+00:00",
+  "config_path": "core/frame.py",
+  "data_scope": "6E and 6B, CME trade dates 2010-06-07 .. 2023-12-29 (EXPLORE),",
+  "code_ref": "3d21fe1+worktree",
+  "run_command": "python -u -m futures.forex.vwap_exploration.scripts.hyp_0002_entry_information",
+  "primary_metric": "per-signal mean pip of fading |dev_vwap_z|>=1.0 at H=30 pooled, session cluster-robust SE + session block-bootstrap CI, reported jointly with the Spearman rank IC",
+  "builder": "Claude (Opus 5)",
+  "outputs": [],
+  "closed_utc": "2026-08-02T10:37:46.758623+00:00",
+  "result_summary": "REJECTED. Arms: sign PASS both; significance FAIL on 6B (t +0.72); shape PASS both (asia reverts, overlap CONTINUES); anchor-specificity FAIL both (degenerate open anchor inside vwap CI). Added degenerate no-anchor arm past30 BEATS every anchor on both (+0.197 t3.92 / +0.384 t5.96 vs vwap +0.131 t2.66 / +0.048 t0.72). Non-tradable: best gross +0.129 pip vs 1.0 pip optimistic round trip. Estimand contrast: session-averaging turns 6B null into +1.030 t+15.06, corr(session mean,count) -0.47. Shared-print artifact: honest retains only 32.4%/12.5% of naive close(m) entry.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

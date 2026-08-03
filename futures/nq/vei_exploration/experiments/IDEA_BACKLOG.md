@@ -110,6 +110,17 @@ material run. Done items link to the run.
     calendar-clustered, per era and per slot. Only if a material share is should a
     calendar feature be built. Unlike volatility persistence, a scheduled dislocation is
     the kind of thing that can plausibly monetize.
+    **UPDATE (EXP-0017): do NOT use VIX as the proxy for this channel.** Spot VIX was
+    tested as exactly that and failed where the mechanism most strongly predicted it would
+    succeed: at the 13:59 slot forecasting the 14:00–14:30 FOMC window its contribution is
+    +0.0004 NQ / +0.0237 ES, the bottom of all eleven slots, while its best slots are the
+    information-poor morning ones — anchoring after a shock, not anticipation of an event.
+    The residual-ranking diagnostic this item asks for is already built
+    (`scripts/hyp_0014b_premium_cell.py` §4) and shows the core's error tail is where any
+    new information must land: VIX helps there (+0.10..+0.13 on deciles 9–10) while
+    *hurting* the easy deciles. Item 13 therefore still stands, but it needs an **explicit
+    event calendar**, or a tenor-matched implied series (VIX1D/VIX9D) — the one instrument
+    that could carry near-term scheduled risk, which 30-day VIX structurally cannot.
 14. ~~**Downside semivariance as the target.**~~ **Done — EXP-0014 / HYP-0011. Channel
     CLOSED.** Claim A (transfer) CONFIRMED on both markets: the frozen recipe applied
     unchanged to `fwd_dsv_bp` retains 92.3% (NQ) / 92.8% (ES) of the within-slot IC delta
@@ -140,13 +151,22 @@ material run. Done items link to the run.
     +0.013 over persistence. Levels are nearly all persistence; deltas are where the
     model lives. Weakest cell = expansion MAGNITUDE (log-MSE skill over persistence
     +0.008 NQ / +0.061 ES), which is exactly what item 13 should improve.
-17. **Trade volatility as the object itself — DATA-BLOCKED, not research-blocked.** A
-    volatility forecast is first-order alpha only where volatility is the traded
-    quantity (short-dated ES/NQ option straddles, variance) or where it can be priced
-    against an implied benchmark. No options data exists in this workspace, and there is
-    no good intraday implied proxy from futures alone. Record as the highest-ceiling
-    direction whose blocking item is data acquisition; do not simulate it without a
-    real quote source.
+17. ~~**Trade volatility as the object itself — DATA-BLOCKED.**~~ **Partly DONE —
+    EXP-0017 / HYP-0014. The data block is LIFTED and the forecast-side question is
+    ANSWERED; the traded-object side remains open.** The premise was wrong on one point:
+    `futures/data/vix/` already held ten contiguous TradingView `CBOE_DLY_VIX, 15` exports
+    covering 2011-08-01..2026-07-17 (101,981 bars, zero duplicate timestamps), so an
+    intraday implied series did exist. Joined causally (`core/vix.py`, staleness 0 min on
+    99.95% of rows), VIX carries real incremental forward-vol information — within-slot IC
+    delta +0.0034 NQ / +0.0063 ES, positive in 11/11 years and 11/11 slots on both markets
+    — but on the declared decision metric it is **beaten by `past_rv30_bp` alone**
+    (+0.0656/+0.0972 against +0.0717/+0.1061) and beaten more decisively by three redundant
+    realised-vol windows (+0.1069/+0.1311). **And the mechanism is reversed:** VIX pays
+    most where implied is unusually CHEAP (just after a realised-vol spike, where the core
+    over-extrapolates) and least at the FOMC window — an ANCHOR, not an ANTICIPATOR.
+    Still open, and now better specified: pricing a forecast against an implied benchmark
+    needs a **tenor-matched** series (VIX1D/VIX9D) or real option quotes; spot 30-day VIX
+    cannot express near-term scheduled risk, which is exactly where it failed.
 18. **Rerun the EXP-0011 shuffled-target placebo on Part B.** The Part-A placebo did not
     centre at zero (null mean +0.0101 NQ / +0.0042 ES vs observed +0.0192 / +0.0160), and
     NQ's confirmed OOS delta of +0.0088 sits inside that Part-A null band. The frozen

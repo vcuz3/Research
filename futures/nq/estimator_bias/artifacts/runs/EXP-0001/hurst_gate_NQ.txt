@@ -1,0 +1,66 @@
+
+===== Study 3 (Cell A): expanding-window Hurst gate -- NQ =====
+sessions=3703  decisions=48139  window grows 30 -> 390 bars within each session
+
+----- per-slot H: real vs two paths with TRUE H = 0.50 -----
+ window      n |    real     sd |  signflip     sd |   fbm05     sd |  real-flip
+     30   3703 |  0.4676 0.1757 |    0.4567 0.1799 |  0.4566 0.1816 |    +0.0109
+     60   3703 |  0.4781 0.1253 |    0.4746 0.1318 |  0.4753 0.1342 |    +0.0035
+     90   3703 |  0.4850 0.0968 |    0.4834 0.1049 |  0.4860 0.1035 |    +0.0015
+    120   3703 |  0.4889 0.0818 |    0.4894 0.0891 |  0.4897 0.0884 |    -0.0005
+    150   3703 |  0.4897 0.0728 |    0.4926 0.0796 |  0.4921 0.0775 |    -0.0028
+    180   3703 |  0.4902 0.0671 |    0.4935 0.0721 |  0.4933 0.0705 |    -0.0034
+    210   3703 |  0.4893 0.0622 |    0.4946 0.0668 |  0.4939 0.0652 |    -0.0053
+    240   3703 |  0.4889 0.0583 |    0.4953 0.0624 |  0.4950 0.0608 |    -0.0064
+    270   3703 |  0.4896 0.0553 |    0.4960 0.0592 |  0.4954 0.0572 |    -0.0064
+    300   3703 |  0.4893 0.0524 |    0.4968 0.0570 |  0.4962 0.0540 |    -0.0075
+    330   3703 |  0.4889 0.0501 |    0.4975 0.0540 |  0.4965 0.0514 |    -0.0087
+    360   3703 |  0.4885 0.0481 |    0.4982 0.0517 |  0.4970 0.0490 |    -0.0097
+    390   3703 |  0.4869 0.0463 |    0.4969 0.0495 |  0.4973 0.0467 |    -0.0100
+  range of the MEAN across slots:  real 0.0225   signflip 0.0415   fbm05 0.0407
+  sd compression first->last slot: real 3.80x   signflip 3.64x   fbm05 3.89x
+
+----- rule 9a: same-slot z coverage (lookback=90, min_obs=45) -----
+  per-slot coverage min 0.9878  max 0.9878  spread 0.0000  (uniform = the pass signal)
+
+----- primary metric: per-slot selection-rate CV, matched global rate ---
+(common sample = both the fixed gate and the same-slot z defined)
+
+  path = real
+   H>=thr    rate   n_sel  CV fixed  CV slot-z   ratio
+     0.35  0.9497 45161.0    0.0835     0.0025   33.08x
+     0.40  0.8823 41958.0    0.1139     0.0049   23.21x
+     0.45  0.7117 33844.0    0.1037     0.0054   19.32x
+     0.50  0.4385 20852.0    0.0372     0.0129    2.88x
+     0.55  0.1837  8738.0    0.4344     0.0136   31.96x
+     0.60  0.0652  3101.0    1.1161     0.0245   45.59x
+     0.65  0.0246  1168.0    1.9474     0.0814   23.93x
+
+  path = signflip
+   H>=thr    rate   n_sel  CV fixed  CV slot-z   ratio
+     0.35  0.9416 44777.0    0.0940     0.0015   62.40x
+     0.40  0.8756 41637.0    0.1288     0.0048   26.63x
+     0.45  0.7236 34408.0    0.1362     0.0113   12.02x
+     0.50  0.4673 22224.0    0.0473     0.0090    5.24x
+     0.55  0.2181 10372.0    0.2643     0.0250   10.56x
+     0.60  0.0793  3773.0    0.8362     0.0299   27.99x
+     0.65  0.0307  1458.0    1.4700     0.0499   29.46x
+
+  path = fbm05
+   H>=thr    rate   n_sel  CV fixed  CV slot-z   ratio
+     0.35  0.9433 44859.0    0.0939     0.0030   30.93x
+     0.40  0.8783 41767.0    0.1278     0.0062   20.49x
+     0.45  0.7264 34545.0    0.1392     0.0091   15.32x
+     0.50  0.4690 22304.0    0.0482     0.0075    6.47x
+     0.55  0.2100  9988.0    0.2922     0.0195   14.99x
+     0.60  0.0760  3613.0    0.9170     0.0380   24.13x
+     0.65  0.0288  1369.0    1.6279     0.0565   28.81x
+
+----- verdict inputs (Cell A kill test: REJECT if ratio <= 2.0) -----
+  usable thresholds: 7 of 7
+  CV ratio  min 2.88x   median 23.93x   max 45.59x
+  fixed-gate CV range: 0.0372 .. 1.9474
+  slot-z   CV range: 0.0025 .. 0.0814   (finding I1 benchmark for a same-slot z: 0.060-0.064)
+  degenerate control -- signflip (true H=0.50) fixed-gate CV: 0.0473 .. 1.4700
+
+artifacts -> C:\Users\VuDoa\Research\futures\nq\estimator_bias\artifacts\runs\EXP-0001

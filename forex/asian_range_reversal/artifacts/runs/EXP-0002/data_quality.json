@@ -1,0 +1,110 @@
+[
+  {
+    "file": "C:\\Users\\VuDoa\\Research\\forex\\data\\eurusd_intraday_1min.csv",
+    "file_bytes": 366417110,
+    "rows": 1107738,
+    "first": "2021-01-03 22:15:00+00:00",
+    "last": "2023-12-29 20:59:00+00:00",
+    "trading_days": 778,
+    "boundary_reached": true,
+    "duplicates": 0,
+    "out_of_order": 0,
+    "gaps_gt_1m": 777,
+    "largest_gap_min": 4501.0,
+    "ohlc_failures": 0,
+    "nonpositive_prices": 0,
+    "volume_minus_one_share": 1.0,
+    "slot_0_day_share": 0.0,
+    "slot_15_day_share": 0.9897172236503856,
+    "session_coverage": [
+      {
+        "session": "Asian",
+        "expected_bars": 420,
+        "median_bars": 405.0,
+        "min_bars": 240,
+        "days_95pct": 770
+      },
+      {
+        "session": "London",
+        "expected_bars": 360,
+        "median_bars": 360.0,
+        "min_bars": 360,
+        "days_95pct": 778
+      },
+      {
+        "session": "NY_AM",
+        "expected_bars": 360,
+        "median_bars": 360.0,
+        "min_bars": 360,
+        "days_95pct": 778
+      },
+      {
+        "session": "NY_PM",
+        "expected_bars": 300,
+        "median_bars": 300.0,
+        "min_bars": 240,
+        "days_95pct": 776
+      }
+    ],
+    "sha256": "aa9530e14c80dc9f702bc02da3b013a0db5042241021cd3c0ca735b93e2c527e",
+    "eligible_days": 768,
+    "excluded_days": 10,
+    "complete_5m_bars": 221547,
+    "rsi_available_bars": 210655,
+    "atr_available_bars": 211433
+  },
+  {
+    "file": "C:\\Users\\VuDoa\\Research\\forex\\data\\gbpusd_intraday_1min.csv",
+    "file_bytes": 363628912,
+    "rows": 1107738,
+    "first": "2021-01-03 22:15:00+00:00",
+    "last": "2023-12-29 20:59:00+00:00",
+    "trading_days": 778,
+    "boundary_reached": true,
+    "duplicates": 0,
+    "out_of_order": 0,
+    "gaps_gt_1m": 777,
+    "largest_gap_min": 4501.0,
+    "ohlc_failures": 0,
+    "nonpositive_prices": 0,
+    "volume_minus_one_share": 1.0,
+    "slot_0_day_share": 0.0,
+    "slot_15_day_share": 0.9897172236503856,
+    "session_coverage": [
+      {
+        "session": "Asian",
+        "expected_bars": 420,
+        "median_bars": 405.0,
+        "min_bars": 240,
+        "days_95pct": 770
+      },
+      {
+        "session": "London",
+        "expected_bars": 360,
+        "median_bars": 360.0,
+        "min_bars": 360,
+        "days_95pct": 778
+      },
+      {
+        "session": "NY_AM",
+        "expected_bars": 360,
+        "median_bars": 360.0,
+        "min_bars": 360,
+        "days_95pct": 778
+      },
+      {
+        "session": "NY_PM",
+        "expected_bars": 300,
+        "median_bars": 300.0,
+        "min_bars": 240,
+        "days_95pct": 776
+      }
+    ],
+    "sha256": "ef92897ce9c6f1fb8aa61970e10a91f51f46462cb23cea737b30e75b22105d8c",
+    "eligible_days": 768,
+    "excluded_days": 10,
+    "complete_5m_bars": 221547,
+    "rsi_available_bars": 210655,
+    "atr_available_bars": 211433
+  }
+]

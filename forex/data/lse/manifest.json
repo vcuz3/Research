@@ -1,0 +1,302 @@
+{
+  "created_utc": "2026-08-03T08:15:25.450174+00:00",
+  "source": "London Strategic Edge vault API",
+  "credential_variable": "londonstrategicedge_api",
+  "fx_request": {
+    "symbols": [
+      "EUR/USD",
+      "GBP/USD",
+      "AUD/USD",
+      "NZD/USD"
+    ],
+    "timeframe": "1s",
+    "range": "full available history"
+  },
+  "economics_request": {
+    "countries": [
+      "United States",
+      "Euro Area",
+      "Australia"
+    ],
+    "series_count_by_country": {
+      "Australia": 176,
+      "Euro Area": 128,
+      "United States": 338
+    }
+  },
+  "files": [
+    {
+      "path": "forex/data/lse/fx/fx_AUD_USD_1s.parquet",
+      "bytes": 27904371,
+      "sha256": "2caff1e800dd3c033f481695b0ac6746c3fd41699f6da1d2cbad06771058deaf",
+      "rows": 2500000,
+      "columns": [
+        "ts",
+        "symbol",
+        "open",
+        "high",
+        "low",
+        "close"
+      ],
+      "coverage": {
+        "first_utc": "2009-09-25T04:00:00+00:00",
+        "last_utc": "2010-05-05T11:01:26+00:00",
+        "duplicate_timestamps": 0,
+        "out_of_order_timestamps": 0,
+        "gaps_over_1_second": 2499999,
+        "largest_gap_seconds": 277450.0
+      },
+      "ohlc_quality": {
+        "null_cells": 0,
+        "invalid_envelopes": 0,
+        "nonpositive_prices": 0
+      },
+      "advertised_last_utc": "2026-07-31T20:59:05.018443+00:00",
+      "complete_through_advertised_last": false,
+      "limitation": "Provider bulk export was silently capped at 2,500,000 rows."
+    },
+    {
+      "path": "forex/data/lse/fx/fx_EUR_USD_1s.parquet",
+      "bytes": 28916496,
+      "sha256": "fbaeb10efdffac5a2d8bfa5f29e9c5871d89fa4a4d6349ec41f95f477b8bc31b",
+      "rows": 2500000,
+      "columns": [
+        "ts",
+        "symbol",
+        "open",
+        "high",
+        "low",
+        "close"
+      ],
+      "coverage": {
+        "first_utc": "2009-09-25T04:00:08+00:00",
+        "last_utc": "2010-03-16T08:27:52+00:00",
+        "duplicate_timestamps": 0,
+        "out_of_order_timestamps": 0,
+        "gaps_over_1_second": 2499999,
+        "largest_gap_seconds": 277198.0
+      },
+      "ohlc_quality": {
+        "null_cells": 0,
+        "invalid_envelopes": 0,
+        "nonpositive_prices": 0
+      },
+      "advertised_last_utc": "2026-07-31T20:59:05.018763+00:00",
+      "complete_through_advertised_last": false,
+      "limitation": "Provider bulk export was silently capped at 2,500,000 rows."
+    },
+    {
+      "path": "forex/data/lse/fx/fx_GBP_USD_1s.parquet",
+      "bytes": 29419188,
+      "sha256": "cc981b5790b5b0e2e73e5b412911b9651eed81acca635964f99adb6cfc51e7e3",
+      "rows": 2500000,
+      "columns": [
+        "ts",
+        "symbol",
+        "open",
+        "high",
+        "low",
+        "close"
+      ],
+      "coverage": {
+        "first_utc": "2009-09-25T04:00:08+00:00",
+        "last_utc": "2010-03-26T00:13:54+00:00",
+        "duplicate_timestamps": 0,
+        "out_of_order_timestamps": 0,
+        "gaps_over_1_second": 2499999,
+        "largest_gap_seconds": 277212.0
+      },
+      "ohlc_quality": {
+        "null_cells": 0,
+        "invalid_envelopes": 0,
+        "nonpositive_prices": 0
+      },
+      "advertised_last_utc": "2026-07-31T20:59:05.022816+00:00",
+      "complete_through_advertised_last": false,
+      "limitation": "Provider bulk export was silently capped at 2,500,000 rows."
+    },
+    {
+      "path": "forex/data/lse/fx/fx_NZD_USD_1s.parquet",
+      "bytes": 29043992,
+      "sha256": "9ba671de689bc3ff5fd6ef01a2cc1f274f1ae8250e491afe9bc388b6cbed7f80",
+      "rows": 2500000,
+      "columns": [
+        "ts",
+        "symbol",
+        "open",
+        "high",
+        "low",
+        "close"
+      ],
+      "coverage": {
+        "first_utc": "2009-09-25T04:00:04+00:00",
+        "last_utc": "2010-08-12T17:01:39+00:00",
+        "duplicate_timestamps": 0,
+        "out_of_order_timestamps": 0,
+        "gaps_over_1_second": 2337347,
+        "largest_gap_seconds": 277272.0
+      },
+      "ohlc_quality": {
+        "null_cells": 0,
+        "invalid_envelopes": 0,
+        "nonpositive_prices": 0
+      },
+      "advertised_last_utc": "2026-07-31T20:59:05.013213+00:00",
+      "complete_through_advertised_last": false,
+      "limitation": "Provider bulk export was silently capped at 2,500,000 rows."
+    },
+    {
+      "path": "forex/data/lse/economics/economics_Australia.parquet",
+      "bytes": 219599,
+      "sha256": "01bc5fa10b20fa4386925a38d05fdbd773492111c3f6b3ed766aef847e78bb64",
+      "rows": 47806,
+      "columns": [
+        "symbol",
+        "date",
+        "value",
+        "series_name",
+        "country"
+      ],
+      "coverage": {
+        "first_date": "1901-01-01",
+        "last_date": "2026-07-20",
+        "series": 176,
+        "duplicate_symbol_dates": 0,
+        "null_values": 0
+      }
+    },
+    {
+      "path": "forex/data/lse/economics/economics_Euro_Area.parquet",
+      "bytes": 215135,
+      "sha256": "23bace3d77e3f3dcdccd7fe8c6364f5825eb7289475c730929eaa03a9a8efdff",
+      "rows": 45113,
+      "columns": [
+        "symbol",
+        "date",
+        "value",
+        "series_name",
+        "country"
+      ],
+      "coverage": {
+        "first_date": "1954-01-01",
+        "last_date": "2026-12-01",
+        "series": 128,
+        "duplicate_symbol_dates": 0,
+        "null_values": 0
+      }
+    },
+    {
+      "path": "forex/data/lse/economics/economics_US.parquet",
+      "bytes": 913180,
+      "sha256": "8a6dcbeee92d70b4d6b4fce7c3b78d6c26ff30794a414a842e9aad1ef6f04f6b",
+      "rows": 223804,
+      "columns": [
+        "symbol",
+        "date",
+        "value",
+        "series_name",
+        "country"
+      ],
+      "coverage": {
+        "first_date": "1900-01-01",
+        "last_date": "2026-07-21",
+        "series": 338,
+        "duplicate_symbol_dates": 0,
+        "null_values": 0
+      }
+    },
+    {
+      "path": "forex/data/lse/economic_calendar/economic_calendar_Australia.parquet",
+      "bytes": 128554,
+      "sha256": "2b6b67ee90a5c68ea48fe9f5352271583052c77a6f862a9c09a9ffce0653872e",
+      "rows": 6723,
+      "columns": [
+        "id",
+        "date",
+        "time",
+        "datetime",
+        "region_code",
+        "event",
+        "period_hint",
+        "actual",
+        "previous",
+        "consensus",
+        "forecast",
+        "actual_revised",
+        "previous_revised",
+        "consensus_revised",
+        "forecast_revised",
+        "created_at",
+        "updated_at"
+      ],
+      "coverage": {
+        "first_utc": "2015-01-04T23:30:00+00:00",
+        "last_utc": "2026-10-30T00:30:00+00:00",
+        "duplicate_ids": 0,
+        "missing_actual": 919
+      }
+    },
+    {
+      "path": "forex/data/lse/economic_calendar/economic_calendar_Euro_Area.parquet",
+      "bytes": 27556,
+      "sha256": "c3df4be5f1b098ae984e295189f5d252a919c82a1b5855ea658c39a534a4d454",
+      "rows": 767,
+      "columns": [
+        "id",
+        "date",
+        "time",
+        "datetime",
+        "region_code",
+        "event",
+        "period_hint",
+        "actual",
+        "previous",
+        "consensus",
+        "forecast",
+        "actual_revised",
+        "previous_revised",
+        "consensus_revised",
+        "forecast_revised",
+        "created_at",
+        "updated_at"
+      ],
+      "coverage": {
+        "first_utc": "2025-09-17T10:10:00+00:00",
+        "last_utc": "2026-10-30T10:00:00+00:00",
+        "duplicate_ids": 0,
+        "missing_actual": 339
+      }
+    },
+    {
+      "path": "forex/data/lse/economic_calendar/economic_calendar_US.parquet",
+      "bytes": 705769,
+      "sha256": "3fe08520a6d8bb7c3add0fa22dc969193e058f6e99c4ad9a6a7b78cce0df9749",
+      "rows": 37381,
+      "columns": [
+        "id",
+        "date",
+        "time",
+        "datetime",
+        "region_code",
+        "event",
+        "period_hint",
+        "actual",
+        "previous",
+        "consensus",
+        "forecast",
+        "actual_revised",
+        "previous_revised",
+        "consensus_revised",
+        "forecast_revised",
+        "created_at",
+        "updated_at"
+      ],
+      "coverage": {
+        "first_utc": "2015-01-02T15:45:00+00:00",
+        "last_utc": "2026-10-30T17:00:00+00:00",
+        "duplicate_ids": 0,
+        "missing_actual": 4813
+      }
+    }
+  ]
+}

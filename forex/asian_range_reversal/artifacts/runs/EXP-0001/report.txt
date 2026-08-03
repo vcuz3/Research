@@ -1,0 +1,84 @@
+EXP-0001 HYP-0001 discovery run
+Verdict: REJECT_INITIAL_SPEC
+Scope: 2012-2020 only; 2021-2023 was not retained or scored.
+Prices: midpoint; costs are hypothetical round-trip pips.
+
+PRIMARY / CORE SUMMARY
+slice   target   pair  cost_pips  trades  trading_days  trades_per_day  mean_gross_pips  mean_net_pips  median_net_pips  win_rate_net  mean_gross_r  daily_mean_pips  daily_sharpe  max_drawdown_pips
+  all midpoint EURUSD        0.0    9402          2286        4.112861        -0.095422      -0.095422        -6.778631      0.339396      0.021782        -0.392458     -0.163283       -1930.329856
+  all midpoint EURUSD        0.5    9402          2286        4.112861        -0.095422      -0.595422        -7.278631      0.336205      0.021782        -2.448888     -1.007928       -5951.585728
+  all midpoint EURUSD        1.0    9402          2286        4.112861        -0.095422      -1.095422        -7.778631      0.333652      0.021782        -4.505319     -1.833375      -10606.026399
+  all midpoint GBPUSD        0.0    9797          2278        4.300702        -0.077791      -0.077791        -8.643852      0.331428      0.004040        -0.334556     -0.106571       -2213.564407
+  all midpoint GBPUSD        0.5    9797          2278        4.300702        -0.077791      -0.577791        -9.143852      0.329489      0.004040        -2.484907     -0.784918       -6478.940088
+  all midpoint GBPUSD        1.0    9797          2278        4.300702        -0.077791      -1.077791        -9.643852      0.327753      0.004040        -4.635258     -1.451317      -11081.610920
+  all opposite EURUSD        0.0    9283          2286        4.060805        -0.176657      -0.176657        -7.358966      0.288807      0.017847        -0.717371     -0.273656       -2791.180392
+  all opposite EURUSD        0.5    9283          2286        4.060805        -0.176657      -0.676657        -7.858966      0.285468      0.017847        -2.747773     -1.039108       -6559.387270
+  all opposite EURUSD        1.0    9283          2286        4.060805        -0.176657      -1.176657        -8.358966      0.283098      0.017847        -4.778176     -1.790341      -11132.376125
+  all opposite GBPUSD        0.0    9671          2278        4.245391        -0.113752      -0.113752        -9.330440      0.285389      0.007130        -0.482920     -0.142660       -2799.883877
+  all opposite GBPUSD        0.5    9671          2278        4.245391        -0.113752      -0.613752        -9.830440      0.283631      0.007130        -2.605615     -0.764671       -7050.003316
+  all opposite GBPUSD        1.0    9671          2278        4.245391        -0.113752      -1.113752       -10.330440      0.281977      0.007130        -4.728311     -1.378000      -11406.503316
+ long midpoint EURUSD        0.0    4813          2286        2.105424        -0.247312      -0.247312        -6.889696      0.332641      0.004194        -0.520698     -0.303029       -2097.691304
+ long midpoint EURUSD        0.5    4813          2286        2.105424        -0.247312      -0.747312        -7.389696      0.329732      0.004194        -1.573410     -0.900279       -4044.167773
+ long midpoint EURUSD        1.0    4813          2286        2.105424        -0.247312      -1.247312        -7.889696      0.327239      0.004194        -2.626122     -1.476050       -6269.139017
+ long midpoint GBPUSD        0.0    5061          2278        2.221686        -0.248197      -0.248197        -8.956795      0.325430     -0.013433        -0.551416     -0.239254       -2743.434120
+ long midpoint GBPUSD        0.5    5061          2278        2.221686        -0.248197      -0.748197        -9.456795      0.323059     -0.013433        -1.662259     -0.711306       -4785.222748
+ long midpoint GBPUSD        1.0    5061          2278        2.221686        -0.248197      -1.248197        -9.956795      0.320688     -0.013433        -2.773102     -1.169702       -7084.222748
+ long opposite EURUSD        0.0    4763          2286        2.083552        -0.297473      -0.297473        -7.447512      0.282175      0.003698        -0.619801     -0.328447       -2790.171874
+ long opposite EURUSD        0.5    4763          2286        2.083552        -0.297473      -0.797473        -7.947512      0.278816      0.003698        -1.661577     -0.866333       -4465.171874
+ long opposite EURUSD        1.0    4763          2286        2.083552        -0.297473      -1.297473        -8.447512      0.276087      0.003698        -2.703353     -1.385885       -6327.638644
+ long opposite GBPUSD        0.0    4989          2278        2.190079        -0.383694      -0.383694        -9.630228      0.276609     -0.023223        -0.840320     -0.340854       -3875.218529
+ long opposite GBPUSD        0.5    4989          2278        2.190079        -0.383694      -0.883694       -10.130228      0.274404     -0.023223        -1.935359     -0.774496       -5807.104864
+ long opposite GBPUSD        1.0    4989          2278        2.190079        -0.383694      -1.383694       -10.630228      0.271998     -0.023223        -3.030399     -1.195944       -8013.074034
+short midpoint EURUSD        0.0    4589          2286        2.007437         0.063882       0.063882        -6.691572      0.346481      0.040228         0.128240      0.074346       -1324.982932
+short midpoint EURUSD        0.5    4589          2286        2.007437         0.063882      -0.436118        -7.191572      0.342994      0.040228        -0.875478     -0.499538       -2592.569097
+short midpoint EURUSD        1.0    4589          2286        2.007437         0.063882      -0.936118        -7.691572      0.340379      0.040228        -1.879197     -1.054409       -4570.628628
+short midpoint GBPUSD        0.0    4736          2278        2.079017         0.104309       0.104309        -8.284642      0.337838      0.022713         0.216860      0.100628       -1354.596251
+short midpoint GBPUSD        0.5    4736          2278        2.079017         0.104309      -0.395691        -8.784642      0.336360      0.022713        -0.822648     -0.376781       -2559.404624
+short midpoint GBPUSD        1.0    4736          2278        2.079017         0.104309      -0.895691        -9.284642      0.335304      0.022713        -1.862157     -0.841311       -4373.326308
+short opposite EURUSD        0.0    4520          2286        1.977253        -0.049346      -0.049346        -7.267602      0.295796      0.032757        -0.097570     -0.051174       -1776.611901
+short opposite EURUSD        0.5    4520          2286        1.977253        -0.049346      -0.549346        -7.767602      0.292478      0.032757        -1.086196     -0.561143       -2945.479337
+short opposite EURUSD        1.0    4520          2286        1.977253        -0.049346      -1.049346        -8.267602      0.290487      0.032757        -2.074823     -1.055112       -4919.218177
+short opposite GBPUSD        0.0    4682          2278        2.055312         0.173891       0.173891        -8.983284      0.294746      0.039473         0.357400      0.151940       -1219.551260
+short opposite GBPUSD        0.5    4682          2278        2.055312         0.173891      -0.326109        -9.483284      0.293464      0.039473        -0.670256     -0.281520       -2093.509063
+short opposite GBPUSD        1.0    4682          2278        2.055312         0.173891      -0.826109        -9.983284      0.292610      0.039473        -1.697912     -0.704230       -3960.614082
+
+EXIT MIX
+  target   pair direction    exit_reason  trades
+midpoint EURUSD      long            eod     696
+midpoint EURUSD      long           stop    3079
+midpoint EURUSD      long stop_ambiguous       4
+midpoint EURUSD      long         target    1034
+midpoint EURUSD     short            eod     730
+midpoint EURUSD     short           stop    2861
+midpoint EURUSD     short stop_ambiguous       3
+midpoint EURUSD     short         target     995
+midpoint GBPUSD      long            eod     687
+midpoint GBPUSD      long           stop    3309
+midpoint GBPUSD      long stop_ambiguous       4
+midpoint GBPUSD      long         target    1061
+midpoint GBPUSD     short            eod     736
+midpoint GBPUSD     short           stop    2995
+midpoint GBPUSD     short         target    1005
+opposite EURUSD      long            eod     798
+opposite EURUSD      long           stop    3281
+opposite EURUSD      long stop_ambiguous       3
+opposite EURUSD      long         target     681
+opposite EURUSD     short            eod     849
+opposite EURUSD     short           stop    3039
+opposite EURUSD     short stop_ambiguous       2
+opposite EURUSD     short         target     630
+opposite GBPUSD      long            eod     794
+opposite GBPUSD      long           stop    3503
+opposite GBPUSD      long stop_ambiguous       4
+opposite GBPUSD      long         target     688
+opposite GBPUSD     short            eod     843
+opposite GBPUSD     short           stop    3162
+opposite GBPUSD     short stop_ambiguous       1
+opposite GBPUSD     short         target     676
+
+SIGNAL/STATE AUDIT
+  target   pair  entries  ignored_signals  ambiguous_signals  invalid_geometry
+midpoint EURUSD     9402            21088                  0                 6
+midpoint GBPUSD     9797            22045                  0                 5
+opposite EURUSD     9283            21213                  0                 0
+opposite GBPUSD     9671            22176                  0                 0

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0004",
+  "hypothesis_id": "HYP-0004",
+  "status": "completed",
+  "declared_utc": "2026-08-03T01:37:32.901808+00:00",
+  "config_path": "core/vol.py",
+  "data_scope": "6E and 6B, CME trade dates 2010-06-07 .. 2023-12-29 (EXPLORE),",
+  "code_ref": "working-tree",
+  "run_command": "python -u -m futures.forex.vwap_exploration.scripts.hyp_0004_vol_stratified_blocks",
+  "primary_metric": "volatility-stratified `asia` \u2212 `overlap` per-bet contrast in",
+  "builder": "Claude (Opus 5)",
+  "outputs": [],
+  "closed_utc": "2026-08-03T01:46:35.873891+00:00",
+  "result_summary": "NOT REJECTED. Finding C is NOT a volatility artifact. Arms 1-2 (reject gate) PASS both products; arm 3 PASS on 6E only; arm 4 (control worked) PASS both. asia-overlap contrast C_raw +0.5300 -> C_adj +0.5657 [+0.2302,+0.8952] on 6E (106.7% retained) and +0.3776 -> +0.2210 [-0.4120,+0.8096] on 6B, while the cells' volatility ratio moved 0.453->0.904 / 0.523->0.998 and effective bet count held 65.0%/59.7% -- matched, not merely weakened. Invariant over 3 stratum counts, a non-overlapping vol window and a looser coverage floor (18 cells each, adj/raw +0.97..+1.16 on 6E, +0.55..+0.95 on 6B). Opposite outcome to LEARNINGS 2026-07-31c, which collapsed +0.0496 to -0.0047. MIRROR ARM DISAGREES ACROSS PRODUCTS: within-block volatility contrast 6E -0.3455 -> +0.1332 (volatility dies, block is the operative label, inventory reading supported) but 6B -0.3439 -> -0.5370 (volatility strengthens). CORRECTION: the past30 dissociation is 6B-only, does NOT replicate on 6E (past30 C_adj +0.5336 vs vwap +0.5657). Rule-9a defect inside the control itself: rv_60 pairwise coverage deleted 29.7% of 6B asia decisions vs 0.1% of overlap; sized with a 0.25 floor and shown to move C_adj by +0.03 pip. Finding C upgraded to confirmed on 6E, provisional on 6B. No change to the project NO-GO: asia is both the largest-gross and widest-spread block, ~3.5x under the optimistic cost floor.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

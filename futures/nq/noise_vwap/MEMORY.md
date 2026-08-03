@@ -494,7 +494,23 @@ the linked reports, code, and run artifacts.
   0.022→0.031→0.046), the chop-regime `low` (keep H≤T) direction is worse
   everywhere (sign confirmed: breakouts want a persistent tape), and H≥0.5 BEATS a
   200-draw matched-count random-signal-drop null on NQ (frac(rand≥real) Sharpe
-  0.03; ES marginal 0.08) — so it is NOT a pure rarity filter. But it does NOT
+  0.03; ES marginal 0.08) — so it is NOT a pure rarity filter. **⚠ THAT POSITIVE
+  FINDING IS QUALIFIED 2026-08-03 by `futures/nq/estimator_bias` EXP-0001 (finding
+  C): it is CONFOUNDED WITH TIME OF DAY and is no longer separately established.**
+  H here is estimated on a session-to-date EXPANDING window (30 bars at the mfo=29
+  decision, 390 at mfo=389) and compared against a FIXED `H_GRID` cut, so the
+  gate's per-slot selection-rate CV runs **2.88–45.59× (NQ, median 23.9×) /
+  5.90–46.48× (ES)** that of a matched same-slot z-score of the same H, at all 7
+  thresholds. At `H≥0.55` it fires on **33.5% of 10:00 decisions vs 8.4% of 15:59
+  decisions (NQ; 31.7%→5.2% ES)** — 4–6× more likely in the morning, where this
+  project separately documents super-diffusion (EXP-0020) and its strongest edge.
+  Mechanism is DISPERSION not level: mean H moves 0.02 across the session while
+  sd compresses 3.8×, and a `signflip` null (real |returns|, random signs, true
+  H=0.50) reproduces about HALF the ramp. The matched-count random null used here
+  matched COUNT, not TIME OF DAY, so it cannot separate the two. **Repair if ever
+  revisited: a slot-matched null, or gate on a same-slot z-scored H.** Nothing
+  deployed is affected (the gate is already rejected as selection/exit/sizing).
+  Evidence: `futures/nq/estimator_bias/reports/FINDINGS.md` §C. But it does NOT
   monetize: it raises per-trade quality (+30% NQ, +38% ES gross/t) while cutting
   exposure ~40%, so total net R FALLS and Sharpe stays below the gate = a
   turnover/capacity lever, the same [[nq-es-crossmarket-confirm]] pattern (better
