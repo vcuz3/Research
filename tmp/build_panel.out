@@ -1,0 +1,172 @@
+DATA QUALITY GATE -- futures/panel/trend_closedform
+generated 2026-08-03 11:23 UTC
+archive   C:\Users\VuDoa\Research\futures\data\databento
+panel     30 products, 30-minute intraday grid
+
+Session key is the CME trade date, sdate = date(t_ET + 6h).  Verified in
+this run: every product has an empty ET block ending 17:59 and resumes at
+18:00 ET, so one session definition covers all five asset classes.
+
+DAILY GRID
+prod cls      sessions       first        last bars/sess  short  rolls  halt_rows
+6A   fx           4156  2010-06-07  2026-07-28      1331      0     65         25
+6B   fx           4155  2010-06-07  2026-07-27      1265      1     65         15
+6C   fx           4155  2010-06-07  2026-07-27      1238      1     65         22
+6E   fx           4156  2010-06-07  2026-07-28      1355      0     65         36
+6J   fx           4156  2010-06-07  2026-07-28      1348      0     65         15
+6N   fx           4155  2010-06-07  2026-07-28      1103      1     65         17
+6S   fx           4155  2010-06-07  2026-07-28      1100      1     65         14
+ES   equity       3849  2011-08-01  2026-07-15      1365      0     60      18115
+NQ   equity       3849  2011-08-01  2026-07-15      1364      0     60      15206
+RTY  equity       2332  2017-07-10  2026-07-17      1329      0     36         47
+YM   equity       4153  2010-06-07  2026-07-17      1348      1     65      16094
+GC   metals       3845  2011-08-01  2026-07-17      1376      1     74      14010
+SI   metals       4148  2010-06-07  2026-07-28      1284      4     83      13577
+HG   metals       4150  2010-06-07  2026-07-27      1291      2     81      11180
+PL   metals       4151  2010-06-07  2026-07-27      1024      2     65       4230
+PA   metals       4145  2010-06-07  2026-07-27       504      8     64       1795
+MGC  metals       4005  2010-10-07  2026-07-28       936     62     79       2068
+CL   energy       4152  2010-06-07  2026-07-28      1369      1    194      18683
+BZ   energy       4052  2010-06-11  2026-07-27       782     92    531       1021
+NG   energy       4152  2010-06-07  2026-07-28      1144      1    198      15374
+HO   energy       4151  2010-06-07  2026-07-27       933      2    211      11254
+RB   energy       4151  2010-06-07  2026-07-27       894      2    267       9869
+MCL  energy       1303  2021-07-12  2026-07-28      1357      0     61          0
+ZT   rates        4158  2010-06-07  2026-07-27       859      1     64        111
+ZF   rates        4159  2010-06-07  2026-07-28      1182      0     66        121
+ZN   rates        4159  2010-06-07  2026-07-28      1266      0     64        253
+ZB   rates        4158  2010-06-07  2026-07-27      1173      1     64        109
+UB   rates        4153  2010-06-07  2026-07-27      1075      6     64         35
+SR3  rates        1411  2019-06-03  2026-07-27       745    633    469          0
+ZQ   rates        2680  2010-06-10  2026-07-27       166   1471   1005         14
+
+MEASURED PRICE INCREMENT (rule 19) -- from the grid, never assumed.
+A product listed with more than one value changed increment mid-sample, so
+a cost quoted in ticks across the whole span is wrong for part of it.
+This is the EFFECTIVE traded grid (largest increment 99% of closes lie on),
+which on a thin product can exceed the exchange minimum -- PA's exchange
+tick is 0.05 throughout, but 99% of its closes sit on 0.5 from 2021, which
+is a wide market rather than a rule change.  For a cost floor the effective
+grid is the more honest input; it is labelled here so it is not mistaken
+for the contract specification.
+prod distinct ticks (year: value)                                          
+6A   2010:0.0001  2020:5e-05                                               
+6B   2010:0.0001                                                           
+6C   2010:0.0001  2016:5e-05                                               
+6E   2010:0.0001  2016:5e-05                                               
+6J   2010:1e-06  2015:5e-07                                                
+6N   2010:0.0001  2021:5e-05                                               
+6S   2010:0.0001  2022:5e-05                                               
+ES   2011:0.25                                                             
+NQ   2011:0.25                                                             
+RTY  2017:0.1                                                              
+YM   2010:1                                                                
+GC   2011:0.1                                                              
+SI   2010:0.005                                                            
+HG   2010:0.0005                                                           
+PL   2010:0.1                                                              
+PA   2010:0.05  2019:0.1  2021:0.5                                         
+MGC  2010:0.1                                                              
+CL   2010:0.01                                                             
+BZ   2010:0.01                                                             
+NG   2010:0.001                                                            
+HO   2010:0.0001                                                           
+RB   2010:0.0001                                                           
+MCL  2021:0.01                                                             
+ZT   2010:0.0078125  2019:0.00390625                                       
+ZF   2010:0.0078125                                                        
+ZN   2010:0.015625                                                         
+ZB   2010:0.03125                                                          
+UB   2010:0.03125                                                          
+SR3  2019:0.005  2022:0.0025  2026:0.005                                   
+ZQ   2010:0.0025  2013:0.005  2019:0.0025                                  
+-> 10 of 30 products changed tick mid-sample.
+
+INTRADAY GRID -- per-slot coverage and causal-window deletions
+cover      = fraction of sessions with a bar in that slot (min over slots)
+x_defined  = fraction of grid rows where the causal same-slot vol window
+             (lookback 90, min_periods 45) yields a usable risk unit
+spread     = max - min of x_defined ACROSS slots.  A large spread is the
+             finding-G hidden liquidity filter: the deletion tracks time
+             of day, so it silently removes an instrument's thin hours.
+prod       rows  slots  cover_min  cover_p05  x_defined   spread
+6A       190098     46      0.970      0.976      0.989    0.012
+6B       190069     46      0.970      0.977      0.989    0.012
+6C       190113     46      0.971      0.977      0.989    0.012
+6E       190107     46      0.970      0.976      0.989    0.012
+6J       190104     46      0.970      0.976      0.989    0.012
+6N       189384     46      0.954      0.976      0.989    0.011
+6S       189893     46      0.970      0.976      0.989    0.011
+ES       175631     46      0.949      0.966      0.988    0.012
+NQ       175624     46      0.949      0.966      0.988    0.012
+RTY      106314     46      0.964      0.964      0.980    0.011
+YM       189511     46      0.937      0.967      0.989    0.012
+GC       175896     46      0.969      0.970      0.988    0.008
+SI       189393     46      0.966      0.968      0.989    0.009
+HG       189906     46      0.969      0.971      0.989    0.009
+PL       189364     46      0.955      0.967      0.989    0.010
+PA       182290     46      0.807      0.865      0.988    0.009
+MGC      179395     46      0.928      0.947      0.988    0.007
+CL       189819     46      0.964      0.965      0.988    0.026
+BZ       163799     46      0.586      0.653      0.984    0.059
+NG       189765     46      0.966      0.967      0.988    0.026
+HO       188403     46      0.943      0.956      0.988    0.031
+RB       187308     46      0.924      0.935      0.987    0.040
+MCL       59342     46      0.934      0.934      0.964    0.025
+ZT       187321     46      0.909      0.939      0.989    0.007
+ZF       189612     46      0.914      0.969      0.989    0.007
+ZN       189654     46      0.914      0.969      0.989    0.007
+ZB       189593     46      0.914      0.969      0.989    0.007
+UB       184658     46      0.888      0.915      0.988    0.009
+SR3       59497     46      0.812      0.826      0.956    0.157
+ZQ        88228     46      0.383      0.400      0.963    0.231
+
+worst across-slot deletion spread: ZQ 0.231, SR3 0.157, BZ 0.059
+
+DAILY RISK UNITS -- causal 63-session trailing scale, min_periods 2/3
+roll_frac = fraction of daily returns that are a contract substitution
+            rather than a return, and are therefore dropped (rule 11).
+prod   x_defined  rolls  roll_frac    sd(x)   mean(x)
+6A         0.974     66      0.016    1.029   -0.0145
+6B         0.974     66      0.016    1.044   -0.0199
+6C         0.974     66      0.016    1.021   -0.0259
+6E         0.974     66      0.016    1.031   -0.0304
+6J         0.974     66      0.016    1.056   -0.0472
+6N         0.974     66      0.016    1.024   -0.0110
+6S         0.974     66      0.016    1.206   -0.0005
+ES         0.973     61      0.016    1.096    0.0513
+NQ         0.973     61      0.016    1.092    0.0574
+RTY        0.966     37      0.016    1.082    0.0147
+YM         0.974     66      0.016    1.088    0.0466
+GC         0.970     75      0.020    1.065    0.0176
+SI         0.970     84      0.020    1.092    0.0183
+HG         0.970     82      0.020    1.057    0.0045
+PL         0.974     66      0.016    1.047   -0.0095
+PA         0.974     65      0.016    1.067    0.0243
+MGC        0.970     80      0.020    1.075    0.0241
+CL         0.943    195      0.047    1.083   -0.0072
+BZ         0.792    532      0.131    1.094    0.0063
+NG         0.942    199      0.048    1.079   -0.0183
+HO         0.939    212      0.051    1.085    0.0144
+RB         0.925    268      0.065    1.061    0.0225
+MCL        0.920     62      0.048    1.120    0.0325
+ZT         0.974     65      0.016    1.078   -0.0119
+ZF         0.974     67      0.016    1.050   -0.0050
+ZN         0.974     65      0.016    1.038    0.0052
+ZB         0.974     65      0.016    1.034    0.0113
+UB         0.974     65      0.016    1.036    0.0087
+SR3        0.427    470      0.333    1.046   -0.0492
+ZQ         0.376   1006      0.375    1.129   -0.0596
+
+Reading: sd(x) near 1 means the causal scale is doing its job; a value
+far from 1 means the 63-session window is a poor forecast for that
+product and its 'risk units' are not comparable to the others'.
+
+HEAVY-ROLL PRODUCTS (>10% of daily returns dropped): ['BZ', 'SR3', 'ZQ']
+On these the volume-ranked continuous front flickers between contracts
+with no dominant leg, so a large minority of returns is unusable and the
+trend signal is built partly from substituted zeros.  They stay in the
+panel -- excluding them would itself be a selection decision -- but every
+headline is repeated without them as a declared robustness arm.
+
+wrote C:\Users\VuDoa\Research\futures\panel\trend_closedform\data\daily.parquet, C:\Users\VuDoa\Research\futures\panel\trend_closedform\data\slot30.parquet, C:\Users\VuDoa\Research\futures\panel\trend_closedform\reports\DATA_QUALITY.txt

@@ -1,9 +1,9 @@
 {
   "created_utc": "2026-08-03T08:19:38.993867+00:00",
-  "updated_utc": "2026-08-03T09:01:10.464807+00:00",
+  "updated_utc": "2026-08-05T00:00:55.354798+00:00",
   "row_cap_per_export": 2500000,
   "exports_cap_per_hour": 5,
-  "next_symbol_index": 1,
+  "next_symbol_index": 3,
   "pairs": {
     "EUR/USD": {
       "advertised_first_utc": "2009-09-25T04:00:08+00:00",
@@ -32,6 +32,342 @@
           "first_utc": "2010-08-03T19:35:28+00:00",
           "last_utc": "2010-11-01T12:20:11+00:00",
           "sha256": "3daaeb88abaf0e910cd1b33449be8154cb9755a35d34a11d2e5968b120110efd"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_003.parquet",
+          "rows": 2483207,
+          "bytes": 25837103,
+          "first_utc": "2010-11-01T12:20:12+00:00",
+          "last_utc": "2011-02-02T18:27:40+00:00",
+          "sha256": "2b437ccc34170a55f63d20923009f79a5a7b4398daf17e7041cf92ceacd06211"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_004.parquet",
+          "rows": 2464807,
+          "bytes": 24752327,
+          "first_utc": "2011-02-02T18:27:50+00:00",
+          "last_utc": "2011-05-03T09:56:41+00:00",
+          "sha256": "4dcf2731281f7d6aac23f904dbde5eb16367d44002a9f02db6387bc884efe698"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_005.parquet",
+          "rows": 2483877,
+          "bytes": 25400884,
+          "first_utc": "2011-05-03T09:56:42+00:00",
+          "last_utc": "2011-07-12T02:33:17+00:00",
+          "sha256": "e48bbcb83e6e33e3611adaa19f0d9d1c1f80511faad387080c637e8b1859ca4a"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_006.parquet",
+          "rows": 2493872,
+          "bytes": 25717507,
+          "first_utc": "2011-07-12T02:33:19+00:00",
+          "last_utc": "2011-09-15T13:20:20+00:00",
+          "sha256": "7b4acb6915a47afc71b6d72d253dbb15e3dbe29792f6ced3c4379db3b9fe77ff"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_007.parquet",
+          "rows": 2465792,
+          "bytes": 25061028,
+          "first_utc": "2011-09-15T13:20:21+00:00",
+          "last_utc": "2011-11-17T16:30:45+00:00",
+          "sha256": "5ded6a4c0d80a901d8c95cda61daa829e57936d91dbcf13f6ce00aeb08e6d98a"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_008.parquet",
+          "rows": 2458857,
+          "bytes": 24255596,
+          "first_utc": "2011-11-17T16:30:46+00:00",
+          "last_utc": "2012-02-03T13:41:24+00:00",
+          "sha256": "65e9ccd7b900e44958b64186ba3d794120d18e879442d1971e1aa2f20802ffa2"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_009.parquet",
+          "rows": 2473638,
+          "bytes": 23526277,
+          "first_utc": "2012-02-03T13:41:25+00:00",
+          "last_utc": "2012-04-18T13:42:25+00:00",
+          "sha256": "4de90139f70f7824ac40333f582f45d571610821983c6e02ec3e6f914dcb36e6"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_010.parquet",
+          "rows": 2471175,
+          "bytes": 23961049,
+          "first_utc": "2012-04-18T13:42:27+00:00",
+          "last_utc": "2012-06-28T23:01:47+00:00",
+          "sha256": "fc7379158a2383d73fac4d220001f7cfd13c73a4610e9473c5948d2858c2bba8"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_011.parquet",
+          "rows": 2453390,
+          "bytes": 24361985,
+          "first_utc": "2012-06-28T23:01:48+00:00",
+          "last_utc": "2012-09-19T23:55:11+00:00",
+          "sha256": "b1256504748ad02cc355f1288e4faf789d741e39d9e6883d6593acc367452cd6"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_012.parquet",
+          "rows": 2456756,
+          "bytes": 23130992,
+          "first_utc": "2012-09-19T23:55:12+00:00",
+          "last_utc": "2012-12-27T09:46:50+00:00",
+          "sha256": "4124aea28190504059e49e1519525e5f76e0a853006da634e3c6d22fef7f2834"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_013.parquet",
+          "rows": 2488577,
+          "bytes": 24321131,
+          "first_utc": "2012-12-27T09:46:51+00:00",
+          "last_utc": "2013-03-28T07:06:49+00:00",
+          "sha256": "4a25071b7d9df8c3feb05a84a6640ec7839c80682593d7aeeddbab2090c8daf5"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_014.parquet",
+          "rows": 2493164,
+          "bytes": 24088208,
+          "first_utc": "2013-03-28T07:06:50+00:00",
+          "last_utc": "2013-06-26T07:17:13+00:00",
+          "sha256": "b0ee58e0ab6b2a2e6939d010eb6034685b65cfb4cbe0791d592bdb3261224fbf"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_015.parquet",
+          "rows": 2489683,
+          "bytes": 23848497,
+          "first_utc": "2013-06-26T07:17:19+00:00",
+          "last_utc": "2013-10-09T05:46:36+00:00",
+          "sha256": "06a5ad62180cb328cc5212b58e55ebced9b5becf486faaf6e8a6ccfa70a4dce6"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_016.parquet",
+          "rows": 2494869,
+          "bytes": 23341109,
+          "first_utc": "2013-10-09T05:46:37+00:00",
+          "last_utc": "2014-02-03T16:13:23+00:00",
+          "sha256": "521d1c7812e31d1a2158cd5d79fba096a02772b448301860e81cf7f87a3cfe1f"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_017.parquet",
+          "rows": 2475343,
+          "bytes": 22894367,
+          "first_utc": "2014-02-03T16:13:24+00:00",
+          "last_utc": "2014-06-16T14:23:04+00:00",
+          "sha256": "fa0fb9dd09aa58b2131b84abc657c025b7dfd675f1d958dd69597e88fe861cf7"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_018.parquet",
+          "rows": 2483519,
+          "bytes": 23549197,
+          "first_utc": "2014-06-16T14:23:05+00:00",
+          "last_utc": "2014-10-20T12:38:34+00:00",
+          "sha256": "5f2eb5a714e18849a371b8a99ad52d84a05eb73539f70c8dd7270408cb9def5c"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_019.parquet",
+          "rows": 2478723,
+          "bytes": 23053106,
+          "first_utc": "2014-10-20T12:38:35+00:00",
+          "last_utc": "2015-01-13T17:55:58+00:00",
+          "sha256": "b790e5020b09efae66eddaa4d9274d424b3630936b5218ad65bc667c620fd900"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_020.parquet",
+          "rows": 2461332,
+          "bytes": 24644394,
+          "first_utc": "2015-01-13T17:55:59+00:00",
+          "last_utc": "2015-04-07T13:33:33+00:00",
+          "sha256": "b85247f98bd70a62f52322b31077823436f5db9b329a589e2838f24c64816d51"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_021.parquet",
+          "rows": 2475709,
+          "bytes": 24695787,
+          "first_utc": "2015-04-07T13:33:34+00:00",
+          "last_utc": "2015-06-26T19:03:27+00:00",
+          "sha256": "71d8bc25eba2b12bc5bdfb6b2ac0ae5b57e079a813d9525a60b1b301189c6703"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_022.parquet",
+          "rows": 2465513,
+          "bytes": 23530469,
+          "first_utc": "2015-06-26T19:03:29+00:00",
+          "last_utc": "2015-09-09T19:27:25+00:00",
+          "sha256": "5289176381449e4b3c4efb493dfdd92f5197c673050accba32dff84025975a42"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_023.parquet",
+          "rows": 2457664,
+          "bytes": 23423226,
+          "first_utc": "2015-09-09T19:27:26+00:00",
+          "last_utc": "2015-11-27T12:47:21+00:00",
+          "sha256": "c5cbbff7355ec5f003673fae5596389ffc4770f2090d28e16343707f58dbb9d3"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_024.parquet",
+          "rows": 2480017,
+          "bytes": 23428511,
+          "first_utc": "2015-11-27T12:47:22+00:00",
+          "last_utc": "2016-02-11T12:09:13+00:00",
+          "sha256": "68d68d682b4620a36a58429469412b4aca10fc38dbdf909f786726fb5909e9e7"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_025.parquet",
+          "rows": 2470368,
+          "bytes": 23019753,
+          "first_utc": "2016-02-11T12:09:14+00:00",
+          "last_utc": "2016-04-28T05:44:31+00:00",
+          "sha256": "c9dadadb71b8262fa056a86b9dd9ac6344cfec44ae9e1099cfd25d52fca2c35c"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_026.parquet",
+          "rows": 2489323,
+          "bytes": 23294274,
+          "first_utc": "2016-04-28T05:44:39+00:00",
+          "last_utc": "2016-07-13T23:42:31+00:00",
+          "sha256": "9e1f449a76136cbd05b2139ed612f77f9e7bf2948ee13f6f48b399df2cff4b97"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_027.parquet",
+          "rows": 2448918,
+          "bytes": 21568115,
+          "first_utc": "2016-07-13T23:42:32+00:00",
+          "last_utc": "2016-10-03T16:37:55+00:00",
+          "sha256": "bde84ad1bc057e8ccf6a7bd6c187538e789693e814af8247a9ee7ca75b0d849f"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_028.parquet",
+          "rows": 2473140,
+          "bytes": 23051049,
+          "first_utc": "2016-10-03T16:37:56+00:00",
+          "last_utc": "2016-12-13T16:04:28+00:00",
+          "sha256": "4783d304fbbc3fa367e24ee73f759b74c3421bca075760a96733a8ed7ae70a04"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_029.parquet",
+          "rows": 2461767,
+          "bytes": 22306777,
+          "first_utc": "2016-12-13T16:04:29+00:00",
+          "last_utc": "2017-02-22T03:09:07+00:00",
+          "sha256": "59417463e680631c0785b5ccd2b9e2c94f57120abe0559ffe2ac09e748bebb6c"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_030.parquet",
+          "rows": 2494324,
+          "bytes": 21982955,
+          "first_utc": "2017-02-22T03:09:08+00:00",
+          "last_utc": "2017-05-10T21:16:25+00:00",
+          "sha256": "9c5a42921b4f9f257b4724a273dc59d73ec36eee82729df115a3ac08eda94f5c"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_031.parquet",
+          "rows": 2461380,
+          "bytes": 22700680,
+          "first_utc": "2017-05-10T21:16:28+00:00",
+          "last_utc": "2017-07-28T05:43:30+00:00",
+          "sha256": "c6f6188968069ca0f2e8b03fba05cef15982b9db0e29820b7fbb85c11e1a97c7"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_032.parquet",
+          "rows": 2490621,
+          "bytes": 22265997,
+          "first_utc": "2017-07-28T05:43:32+00:00",
+          "last_utc": "2017-10-12T07:23:01+00:00",
+          "sha256": "30545b190728713227651875da989fa5eb6c73456f1401d07720116464d2dac4"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_033.parquet",
+          "rows": 2488264,
+          "bytes": 22223915,
+          "first_utc": "2017-10-12T07:23:02+00:00",
+          "last_utc": "2018-01-11T23:55:39+00:00",
+          "sha256": "898e048428f8c07930619d6b7aee7bba141cdb3979d6bcff7e9b211088fadcd0"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_034.parquet",
+          "rows": 2456500,
+          "bytes": 23213241,
+          "first_utc": "2018-01-11T23:55:42+00:00",
+          "last_utc": "2018-03-26T11:55:26+00:00",
+          "sha256": "abed0e44152d006974ed3e8e235767091b4ecef15bf5a18dc91e98f29c10b95e"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_035.parquet",
+          "rows": 2481919,
+          "bytes": 23319414,
+          "first_utc": "2018-03-26T11:55:27+00:00",
+          "last_utc": "2018-06-20T09:14:16+00:00",
+          "sha256": "dba11fd8fd03107795aa1bf855aabc5aa7b420bb4ac5f236c2241134059214ea"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_036.parquet",
+          "rows": 2485952,
+          "bytes": 22911662,
+          "first_utc": "2018-06-20T09:14:17+00:00",
+          "last_utc": "2018-09-10T00:33:41+00:00",
+          "sha256": "420c05e220df17216b08dc3a732c7aff1a6e30401c204b866fa9a7690ceec925"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_037.parquet",
+          "rows": 2499305,
+          "bytes": 22302288,
+          "first_utc": "2018-09-10T00:33:44+00:00",
+          "last_utc": "2018-11-23T05:06:56+00:00",
+          "sha256": "8373f02ef54b15d1ed4175a99a30ea860ad3eb01c3811afb7a56f8f38b5ff079"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_038.parquet",
+          "rows": 2495326,
+          "bytes": 22328818,
+          "first_utc": "2018-11-23T05:06:57+00:00",
+          "last_utc": "2019-02-13T21:08:56+00:00",
+          "sha256": "294dcf33c63da640e5f154e9acc923ac6223b201ff994dfc890012544bc604b8"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_039.parquet",
+          "rows": 2463373,
+          "bytes": 21967830,
+          "first_utc": "2019-02-13T21:09:15+00:00",
+          "last_utc": "2019-05-14T14:23:30+00:00",
+          "sha256": "ecd4c40de484c9ae7b350f123a614bbcce2017679d74a769d85fb9ba7169a5cf"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_040.parquet",
+          "rows": 2477014,
+          "bytes": 21604736,
+          "first_utc": "2019-05-14T14:23:31+00:00",
+          "last_utc": "2019-08-15T07:33:59+00:00",
+          "sha256": "474c08ae226733c9263066d462e26ef1a2c754772795ba5ef0f588093b9e997c"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_041.parquet",
+          "rows": 2488277,
+          "bytes": 21557642,
+          "first_utc": "2019-08-15T07:34:00+00:00",
+          "last_utc": "2019-11-12T07:43:26+00:00",
+          "sha256": "4dedcf2c06513d3ee4e6e3bd02c8816cd5b212b90e0e15e00d032eeb6c65e12d"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_042.parquet",
+          "rows": 2491814,
+          "bytes": 21402130,
+          "first_utc": "2019-11-12T07:43:27+00:00",
+          "last_utc": "2020-02-26T01:25:00+00:00",
+          "sha256": "46ce3c7eb2a12283d64f15b94c8e0a27a46d0fb692080644ad7bf866cbc51733"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_043.parquet",
+          "rows": 2497864,
+          "bytes": 24620688,
+          "first_utc": "2020-02-26T01:25:03+00:00",
+          "last_utc": "2020-04-27T09:29:22+00:00",
+          "sha256": "32f838eec8c278141af81d637cc1faa71e043f6edd5ac44a4fa24e272a63b2bb"
+        },
+        {
+          "file": "fx_EUR_USD_1s_part_044.parquet",
+          "rows": 2480942,
+          "bytes": 22079349,
+          "first_utc": "2020-04-27T09:29:23+00:00",
+          "last_utc": "2020-07-07T08:46:28+00:00",
+          "sha256": "d520403b1c75a2d08c65e13cea65a0a1c61fe2277b2cdc38f2a5f352fea803e0"
         }
       ],
       "complete": false
@@ -55,6 +391,350 @@
           "first_utc": "2010-03-26T00:14:00+00:00",
           "last_utc": "2010-08-19T13:50:09+00:00",
           "sha256": "9e5e6715bb43472d5f9b59c3de45b901b1fd6a8318252ad1351c9c66700bc0ac"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_002.parquet",
+          "rows": 2477627,
+          "bytes": 25134068,
+          "first_utc": "2010-08-19T13:50:14+00:00",
+          "last_utc": "2010-11-24T14:48:48+00:00",
+          "sha256": "79b17938549f0af80297a0cee7928666a62756a7f322cbfbc107a59a4520f122"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_003.parquet",
+          "rows": 2469055,
+          "bytes": 24750284,
+          "first_utc": "2010-11-24T14:48:49+00:00",
+          "last_utc": "2011-02-22T06:25:42+00:00",
+          "sha256": "68002d9ff7ee1778d769b755e32be283784bdf2b18ca9cfa93437766b9bd07bd"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_004.parquet",
+          "rows": 2489674,
+          "bytes": 24818270,
+          "first_utc": "2011-02-22T06:25:43+00:00",
+          "last_utc": "2011-05-24T00:52:44+00:00",
+          "sha256": "a4afa72c03d1c2ef0449cf873d1879d4dad92893aad76b01f6eecb53f3846fb0"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_005.parquet",
+          "rows": 2498233,
+          "bytes": 24951613,
+          "first_utc": "2011-05-24T00:52:47+00:00",
+          "last_utc": "2011-08-15T19:34:17+00:00",
+          "sha256": "f780b82c8049d06dcee0c2537d9c1a6f155416cc657a0626b4090ae4c62eac60"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_006.parquet",
+          "rows": 2474672,
+          "bytes": 25099265,
+          "first_utc": "2011-08-15T19:34:19+00:00",
+          "last_utc": "2011-11-07T01:11:50+00:00",
+          "sha256": "71dd41fcd8f87853b857cd056617a11d3895d24bf3da5b1caf9d9cc0f1c35438"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_007.parquet",
+          "rows": 2498147,
+          "bytes": 24393474,
+          "first_utc": "2011-11-07T01:11:52+00:00",
+          "last_utc": "2012-01-30T00:54:32+00:00",
+          "sha256": "a1b289f9213e9b932c45de57a77d0728c25db8b3f24da30d57abd1fb3a2c2570"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_008.parquet",
+          "rows": 2498715,
+          "bytes": 23645919,
+          "first_utc": "2012-01-30T00:54:33+00:00",
+          "last_utc": "2012-04-26T10:33:23+00:00",
+          "sha256": "1368206b3e434a0ed901566879b83bce8e2f46ba127d2dccfcf6f4273db9fab6"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_009.parquet",
+          "rows": 2482996,
+          "bytes": 24302234,
+          "first_utc": "2012-04-26T10:33:24+00:00",
+          "last_utc": "2012-07-18T10:27:32+00:00",
+          "sha256": "b2e5d7d703d83c03831a70b406e2148951bbb206bb5bb2f1967d3ef063fc02c0"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_010.parquet",
+          "rows": 2482811,
+          "bytes": 23524598,
+          "first_utc": "2012-07-18T10:27:33+00:00",
+          "last_utc": "2012-10-15T23:22:13+00:00",
+          "sha256": "b6403200103c54773a49be936bf7a53fa369bead0990668e845ddbbdf08e6cca"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_011.parquet",
+          "rows": 2463515,
+          "bytes": 22679063,
+          "first_utc": "2012-10-15T23:22:22+00:00",
+          "last_utc": "2013-01-18T14:46:24+00:00",
+          "sha256": "1c8840bfc59642b6100060d01c48afd4d5dc7011e41429d534ba5ba7b9016e2d"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_012.parquet",
+          "rows": 2472101,
+          "bytes": 23305919,
+          "first_utc": "2013-01-18T14:46:25+00:00",
+          "last_utc": "2013-04-12T14:44:08+00:00",
+          "sha256": "2d57d5f0746219fae92d31a6734185a0beda61392fa8c53029017b31a49249f6"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_013.parquet",
+          "rows": 2473373,
+          "bytes": 23657945,
+          "first_utc": "2013-04-12T14:44:11+00:00",
+          "last_utc": "2013-07-02T14:55:12+00:00",
+          "sha256": "d97fb06f37564b442abaa69dccab2176c2797f78a5566572e4cf551e4663369e"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_014.parquet",
+          "rows": 2473816,
+          "bytes": 24529565,
+          "first_utc": "2013-07-02T14:55:13+00:00",
+          "last_utc": "2013-09-30T22:54:31+00:00",
+          "sha256": "46e9e0129ef5df7ed6db77240e270e64a60090d0bb287cd0f0259446407e21b6"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_015.parquet",
+          "rows": 2462972,
+          "bytes": 23279576,
+          "first_utc": "2013-09-30T22:54:32+00:00",
+          "last_utc": "2014-01-13T11:01:53+00:00",
+          "sha256": "b3113b34b2030f678f04f4c01dacb901b8500f66fb75ef17c73a96e8d2beb5db"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_016.parquet",
+          "rows": 2487805,
+          "bytes": 23574411,
+          "first_utc": "2014-01-13T11:01:59+00:00",
+          "last_utc": "2014-05-15T14:07:10+00:00",
+          "sha256": "1fe2b5da80ded74d55e00420df4c4685ec6504e2c26153281fdf440821d46f2e"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_017.parquet",
+          "rows": 2479197,
+          "bytes": 22542787,
+          "first_utc": "2014-05-15T14:07:11+00:00",
+          "last_utc": "2014-09-09T03:00:09+00:00",
+          "sha256": "3bcc8efa0fda4759652133ef207e88f765da3afb47779e13aa1115c76beb45a0"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_018.parquet",
+          "rows": 2496374,
+          "bytes": 23598818,
+          "first_utc": "2014-09-09T03:00:10+00:00",
+          "last_utc": "2014-11-27T00:39:42+00:00",
+          "sha256": "58c8e180bfd972ea53e2a6ce60206435c2de96329f9fcf3a9768280c9f04085e"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_019.parquet",
+          "rows": 2498936,
+          "bytes": 23323077,
+          "first_utc": "2014-11-27T00:39:43+00:00",
+          "last_utc": "2015-02-09T21:01:04+00:00",
+          "sha256": "c9afbdd222dbe065c36ad05a38675f9e937f511c119fc097a95524174a425984"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_020.parquet",
+          "rows": 2470275,
+          "bytes": 25213434,
+          "first_utc": "2015-02-09T21:01:05+00:00",
+          "last_utc": "2015-05-19T11:05:14+00:00",
+          "sha256": "d29b663922aa0e3798f446631b8cc0353549f0ac5a9863bdf2cb1d17bd47979d"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_021.parquet",
+          "rows": 2481751,
+          "bytes": 24601837,
+          "first_utc": "2015-05-19T11:05:15+00:00",
+          "last_utc": "2015-08-05T12:35:23+00:00",
+          "sha256": "658ae50f2a287424107b4747cf5576e38f6b82cefab02a1d1508e9097f7b32d7"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_022.parquet",
+          "rows": 2470576,
+          "bytes": 23199261,
+          "first_utc": "2015-08-05T12:35:24+00:00",
+          "last_utc": "2015-10-16T04:28:26+00:00",
+          "sha256": "353e74337b9e19697f4ed76e442d70dd65f804418f104d63e42bdf5825ee0169"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_023.parquet",
+          "rows": 2494237,
+          "bytes": 23700652,
+          "first_utc": "2015-10-16T04:28:27+00:00",
+          "last_utc": "2016-01-08T11:51:07+00:00",
+          "sha256": "47e6745a2b1145a2d45f2e30561490343d9d526c15dd48d4e324a8e0b147606e"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_024.parquet",
+          "rows": 2476094,
+          "bytes": 24345054,
+          "first_utc": "2016-01-08T11:51:08+00:00",
+          "last_utc": "2016-03-16T11:59:28+00:00",
+          "sha256": "16197d78ff3de04849457323fd5d48fee3c16d43d1e751fa8b495491d4599338"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_025.parquet",
+          "rows": 2478479,
+          "bytes": 24448363,
+          "first_utc": "2016-03-16T11:59:29+00:00",
+          "last_utc": "2016-06-01T09:30:50+00:00",
+          "sha256": "e2ea66024262c4d0619c57905d7a8dc655948070eb873d3aceb3b0319117ced5"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_026.parquet",
+          "rows": 2481694,
+          "bytes": 25411372,
+          "first_utc": "2016-06-01T09:30:51+00:00",
+          "last_utc": "2016-08-08T09:00:41+00:00",
+          "sha256": "c5a073564f1e51686ef36f3ad5e3eb7a2df97f6b0b70798a3147d929e19d2e09"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_027.parquet",
+          "rows": 2487100,
+          "bytes": 24292128,
+          "first_utc": "2016-08-08T09:00:45+00:00",
+          "last_utc": "2016-10-26T14:09:31+00:00",
+          "sha256": "952e5f863b414d77870365e205bca2757c1db60207f234739f9da3892c196ba3"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_028.parquet",
+          "rows": 2470868,
+          "bytes": 23943903,
+          "first_utc": "2016-10-26T14:09:32+00:00",
+          "last_utc": "2017-01-02T23:38:17+00:00",
+          "sha256": "9c99c878d5019f41e9ab0feaf7ef73c7d5e7df59d6f90d5dcd8d34b800b1f497"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_029.parquet",
+          "rows": 2479808,
+          "bytes": 23381711,
+          "first_utc": "2017-01-02T23:38:18+00:00",
+          "last_utc": "2017-03-10T14:33:26+00:00",
+          "sha256": "0140e219816abebbe54774adbb60f2577ab88050f4cc0209dd766a7a1313fd1a"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_030.parquet",
+          "rows": 2477640,
+          "bytes": 23755831,
+          "first_utc": "2017-03-10T14:33:27+00:00",
+          "last_utc": "2017-06-01T00:54:03+00:00",
+          "sha256": "7d89a30927056e6315b28a3473115eec3143da8038fff83d158be3534fdbd0d2"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_031.parquet",
+          "rows": 2498695,
+          "bytes": 22323852,
+          "first_utc": "2017-06-01T00:54:04+00:00",
+          "last_utc": "2017-08-15T02:36:01+00:00",
+          "sha256": "29c159966f3df02c36118a9eaead6ea605e74138207fa97fc49f8ea168945e1d"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_032.parquet",
+          "rows": 2495207,
+          "bytes": 22967445,
+          "first_utc": "2017-08-15T02:36:02+00:00",
+          "last_utc": "2017-10-24T06:42:10+00:00",
+          "sha256": "610069692d7b151bd168a0b3298ab5310f6e9fe659856ba52d2bde8ffbda63cf"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_033.parquet",
+          "rows": 2488985,
+          "bytes": 22001116,
+          "first_utc": "2017-10-24T06:42:11+00:00",
+          "last_utc": "2018-01-05T03:07:45+00:00",
+          "sha256": "266991fdbc43f752779c9d107bb1b94518ff6cbf29ceecddd68fd5db7f431dbf"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_034.parquet",
+          "rows": 2495308,
+          "bytes": 24480263,
+          "first_utc": "2018-01-05T03:07:47+00:00",
+          "last_utc": "2018-03-07T20:48:06+00:00",
+          "sha256": "64e24eb020d58dafc3c88af700a93d90e68926ff6fccc52cba1e6e1d3ae959e9"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_035.parquet",
+          "rows": 2448484,
+          "bytes": 23046255,
+          "first_utc": "2018-03-07T20:48:07+00:00",
+          "last_utc": "2018-05-14T13:13:21+00:00",
+          "sha256": "d8a2e671dd000f7ce04e52d76334528ec0cdad6278edf2773fd136ff5e37568e"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_036.parquet",
+          "rows": 2472483,
+          "bytes": 22328788,
+          "first_utc": "2018-05-14T13:13:22+00:00",
+          "last_utc": "2018-07-20T07:34:41+00:00",
+          "sha256": "bc7771bc63ad458aaa1740a548e801ba942b801e53bdc4d5094386de9e1fe10f"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_037.parquet",
+          "rows": 2483621,
+          "bytes": 22706916,
+          "first_utc": "2018-07-20T07:34:42+00:00",
+          "last_utc": "2018-10-02T09:43:14+00:00",
+          "sha256": "d6786dde29fde8d9139c38888699f6ad8d3aa648cace54443e5ba41dad9ec05e"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_038.parquet",
+          "rows": 2479679,
+          "bytes": 23228595,
+          "first_utc": "2018-10-02T09:43:15+00:00",
+          "last_utc": "2018-12-06T08:28:48+00:00",
+          "sha256": "73348de76f80f82483bd7ca09af81b4ad9f6c82d79ac60a7425a1d991f248d79"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_039.parquet",
+          "rows": 2483006,
+          "bytes": 22523379,
+          "first_utc": "2018-12-06T08:28:50+00:00",
+          "last_utc": "2019-02-13T17:27:12+00:00",
+          "sha256": "5d69bfd2cbea2f6ba4e7a6354cd9b715a0016fe6d094d6032f6f019b378823b0"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_040.parquet",
+          "rows": 2460139,
+          "bytes": 22892829,
+          "first_utc": "2019-02-13T17:27:13+00:00",
+          "last_utc": "2019-04-24T17:10:43+00:00",
+          "sha256": "706e75acb1bc7927a1bb873c4244216fb7660ceeb1c86533fe0b1da9532f48b5"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_041.parquet",
+          "rows": 2460369,
+          "bytes": 22173917,
+          "first_utc": "2019-04-24T17:10:44+00:00",
+          "last_utc": "2019-07-12T06:09:17+00:00",
+          "sha256": "00d9b50847b116372fd24b2d96d4eb82245b56d3b5221f2359cfb6dcae2f355a"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_042.parquet",
+          "rows": 2492018,
+          "bytes": 23328910,
+          "first_utc": "2019-07-12T06:09:19+00:00",
+          "last_utc": "2019-09-26T05:51:39+00:00",
+          "sha256": "1381f16ee315b69b41d40c0e08cae0d1c56687d0554c7a949bc98d4d6932794f"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_043.parquet",
+          "rows": 2491745,
+          "bytes": 22712544,
+          "first_utc": "2019-09-26T05:51:40+00:00",
+          "last_utc": "2019-12-12T14:41:17+00:00",
+          "sha256": "5fa0aabce65b96fa7210ad489206ea2dc7787208e34dfe5c9d2dec965dcc462b"
+        },
+        {
+          "file": "fx_GBP_USD_1s_part_044.parquet",
+          "rows": 2473859,
+          "bytes": 23050134,
+          "first_utc": "2019-12-12T14:41:18+00:00",
+          "last_utc": "2020-03-02T13:47:54+00:00",
+          "sha256": "2ec8dde5729e8ba6491f09aadd230cfef507147f122efbf4ef98812600d2ab79"
         }
       ],
       "complete": false
@@ -78,6 +758,350 @@
           "first_utc": "2010-05-05T11:01:28+00:00",
           "last_utc": "2010-09-14T16:01:35+00:00",
           "sha256": "8a5bfda2a341b1cdb7b4e73a3faa6e9870445486356fcc912fbf10b4ca3a3b2e"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_002.parquet",
+          "rows": 2478547,
+          "bytes": 25168779,
+          "first_utc": "2010-09-14T16:01:36+00:00",
+          "last_utc": "2010-12-10T17:29:32+00:00",
+          "sha256": "0d8b2a5b166b94b9b1643e0750074c98c9149b8e2be15db3a00f608863cc052f"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_003.parquet",
+          "rows": 2468169,
+          "bytes": 23627315,
+          "first_utc": "2010-12-10T17:29:36+00:00",
+          "last_utc": "2011-03-18T18:13:56+00:00",
+          "sha256": "3f66bcab2d4b5d248a9cf6e59546554239515da0efd00830d54a8ff7093418f7"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_004.parquet",
+          "rows": 2469990,
+          "bytes": 24689825,
+          "first_utc": "2011-03-18T18:13:58+00:00",
+          "last_utc": "2011-06-20T06:10:08+00:00",
+          "sha256": "e449b4f71e7b3e8e734a92203c133ec9abb48b44454dfdd3e7dfc6e363a421d1"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_005.parquet",
+          "rows": 2492264,
+          "bytes": 24338952,
+          "first_utc": "2011-06-20T06:10:09+00:00",
+          "last_utc": "2011-09-12T03:43:55+00:00",
+          "sha256": "42dca633c66767213d777cd7f19e7ff0556e06d34a15a41ab7c152cf6fc29d70"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_006.parquet",
+          "rows": 2494624,
+          "bytes": 25674602,
+          "first_utc": "2011-09-12T03:43:56+00:00",
+          "last_utc": "2011-11-23T23:35:39+00:00",
+          "sha256": "45cf363b22a7ccfdcf72d220fe28012570e94a0a98e550639835493aedcc4f06"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_007.parquet",
+          "rows": 2445420,
+          "bytes": 24606140,
+          "first_utc": "2011-11-23T23:35:43+00:00",
+          "last_utc": "2012-02-15T15:09:24+00:00",
+          "sha256": "053d06ef65dc6e82bdba84a4b620974069e078a6f4cfc5992d21f4159a845c98"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_008.parquet",
+          "rows": 2470869,
+          "bytes": 23336192,
+          "first_utc": "2012-02-15T15:09:25+00:00",
+          "last_utc": "2012-05-10T10:12:05+00:00",
+          "sha256": "06a0787e183e445aedf04aa1aa111b7dcc6119723122f2be45a8e71928eddc9e"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_009.parquet",
+          "rows": 2478119,
+          "bytes": 24148871,
+          "first_utc": "2012-05-10T10:12:06+00:00",
+          "last_utc": "2012-07-25T09:15:52+00:00",
+          "sha256": "b11b33ed238cd9ca448559d01c31116f01bc6f6671215f4202475d6f8028d137"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_010.parquet",
+          "rows": 2481722,
+          "bytes": 23350956,
+          "first_utc": "2012-07-25T09:15:53+00:00",
+          "last_utc": "2012-10-22T01:01:35+00:00",
+          "sha256": "3d69af0da4bb47b1f436fc97322b24f9b30d09a3787feb2af4f675c5cca644a9"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_011.parquet",
+          "rows": 2498475,
+          "bytes": 22514885,
+          "first_utc": "2012-10-22T01:01:36+00:00",
+          "last_utc": "2013-02-19T12:40:44+00:00",
+          "sha256": "3223d8d5d26d9a96e6cf341596aed9d5f3bc24ae45cefdda50877e70e2e91031"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_012.parquet",
+          "rows": 2484854,
+          "bytes": 23379936,
+          "first_utc": "2013-02-19T12:40:45+00:00",
+          "last_utc": "2013-06-04T00:24:20+00:00",
+          "sha256": "7dd2c2ed6fe7e28a3629d00fc5196bfe31835b7154ffbdf09b434408ac7ce588"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_013.parquet",
+          "rows": 2499051,
+          "bytes": 24493707,
+          "first_utc": "2013-06-04T00:24:21+00:00",
+          "last_utc": "2013-08-22T12:15:12+00:00",
+          "sha256": "a26c6806775f436059f2f36929f4bb39809b8b9112ce3bce8e9d6c86c2208eeb"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_014.parquet",
+          "rows": 2475283,
+          "bytes": 23716273,
+          "first_utc": "2013-08-22T12:15:13+00:00",
+          "last_utc": "2013-11-29T14:43:56+00:00",
+          "sha256": "febdc96f1849636032605970b65b1c2e13856c3ed5819ddc54c3a8b994a0ad05"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_015.parquet",
+          "rows": 2474306,
+          "bytes": 22894833,
+          "first_utc": "2013-11-29T14:43:58+00:00",
+          "last_utc": "2014-03-23T23:57:58+00:00",
+          "sha256": "5e4cbdb5eeba370aadfa2e8e50d788ca2a3796f474a304f56db8a117a92f8e5d"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_016.parquet",
+          "rows": 2497852,
+          "bytes": 21883506,
+          "first_utc": "2014-03-23T23:58:19+00:00",
+          "last_utc": "2014-08-06T13:36:10+00:00",
+          "sha256": "249714517f5ff9d593c48656dbd7aa35d8403590d09c4fd330b0f07c53e10901"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_017.parquet",
+          "rows": 2484414,
+          "bytes": 22904575,
+          "first_utc": "2014-08-06T13:36:12+00:00",
+          "last_utc": "2014-11-17T05:03:56+00:00",
+          "sha256": "51f36409287bed255c2331524344eecf2f57dae917524c5998d657801c47787c"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_018.parquet",
+          "rows": 2489267,
+          "bytes": 23079733,
+          "first_utc": "2014-11-17T05:04:01+00:00",
+          "last_utc": "2015-02-04T20:29:18+00:00",
+          "sha256": "631c39f59fea0bf8d649a231093f91ee3add632cfdfd64bc521ac76f99924d37"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_019.parquet",
+          "rows": 2458225,
+          "bytes": 22773064,
+          "first_utc": "2015-02-04T20:29:21+00:00",
+          "last_utc": "2015-05-08T19:58:44+00:00",
+          "sha256": "3d68d8f43d88612e6809b08563ef22492f53b8ad03da96f6b1ca21065d8b22e5"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_020.parquet",
+          "rows": 2463168,
+          "bytes": 23836015,
+          "first_utc": "2015-05-08T19:58:55+00:00",
+          "last_utc": "2015-08-05T13:50:58+00:00",
+          "sha256": "a8b954936f9588759e485d3ffa33c132d3073ce0ba69aceb9c070e7a848c0753"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_021.parquet",
+          "rows": 2471938,
+          "bytes": 22576961,
+          "first_utc": "2015-08-05T13:51:01+00:00",
+          "last_utc": "2015-10-28T20:40:11+00:00",
+          "sha256": "02a4b6cfc091f80ac566fd35cec6b15b4bf8f9fc563f474e81e37a9cb536a8db"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_022.parquet",
+          "rows": 2463063,
+          "bytes": 22048107,
+          "first_utc": "2015-10-28T20:40:13+00:00",
+          "last_utc": "2016-01-27T10:52:14+00:00",
+          "sha256": "8707232dff7e44072d13d82555fd2f72f9d9303291a6960aedc2d2fc55be3181"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_023.parquet",
+          "rows": 2475272,
+          "bytes": 22889552,
+          "first_utc": "2016-01-27T10:52:16+00:00",
+          "last_utc": "2016-04-08T17:04:36+00:00",
+          "sha256": "1c92b21e6c07996648c7b1a6115de6602221003b5a081e1b403780ca2ef92731"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_024.parquet",
+          "rows": 2462532,
+          "bytes": 22281885,
+          "first_utc": "2016-04-08T17:04:37+00:00",
+          "last_utc": "2016-06-29T15:54:44+00:00",
+          "sha256": "58dde666c31ce095025136ee561ce504129a832f7c2434cb344ab90b50c8c820"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_025.parquet",
+          "rows": 2466386,
+          "bytes": 21946366,
+          "first_utc": "2016-06-29T15:54:46+00:00",
+          "last_utc": "2016-09-19T10:58:54+00:00",
+          "sha256": "8b452a76657d542666e2d3f0640a31a1bf80b4f011b7c27dcd550d9a0d92956b"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_026.parquet",
+          "rows": 2480785,
+          "bytes": 22600347,
+          "first_utc": "2016-09-19T10:58:58+00:00",
+          "last_utc": "2016-11-30T23:44:27+00:00",
+          "sha256": "b57623d5c5752abf0dcf48af43d5b3c774cbdd47209eddaa18be8ae1a68cba53"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_027.parquet",
+          "rows": 2442287,
+          "bytes": 21736815,
+          "first_utc": "2016-11-30T23:44:28+00:00",
+          "last_utc": "2017-02-07T09:12:50+00:00",
+          "sha256": "63e126b673bdf8862189f0425c3b46a9c900ac94d7a1f29698ce805acf54ac95"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_028.parquet",
+          "rows": 2481129,
+          "bytes": 21600113,
+          "first_utc": "2017-02-07T09:12:54+00:00",
+          "last_utc": "2017-05-01T03:00:47+00:00",
+          "sha256": "e814502eaf0592e3a19740ff694e051b78251718d1678b11b8c58ebc9f9fb4c1"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_029.parquet",
+          "rows": 2496579,
+          "bytes": 21988596,
+          "first_utc": "2017-05-01T03:00:50+00:00",
+          "last_utc": "2017-08-04T09:46:08+00:00",
+          "sha256": "3bab23f6ad109725c5893cf3943c9bea810247b58a25b2772dc984276d4f7862"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_030.parquet",
+          "rows": 2484065,
+          "bytes": 22086365,
+          "first_utc": "2017-08-04T09:46:09+00:00",
+          "last_utc": "2017-11-07T06:48:58+00:00",
+          "sha256": "25ef14fad77a7cfa5188cbfa4ffbec55ec5eba3b1097886c4795b890d98730d9"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_031.parquet",
+          "rows": 2491699,
+          "bytes": 23059137,
+          "first_utc": "2017-11-07T06:49:00+00:00",
+          "last_utc": "2018-02-15T15:55:53+00:00",
+          "sha256": "ce2fcbc3119e173711d63fab2fbc194dbf4b94424cf33521a43dc834ed5978ed"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_032.parquet",
+          "rows": 2467893,
+          "bytes": 22103234,
+          "first_utc": "2018-02-15T15:55:54+00:00",
+          "last_utc": "2018-05-18T13:14:04+00:00",
+          "sha256": "311f9c7e01875d9e5cc6935f02009a4974c77874ee08cb9f6bbe2b5aedf5982d"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_033.parquet",
+          "rows": 2479310,
+          "bytes": 22504710,
+          "first_utc": "2018-05-18T13:14:05+00:00",
+          "last_utc": "2018-08-16T15:41:46+00:00",
+          "sha256": "02ed508e58ee4664e522a25b3279c18aac409ecea353e8d86af34329f22e1e6b"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_034.parquet",
+          "rows": 2463707,
+          "bytes": 21002634,
+          "first_utc": "2018-08-16T15:41:47+00:00",
+          "last_utc": "2018-11-05T15:15:35+00:00",
+          "sha256": "a9fb719794f3ec872e5e22e0086caa14c32bd6de1718779890fc25bbb1c71e23"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_035.parquet",
+          "rows": 2470093,
+          "bytes": 21532518,
+          "first_utc": "2018-11-05T15:15:37+00:00",
+          "last_utc": "2019-01-28T05:39:58+00:00",
+          "sha256": "e60ff64e8903109ce0aa6ca58c744c0814a799153bb6eaa7e3bc66abd06a45ce"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_036.parquet",
+          "rows": 2490989,
+          "bytes": 21987195,
+          "first_utc": "2019-01-28T05:40:00+00:00",
+          "last_utc": "2019-05-08T06:10:09+00:00",
+          "sha256": "99ab2628b00253afa0184376cff8408921ac8856df0dcc824ab3bce386fad5dd"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_037.parquet",
+          "rows": 2490679,
+          "bytes": 21479190,
+          "first_utc": "2019-05-08T06:10:11+00:00",
+          "last_utc": "2019-08-12T23:30:09+00:00",
+          "sha256": "b79b12b89d450497d05264d53523ba3c24136ce9406b0ccc881bf7ef7ee35b94"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_038.parquet",
+          "rows": 2457970,
+          "bytes": 20313791,
+          "first_utc": "2019-08-12T23:30:10+00:00",
+          "last_utc": "2019-11-05T08:10:27+00:00",
+          "sha256": "336776cd019dd598e1ee2f63880d39c51009b585815d9388ccbf37e0503a44c6"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_039.parquet",
+          "rows": 2483713,
+          "bytes": 21500968,
+          "first_utc": "2019-11-05T08:10:28+00:00",
+          "last_utc": "2020-02-14T07:27:42+00:00",
+          "sha256": "45e4f5726abba73c43458884a259daddf3cf6028cff636143d248efb1dbc62de"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_040.parquet",
+          "rows": 2490122,
+          "bytes": 23881553,
+          "first_utc": "2020-02-14T07:27:49+00:00",
+          "last_utc": "2020-04-21T19:41:56+00:00",
+          "sha256": "9c0d14c9bf4abd9e34afdde2f92363e0c2fee67bdff5d185de0068e5811320dd"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_041.parquet",
+          "rows": 2452336,
+          "bytes": 23006087,
+          "first_utc": "2020-04-21T19:41:58+00:00",
+          "last_utc": "2020-06-29T22:35:30+00:00",
+          "sha256": "a53c82ec1d985904de367c4abf3cc45c66037e892717135794c1f06e206c0849"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_042.parquet",
+          "rows": 2451179,
+          "bytes": 22259931,
+          "first_utc": "2020-06-29T22:35:31+00:00",
+          "last_utc": "2020-09-10T09:27:34+00:00",
+          "sha256": "2bfe1d7d9e2935ca87268ba05f0ad4a7a037e0ef21ea3a97f86f1a85c9fd8f6c"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_043.parquet",
+          "rows": 2482946,
+          "bytes": 21905819,
+          "first_utc": "2020-09-10T09:27:35+00:00",
+          "last_utc": "2020-11-22T21:47:00+00:00",
+          "sha256": "ae7effe9776de9b6c0bc57987b6fd3bd946c6159705b2d345b8c660a7d9a1e3f"
+        },
+        {
+          "file": "fx_AUD_USD_1s_part_044.parquet",
+          "rows": 2491853,
+          "bytes": 22543390,
+          "first_utc": "2020-11-22T21:47:01+00:00",
+          "last_utc": "2021-02-03T19:47:06+00:00",
+          "sha256": "f9df3c8fdf6dcc78220e87b91459620e62b49573c283a4a3eeb1697c0668da53"
         }
       ],
       "complete": false
@@ -101,6 +1125,342 @@
           "first_utc": "2010-08-12T17:01:41+00:00",
           "last_utc": "2011-01-04T06:14:46+00:00",
           "sha256": "9fc3349944049b14dc7e196dcf9ff240882089619fdb305065c73ab6e740c3a5"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_002.parquet",
+          "rows": 2493340,
+          "bytes": 23546710,
+          "first_utc": "2011-01-04T06:14:47+00:00",
+          "last_utc": "2011-05-02T18:00:36+00:00",
+          "sha256": "dc58939e4ea1f08f8d8675692d1b423111547209ebc60f87e78eabd713ba00dc"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_003.parquet",
+          "rows": 2478546,
+          "bytes": 24328717,
+          "first_utc": "2011-05-02T18:00:46+00:00",
+          "last_utc": "2011-08-12T16:10:02+00:00",
+          "sha256": "e61b6ab49455bd1e20e685567a84c0617aa427f8c93b9c034ce1d1badff34ea7"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_004.parquet",
+          "rows": 2485883,
+          "bytes": 25642039,
+          "first_utc": "2011-08-12T16:10:03+00:00",
+          "last_utc": "2011-12-15T08:37:29+00:00",
+          "sha256": "e92194140344ea388db5aeab170d625c3856ce0132be3fae640c067623fb000f"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_005.parquet",
+          "rows": 2491532,
+          "bytes": 23893923,
+          "first_utc": "2011-12-15T08:37:30+00:00",
+          "last_utc": "2012-03-29T05:26:18+00:00",
+          "sha256": "60b1db96c309112d68028ca5abddeed7c1ebe4c96c4611a1d08f989c0981403d"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_006.parquet",
+          "rows": 2493961,
+          "bytes": 23702451,
+          "first_utc": "2012-03-29T05:26:24+00:00",
+          "last_utc": "2012-06-22T07:48:57+00:00",
+          "sha256": "622747d698b1317cade65d16015738b9086e559d0194cf892d495dba4e9b5a79"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_007.parquet",
+          "rows": 2486632,
+          "bytes": 21989727,
+          "first_utc": "2012-06-22T07:48:58+00:00",
+          "last_utc": "2012-09-19T15:39:44+00:00",
+          "sha256": "63e7d708719ccbf21fd05bbc37b9c3b982ee4d8f5a95ce9c45a2c039b3810aa1"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_008.parquet",
+          "rows": 2473750,
+          "bytes": 22007666,
+          "first_utc": "2012-09-19T15:39:45+00:00",
+          "last_utc": "2013-01-09T17:37:00+00:00",
+          "sha256": "a0006ebd43ef7b6dbcc32f5e890da73c1c4485bb7744c5fe44f1b753eedfda3e"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_009.parquet",
+          "rows": 2474490,
+          "bytes": 22739714,
+          "first_utc": "2013-01-09T17:37:02+00:00",
+          "last_utc": "2013-04-29T04:58:19+00:00",
+          "sha256": "e961494ac0b4bc66df27850b58d1c1668f491b288a2d69b60d90ca984386c9b1"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_010.parquet",
+          "rows": 2493322,
+          "bytes": 24193342,
+          "first_utc": "2013-04-29T04:58:24+00:00",
+          "last_utc": "2013-07-23T11:44:04+00:00",
+          "sha256": "0a1fa22671cedae95a45b127251a1044f99de0ff71664280c1fda7434005014e"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_011.parquet",
+          "rows": 2478682,
+          "bytes": 23929667,
+          "first_utc": "2013-07-23T11:44:08+00:00",
+          "last_utc": "2013-11-04T09:43:46+00:00",
+          "sha256": "39363a94030edc0825237c408bf990d586608c821d848ae6b169f2c0f27dd76a"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_012.parquet",
+          "rows": 2488301,
+          "bytes": 22692484,
+          "first_utc": "2013-11-04T09:43:48+00:00",
+          "last_utc": "2014-03-05T12:23:29+00:00",
+          "sha256": "a7c0d5874e8b10efb5aca1884b4ebd201e41436271015c0ab3a45747ae4f985d"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_013.parquet",
+          "rows": 2486400,
+          "bytes": 21741382,
+          "first_utc": "2014-03-05T12:23:30+00:00",
+          "last_utc": "2014-07-14T23:26:16+00:00",
+          "sha256": "db96514b84177c7fc23954b854cea94533c021cff28a3f5e27b4078b38b6147e"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_014.parquet",
+          "rows": 2471802,
+          "bytes": 22583242,
+          "first_utc": "2014-07-14T23:26:18+00:00",
+          "last_utc": "2014-10-24T02:00:04+00:00",
+          "sha256": "8414f677518ce74b83b28c1aa12acdb2818ad900dd53a43c536e40cb14da7285"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_015.parquet",
+          "rows": 2496849,
+          "bytes": 22286265,
+          "first_utc": "2014-10-24T02:00:05+00:00",
+          "last_utc": "2015-01-22T01:09:28+00:00",
+          "sha256": "8bf9a718df97141b4d71c8f342c3d3d8e86853dcdf6ed58add42a5da3bb86e64"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_016.parquet",
+          "rows": 2497459,
+          "bytes": 24220134,
+          "first_utc": "2015-01-22T01:09:29+00:00",
+          "last_utc": "2015-05-08T12:47:05+00:00",
+          "sha256": "38c97d47c3597cfee686206b81601ac9c267c67ba467a86356e734b1ae5594b9"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_017.parquet",
+          "rows": 2480840,
+          "bytes": 23774202,
+          "first_utc": "2015-05-08T12:47:06+00:00",
+          "last_utc": "2015-08-11T09:03:35+00:00",
+          "sha256": "31caaca31819e518a5e736825b57cbd889157267eeb2493422c0209b0cb849ea"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_018.parquet",
+          "rows": 2480496,
+          "bytes": 23265193,
+          "first_utc": "2015-08-11T09:03:36+00:00",
+          "last_utc": "2015-11-06T05:46:53+00:00",
+          "sha256": "8297091cfd9a03f9e1289cca354f83d27a31e091bb130b229ef99381becf395c"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_019.parquet",
+          "rows": 2492367,
+          "bytes": 23369786,
+          "first_utc": "2015-11-06T05:46:55+00:00",
+          "last_utc": "2016-02-11T15:44:22+00:00",
+          "sha256": "64593bbbc1ab7936eab67774f1240e7d16af30f8fe50eb59f7ae42795f6aba91"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_020.parquet",
+          "rows": 2462028,
+          "bytes": 22314407,
+          "first_utc": "2016-02-11T15:44:23+00:00",
+          "last_utc": "2016-05-03T08:05:15+00:00",
+          "sha256": "2021cc51f5087f1afe201266308e91d7bb0d65ed2fc235dd2534ac45a28b4c0e"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_021.parquet",
+          "rows": 2485224,
+          "bytes": 22424879,
+          "first_utc": "2016-05-03T08:05:17+00:00",
+          "last_utc": "2016-07-27T15:10:40+00:00",
+          "sha256": "7579f12730600013f6662f83ee4d72786fdaaa6ca635fd5f2689e392091357d8"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_022.parquet",
+          "rows": 2468303,
+          "bytes": 21796238,
+          "first_utc": "2016-07-27T15:10:45+00:00",
+          "last_utc": "2016-10-17T15:20:51+00:00",
+          "sha256": "ca819cd93a8ddfa75dd354350091afec9d0b3a7d3f37718d70a3214849b43565"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_023.parquet",
+          "rows": 2473788,
+          "bytes": 21844856,
+          "first_utc": "2016-10-17T15:20:53+00:00",
+          "last_utc": "2016-12-29T16:04:14+00:00",
+          "sha256": "9a7052a5f1b85efafb9ec604f26b27741b31bfa74ea5d8f01e887bd192b83cc9"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_024.parquet",
+          "rows": 2467166,
+          "bytes": 21785300,
+          "first_utc": "2016-12-29T16:04:15+00:00",
+          "last_utc": "2017-03-15T10:56:40+00:00",
+          "sha256": "f201b28fbeb076a3706a700739f6e70a89633153b750bf47782585bd52f36b47"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_025.parquet",
+          "rows": 2485153,
+          "bytes": 21744907,
+          "first_utc": "2017-03-15T10:56:42+00:00",
+          "last_utc": "2017-06-15T14:18:49+00:00",
+          "sha256": "c50f0ae255d2a6b29bd877e9c145df1b9acf0b6b07b47853bc3515659a8e9c80"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_026.parquet",
+          "rows": 2475087,
+          "bytes": 21882289,
+          "first_utc": "2017-06-15T14:18:50+00:00",
+          "last_utc": "2017-09-14T07:51:20+00:00",
+          "sha256": "4a5fb47601d4ea92a72a52f6a2f670f7450c6c4514530605aeedac4472b05bf6"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_027.parquet",
+          "rows": 2484810,
+          "bytes": 21075509,
+          "first_utc": "2017-09-14T07:51:21+00:00",
+          "last_utc": "2017-12-08T02:54:37+00:00",
+          "sha256": "5dc6ac1b1dbbd0d755559d43f0898b918caa71a5034807f6da7e31c4c230f265"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_028.parquet",
+          "rows": 2496052,
+          "bytes": 22020355,
+          "first_utc": "2017-12-08T02:54:39+00:00",
+          "last_utc": "2018-02-28T03:14:40+00:00",
+          "sha256": "ac08474d45649b605d4ab52daa2e8d0ff742063416f2a0f1ed99702011ddd893"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_029.parquet",
+          "rows": 2494231,
+          "bytes": 21569385,
+          "first_utc": "2018-02-28T03:14:41+00:00",
+          "last_utc": "2018-05-21T01:36:13+00:00",
+          "sha256": "e06b5d06b1ebc7a6eb274d51d1859801efc63d1c4c42f2ee61cf62c936c0514c"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_030.parquet",
+          "rows": 2497158,
+          "bytes": 21073038,
+          "first_utc": "2018-05-21T01:36:14+00:00",
+          "last_utc": "2018-08-16T14:40:51+00:00",
+          "sha256": "712c31fa4ff60a5e23f5d47864f369705883a75a93c072bac0c7e8d11da805dd"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_031.parquet",
+          "rows": 2470477,
+          "bytes": 20592100,
+          "first_utc": "2018-08-16T14:40:52+00:00",
+          "last_utc": "2018-11-06T20:18:40+00:00",
+          "sha256": "f997ed36c856a87b4c773223526caa0d91b757ccbe1ab65dd49530830517cd22"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_032.parquet",
+          "rows": 2463183,
+          "bytes": 21082275,
+          "first_utc": "2018-11-06T20:18:45+00:00",
+          "last_utc": "2019-02-04T14:20:19+00:00",
+          "sha256": "f694d0a6a0b3701ea05dd20e398fb8578950ea7235cf15a9e5cf155f1ad75257"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_033.parquet",
+          "rows": 2478679,
+          "bytes": 21367662,
+          "first_utc": "2019-02-04T14:20:20+00:00",
+          "last_utc": "2019-05-10T14:51:36+00:00",
+          "sha256": "92c0fe46cc48a30fe4903cb49abc32bff28d36e85122e39931979cf3e048ffd8"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_034.parquet",
+          "rows": 2466836,
+          "bytes": 21425897,
+          "first_utc": "2019-05-10T14:51:38+00:00",
+          "last_utc": "2019-08-23T01:00:40+00:00",
+          "sha256": "5a4cfda9a6e449d079af1a75855394c9bd72562469775d8ab2d8a2a0055f38d9"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_035.parquet",
+          "rows": 2498266,
+          "bytes": 22046181,
+          "first_utc": "2019-08-23T01:00:41+00:00",
+          "last_utc": "2019-12-27T10:47:54+00:00",
+          "sha256": "4899a911244aec634d80db04f6aa2dbb5ca17540457df48ce2c2faef2a816e98"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_036.parquet",
+          "rows": 2483791,
+          "bytes": 22752576,
+          "first_utc": "2019-12-27T10:47:55+00:00",
+          "last_utc": "2020-03-31T07:19:27+00:00",
+          "sha256": "5347b288923e6c220f7257f1c29ccb6970f1821d186f8ce8ca1bd113fbf7a59e"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_037.parquet",
+          "rows": 2483371,
+          "bytes": 23071643,
+          "first_utc": "2020-03-31T07:19:30+00:00",
+          "last_utc": "2020-06-24T08:44:58+00:00",
+          "sha256": "29b11b71cf5e96ea622f549a0fe74f2300a496dc7b24a2c2c4d66c4c8215530a"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_038.parquet",
+          "rows": 2483115,
+          "bytes": 21837770,
+          "first_utc": "2020-06-24T08:45:00+00:00",
+          "last_utc": "2020-09-16T05:32:20+00:00",
+          "sha256": "95f570a5b657d8614f3c65f0ba1e4465ceabba7c9d73738ec29a15cb5f8abc62"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_039.parquet",
+          "rows": 2492097,
+          "bytes": 22153918,
+          "first_utc": "2020-09-16T05:32:22+00:00",
+          "last_utc": "2021-02-12T17:08:13+00:00",
+          "sha256": "9901e21b1be838ee7b55f1c6aa7f1f1f1a2ff8dccd7d5a2a473b87842a221cd9"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_040.parquet",
+          "rows": 2469400,
+          "bytes": 22848208,
+          "first_utc": "2021-02-12T17:08:16+00:00",
+          "last_utc": "2021-04-28T01:12:46+00:00",
+          "sha256": "89e17e7e64d19037b5781f69865455ac8b88c870b029189394a37d401f0ecf38"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_041.parquet",
+          "rows": 2497762,
+          "bytes": 23088570,
+          "first_utc": "2021-04-28T01:12:48+00:00",
+          "last_utc": "2021-07-12T14:48:45+00:00",
+          "sha256": "9e10d891b451c57dacb5d1e2bfeb53c42310d996599d334bc865feb3ff501b04"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_042.parquet",
+          "rows": 2480282,
+          "bytes": 22783310,
+          "first_utc": "2021-07-12T14:48:46+00:00",
+          "last_utc": "2021-09-23T00:28:50+00:00",
+          "sha256": "5046edc2e0bbac80bfd05750967246c1925ca62ffd855449df5cea0597f993b3"
+        },
+        {
+          "file": "fx_NZD_USD_1s_part_043.parquet",
+          "rows": 2499164,
+          "bytes": 22867521,
+          "first_utc": "2021-09-23T00:28:51+00:00",
+          "last_utc": "2021-11-29T20:04:02+00:00",
+          "sha256": "53883b86244531ea25b4e66ede889e4e61568ae79fc0fcd09075e0cdff45e2f9"
         }
       ],
       "complete": false

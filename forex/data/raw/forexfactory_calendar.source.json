@@ -1,0 +1,17 @@
+{
+  "commit": "7098533984dad1272a2729d4475f1dbc5228c5df",
+  "display_timezone": "Australia/Sydney",
+  "end_local_date": "2026-07-19",
+  "fetched_utc_date": "2026-08-06",
+  "keep_currencies": [
+    "USD",
+    "EUR",
+    "GBP",
+    "AUD",
+    "NZD"
+  ],
+  "notes": "Fetched in yearly checkpointed chunks. The page rendered Sydney local times; the scraper's --tz option parses/labels those displayed values but does not set the page timezone.",
+  "provider": "forexfactory-html",
+  "source_url": "https://github.com/ehsanrs2/forexfactory-scraper",
+  "start_local_date": "2011-07-18"
+}

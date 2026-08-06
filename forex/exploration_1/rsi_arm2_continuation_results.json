@@ -1,0 +1,581 @@
+{
+  "metadata": {
+    "generated_at": "2026-08-03T16:10:19.001093+00:00",
+    "pairs": [
+      "EURUSD",
+      "GBPUSD",
+      "AUDUSD",
+      "NZDUSD"
+    ],
+    "candidates": [
+      "vol_of_vol_60m",
+      "kurtosis_30m",
+      "kurtosis_60m",
+      "efficiency_15m_raw",
+      "efficiency_60m_raw",
+      "rv_ratio_5_30_raw",
+      "rv_30m_raw"
+    ],
+    "bootstrap_draws": 300,
+    "seed": 20260804,
+    "holdout_start": "2024-01-01T00:00:00+00:00"
+  },
+  "realised_survival_split": [
+    {
+      "pair": "EURUSD",
+      "survivors": {
+        "n": 795,
+        "gross_pips": -10.292893081761015,
+        "cluster_t": -24.142104744872828
+      },
+      "reverters": {
+        "n": 12441,
+        "gross_pips": 1.3590969375452018,
+        "cluster_t": 18.417052270247776
+      },
+      "survival_rate": 0.060063463281958294
+    },
+    {
+      "pair": "GBPUSD",
+      "survivors": {
+        "n": 1016,
+        "gross_pips": -12.410187007873972,
+        "cluster_t": -29.589466200237638
+      },
+      "reverters": {
+        "n": 13438,
+        "gross_pips": 1.6355428635213456,
+        "cluster_t": 18.16592147268447
+      },
+      "survival_rate": 0.07029196070291961
+    },
+    {
+      "pair": "AUDUSD",
+      "survivors": {
+        "n": 887,
+        "gross_pips": -8.714177001127439,
+        "cluster_t": -34.63291203903321
+      },
+      "reverters": {
+        "n": 12723,
+        "gross_pips": 1.1648530220859814,
+        "cluster_t": 18.59692567990992
+      },
+      "survival_rate": 0.06517266715650258
+    },
+    {
+      "pair": "NZDUSD",
+      "survivors": {
+        "n": 1138,
+        "gross_pips": -8.313268892794376,
+        "cluster_t": -35.97497845587476
+      },
+      "reverters": {
+        "n": 14066,
+        "gross_pips": 1.2610834636712658,
+        "cluster_t": 21.790315320302508
+      },
+      "survival_rate": 0.07484872401999473
+    }
+  ],
+  "univariate": [
+    {
+      "pair": "EURUSD",
+      "feature": "vol_of_vol_60m_pct",
+      "n_test": 3241,
+      "test_auc": 0.4409202601,
+      "auc_lo": 0.4034161281,
+      "auc_hi": 0.4780277356,
+      "boot_p": 0.0033333333,
+      "excludes_half": true,
+      "boot_q": 0.0355555556
+    },
+    {
+      "pair": "EURUSD",
+      "feature": "kurtosis_30m_pct",
+      "n_test": 3337,
+      "test_auc": 0.5033341201,
+      "auc_lo": 0.4654427783,
+      "auc_hi": 0.5408181742,
+      "boot_p": 0.8533333333,
+      "excludes_half": false,
+      "boot_q": 0.9733333333
+    },
+    {
+      "pair": "EURUSD",
+      "feature": "kurtosis_60m_pct",
+      "n_test": 3241,
+      "test_auc": 0.5010233436,
+      "auc_lo": 0.4614460084,
+      "auc_hi": 0.5338890001,
+      "boot_p": 0.9533333333,
+      "excludes_half": false,
+      "boot_q": 0.9733333333
+    },
+    {
+      "pair": "EURUSD",
+      "feature": "efficiency_15m_raw_pct",
+      "n_test": 3337,
+      "test_auc": 0.5410814745,
+      "auc_lo": 0.5021434935,
+      "auc_hi": 0.5772365431,
+      "boot_p": 0.0266666667,
+      "excludes_half": true,
+      "boot_q": 0.1422222222
+    },
+    {
+      "pair": "EURUSD",
+      "feature": "efficiency_60m_raw_pct",
+      "n_test": 3241,
+      "test_auc": 0.4994621078,
+      "auc_lo": 0.4533268122,
+      "auc_hi": 0.5380062187,
+      "boot_p": 0.9533333333,
+      "excludes_half": false,
+      "boot_q": 0.9733333333
+    },
+    {
+      "pair": "EURUSD",
+      "feature": "rv_ratio_5_30_raw_pct",
+      "n_test": 3337,
+      "test_auc": 0.4890654066,
+      "auc_lo": 0.4505529279,
+      "auc_hi": 0.5268620623,
+      "boot_p": 0.56,
+      "excludes_half": false,
+      "boot_q": 0.9155555556
+    },
+    {
+      "pair": "EURUSD",
+      "feature": "rv_30m_raw_pct",
+      "n_test": 3337,
+      "test_auc": 0.4565018855,
+      "auc_lo": 0.4217413768,
+      "auc_hi": 0.4951982724,
+      "boot_p": 0.0266666667,
+      "excludes_half": true,
+      "boot_q": 0.1422222222
+    },
+    {
+      "pair": "EURUSD",
+      "feature": "rsi_depth",
+      "n_test": 3605,
+      "test_auc": 0.5367664555,
+      "auc_lo": 0.5027277612,
+      "auc_hi": 0.5687256732,
+      "boot_p": 0.0466666667,
+      "excludes_half": true,
+      "boot_q": 0.2133333333
+    },
+    {
+      "pair": "GBPUSD",
+      "feature": "vol_of_vol_60m_pct",
+      "n_test": 3245,
+      "test_auc": 0.5088858785,
+      "auc_lo": 0.4688733568,
+      "auc_hi": 0.5519417925,
+      "boot_p": 0.6866666667,
+      "excludes_half": false,
+      "boot_q": 0.9155555556
+    },
+    {
+      "pair": "GBPUSD",
+      "feature": "kurtosis_30m_pct",
+      "n_test": 3346,
+      "test_auc": 0.5106966174,
+      "auc_lo": 0.4707418947,
+      "auc_hi": 0.5444607639,
+      "boot_p": 0.5066666667,
+      "excludes_half": false,
+      "boot_q": 0.9155555556
+    },
+    {
+      "pair": "GBPUSD",
+      "feature": "kurtosis_60m_pct",
+      "n_test": 3245,
+      "test_auc": 0.5193990148,
+      "auc_lo": 0.4803416014,
+      "auc_hi": 0.5577191006,
+      "boot_p": 0.3133333333,
+      "excludes_half": false,
+      "boot_q": 0.8355555556
+    },
+    {
+      "pair": "GBPUSD",
+      "feature": "efficiency_15m_raw_pct",
+      "n_test": 3344,
+      "test_auc": 0.5077696201,
+      "auc_lo": 0.4653346464,
+      "auc_hi": 0.5469230964,
+      "boot_p": 0.7866666667,
+      "excludes_half": false,
+      "boot_q": 0.9402469136
+    },
+    {
+      "pair": "GBPUSD",
+      "feature": "efficiency_60m_raw_pct",
+      "n_test": 3245,
+      "test_auc": 0.509043514,
+      "auc_lo": 0.4666386176,
+      "auc_hi": 0.5560735472,
+      "boot_p": 0.68,
+      "excludes_half": false,
+      "boot_q": 0.9155555556
+    },
+    {
+      "pair": "GBPUSD",
+      "feature": "rv_ratio_5_30_raw_pct",
+      "n_test": 3346,
+      "test_auc": 0.496588028,
+      "auc_lo": 0.4531496738,
+      "auc_hi": 0.5336689156,
+      "boot_p": 0.76,
+      "excludes_half": false,
+      "boot_q": 0.9402469136
+    },
+    {
+      "pair": "GBPUSD",
+      "feature": "rv_30m_raw_pct",
+      "n_test": 3346,
+      "test_auc": 0.4958204502,
+      "auc_lo": 0.460352515,
+      "auc_hi": 0.534160952,
+      "boot_p": 0.7933333333,
+      "excludes_half": false,
+      "boot_q": 0.9402469136
+    },
+    {
+      "pair": "GBPUSD",
+      "feature": "rsi_depth",
+      "n_test": 3618,
+      "test_auc": 0.5532004996,
+      "auc_lo": 0.51441669,
+      "auc_hi": 0.5953022174,
+      "boot_p": 0.0033333333,
+      "excludes_half": true,
+      "boot_q": 0.0355555556
+    },
+    {
+      "pair": "AUDUSD",
+      "feature": "vol_of_vol_60m_pct",
+      "n_test": 2949,
+      "test_auc": 0.4831392662,
+      "auc_lo": 0.4450349958,
+      "auc_hi": 0.5249255573,
+      "boot_p": 0.4466666667,
+      "excludes_half": false,
+      "boot_q": 0.9155555556
+    },
+    {
+      "pair": "AUDUSD",
+      "feature": "kurtosis_30m_pct",
+      "n_test": 3052,
+      "test_auc": 0.4890731926,
+      "auc_lo": 0.4518119911,
+      "auc_hi": 0.5247730002,
+      "boot_p": 0.58,
+      "excludes_half": false,
+      "boot_q": 0.9155555556
+    },
+    {
+      "pair": "AUDUSD",
+      "feature": "kurtosis_60m_pct",
+      "n_test": 2949,
+      "test_auc": 0.4983449477,
+      "auc_lo": 0.4597101974,
+      "auc_hi": 0.537844667,
+      "boot_p": 0.9266666667,
+      "excludes_half": false,
+      "boot_q": 0.9733333333
+    },
+    {
+      "pair": "AUDUSD",
+      "feature": "efficiency_15m_raw_pct",
+      "n_test": 3051,
+      "test_auc": 0.4903692273,
+      "auc_lo": 0.4531431565,
+      "auc_hi": 0.5361029031,
+      "boot_p": 0.6333333333,
+      "excludes_half": false,
+      "boot_q": 0.9155555556
+    },
+    {
+      "pair": "AUDUSD",
+      "feature": "efficiency_60m_raw_pct",
+      "n_test": 2949,
+      "test_auc": 0.5395683709,
+      "auc_lo": 0.4931450027,
+      "auc_hi": 0.5771746981,
+      "boot_p": 0.1,
+      "excludes_half": false,
+      "boot_q": 0.32
+    },
+    {
+      "pair": "AUDUSD",
+      "feature": "rv_ratio_5_30_raw_pct",
+      "n_test": 3051,
+      "test_auc": 0.5167328042,
+      "auc_lo": 0.4764078802,
+      "auc_hi": 0.5570779269,
+      "boot_p": 0.4266666667,
+      "excludes_half": false,
+      "boot_q": 0.9155555556
+    },
+    {
+      "pair": "AUDUSD",
+      "feature": "rv_30m_raw_pct",
+      "n_test": 3052,
+      "test_auc": 0.4624879199,
+      "auc_lo": 0.4281948298,
+      "auc_hi": 0.5002547447,
+      "boot_p": 0.0533333333,
+      "excludes_half": false,
+      "boot_q": 0.2133333333
+    },
+    {
+      "pair": "AUDUSD",
+      "feature": "rsi_depth",
+      "n_test": 3312,
+      "test_auc": 0.5505165306,
+      "auc_lo": 0.5102481805,
+      "auc_hi": 0.5858099607,
+      "boot_p": 0.0033333333,
+      "excludes_half": true,
+      "boot_q": 0.0355555556
+    },
+    {
+      "pair": "NZDUSD",
+      "feature": "vol_of_vol_60m_pct",
+      "n_test": 3088,
+      "test_auc": 0.4804226123,
+      "auc_lo": 0.4413762062,
+      "auc_hi": 0.5161541616,
+      "boot_p": 0.3066666667,
+      "excludes_half": false,
+      "boot_q": 0.8355555556
+    },
+    {
+      "pair": "NZDUSD",
+      "feature": "kurtosis_30m_pct",
+      "n_test": 3229,
+      "test_auc": 0.5135696394,
+      "auc_lo": 0.4798643522,
+      "auc_hi": 0.5503230358,
+      "boot_p": 0.4866666667,
+      "excludes_half": false,
+      "boot_q": 0.9155555556
+    },
+    {
+      "pair": "NZDUSD",
+      "feature": "kurtosis_60m_pct",
+      "n_test": 3088,
+      "test_auc": 0.4902295616,
+      "auc_lo": 0.4487166137,
+      "auc_hi": 0.5276222985,
+      "boot_p": 0.6466666667,
+      "excludes_half": false,
+      "boot_q": 0.9155555556
+    },
+    {
+      "pair": "NZDUSD",
+      "feature": "efficiency_15m_raw_pct",
+      "n_test": 3228,
+      "test_auc": 0.4982187127,
+      "auc_lo": 0.4564572762,
+      "auc_hi": 0.5392176398,
+      "boot_p": 0.9733333333,
+      "excludes_half": false,
+      "boot_q": 0.9733333333
+    },
+    {
+      "pair": "NZDUSD",
+      "feature": "efficiency_60m_raw_pct",
+      "n_test": 3088,
+      "test_auc": 0.5137090395,
+      "auc_lo": 0.4740690549,
+      "auc_hi": 0.5505309893,
+      "boot_p": 0.5133333333,
+      "excludes_half": false,
+      "boot_q": 0.9155555556
+    },
+    {
+      "pair": "NZDUSD",
+      "feature": "rv_ratio_5_30_raw_pct",
+      "n_test": 3229,
+      "test_auc": 0.5134129105,
+      "auc_lo": 0.4728326398,
+      "auc_hi": 0.5567512184,
+      "boot_p": 0.5666666667,
+      "excludes_half": false,
+      "boot_q": 0.9155555556
+    },
+    {
+      "pair": "NZDUSD",
+      "feature": "rv_30m_raw_pct",
+      "n_test": 3229,
+      "test_auc": 0.4502497866,
+      "auc_lo": 0.4096583192,
+      "auc_hi": 0.4858568685,
+      "boot_p": 0.0066666667,
+      "excludes_half": true,
+      "boot_q": 0.0533333333
+    },
+    {
+      "pair": "NZDUSD",
+      "feature": "rsi_depth",
+      "n_test": 3503,
+      "test_auc": 0.5288740821,
+      "auc_lo": 0.492274706,
+      "auc_hi": 0.5626037167,
+      "boot_p": 0.0933333333,
+      "excludes_half": false,
+      "boot_q": 0.32
+    }
+  ],
+  "consistency": [
+    {
+      "feature": "efficiency_15m_raw_pct",
+      "pairs": 4,
+      "pairs_above_half": 2,
+      "median_auc": 0.5029941664,
+      "min_q": 0.1422222222,
+      "sign_consistent": false
+    },
+    {
+      "feature": "efficiency_60m_raw_pct",
+      "pairs": 4,
+      "pairs_above_half": 3,
+      "median_auc": 0.5113762767,
+      "min_q": 0.32,
+      "sign_consistent": false
+    },
+    {
+      "feature": "kurtosis_30m_pct",
+      "pairs": 4,
+      "pairs_above_half": 3,
+      "median_auc": 0.5070153688,
+      "min_q": 0.9155555556,
+      "sign_consistent": false
+    },
+    {
+      "feature": "kurtosis_60m_pct",
+      "pairs": 4,
+      "pairs_above_half": 2,
+      "median_auc": 0.4996841457,
+      "min_q": 0.8355555556,
+      "sign_consistent": false
+    },
+    {
+      "feature": "rsi_depth",
+      "pairs": 4,
+      "pairs_above_half": 4,
+      "median_auc": 0.543641493,
+      "min_q": 0.0355555556,
+      "sign_consistent": true
+    },
+    {
+      "feature": "rv_30m_raw_pct",
+      "pairs": 4,
+      "pairs_above_half": 0,
+      "median_auc": 0.4594949027,
+      "min_q": 0.0533333333,
+      "sign_consistent": true
+    },
+    {
+      "feature": "rv_ratio_5_30_raw_pct",
+      "pairs": 4,
+      "pairs_above_half": 2,
+      "median_auc": 0.5050004692,
+      "min_q": 0.9155555556,
+      "sign_consistent": false
+    },
+    {
+      "feature": "vol_of_vol_60m_pct",
+      "pairs": 4,
+      "pairs_above_half": 1,
+      "median_auc": 0.4817809393,
+      "min_q": 0.0355555556,
+      "sign_consistent": false
+    }
+  ],
+  "multivariate": [
+    {
+      "pair": "EURUSD",
+      "n_fit": 8730,
+      "n_test": 3241,
+      "test_auc": 0.5390623595,
+      "auc_lo": 0.4957850858,
+      "auc_hi": 0.5707133107,
+      "boot_p": 0.08,
+      "excludes_half": false,
+      "all_gross_pips": 0.6947084233,
+      "all_cluster_t": 5.1425013451,
+      "kept_gross_pips": 0.792936459,
+      "kept_cluster_t": 3.9224570123,
+      "dropped_gross_pips": 0.5964197531,
+      "filter_gain_pips": 0.0982280356
+    },
+    {
+      "pair": "GBPUSD",
+      "n_fit": 9835,
+      "n_test": 3244,
+      "test_auc": 0.5103695795,
+      "auc_lo": 0.4717721827,
+      "auc_hi": 0.5511324458,
+      "boot_p": 0.5466666667,
+      "excludes_half": false,
+      "all_gross_pips": 0.6254932182,
+      "all_cluster_t": 3.2062563635,
+      "kept_gross_pips": 0.9645499383,
+      "kept_cluster_t": 3.0279136067,
+      "dropped_gross_pips": 0.2864364982,
+      "filter_gain_pips": 0.3390567201
+    },
+    {
+      "pair": "AUDUSD",
+      "n_fit": 9036,
+      "n_test": 2947,
+      "test_auc": 0.5075554607,
+      "auc_lo": 0.4654993985,
+      "auc_hi": 0.5454626129,
+      "boot_p": 0.7133333333,
+      "excludes_half": false,
+      "all_gross_pips": 0.285018663,
+      "all_cluster_t": 2.1269106243,
+      "kept_gross_pips": 0.0621777476,
+      "kept_cluster_t": 0.3348357594,
+      "dropped_gross_pips": 0.5080108622,
+      "filter_gain_pips": -0.2228409154
+    },
+    {
+      "pair": "NZDUSD",
+      "n_fit": 10110,
+      "n_test": 3087,
+      "test_auc": 0.5522682656,
+      "auc_lo": 0.5129913908,
+      "auc_hi": 0.5923655221,
+      "boot_p": 0.0033333333,
+      "excludes_half": true,
+      "all_gross_pips": 0.4697278912,
+      "all_cluster_t": 3.6892237616,
+      "kept_gross_pips": 0.8027525907,
+      "kept_cluster_t": 4.1153130908,
+      "dropped_gross_pips": 0.1364873623,
+      "filter_gain_pips": 0.3330246995
+    }
+  ],
+  "kill_test": {
+    "max_univariate_auc_deviation": 0.05907973989391985,
+    "max_multivariate_auc_deviation": 0.05226826558719244,
+    "n_tests": 32,
+    "n_raw_ci_excluding_half": 7,
+    "expected_by_chance": 1.6,
+    "any_bh_q_below_10pct": true,
+    "sign_consistent_and_significant": [
+      "rsi_depth",
+      "rv_30m_raw_pct"
+    ],
+    "multivariate_ci_excludes_half": true,
+    "verdict": "SIGNAL PRESENT \u2014 a sign-consistent separator survives correction"
+  }
+}

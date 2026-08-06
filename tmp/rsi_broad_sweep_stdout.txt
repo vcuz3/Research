@@ -1,0 +1,33 @@
+Building and analyzing EURUSD ...
+  149,133 decisions; 13,881 RSI extreme rows
+Building and analyzing GBPUSD ...
+  149,129 decisions; 15,121 RSI extreme rows
+Building and analyzing AUDUSD ...
+  149,131 decisions; 14,368 RSI extreme rows
+Building and analyzing NZDUSD ...
+  149,133 decisions; 15,959 RSI extreme rows
+
+Top stability rows:
+                           regime  cells  q5_stronger_cells  strengthening_interaction_cells  positive_pnl_uplift_cells  median_strength_q5_minus_q1  median_interaction_beta  median_abs_interaction_t  median_gross_pips_q5_minus_q1  min_interaction_q  max_interaction_q
+               vei_25_100_pct_90d      8                  8                                8                          8                       0.0402                  -0.0533                    3.9948                         0.4692             0.0000             0.5168
+               vei_25_100_pct_30d      8                  8                                8                          8                       0.0386                  -0.0505                    3.6955                         0.4161             0.0000             0.5219
+                vei_10_50_pct_90d      8                  8                                8                          6                       0.0475                  -0.0497                    3.2964                         0.3280             0.0000             0.4008
+                 vei_5_25_pct_90d      8                  8                                8                          6                       0.0496                  -0.0417                    3.1764                         0.1975             0.0000             0.3012
+                vei_10_50_pct_30d      8                  8                                8                          5                       0.0476                  -0.0471                    3.0381                         0.1317             0.0000             0.4024
+                 vei_5_25_pct_30d      8                  8                                8                          5                       0.0468                  -0.0416                    2.9065                         0.1601             0.0001             0.4670
+            rv_ratio_5_30_pct_90d      8                  8                                8                          8                       0.0500                  -0.0423                    2.7953                         0.3377             0.0000             0.3012
+            rv_ratio_5_30_pct_30d      8                  8                                8                          8                       0.0448                  -0.0361                    2.4295                         0.2424             0.0000             0.3012
+trend_variance_ratio_240m_pct_90d      8                  8                                8                          4                       0.0352                  -0.0366                    2.3871                        -0.0285             0.0000             0.7267
+    trend_efficiency_240m_pct_90d      8                  8                                8                          5                       0.0339                  -0.0362                    2.3613                         0.0943             0.0000             0.7267
+          rv_ratio_25_100_pct_30d      8                  8                                8                          5                       0.0289                  -0.0308                    2.2939                         0.1769             0.0000             0.9243
+           rv_ratio_10_50_pct_90d      8                  8                                8                          4                       0.0414                  -0.0286                    2.0211                         0.0174             0.0004             0.7267
+           rv_ratio_10_50_pct_30d      8                  8                                8                          4                       0.0350                  -0.0275                    1.8226                         0.0086             0.0003             0.7867
+          rv_ratio_25_100_pct_90d      8                  8                                7                          6                       0.0181                  -0.0289                    1.9424                         0.3079             0.0000             0.9634
+ trend_variance_ratio_15m_pct_90d      8                  8                                5                          4                       0.0475                  -0.0065                    0.8966                         0.2533             0.0791             0.7267
+     trend_efficiency_15m_pct_90d      8                  8                                5                          5                       0.0507                  -0.0090                    0.7905                         0.8919             0.0873             0.7267
+                   rv_30m_pct_90d      8                  7                                8                          8                       0.0349                  -0.0650                    3.7829                         0.6507             0.0000             0.7267
+                     rv_30m_z_30d      8                  7                                8                          8                       0.0328                  -0.0663                    3.6440                         0.8472             0.0000             0.8641
+                   rv_30m_pct_30d      8                  7                                8                          8                       0.0354                  -0.0661                    3.6291                         0.6051             0.0000             0.7267
+                     rv_30m_z_90d      8                  7                                8                          8                       0.0330                  -0.0652                    3.6015                         0.6975             0.0000             0.7267
+
+Saved C:\Users\VuDoa\Research\forex\exploration_1\rsi_broad_regime_sweep_results.json

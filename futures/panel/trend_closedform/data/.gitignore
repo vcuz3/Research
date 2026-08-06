@@ -1,0 +1,8 @@
+# Derived caches, regenerated in ~3 minutes by scripts/build_panel.py from the
+# shared archive at futures/data/databento/.  ~57 MB; not worth versioning.
+# The rule-9a report they are gated by (reports/DATA_QUALITY.txt) IS versioned,
+# and so is ticks.csv, because a measured price increment is an input to every
+# cost number in reports/FINDINGS.md and must not silently change.
+*.parquet
+intraday_coverage.csv
+daily_quality.csv

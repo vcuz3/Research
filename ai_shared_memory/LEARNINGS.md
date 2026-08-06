@@ -19,6 +19,618 @@ kill them.
 
 ## Learnings
 
+### 2026-08-05 — A claim-matched null for a SIDE-FOLDED feature must permute WITHIN side (or the firing-rate invariant fails and the null distribution is distorted); and a CROSS-PAIR relative-value DIVERGENCE gate is the one conditioner orthogonal to the own-pair vol/directional axis — yet was null-fragile, passing on one leg of each cointegrated block
+
+- Status: provisional (single project, four correlated FX pairs = two cointegrated blocks,
+  so ~2 effective experiments — but the null defect is arithmetic and was caught by an
+  in-code invariant, and the block-structured result is internally consistent). Confirm or
+  kill the divergence effect by re-pairing on any other cross-instrument conditioner in this
+  workspace; confirm the null-construction rule by auditing any existing null whose feature
+  multiplies in the trade side (the `noise_vwap` ES-confirmation and disagree-filter nulls
+  are the obvious hosts, evaluation-only).
+- Applies to: (a) any claim-matched permutation/donor null for a feature that FOLDS IN the
+  trade side — `align = side · X`, `signed_edge = side · signal`, any "is the state FAVORABLE
+  to this trade's direction" gate; (b) any cross-instrument conditioner built to be orthogonal
+  to the traded instrument's own state.
+- **The null-construction rule, and it was caught by the exact invariant RULES 17 asks for.**
+  A cross-pair fade gated on `xalign = side · z_partner` (positive = the partner DIVERGED from
+  this pair's signal). The first donor null permuted `z_partner` among all |z|≥1.5 signals in
+  each (session-minute, era) cell — and **failed its own firing-rate invariant on 4/4 pairs**,
+  because a large partner value sitting on a LONG signal (xalign = +large) can land on a SHORT
+  signal (xalign = −large), flipping its sign, scrambling the `xalign` marginal, and — the part
+  that actually mattered — inflating the **null-max mean** unevenly across pairs (+0.008–0.009 R
+  on two pairs vs +0.003–0.004 on the other two), which is the reference the real effect is
+  judged against. The fix is one term in the grouping key: permute WITHIN **(slot, era, side)**.
+  Then `xalign = side · z_partner` is a fixed monotone transform of `z_partner` within each
+  group, so its marginal and the gate's firing rate are preserved exactly while the pairing
+  between THIS signal and the partner's state is still destroyed. **General rule: the donor
+  cells must be fine enough that the permuted feature's own marginal is invariant; for a
+  side-folded feature that means side is part of the cell key. Assert the firing rate in code
+  and do not read the null until it passes** — here the invariant fired, the mis-specified null
+  was discarded, and only then was the (unchanged 2/4) verdict trustworthy.
+- **The substantive half: a cross-pair DIVERGENCE gate is orthogonal to the own-pair
+  vol/directional axis — the first conditioner in a long search that was NOT redundant.** Three
+  own-pair "directional structure" estimators (Kaufman efficiency, Wilder ADX, generalized
+  Hurst) had all reproduced the same reversed direction (a clean directional over-extension
+  reverts better than a choppy grind) but were mutually +0.4–0.6 correlated — the SAME axis
+  measured three ways, none deployable. The cross-pair feature, built PURELY from the partner
+  pair's contemporaneous displacement so it cannot restate the traded pair's own |z|, was
+  instead **−0.10 to −0.17 correlated** with the own-pair vol/ADX state, stacked on the
+  confirmed volatility gate on 3/4 pairs, and out-reverted "confirm" within the vol-gate
+  population on 4/4 — i.e. genuinely a different dimension. **When a conditioner search keeps
+  returning redundant survivors, switch from own-instrument features to a CROSS-instrument
+  relative-value feature; it is the construction most likely to be orthogonal to what you have.**
+- **The symmetric 4-leg null passed only 2/4 — but that was DILUTION of a directed 2/2 effect,
+  and the resolver is which leg ERROR-CORRECTS.** Symmetric real MAX vs null MAX: EURUSD +0.0159
+  (frac 0.000, PASS) and NZDUSD +0.0302 (frac 0.000, PASS) decisive; GBPUSD (0.100) and AUDUSD
+  (0.130) failed, their excess mostly reproducible by random re-pairing. One leg of each
+  cointegrated block passed and the other failed. **Do not stop at "block-structured NO-GO" —
+  ask which leg the cointegration says should revert.** In a cointegrating pair one leg does most
+  of the error-correction (the FOLLOWER, adjusts back to equilibrium) and the other is weakly
+  exogenous (the ANCHOR). Estimating each leg's error-correction loading a-priori — OLS slope of
+  its forward-30-min log change on the cross-rate deviation, EARLY era, PRICE LEVELS ONLY, never
+  the fade P&L — assigned followers **{EURUSD, NZDUSD}** (β_EUR −0.0082 ≫ β_GBP −0.0007; β_NZD
+  +0.0262 ≫ β_AUD −0.0067), i.e. the exact two symmetric passers, and a DIRECTED null on just
+  those legs cleared **2/2 at frac 0.000** while both anchors failed. The divergence fade lives
+  on the error-correcting leg; the 4-leg test diluted a real 2/2 directed effect to 2/4.
+  **Reusable: a cross-instrument relative-value conditioner is inherently DIRECTED — apply it to
+  the error-correcting leg, not symmetrically to both, and identify that leg from the
+  cointegration dynamics, not from the P&L you are testing.**
+- **The follower is NOT the illiquid leg — liquidity and error-correction disagree.** The
+  a-priori error-correction rule flagged **EURUSD** as the EUR/GBP follower even though EUR is the
+  most liquid pair in the world (a naive liquidity-anchor rule predicts the opposite, GBP). That
+  disagreement is what makes the assignment non-trivial rather than a relabelled cherry-pick, and
+  it is a standalone caution: the cointegration "anchor" is about weak exogeneity, not trading
+  volume. (Caveat: the follower β shares reversion information with the fade target, so treat the
+  directed pass as SUPPORTED-provisional — the a-priori-ness and the liquidity disagreement are
+  the guards, and the null itself is independent of β.) Note EURUSD — usually this project's
+  weakest pair, inverting to momentum long-horizon — was here the strong leg, so which leg carries
+  it is NOT predictable from own-signal strength, only from the error-correction structure.
+- **Keep the distinction that makes this NOT the dead coherence test.** The same project had
+  already killed a cross-pair COHERENCE gate (trailing |correlation| with the USD basket, a
+  SECOND-moment magnitude-of-comovement feature; donor null centred at 0.000). Divergence is a
+  FIRST-moment SIGNED LEVEL relationship (does the partner confirm or oppose THIS move). They are
+  different features and gave different results — coherence dead, divergence real-but-fragile.
+  **"Cross-pair" is not one idea: separate the co-movement MAGNITUDE (usually nothing here) from
+  the signed relative-value LEVEL (something, but weak).**
+- Bottom line for the host project: no conditioner crosses the cost floor. Across three axes —
+  own-pair directional structure (redundant, sub-floor), cross-pair coherence (dead), cross-pair
+  divergence (orthogonal, stacks on the vol gate, and CONFIRMED under a directed null 2/2 on the
+  error-correcting leg, best arm ~0.24 pip gross vs a ~0.70 pip commission floor) — the per-bet
+  edge is real and ~3× under cost. The one confirmed deployable-quality regime stays the
+  VOLATILITY gate (+0.0137 R, null 4/4 family); divergence is a genuine SECOND orthogonal
+  conditioner but neither alone nor stacked crosses cost. The search is exhausted; the remaining
+  lever is the ACCOUNT estimand (prop-firm challenge pass-probability × payout), not a better
+  per-bet signal.
+- Evidence: `forex/exploration_1/RSI_COINTEGRATION_GATE_REPORT.md` +
+  `RSI_DIRECTED_COINT_REPORT.md` (+ frozen `*_SPEC.md`), `_run_rsi_cointegration_gate.py`,
+  `_run_rsi_cointegration_null.py` (the within-(slot,era,side) donor fix + the firing-rate
+  invariant that caught the bug), `_run_rsi_directed_coint.py` (the error-correction follower
+  assignment + directed null), `rsi_cointegration_{gate,null}_*` and `rsi_directed_coint_*`
+  json/csv; the redundant directional-axis siblings
+  `RSI_{EFFICIENCY_GATE,ADX_REVERSAL,HURST_GATE}_REPORT.md`. Reproduce via
+  `python -u _run_rsi_cointegration_{gate,null}.py` and `_run_rsi_directed_coint.py` from
+  `forex/exploration_1`.
+- Origin: user asked, before opening the sealed 2024+ holdout, to explore the conditions under
+  which the FX mean-reversion edge performs better, to run cointegration of the USD pairs "for
+  completeness", and then — reading the block-structured result — to run a directed
+  follower-reverts-to-anchor test (2026-08-05/06). It was the last conditioner axis; it produced
+  the search's only orthogonal survivor, its only null-invariant catch, and — once directed by
+  error-correction structure — its only cross-pair conditioner to clear a preregistered null.
+
+### 2026-08-05 — A PLACEBO must be COVERAGE-MATCHED before it is read; and resampling a strategy to a coarser bar multiplies every lookback, so windows that used to fit between the data's gaps stop fitting
+
+- Status: provisional (single project, four correlated FX pairs — but the defect is
+  arithmetic, was caught by an in-run count check, and the corrected placebo is
+  decisive). Confirm or kill by adding a per-cell COUNT column to any existing
+  placebo/permutation table in this workspace — the `noise_vwap` decision-clock phase
+  sweep and the CME 46-slot circular-shift null are the obvious hosts, and the arm is
+  evaluation-only.
+- Applies to: (a) any placebo that sweeps a phase, offset, slot, weekday or other
+  index and compares cells; (b) any port of a strategy from one bar size to another
+  where parameters are kept in BAR units (RSI(14), EMA(20), a 120-bar z window).
+- **The headline: a phase placebo reported the default offset at rank 1/5 with about
+  3x the mean R of every other offset — and the entire gap was a coverage hole in the
+  control, not a phase effect.** Transplanting a 1-minute z/RSI mean-reversion system
+  to 5-minute bars, the `z` scale is a 120-BAR rolling dispersion; in bar units that
+  silently becomes **600 minutes instead of 120**, and a 600-minute window no longer
+  fits between the daily 17:00 FX rollover gaps. The strict contiguity rule returned
+  **coverage 0.000 for the first TEN hours of every session** — the whole Asia session,
+  58% of bars, visible only as NaN. Allowing one session break repairs the DEFAULT grid
+  phase and no other: off-phase, the bar straddling the rollover is incomplete, hence
+  invalid, hence **two** breaks, so Asia is deleted again. The placebo was comparing
+  grid offsets against a ten-hour-a-day hole.
+- **The tell was one column and it should be standard: the cells had different n.**
+  Phase 0 had **1,212 signals/year against ~783** at the other four offsets. A placebo
+  is supposed to change WHICH observations you select, not HOW MANY are definable.
+  **Print the per-cell count next to every placebo/permutation statistic and reject the
+  comparison if the counts move.** After the repair (drop the break gate on the scale
+  estimator entirely — displacement from an EMA is defined at every bar, and a trailing
+  dispersion estimate across a weekend is still a valid causal one) coverage went to
+  0.9999 with a per-slot minimum of 0.9995 and counts matched at
+  1,215/1,211/1,211/1,216/1,218.
+- **The residual real effect, once measurable, was a third of what the broken control
+  claimed — and still large enough to matter.** Corrected, the default phase is still
+  rank 1/5 but at **+0.0086 R above the phase median, ~38% of the base arm's entire
+  edge** (sd across phases 0.0049). That phase puts every entry on a UTC minute
+  divisible by five, including `:00` and `:30`, which the same project had already
+  identified as the most strongly reverting minutes of the hour on spot FX. So the
+  broken control and the corrected one pointed the same way, which is exactly why it
+  would have shipped.
+- **A statistic defined as EXCESS OVER A BASELINE MEASURED IN THE SAME CELL is immune
+  to this class of contamination, and that is a reason to prefer it.** Absolute mean R
+  moved 0.0228 -> 0.0096 across phases, but excess over the `|z|` frontier *measured at
+  each phase* was +0.0100/+0.0077/+0.0060/+0.0022/+0.0080 — all positive, because a
+  phase shift moves the arm and its own baseline together. Extends the 2026-08-04
+  frontier-excess entry: the device does not only correct for selectivity, it also
+  cancels nuisance shifts shared by the arm and its reference. **Cost: you must
+  actually run the baseline inside every placebo cell** — running it only in the
+  default cell makes the cancellation an assumption rather than evidence.
+- **Sub-lesson with teeth: `np.interp` CLAMPS outside its range, so a "rate-matched"
+  comparison silently becomes an extrapolation.** Arms firing at 272-401 signals/year
+  were scored against a frontier whose own minimum was 421-573, so they were credited
+  against the shallowest available baseline rather than a matched one — and they
+  produced the run's largest apparent excess (+0.0294 R). **Assert that every arm's
+  rate lies inside the reference curve's range and flag the ones that do not.**
+- Bottom line for the host project: the 5-minute clock is a **wash** — 0.0240 R against
+  the 1-minute clock's 0.0230 R at a matched risk unit and matched horizon, so the
+  1-minute edge was not a sub-five-minute microstructure artefact — but it buys nothing:
+  the regime gate is weaker (+0.0100 vs +0.0137 excess) and delay retention is not
+  improved (22-29% of pips at a five-minute delay, against ~15% for the 1-minute clock
+  at the same wall-clock delay, i.e. the decay is a property of elapsed TIME, not of the
+  sampling rate). The one durable result is that the volatility-regime gate is a
+  **short-horizon** conditioner: excess +0.0100 R at a 30-minute hold, +0.0045 at 60,
+  **+0.0003 at 150**, at every grid phase.
+- Evidence: `forex/exploration_1/RSI_FIVE_MINUTE_CLOCK_REPORT.md` and its frozen
+  `RSI_FIVE_MINUTE_CLOCK_SPEC.md`; `_run_rsi_five_minute_clock.py` (bar builder,
+  1-minute stop resolution under a 5-minute decision clock, per-phase coverage and
+  count reporting) and `rsi_five_minute_clock_results.json` / `.csv`. Reproduce via
+  `python -u _run_rsi_five_minute_clock.py` from `forex/exploration_1`.
+- Origin: user asked to try the z/RSI mean-reversion strategy "on the 5 minutes instead
+  of 1, first crossing, with appropriate volatility regimes" (2026-08-05). The clock
+  question came back a wash; the placebo bug and the horizon result were the value.
+
+### 2026-08-04 — For any CONDITIONAL EXIT rule, the decisive control is a RANDOM exit at the same rate; and when a MANDATORY stop is imposed from outside, its width is usually a bigger lever than the signal work it is imposed on
+
+- Status: provisional (single project, four correlated FX pairs — nearer two effective
+  agreements — but each verdict is over-determined by three mutually independent
+  degenerate controls that all landed on the same number, and the stop result is
+  monotone on 4/4 pairs with no exceptions). Confirm or kill by applying the
+  random-exit control to any other conditional exit in this workspace —
+  `futures/nq/noise_vwap`'s continuous stop and partial-TP exits and the GC 60-minute
+  clock are the obvious hosts, and the arm is evaluation-only.
+- Applies to: (a) any exit rule of the form "close the position early if it has not
+  yet done X" — non-reversion exits, time stops, break-even stops, "cut it if it is
+  not working" heuristics; (b) any strategy operating under an externally imposed
+  per-trade stop (prop-firm challenge, risk-desk mandate, margin rule); (c) any
+  same-time-of-day normaliser being ported from a SCHEDULED clock to an EVENT clock.
+- **The headline: an exit rule that cut the left tail exactly as designed was
+  indistinguishable from closing a random 46% of trades at the same minute.** Testing
+  "exit at minute 10 if the position has not reverted" on an RSI mean-reversion
+  strategy: worst-5% share improved from −3.548 to −3.232, max drawdown from 111 R to
+  86 R, worst day from −15.6 R to −11.7 R. Every tail metric moved the right way. But
+  mean R fell 0.037 → 0.032, and the **matched-rate random-time exit** — close a
+  randomly chosen 46% at minute 10, 50 draws — scored the *same or better* (median
+  −0.0021 R against the conditional rule, 1/4 pairs). The **unconditional** control,
+  closing *everyone* at minute 10, also gave 0.032. Three ways of shortening exposure,
+  three identical answers. **The tail reduction was bought with exposure, not with
+  information**, and only the random control could show that.
+- **Run all three degenerate exits, because they fail in different directions and one
+  of them passing is a trap.** The third control here was a **matched-rate tighter
+  STOP** (the price barrier set so it terminates the same 47% of trades early). The
+  time exit beat it by +0.070 R on 4/4 pairs — a criterion the spec had declared, and
+  it PASSED. It proves nothing about the exit rule: the matched stop had to be set at
+  0.64 R and was simply catastrophic (−0.039 R). **A control that is much worse than
+  the treatment tells you about the control.** The useful residual is real but
+  different from the claim being tested: *if you must shed exposure, shed it on the
+  clock rather than by tightening the stop.*
+- **The second half, and it is the one with money attached: when a stop is COMPULSORY,
+  its width is a monotone tax and it dominated everything else in the study.** Gated
+  signal, 1-pip stop slippage, median of four pairs: no stop **0.333 pip / 0.047 R**,
+  3.0 R 0.308 / 0.042, 2.0 R 0.269 / 0.034, 1.5 R 0.185 / 0.019, **1.0 R 0.030 /
+  −0.008 with cluster t collapsing 8.65 → 0.90** and mean R negative on 3 of 4 pairs.
+  Monotone on every pair with no exception. The mechanism is one line and it
+  generalises: **when winners and losers are the same size (here both about ±0.9 R,
+  the whole edge being a 55-57% hit rate), truncating the loss distribution truncates
+  the gain distribution by more.** Check that ratio before designing any stop; if
+  |mean win| ≈ |mean loss| there is no favourable geometry for a barrier to harvest.
+- **The slippage is what converts "mildly costly" into "fatal", so never evaluate a
+  mandated stop at the stop price.** Crediting the exact level (rule 5's optimistic
+  fill) makes the whole sweep look flat-to-benign; adding one pip of adverse fill
+  makes the tight end negative. The tighter the stop the more often you pay it, so
+  slippage interacts multiplicatively with stop tightness rather than additively.
+- **What tight stops genuinely buy is a smaller WORST DAY, and in a mandated-stop
+  setting that is a real constraint rather than a consolation.** Worst day improved
+  monotonically from −18.6 R (no stop) to −13.9 R (1.0 R). A prop challenge's
+  **daily-loss limit** binds on that number while its **profit target** binds on
+  expectancy, so the two rules pull stop width in *opposite* directions. The right
+  output is an explicit trade-off, not an optimum of either. Practical default:
+  **widest stop the risk budget allows, and control daily loss through position size
+  and a trade cap** — both of which cost expectancy proportionally rather than
+  asymmetrically. Note also that a drawdown blow-up under a tight stop is usually just
+  the negative mean compounding, not an independent risk effect; do not report it as
+  one.
+- **Sub-lesson, rule 9a, and it silently deleted 96.5% of the sample: an EVENT-clock
+  sample is far too sparse to estimate its own SAME-SLOT baseline.** Moving the
+  decision rule from a fixed `:29`/`:59` schedule to "the first minute the condition
+  becomes true" scatters signals over all 1,440 session minutes, so a 90-session
+  same-slot window computed *on the event rows* was populated for only **3.5%** of
+  signals. Estimating the identical feature on the **full minute grid** and then
+  reading it at the event rows restored coverage to **94.9%**. The trap is that the
+  3.5% who survived were not a random 3.5%: the most common minute-of-half-hour held
+  **30.5%** of them, i.e. the broken construction quietly reconstructed the round-clock
+  schedule that the whole change was made to escape. **Estimate a seasonal normaliser
+  on the regular grid and read it at the events; never estimate it from the events.**
+  Same family as the 2026-07-19 strict-`min_periods` hidden liquidity filter, reached
+  from the clock side.
+- Sub-lesson worth keeping for the host project: the event clock's base edge retained
+  **72% of pips and 71% of R under a one-minute entry delay**, against 15% for the
+  scheduled clock's freshness component. So the first-traded-minute fragility recorded
+  in the 2026-08-04 clock entry is **specific to the scheduled clock**, not a property
+  of short-horizon FX reversion. Dropping a schedule can fix a fragility as well as a
+  confound.
+- Also confirmed here, third time in this project: a cross-sectional gate (cross-pair
+  coherence — is this move shared with the other three USD pairs, or idiosyncratic?)
+  looked plausible, was constructed to exclude its own pair so it could not restate
+  `|z|`, and returned **nothing**: median tercile gap −0.0012 R on 2/4 pairs, wrong
+  sign on two, flat non-monotone quintiles, sign flip under a volatility-matched
+  split, and a donor-matched re-pairing null centred at 0.000 with sd 0.010-0.013 that
+  only 1 of 4 pairs escaped. Worth pinning that **the null's sd is the power
+  statement**: a preregistered +0.02 R effect would have sat about 2 sd outside it, so
+  this is a real null result rather than an underpowered one. Report that comparison
+  explicitly — most "no effect" write-ups never establish they could have seen one.
+- Evidence: `forex/exploration_1/RSI_COHERENCE_TIMEEXIT_REPORT.md` and its frozen
+  `RSI_COHERENCE_TIMEEXIT_SPEC.md`; `_rsi_stop_engine.py` +
+  `_test_rsi_stop_engine.py` (17 checks pinning rule-3 entry-bar inclusion, rule-5
+  gap-through fills, adverse slippage on both fill kinds, the short-side mirror, and
+  that a breach at the exit bar does not fire); `_run_rsi_coherence_gate.py`,
+  `_run_rsi_time_exit.py` and their JSON/CSV outputs. Rule-23 reproduction against the
+  published first-crossing figures passes on 4/4 era cells. Reproduce via
+  `python -u _run_rsi_{coherence_gate,time_exit}.py` from `forex/exploration_1`.
+- Origin: user asked to run items 3 and 4 of an earlier shortlist and, mid-run, added
+  two deployment constraints — a compulsory single-barrier stop, and no fixed decision
+  clock (2026-08-04). Both constraints changed the estimand, and the stop constraint
+  turned out to matter more than either component under test.
+
+### 2026-08-04 — A threshold that SCALES with a regime variable is a selector FOR that variable, and comparing such rules in P&L units compares RISK UNITS, not edges
+
+- Status: provisional (single project, four correlated FX pairs, so nearer two or three
+  effective agreements — but the diagnosis is over-determined: the three rules agree to
+  ±0.01 R while their pip means span 0.73 to 1.00, and the implied risk unit orders them
+  exactly). Confirm or kill by applying the R-unit read to any other threshold, gate, or
+  filter in this workspace whose cut is a function of a volatility or regime variable —
+  `noise_vwap`'s band-multiple entry and the CME FX projects' `|dev_z|` cut are the
+  obvious hosts, and the arm is evaluation-only.
+- Applies to: (a) any decision rule of the form "trigger when `|x| ≥ k · f(regime)`" —
+  vol-scaled entry thresholds, ATR-multiple stops and targets, adaptive breakout bands,
+  z-cuts whose width moves with a state variable; (b) any comparison between two such
+  rules reported in ticks, pips, dollars, or basis points.
+- **The headline: a vol-scaled exhaustion threshold that beat a fixed one by +0.060 pip
+  lost to it by −0.241 pip once the two were run at the same selection rate — and in
+  scale-free units the two were identical.** The audited comparison ran
+  `|z| ≥ 1.5(1 + vol_pct)` against `|z| ≥ 1.5` at **632 and 1,724 signals per year**, a
+  2.7x difference in selectivity, on a strategy whose own threshold sweep already showed
+  depth raises pips-per-signal monotonically. Rewriting every rule as a score
+  `s = |x| / g(regime)` and keeping the top `rate` by that score makes rules **exactly
+  rate-matched by construction**, which is the cheap general fix. The published rule then
+  beat the degenerate fixed rule on **0 of 4** pairs, and the deficit was **monotone in
+  selectivity** (−0.383 pip at keep 0.02 → −0.037 at 0.20) — the signature of a rule whose
+  only content is how deep it cuts.
+- **METHOD UPGRADE, 2026-08-04, same project: when arms have arbitrary and uncontrollable
+  selection rates, do not match them pairwise — score every arm as EXCESS over the BASE
+  PARAMETER'S OWN FRONTIER.** Sweep the base rule's one threshold (here `|z| ≥ k`, eight
+  values), giving a curve of (signals per year, mean R); then score each arm as
+  `arm mean R − frontier mean R linearly interpolated in log(signals/year) to that arm's
+  own rate`. An arm sitting ON the curve added nothing but selectivity, and the sign of
+  the excess is directly readable. It generalises the score-and-keep-top device above to
+  gates, conjunctions and filters whose rate you cannot dial, and it costs one extra
+  sweep. It immediately settled two questions that had been open for weeks: stacking
+  RSI on top of `z` is **negative** at every matched rate (−0.0010 to −0.0043 R, 0-1 of
+  4 pairs — they are the same variable, `Spearman(z, RSI14) = 0.9684` on 4.21M minutes
+  with **zero** direction disagreements), and four separately-published volatility-regime
+  gates were each **inside the ±0.005 R no-effect band on 2 of 4 pairs**, i.e. all dials —
+  including the one that had been carried as the project's last surviving component.
+  **Print the frontier next to any filter you are about to adopt; a filter that does not
+  clear its own base parameter's depth curve is a turnover setting, not information.**
+  Evidence: `forex/exploration_1/RSI_Z_REGIME_MATRIX_REPORT.md` + its frozen spec and
+  `_run_rsi_z_regime_matrix.py`.
+- **COROLLARY, 2026-08-05, and it nearly doubled an effect on paper: once your statistic
+  is an EXCESS OVER AN INFORMATIVE BASELINE, its null does NOT centre at zero — and the
+  two bars it creates answer different questions.** Running a claim-matched, joint
+  donor re-pairing null on the frontier-excess statistic above, the null centred
+  **−0.0012 to −0.0130 R**, never at zero, because a RANDOM gate at the same trade count
+  keeps the shallow base-threshold signal mix while being compared against a *deeper*
+  frontier cell. So **"real beats the null" only says the gate carries information**,
+  whereas **"excess > 0" says it beats the cheaper alternative of just deepening the base
+  parameter** — which is the deployment bar and the strictly harder one. Quoting the null
+  p-value alone would have overstated the effect by about the null's offset, i.e. most of
+  it. Report the null's centre, the baseline, and the real value as three separate
+  numbers whenever the test statistic is a difference against something informative;
+  this is the 2026-07-20 "interpret the null's CENTER" instruction extended from
+  rarity-filter nulls to baseline-differenced statistics. Two further reusable pieces
+  from the same run: (i) when selection occurred, compare the real MAXIMUM over the
+  reproduced search against the null distribution of MAXIMA — here that converted a
+  "1 pass out of 13 arms" screen into a 4/4-pair pass at p ≤ 0.05; (ii) **a family can
+  be confirmed while its best cell is not identified** — every one of four correlated
+  pairs had a *different* argmax arm, so the honest promotion was the gate family with
+  loose parameters, not the winning cell. Evidence:
+  `forex/exploration_1/RSI_GATE_NULL_REPORT.md`, `_run_rsi_gate_null.py` (four
+  preservation claims asserted in code and passing on 4/4 pairs).
+- **The reusable half, and it is rule 19 in a costume: three rules with the same edge per
+  unit of risk produced pip means spanning 37%, because each selected a different
+  volatility.** Mean R was 0.096 / 0.106 / 0.103 (published / fixed / mirror) and hit rate
+  0.558 / 0.571 / 0.574 — indistinguishable — while the **implied risk unit** (mean pips ÷
+  mean R) was **7.4 / 8.6 / 10.1 pips**. Across the whole frontier the R-unit differences
+  ran −0.013 to +0.009 with pair votes 1-3 of 4 in *both* directions. **Always print
+  `mean_pips / mean_R` next to any rule comparison; if it moves, you are ranking risk
+  units.** A fixed per-trade cost then converts that ranking into a spurious economic
+  verdict.
+- **The direction of the scaling is the thing to check first, and it was backwards.**
+  Demanding MORE stretch when volatility is high makes high-volatility states the hardest
+  to trigger, so the rule systematically samples the CALMEST states — while the host
+  project's own established finding is that reversion is *stronger* in high-volatility
+  states. The rule was fighting the project's own regime result, and the depth increase
+  hid it for two reports. **Write down which states your scaled threshold selects MORE of
+  before reading its P&L**; it is one line and it would have caught this at design time.
+- **The mirror rule won the frozen metric and still should not be adopted, which is the
+  subtler lesson.** Scaling the other way (shallower threshold in high volatility) beat
+  the published rule on 4 of 4 pairs (+0.400 pip) and was the only rule with a late-era
+  cluster t above 3 — because it selects the most volatile states, where a flat pip cost
+  is a smaller share of the move. It did **not** win in R units. So under an *assumed
+  flat* cost it reads as an edge, and under a realistic spread that widens with volatility
+  it may be entirely absorbed. **An unmeasured cost model does not merely leave viability
+  open — it can decide which rule you adopt.** Prefer the degenerate no-scaling rule until
+  the cost is measured: it ties on both metrics, has one fewer parameter, and does not
+  tilt the sample toward the widest-spread states.
+- **Sub-lesson, from the same run: the one lever that survived is the one that does NOT
+  work by selecting more volatile states.** Freshness (how many consecutive minutes the
+  trigger condition had already held) paid 1.363 pip / **0.183 R** at age 0 against
+  0.824 / 0.097 for all ages, monotone in age, 4/4 pairs, with the risk unit *smaller*
+  than the base and age correlating *positively* with volatility — i.e. the scale channel
+  runs against the result rather than producing it. That is what a real conditioning
+  variable looks like next to three fake ones. (It was still rejected for deployment:
+  85% of the pip gain died on a one-minute entry delay, per the clock entry below.)
+- **Method note that nearly inverted a verdict: your rate-matched CONTROL can itself be a
+  volatility selector.** The preregistered control for freshness was "tighten the existing
+  gate to the same keep rate", which tied on pips (2/4 pairs) — but that control selected
+  states with an 11.8-18.6 pip risk unit against freshness's 6.6-10.5, and in R units
+  freshness won 4/4. Check the risk unit of the control, not only of the treatment.
+- This is a fourth route into the "a design choice pins the decision to something you did
+  not mean to select" family — 2026-07-27 (fixed cut on a session-reset feature is a
+  clock), 2026-08-03 (fixed cut on a trailing normaliser, and estimator bias on a growing
+  window), 2026-08-04 (a fixed schedule is a minute-of-hour selector), and now a
+  regime-SCALED cut is a regime selector. The unifying instruction is unchanged: whenever
+  a rule's threshold is a function of something, sweep that something as a placebo — and
+  compare at matched selection rate, in scale-free units.
+- Evidence: `forex/exploration_1/RSI_THRESHOLD_FRESHNESS_REPORT.md` and its frozen
+  `RSI_THRESHOLD_FRESHNESS_SPEC.md`; `_run_rsi_threshold_control.py`,
+  `_run_rsi_freshness.py` and their JSON/CSV outputs; the superseded-in-place
+  `RSI_REGIME_GATED_SYSTEM_REPORT.md` component 2. Rule-23 reproduction of the three
+  audited rows within 0.003 pip. Reproduce via
+  `python -u _run_rsi_{threshold_control,freshness}.py` from `forex/exploration_1`.
+- Origin: user asked for suggestions on improving a mean-reversion system's entry signal,
+  exhaustion threshold and regime filter (2026-08-04). Reading the audited script showed
+  the surviving threshold component had never been compared at matched selectivity; the
+  control was one line and it retracted the component.
+
+### 2026-08-04 — A SCHEDULED signal clock is a minute-of-hour selector: comparing a "sampled state" clock against an "event" clock changes the sampling PHASE as well as the signal, and the phase is usually the bigger lever
+
+- Status: **confirmed** for the phase confound (2026-08-04: replicated on two further
+  sources — LSE tick-derived spot bars covering 2009-2012, an almost non-overlapping
+  period, and Databento CME 6E/6B exchange-reported futures. Phase `:29` is rank
+  **30/30** among the 30 half-hour phases in 5 of 6 pair/venue cells, the sixth being the
+  thinnest. See "cross-vendor check" below). **Provisional and partly rejected** for the
+  proposed `:00`/`:30` reversal mechanism. Confirm or kill the remaining piece by
+  sweeping the sampling phase on any other decision clock in this workspace; the
+  30-minute noise-area clock (`:59`/`:29`) and the 46-slot CME FX clock are the obvious
+  hosts and the arm is evaluation-only.
+- Applies to: any comparison between a signal sampled on a FIXED SCHEDULE (every 30/15/60
+  minutes, at a session slot, at a bar close) and the same signal taken as an EVENT
+  (threshold crossing, breakout, trigger) — and to any result whose entries all land on
+  the same phase of a round clock.
+- **The headline: "the scheduled clock beats the first-crossing clock by 0.22-0.28 pip"
+  reversed once phase was held fixed.** RSI(14) 30/70 mean reversion on EURUSD/GBPUSD,
+  30-minute horizon: scheduled +0.637 to +0.695 pip against first-crossing +0.220 to
+  +0.418, reproduced to 0.0021 pip. But the scheduled clock is 100% on minute-of-half-hour
+  `:29`, while crossings land on all 30 phases. **First crossings that happen to land on
+  `:29` average +1.214/+0.716 (EURUSD early/late) and +1.427/+1.377 (GBPUSD)** — equal to
+  or better than scheduled, at matched threshold depth — while off-phase crossings average
+  +0.206 to +0.380. The published crossing number is just their 1:29 mixture. The event
+  signal was never worse; it was sampled off-phase 29 times out of 30.
+- **The control is one line and it is a placebo, not a robustness check: rerun the
+  scheduled clock at ALL phases of its own interval.** Phase `:29` came out rank **30/30**
+  in three of four pair/era cells and 29/30 in the fourth, with a cross-phase sd of
+  0.11-0.15 against a `:29`-minus-median excess of +0.22 to +0.44. **The spread across
+  phases was larger than the entire effect being studied.** A clock whose phase is never
+  swept has an unmeasured selector inside it.
+- **Corroborate the phase effect on the FULL range with no threshold before believing it.**
+  Spearman IC(RSI, signed forward 30-min return) computed per phase on every row
+  (~107k per phase) put `:29` most-negative in 3 of 4 cells — so it is a property of the
+  tape, not a small-sample artifact of the 30/70 extremes. This is the cheap way to tell a
+  real clock structure from a lucky cell.
+- **Localise it in TIME, then run the degenerate no-signal control.** Splitting the
+  phase excess into the first traded minute vs the remaining 29 showed it is
+  **entirely the first minute on GBPUSD** (+0.293 of a +0.282 total) and about half on
+  EURUSD; delaying entry and exit by one minute dropped `:29` to rank 17-28/30. Then the
+  decisive arm, with no RSI at all: **unconditional lag-1 autocorrelation of one-minute
+  returns is -0.085/-0.082 at minute `:00` and -0.062/-0.074 at `:30`, against a
+  60-minute median of -0.016/-0.024.** A `:29`/`:59` signal is entered at the `:30`/`:00`
+  open — the two most strongly reverting minutes of the hour. The "clock effect" looked
+  like a round-clock microstructure effect the schedule was parked on. **That mechanism
+  half-died on cross-vendor check — see the next bullet — but the localisation survived.**
+- **CROSS-VENDOR CHECK, and it separated the finding from its explanation.** Repeating the
+  work on LSE tick-derived spot bars (2009-2012, a different vendor and an almost
+  non-overlapping period) and on Databento CME 6E/6B exchange-reported futures: the
+  **phase effect replicates** (rank 30/30 in 5 of 6 cells, excesses +0.267 to +0.717 pip;
+  threshold-free Spearman IC by phase agrees on 26k-133k rows per phase), and the
+  first-minute concentration replicates too (**rank 30/30 in every cell including both
+  futures**). But the **`:00`/`:30` raw-return reversal spike does not**: it is rank 1/60
+  and 3-4/60 on both LSE spot pairs, surviving an activity control, and **absent on CME,
+  where 6E's `:30` is the LEAST reverting minute of the hour (rank 60/60)**. On CME the
+  phase excess also runs deeper into the holding period (first-minute share 36-51% vs
+  56-107% on spot). So the mechanism is spot-FX-specific and is **open again**, while the
+  finding it was invoked to explain is now the best-replicated thing in the project.
+  **General lesson: replicate the FINDING and the MECHANISM as separate arms.** A
+  cross-venue check that only asks "does the headline hold" would have carried a wrong
+  mechanism forward under a confirmed banner.
+- **A one-minute labelling bug that inverted a cross-vendor verdict, worth pinning
+  because it is invisible.** IBKR bars satisfy `open(t) == close(t-1)` **exactly** (a
+  continuous synthetic series); LSE bars do not, because a minute's open is its first
+  tick. So an open-to-open return series on one vendor **is** a close-to-close series on
+  the other, shifted by one minute. Comparing them unaligned read as "LSE does not
+  replicate" when it does — the LSE profile had simply moved from `:00`/`:30` to
+  `:59`/`:29`. When a claim is about specific minutes, fix one convention (`r_m = P(m) −
+  P(m−1)`, labelled by its ending minute) and check `share(open(t) == close(t−1))` per
+  vendor before comparing anything.
+- **Trade prints need an activity control before any minute-of-hour reading.** CME
+  `ohlcv-1m` opens/closes are trade prices, so lag-1 autocorrelation sits at about
+  **−0.35** everywhere from bid-ask bounce — an order of magnitude larger than any
+  minute-of-hour structure — and volume at `:00` is roughly **2x** the median minute.
+  Bounce shrinks as activity rises, so the raw profile is largely a liquidity profile
+  with the wrong sign. Regressing ac1 on log activity across the 60 minutes and reading
+  the residual removed both CME contracts' apparent `:00`/`:30` structure. Spot midpoint
+  bars do not have this problem, which is exactly why the two venues disagreed.
+- **Two plausible explanations that both failed, and they failed in the useful direction.**
+  (a) *State sampling finds a better state*: within the scheduled clock, expectancy
+  **decays** with time-in-zone — tau=0 is the best cell (+0.90/+1.04) and tau 6-20 is flat
+  to negative, so a fresh crossing is the best state, not the worst. (b) *Length-biased
+  sampling*: scheduled sampling over-weights long extreme runs (mean run 6.3-7.4 min vs
+  3.2-3.5), and long runs are catastrophic (crossings into 21-45-minute runs average
+  **-17.4 pip**); reweighting crossings to the scheduled run-length mix gives **-1.61 and
+  -1.99 pip**. Length bias works *against* the scheduled clock and it wins anyway — which
+  is what forced the search onto the phase.
+- **Method note worth pinning: a survival split on an event is not a filter.** Splitting
+  first crossings by whether the extreme survived to the next scheduled checkpoint gives
+  -4.6 to -5.7 pip (t about -35) for survivors against +1.2 to +1.7 for non-survivors —
+  spectacular, and useless, because survival is not known at the crossing. Read it as a
+  restatement of "continuation kills this signal", never as a condition.
+- This is the third route into the same family: 2026-07-27 (fixed threshold on a
+  session-RESET feature is a clock), 2026-08-03 (fixed threshold on a trailing-window
+  normaliser is a clock, and estimator bias on a growing window is a clock), and now a
+  fixed SCHEDULE is a minute-of-hour selector. The unifying instruction: whenever a design
+  choice pins a decision to a repeating index, sweep that index as a placebo.
+- Bottom line for the host project: nothing deployable either way — the on-phase cells are
+  0.7-1.4 pip gross against a 0.5-1.0 pip round trip, post hoc, n=475 to 1952, and the
+  first-minute concentration is the same fragility that project's one-minute-lag decay
+  already recorded. The value is the retracted framing.
+- Evidence: `forex/exploration_1/RSI_CLOCK_CONFOUND_REPORT.md` (incl. its cross-vendor
+  section), `_run_rsi_clock_decomposition.py`, `_run_rsi_clock_phase_forensics.py`,
+  `_run_rsi_clock_boundary_test.py`, `_run_boundary_crosscheck.py`,
+  `_run_boundary_crosscheck_aligned.py`, `_run_phase_shape_crosscheck.py` and their JSON
+  outputs; data at `forex/data/lse/fx/` and `futures/data/databento/`;
+  `forex/exploration_1/MEMORY.md` (the superseded clock paragraph). Rule-23 reproduction
+  of 7 of 8 published clock means within 0.0021 pip. Reproduce via
+  `python -u _run_rsi_clock_{decomposition,phase_forensics,boundary_test}.py` from
+  `forex/exploration_1`.
+- Origin: user pushed back on the project's own finding, saying it made no sense that a
+  fixed schedule would inherently outperform controlling for everything else (2026-08-04).
+  It did not; the two clocks were not controlling for everything else.
+
+### 2026-08-03 — Ask how much of a result is ALGEBRA before you read it; and the failure mode nobody names is a STABLE predictor of an UNSTABLE target
+
+- Status: provisional (single project, but the algebra half is a proof rather than a
+  measurement, and the persistence half is measured on 30 products x 16 years across five
+  asset classes). Confirm or kill by applying the identity diagnostic to any other
+  closed-form, analytic-approximation, or "this statistic predicts that backtest" claim in
+  this workspace — and by computing the two persistence numbers before building any
+  cross-sectional screen.
+- Applies to: (a) any claim that a computed quantity PREDICTS a backtest result, where both
+  are computed from the same data — closed forms, analytic approximations, factor
+  attributions, "our metric explains our P&L"; (b) any cross-sectional SCREEN meant to
+  answer "which market/parameter/regime next?".
+- **The headline: a screen scored +0.87 across 30 products with a CI excluding zero, a
+  re-pairing null at 0.0000, and robustness to leave-one-asset-class-out, de-duplication,
+  cost stress and every span — and it was worth nothing, because the predictor was an
+  algebraic restatement of the thing predicted.** Testing the trend-following closed form
+  `F_T ∝ γ(0)([Σ_m ν^m ρ(m) − 1] + (ν/(1−ν))SR²)` on 30 CME products: predicted P&L matched
+  realised to **4.16e-17**. That exactness IS the finding. `PHI` computed over a window is
+  that window's in-sample trend P&L plus a drift term, so "use the closed form" and "just
+  run the backtest" are the same predictor — measured within year they correlate at
+  **+0.9808**. Out of sample it predicted nothing (pooled **+0.0268 [−0.0210, +0.1149]**,
+  n=374) and did not beat the no-theory benchmark (**difference +0.0072 [−0.0083,
+  +0.0492]**).
+- **The diagnostic is three lines and it must be printed ABOVE the headline, not computed
+  after it.** For a predicted/realised pair, report `Spearman(predicted, realised)` at the
+  SAME construction — if it is ~1, the comparison you are about to read is an identity and
+  the only thing it can test is whatever differs between the two arms. Here
+  `Spearman(PHI_executable, realised) = +0.9804` and the published lag-0 form shared 159 of
+  its 160 weighted lags with it, so the celebrated +0.87 tested exactly one thing: whether
+  a one-bar execution lag and a cost model break the algebra. They did not. This is rule 16
+  in a costume nobody recognises — the relation is not a mirrored P&L or a sign flip, it is
+  a correct derivation, which is *why* it passes every null you throw at it. **A
+  re-pairing null cannot detect an identity; only the identity diagnostic can.**
+  Confirming signature: the score rose MONOTONICALLY with filter span (+0.693 at 8 to
+  +0.963 at the crossover) because longer spans make the two forms converge — the "effect"
+  tracked the algebra, not the market.
+- **The second half is the more useful one, and it is a failure mode this workspace had not
+  named: a STABLE predictor of an UNSTABLE target.** Two one-line numbers diagnose it:
+  rank persistence of the PREDICTOR year to year (**+0.7133**) and rank persistence of the
+  TARGET year to year (**−0.0045**). The screen did not fail because it was noisy — it was
+  the most stable thing in the run. It failed because realised trend P&L has **zero**
+  year-to-year rank persistence across 30 products over 16 years. That combination is the
+  worst available: a multi-year estimation window yields a confident, smooth, repeatable
+  ranking that is uncorrelated with next year, and it *looks* like a good screen every time
+  you inspect it. The signature is per-period scores swinging hard on a fixed ranking —
+  here +0.365 in 2023 and −0.364 in 2025. **Compute both persistences BEFORE building any
+  screen**: if the target's is ~0, no estimator can help and the project is already
+  answered.
+- **Method note that changed the verdict: bootstrap the DIFFERENCE against a degenerate
+  no-theory benchmark, not the statistic against zero.** The benchmark here was "last
+  window's realised P&L", which uses no theory at all. PHI's own CI and the benchmark's
+  overlap heavily and neither is decisive; the difference is. (Same lesson as
+  `vwap_exploration` EXP-0005, now confirmed in a second project — treat it as standard.)
+  Also worth pinning: **a percentile bootstrap CI that does not bracket its own point
+  estimate is biased** and must be read as "no evidence", never as a signed result. That
+  happened on the intraday arm ([−0.0421, −0.0085] around −0.0033) and not the daily one.
+- **What survived, including one prediction that failed in the good direction.** The
+  article's turnover claim `E|Δp| = (2/√π)√(1−ν)` — that turnover depends only on filter
+  span, never on the market — held outright: **0.257–0.278 measured against 0.2778
+  predicted on 28 of 30 products**, with both exceptions explained by roll-dropped returns.
+  And the preregistered worry that `PHI` would just be `SR²` in disguise was **refuted**:
+  the autocorrelation term carried it (**+0.8563**) while the drift term alone scored
+  **−0.2632** (null frac 0.92) and bare `SR` −0.1128. Note also **bare ρ(1) scored +0.0024**
+  — it is the whole weighted autocorrelation function, not any headline lag.
+- **Sub-lesson worth carrying: a strategy-transfer ladder can be a property of the CLOCK,
+  not the strategy.** The four CME equity index products ranked **`RTY > YM > ES > NQ` on a
+  daily EWMA rule** and **`NQ > YM > ES > RTY` on a 30-minute one** — an inversion. NQ is
+  the panel's most mean-reverting product at daily trend lags and the best of the four
+  intraday. So `noise_vwap`'s NQ>ES>YM/GC>RTY ladder is not a general statement about those
+  instruments, and a screen validated on one clock says nothing about another.
+- **Sub-lesson (intraday, provisional): ρ(1) on an intraday clock is largely bid-ask bounce,
+  and it is correlated with your cost model.** `Spearman(ρ1, cost) = −0.514` and
+  `Spearman(cost, net) = −0.863`, so a *net*-P&L cross-product ranking built on any
+  statistic containing ρ(1) is partly a liquidity ranking. It made a failing arm (+0.38 on
+  gross, CI spanning zero) look like a pass (+0.70 on net). Daily was unaffected
+  (`Spearman(cost, net) = −0.125`).
+- Rule-9a note, and it is the LEARNINGS 2026-07-19 defect reproduced in fresh code: a strict
+  `min_periods == window` on a causal 63-session volatility scale required all 63 trailing
+  sessions to be roll-free. `CL` drops 4.7% of its returns to contract substitutions, so
+  essentially every window contained one and the risk unit was defined on **0.0% of rows for
+  all six energy products** — visible only as NaN in a report, never as a crash. A 2/3
+  fractional floor restored them to 0.92–0.94. Also: **10 of 30 CME products changed their
+  effective price increment mid-sample**, at ten different dates, and `BZ`/`SR3`/`ZQ` have
+  13%/33%/38% of daily returns unusable because the volume-ranked continuous front flickers
+  with no dominant leg.
+- Bottom line: the closed form is correct, fast, and genuinely useful for **decomposing a
+  completed backtest** (which lags, drift vs autocorrelation) — and useless for choosing the
+  next market, which is what it was imported to do. Neither matched EWMA rule was tradable
+  anyway: daily median annualised net Sharpe +0.027 with 17/30 products positive, intraday
+  0/30 with cost 23x gross.
+- Evidence: `futures/panel/trend_closedform/reports/FINDINGS.md` §A-§H,
+  `artifacts/runs/EXP-0001/review.md` (+ `screen_daily.txt`, `screen_slot30.txt`,
+  `k2b_persistence_daily.csv`), `experiments/hypotheses/HYP-0001.md`,
+  `reports/DATA_QUALITY.txt`. New tested modules
+  `core/{panel,filters,closedform,engine,stats}.py` + `tests/test_core.py` (30 checks,
+  including the exact identity at both execution lags and through dropped rolls, the
+  price-kernel to return-weight conversion for an EWMA crossover, that `w[0]` multiplies
+  `x_t` — an off-by-one there shifts every lag in the formula — and that a strict
+  `min_periods` deletes a series with scattered roll gaps). Reproduce via
+  `python -u -m futures.panel.trend_closedform.scripts.{build_panel,s1_screen}`.
+- Origin: user asked to run item H-A1 of the aligrithm.com intake
+  (`research_papers/ALIGRITHM_HYPOTHESES_2026-08.md`, 2026-08-03). It was the item ranked
+  highest for "leverage on where do we go next", and it answered that question by showing
+  the question has no answer at this horizon.
+
 ### 2026-08-03 — Estimator bias is a THIRD route to a time-of-day selector: a persistence statistic on a GROWING window has a shrinking sampling SD, and a fixed threshold on it reads that as signal — while POOLING one across a deterministic profile inflates it in the opposite direction
 
 - Status: provisional (single project, NQ+ES — a correlated pair, so cheap corroboration

@@ -31,6 +31,27 @@ cross-section we have never built**, and **the rates complex is completely unexp
 ## Tier 1 — run these first
 
 ### H-A1. The trend-following closed form as an instrument PRE-SCREEN
+
+> **DONE 2026-08-03 → `futures/panel/trend_closedform` HYP-0001 / EXP-0001. REJECTED as a
+> pre-screen; two of the article's own claims confirmed.** The formula is *exact* —
+> predicted matched realised to **4.16e-17** on 30 products — and that is precisely why it
+> cannot screen: PHI over a window IS that window's in-sample trend P&L plus a drift term,
+> so "use the closed form" and "just run the backtest" correlate at **+0.98**. The
+> in-sample ranking scored **+0.8656 [+0.6853, +0.9333]**, null 0.0000, robust to
+> everything — and it is algebra, not evidence. Out of sample: **+0.0268 [−0.0210,
+> +0.1149]**, and the difference against a no-theory benchmark is **+0.0072 [−0.0083,
+> +0.0492]**, spanning zero. The mechanism is the reusable part: PHI's own year-to-year
+> rank persistence is **+0.7133** while *realised trend P&L's* is **−0.0045** — a stable
+> predictor of an unstable target, so **no screen of any construction can rank next year's
+> trend P&L on this panel**. The transfer-ladder question is closed by showing no table can
+> exist at this horizon. Confirmed from the article: turnover really is market-independent
+> (0.257–0.278 vs 0.2778 predicted, 28/30), and autocorrelation — not drift — carries the
+> cross-product variation (+0.8563 vs −0.2632), refuting the preregistered worry. The kill
+> test's own ordering clause was unanswerable: the EWMA equity ladder **inverts between
+> clocks** (`RTY>YM>ES>NQ` daily, `NQ>YM>ES>RTY` intraday), so `noise_vwap`'s ladder is a
+> property of the clock, not of the instruments. Note the panel is **30** distinct products,
+> not 40 — that was the file count. See `futures/panel/trend_closedform/reports/FINDINGS.md`
+> and `ai_shared_memory/LEARNINGS.md`.
 - **Source:** *6.48 Trend-Following P&L Is a Function of Autocorrelation (Closed Form)*, Jul 10 — Sepp & Lucic.
 - **Plumbing:** a European trend-follower's cumulative P&L reduces to
   `F_T ∝ γ(0)·( [Σ_m ν^m ρ(m) − 1] + (ν/(1−ν))·SR² )`, and turnover
@@ -327,13 +348,25 @@ cross-section we have never built**, and **the rates complex is completely unexp
 
 ## Recommended order
 
-1. **H-A2** (OLS bias audit) — cheapest, touches the most existing conclusions.
-2. **H-A4** (NQ MBP-1 fill quality) — the year of L1 data is idle, and the output is reusable machinery.
-3. **H-A3** (sign-asymmetric ranking) — sharpest single prediction on this list, and it is a direct
+1. ~~**H-A2** (OLS bias audit)~~ — **done 2026-08-03**, not killed on all three cells.
+2. ~~**H-A1** (trend closed form)~~ — **done 2026-08-03**, rejected as a screen; the
+   reusable output is that realised trend P&L has zero year-to-year rank persistence
+   across 30 CME products, which closes the "where do we go next?" question for this
+   family rather than answering it.
+3. **H-A4** (NQ MBP-1 fill quality) — the year of L1 data is idle, and the output is reusable machinery.
+4. **H-A3** (sign-asymmetric ranking) — sharpest single prediction on this list, and it is a direct
    consequence of a learning we already own.
-4. **H-B1** (path convexity) — cheap and genuinely orthogonal to everything run so far.
-5. **H-A1** (trend closed form) — highest leverage on "where do we go next", and it is falsifiable
-   against six projects' worth of results we already have.
+5. **H-B1** (path convexity) — cheap and genuinely orthogonal to everything run so far.
+
+**Two pieces of machinery H-A1 leaves behind for the rest of this list.** (a) The
+30-product CME panel is now built, cached and rule-9a-gated at
+`futures/panel/trend_closedform/data/{daily,slot30,ticks}.parquet|csv` with measured
+per-product-per-year price increments — H-B1's daily cross-section and H-C1's
+transfer-ladder table can read it directly instead of rebuilding it. (b) The **identity
+diagnostic** (does the predicted quantity correlate ~1 with the realised one by
+construction?) and the **degenerate no-theory benchmark with a bootstrapped difference**
+should be run on H-B1 and H-B5 before their headline numbers are read; both are a few
+lines and both changed H-A1's verdict.
 
 `H-B4` (collinear sweeps) and `H-B3` (signal averaging) are near-free add-ons to existing scripts and
 can ride alongside any of the above.

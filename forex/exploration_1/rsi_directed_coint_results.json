@@ -1,0 +1,330 @@
+{
+  "metadata": {
+    "generated_at": "2026-08-06T08:54:47.300580+00:00",
+    "spec": "RSI_DIRECTED_COINT_SPEC.md",
+    "pairs": [
+      "EURUSD",
+      "GBPUSD",
+      "AUDUSD",
+      "NZDUSD"
+    ],
+    "partner": {
+      "EURUSD": "GBPUSD",
+      "GBPUSD": "EURUSD",
+      "AUDUSD": "NZDUSD",
+      "NZDUSD": "AUDUSD"
+    },
+    "blocks": [
+      [
+        "EURUSD",
+        "GBPUSD"
+      ],
+      [
+        "AUDUSD",
+        "NZDUSD"
+      ]
+    ],
+    "draws": 200,
+    "seed": 20260806,
+    "keeps": [
+      0.1,
+      0.2
+    ],
+    "stop_R": 2.0,
+    "slippage_pips": 1.0
+  },
+  "follower_assignment": [
+    {
+      "block": "EURUSD-GBPUSD",
+      "beta_a": -0.008203454829985973,
+      "beta_b": -0.000685138241128755,
+      "n": 3121086,
+      "leg_a": "EURUSD",
+      "leg_b": "GBPUSD",
+      "beta_follower": "EURUSD",
+      "liq_anchor": "EURUSD",
+      "liq_follower": "GBPUSD"
+    },
+    {
+      "block": "AUDUSD-NZDUSD",
+      "beta_a": -0.006685375692010015,
+      "beta_b": 0.026188176261538135,
+      "n": 2736212,
+      "leg_a": "AUDUSD",
+      "leg_b": "NZDUSD",
+      "beta_follower": "NZDUSD",
+      "liq_anchor": "AUDUSD",
+      "liq_follower": "NZDUSD"
+    }
+  ],
+  "legs": {
+    "EURUSD": {
+      "pair": "EURUSD",
+      "real": {
+        "diverge_hi 10": {
+          "signals": 19074,
+          "signals_per_year": 1571.3135011441648,
+          "mean_pips": 0.2783379696387432,
+          "median_pips": 0.40000000000040004,
+          "mean_R": 0.04070993712050202,
+          "implied_risk_unit_pips": 6.837101438276818,
+          "cluster_t": 4.448670716992459,
+          "hit_rate": 0.5301457481388278,
+          "per_signal_sharpe": 0.03155210881603651,
+          "worst_1pct_share": -1.1091310095887665,
+          "worst_5pct_share": -3.615140745324366,
+          "max_drawdown_R": 78.12445199290957,
+          "worst_day_R": -14.008375255569938,
+          "sd_daily_R": 2.920759099963089,
+          "stopped_frac": 0.08708189158016148,
+          "net_0.2_pips": 0.07833796963874318,
+          "annual_net_0.2_pips": 123.09350934557881,
+          "net_0.5_pips": -0.2216620303612568,
+          "annual_net_0.5_pips": -348.30054099767057,
+          "net_1.0_pips": -0.7216620303612569,
+          "annual_net_1.0_pips": -1133.9572915697531,
+          "excess_R": 0.015882562739360086
+        },
+        "diverge_hi 20": {
+          "signals": 32863,
+          "signals_per_year": 2661.9980713596915,
+          "mean_pips": 0.290806890873452,
+          "median_pips": 0.3999999999981796,
+          "mean_R": 0.031932467847986465,
+          "implied_risk_unit_pips": 9.106934429804465,
+          "cluster_t": 6.003213069684046,
+          "hit_rate": 0.5269147673675563,
+          "per_signal_sharpe": 0.03236579181919632,
+          "worst_1pct_share": -1.0683466135277833,
+          "worst_5pct_share": -3.444315707670581,
+          "max_drawdown_R": 120.8615113730358,
+          "worst_day_R": -11.199473751119976,
+          "sd_daily_R": 3.7693730666915597,
+          "stopped_frac": 0.0851717737272921,
+          "net_0.2_pips": 0.090806890873452,
+          "annual_net_0.2_pips": 241.72776837129922,
+          "net_0.5_pips": -0.20919310912654798,
+          "annual_net_0.5_pips": -556.8716530366082,
+          "net_1.0_pips": -0.709193109126548,
+          "annual_net_1.0_pips": -1887.870688716454,
+          "excess_R": 0.0042901728383020095
+        }
+      },
+      "real_max": 0.015882562739360086,
+      "null_max_mean": 0.001659799557788616,
+      "null_max_sd": 0.0040372616638425065,
+      "null_max_p95": 0.008286635573609811,
+      "frac_null_ge_real": 0.0,
+      "passes_p05": true,
+      "checks": {
+        "partner marginal preserved": true,
+        "z trigger untouched": true,
+        "diverge rate preserved <0.5pp": true
+      }
+    },
+    "GBPUSD": {
+      "pair": "GBPUSD",
+      "real": {
+        "diverge_hi 10": {
+          "signals": 18381,
+          "signals_per_year": 1512.740692357936,
+          "mean_pips": 0.20827054403381612,
+          "median_pips": 0.5499999999991623,
+          "mean_R": 0.02752572885522111,
+          "implied_risk_unit_pips": 7.566395248942197,
+          "cluster_t": 2.3739436312160804,
+          "hit_rate": 0.52804526413144,
+          "per_signal_sharpe": 0.017437028111298013,
+          "worst_1pct_share": -1.98328145679884,
+          "worst_5pct_share": -6.627089829410246,
+          "max_drawdown_R": 65.22510460993999,
+          "worst_day_R": -10.46529473383441,
+          "sd_daily_R": 2.893512559251288,
+          "stopped_frac": 0.09373809912409553,
+          "net_0.2_pips": 0.008270544033816107,
+          "annual_net_0.2_pips": 12.511188507891776,
+          "net_0.5_pips": -0.2917294559661839,
+          "annual_net_0.5_pips": -441.31101919948907,
+          "net_1.0_pips": -0.7917294559661838,
+          "annual_net_1.0_pips": -1197.681365378457,
+          "excess_R": 0.012080240043402364
+        },
+        "diverge_hi 20": {
+          "signals": 31886,
+          "signals_per_year": 2584.5197812801543,
+          "mean_pips": 0.2197174237538907,
+          "median_pips": 0.4999999999988347,
+          "mean_R": 0.025472295823141977,
+          "implied_risk_unit_pips": 8.625740894319938,
+          "cluster_t": 3.477411290272758,
+          "hit_rate": 0.5264379351439503,
+          "per_signal_sharpe": 0.019034650916394006,
+          "worst_1pct_share": -1.7816965616527214,
+          "worst_5pct_share": -6.026943411631964,
+          "max_drawdown_R": 113.46411624716461,
+          "worst_day_R": -12.613773768915067,
+          "sd_daily_R": 3.683835408462344,
+          "stopped_frac": 0.09003951577494826,
+          "net_0.2_pips": 0.019717423753890684,
+          "annual_net_0.2_pips": 50.96007172781368,
+          "net_0.5_pips": -0.2802825762461093,
+          "annual_net_0.5_pips": -724.3958626562327,
+          "net_1.0_pips": -0.7802825762461093,
+          "annual_net_1.0_pips": -2016.65575329631,
+          "excess_R": 0.005028851060971944
+        }
+      },
+      "real_max": 0.012080240043402364,
+      "null_max_mean": 0.004871561396369732,
+      "null_max_sd": 0.004237325590260775,
+      "null_max_p95": 0.012582489520700402,
+      "frac_null_ge_real": 0.06,
+      "passes_p05": false,
+      "checks": {
+        "partner marginal preserved": true,
+        "z trigger untouched": true,
+        "diverge rate preserved <0.5pp": true
+      }
+    },
+    "AUDUSD": {
+      "pair": "AUDUSD",
+      "real": {
+        "diverge_hi 10": {
+          "signals": 18454,
+          "signals_per_year": 1533.2700296735904,
+          "mean_pips": 0.1389040256353322,
+          "median_pips": 0.2500000000005276,
+          "mean_R": 0.023120162324584595,
+          "implied_risk_unit_pips": 6.007917404958268,
+          "cluster_t": 2.609373228022306,
+          "hit_rate": 0.521512951121708,
+          "per_signal_sharpe": 0.01891287753109815,
+          "worst_1pct_share": -1.669501951847566,
+          "worst_5pct_share": -5.728398554808559,
+          "max_drawdown_R": 87.9172921567976,
+          "worst_day_R": -9.289975503630115,
+          "sd_daily_R": 2.968980163049001,
+          "stopped_frac": 0.08832773382464507,
+          "net_0.2_pips": -0.06109597436466782,
+          "annual_net_0.2_pips": -93.67662642705115,
+          "net_0.5_pips": -0.3610959743646678,
+          "annual_net_0.5_pips": -553.6576353291282,
+          "net_1.0_pips": -0.8610959743646678,
+          "annual_net_1.0_pips": -1320.2926501659235,
+          "excess_R": 0.003355025314254124
+        },
+        "diverge_hi 20": {
+          "signals": 32578,
+          "signals_per_year": 2640.6098423930525,
+          "mean_pips": 0.13427910534267626,
+          "median_pips": 0.24999999999941735,
+          "mean_R": 0.01731927603924205,
+          "implied_risk_unit_pips": 7.753159256681769,
+          "cluster_t": 3.288881732832192,
+          "hit_rate": 0.5179262078703419,
+          "per_signal_sharpe": 0.018093801103570895,
+          "worst_1pct_share": -1.7351729360047536,
+          "worst_5pct_share": -5.982509951118807,
+          "max_drawdown_R": 127.56125922243939,
+          "worst_day_R": -13.01910113309544,
+          "sd_daily_R": 3.8071221937771806,
+          "stopped_frac": 0.08416722941862606,
+          "net_0.2_pips": -0.06572089465732375,
+          "annual_net_0.2_pips": -173.5432412830061,
+          "net_0.5_pips": -0.3657208946573237,
+          "annual_net_0.5_pips": -965.7261940009217,
+          "net_1.0_pips": -0.8657208946573237,
+          "annual_net_1.0_pips": -2286.031115197448,
+          "excess_R": 0.01150973271337935
+        }
+      },
+      "real_max": 0.01150973271337935,
+      "null_max_mean": 0.004123615382275086,
+      "null_max_sd": 0.005154213444867024,
+      "null_max_p95": 0.012841184930852205,
+      "frac_null_ge_real": 0.09,
+      "passes_p05": false,
+      "checks": {
+        "partner marginal preserved": true,
+        "z trigger untouched": true,
+        "diverge rate preserved <0.5pp": true
+      }
+    },
+    "NZDUSD": {
+      "pair": "NZDUSD",
+      "real": {
+        "diverge_hi 10": {
+          "signals": 17832,
+          "signals_per_year": 1484.5272547076313,
+          "mean_pips": 0.29550735925059146,
+          "median_pips": 0.3500000000000725,
+          "mean_R": 0.03927200082449637,
+          "implied_risk_unit_pips": 7.5246321309472295,
+          "cluster_t": 5.581282569940195,
+          "hit_rate": 0.523721399730821,
+          "per_signal_sharpe": 0.041481253790173554,
+          "worst_1pct_share": -0.719916714420624,
+          "worst_5pct_share": -2.524255086949874,
+          "max_drawdown_R": 72.16143554765398,
+          "worst_day_R": -11.325343925815071,
+          "sd_daily_R": 2.9481333839673964,
+          "stopped_frac": 0.08232391206819202,
+          "net_0.2_pips": 0.09550735925059145,
+          "annual_net_0.2_pips": 141.783277832656,
+          "net_0.5_pips": -0.20449264074940854,
+          "annual_net_0.5_pips": -303.5748985796333,
+          "net_1.0_pips": -0.7044926407494085,
+          "annual_net_1.0_pips": -1045.838525933449,
+          "excess_R": 0.03020682421445406
+        },
+        "diverge_hi 20": {
+          "signals": 31650,
+          "signals_per_year": 2565.3908009006113,
+          "mean_pips": 0.22840175131444818,
+          "median_pips": 0.2999999999997449,
+          "mean_R": 0.029482081302886445,
+          "implied_risk_unit_pips": 7.747137963834544,
+          "cluster_t": 5.627057565561537,
+          "hit_rate": 0.5228751974723539,
+          "per_signal_sharpe": 0.032256198202520674,
+          "worst_1pct_share": -0.951309407070611,
+          "worst_5pct_share": -3.326021443035683,
+          "max_drawdown_R": 89.77703747875967,
+          "worst_day_R": -14.389962609490787,
+          "sd_daily_R": 3.8965518656420683,
+          "stopped_frac": 0.080695102685624,
+          "net_0.2_pips": 0.028401751314448165,
+          "annual_net_0.2_pips": 72.86159155155217,
+          "net_0.5_pips": -0.2715982486855518,
+          "annual_net_0.5_pips": -696.7556487186312,
+          "net_1.0_pips": -0.7715982486855518,
+          "annual_net_1.0_pips": -1979.4510491689366,
+          "excess_R": 0.01508215764836017
+        }
+      },
+      "real_max": 0.03020682421445406,
+      "null_max_mean": 0.00010566227350694498,
+      "null_max_sd": 0.00447494538419452,
+      "null_max_p95": 0.008165878635991854,
+      "frac_null_ge_real": 0.0,
+      "passes_p05": true,
+      "checks": {
+        "partner marginal preserved": true,
+        "z trigger untouched": true,
+        "diverge rate preserved <0.5pp": true
+      }
+    }
+  },
+  "verdict": {
+    "beta_followers": [
+      "EURUSD",
+      "NZDUSD"
+    ],
+    "matches_symmetric_passers": true,
+    "beta_followers_pass": {
+      "EURUSD": true,
+      "NZDUSD": true
+    },
+    "directed_supported": true
+  }
+}

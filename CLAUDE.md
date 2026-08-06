@@ -23,6 +23,11 @@ Before finishing substantial research work:
 4. Never store credentials, private keys, tokens, account details, or raw
    secrets in instruction or memory files.
 
+## Communication
+Explain research plans, results, and decisions in simple language. When technical
+terms or jargon are necessary, define them briefly the first time they are used. 
+Assume the user is a data scientist but is still learning quantitative trading concepts.
+
 Create new backtesting projects from `templates/backtesting_project/`. Keep
 paper-faithful baseline replication, reusable engine code, strategy logic, and
 experiments separate. Register every material run in `experiments/ledger.csv`.

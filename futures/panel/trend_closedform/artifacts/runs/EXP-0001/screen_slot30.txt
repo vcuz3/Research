@@ -1,0 +1,180 @@
+==============================================================================
+EXP-0001  trend-following closed form as an instrument pre-screen
+clock=slot30  primary span=32 (kernel M=160)  executable lag=1
+cost=0.5 measured increment one way (stress 1.0); products=30
+==============================================================================
+
+CONTROL 1 -- IDENTITY CHECK (implementation, not evidence)
+PHI computed on the engine's own booked rows must EQUAL realised P&L at
+the same lag.  This is exact algebra; it is reported so that any later
+disagreement can be attributed to the market rather than to the code.
+  worst |predicted - realised| over 30 products x 2 lags: 2.082e-17
+  -> PASS (tolerance 1e-9)
+
+PER-PRODUCT TABLE (primary cell)
+PHI0      the article's published closed form, lag 0, ordinary
+          full-sample autocorrelations -- the number a screener computes
+PHI0_ac   its autocorrelation term alone      PHI0_dr  its drift term alone
+gross/net realised P&L per period, risk units, EXECUTABLE lag-1 rule
+turn      measured turnover; turn_cf the closed form's market-independent
+          prediction (2/sqrt(pi))sqrt(1-nu) -- identical for every product
+
+prod cls          n      SR    rho1     PHI0  PHI0_ac  PHI0_dr    gross      net  turn_p     cost
+6A   fx      187962 -0.0011 -0.0552  -0.0690  -0.0690   0.0000  -0.0078  -0.0277   0.257   0.0199
+6B   fx      187933 -0.0012 -0.0446  -0.0506  -0.0506   0.0000  -0.0043  -0.0247   0.257   0.0203
+6C   fx      187977 -0.0037 -0.0592  -0.0700  -0.0702   0.0002  -0.0063  -0.0301   0.258   0.0237
+6E   fx      187971 -0.0027 -0.0573  -0.0665  -0.0666   0.0001  -0.0059  -0.0219   0.256   0.0159
+6J   fx      187968 -0.0068 -0.0436  -0.0394  -0.0402   0.0007   0.0007  -0.0160   0.248   0.0167
+6N   fx      187248  0.0002 -0.0636  -0.0756  -0.0756   0.0000  -0.0072  -0.0283   0.258   0.0211
+6S   fx      187757 -0.0025 -0.0806  -0.0874  -0.0875   0.0001  -0.0064  -0.0286   0.257   0.0222
+ES   equity  173500  0.0092 -0.0045  -0.0167  -0.0181   0.0013  -0.0065  -0.0257   0.258   0.0192
+NQ   equity  173493  0.0119  0.0056   0.0124   0.0102   0.0022   0.0036  -0.0040   0.262   0.0076
+RTY  equity  104207  0.0043 -0.0146  -0.0479  -0.0482   0.0003  -0.0178  -0.0256   0.264   0.0077
+YM   equity  187375  0.0087 -0.0087  -0.0129  -0.0141   0.0012  -0.0025  -0.0126   0.260   0.0101
+GC   metals  173751  0.0037 -0.0078  -0.0044  -0.0046   0.0002   0.0014  -0.0091   0.259   0.0105
+SI   metals  187239  0.0025 -0.0218  -0.0318  -0.0319   0.0001  -0.0059  -0.0279   0.264   0.0220
+HG   metals  187754 -0.0004 -0.0196  -0.0356  -0.0357   0.0000  -0.0084  -0.0263   0.263   0.0180
+PL   metals  187228  0.0002 -0.0364  -0.0560  -0.0560   0.0000  -0.0098  -0.0182   0.267   0.0084
+PA   metals  180155  0.0067 -0.0705  -0.1059  -0.1066   0.0007  -0.0186  -0.0275   0.264   0.0089
+MGC  metals  177245  0.0048 -0.0381  -0.0355  -0.0359   0.0004   0.0001  -0.0096   0.262   0.0097
+CL   energy  187554 -0.0004  0.0070  -0.0106  -0.0106   0.0000  -0.0087  -0.0218   0.263   0.0131
+BZ   energy  161184  0.0011 -0.0218  -0.0360  -0.0360   0.0000  -0.0076  -0.0186   0.259   0.0110
+NG   energy  187496  0.0013 -0.0277  -0.0271  -0.0271   0.0000  -0.0005  -0.0232   0.262   0.0227
+HO   energy  186117  0.0045 -0.0122  -0.0156  -0.0159   0.0003  -0.0020  -0.0065   0.266   0.0045
+RB   energy  184955  0.0021 -0.0200  -0.0345  -0.0346   0.0001  -0.0074  -0.0117   0.265   0.0043
+MCL  energy   57210  0.0044  0.0162  -0.0137  -0.0140   0.0003  -0.0176  -0.0277   0.267   0.0100
+ZT   rates   185186 -0.0019 -0.1111  -0.1351  -0.1352   0.0001  -0.0145  -0.1226   0.252   0.1081
+ZF   rates   187475 -0.0000 -0.0248  -0.0545  -0.0545   0.0000  -0.0145  -0.0645   0.257   0.0500
+ZN   rates   187519  0.0007 -0.0337  -0.0547  -0.0547   0.0000  -0.0104  -0.0665   0.260   0.0561
+ZB   rates   187458  0.0028 -0.0283  -0.0506  -0.0507   0.0001  -0.0108  -0.0630   0.262   0.0522
+UB   rates   182523  0.0024 -0.0208  -0.0478  -0.0479   0.0001  -0.0127  -0.0474   0.260   0.0346
+SR3  rates    56886 -0.0076 -0.0503  -0.0947  -0.0956   0.0009  -0.0258  -0.0975   0.238   0.0717
+ZQ   rates    85002 -0.0021 -0.1650  -0.1540  -0.1541   0.0001   0.0005  -0.1250   0.210   0.1254
+
+  DEPLOYABILITY (rules 20, 21) -- annualised Sharpe of the executable rule
+  gross: median -0.222  best NQ +0.096  worst PA -1.058
+  net:   median -0.860  products with net > 0: 0 / 30
+  cost as a share of gross, median over products with gross > 0: 23.154
+
+  turnover of the RISK-UNIT position: min 0.2102 max 0.2672, closed form 0.2778
+  The article's claim that turnover depends only on the filter span and
+  not on the market is the one part of it that holds exactly here.
+  (Contract turnover is in each product's own price scale and is NOT
+  comparable across products; it is in the CSV, used only inside cost.)
+
+HOW MUCH OF K1 IS ALGEBRA?  (asked before K1 is read, not after)
+PHI0 and the realised lag-1 P&L share 159 of their 160 weighted lags --
+PHI0 sums rho(1..160), the realised rule is an exact identity with
+PHI1 = rho(2..161).  So a high K1 is mostly the SAME statistic at a
+one-lag offset, and the honest question is how much the offset moves it.
+  Spearman(PHI0, PHI1)                    +0.4296
+  Spearman(PHI1, realised gross)          +0.9915   <- near +1 is expected: identity
+  Spearman(pred1, realised gross)         +1.0000   <- same, in engine units
+  Read K1 as 'the published lag-0 form survives the execution lag and the
+  cost', NOT as 'the formula predicts'.  Only K2 can say that.
+
+K1 -- DOES THE PUBLISHED NUMBER PREDICT THE DEPLOYABLE RESULT?
+gate: Spearman > +0.50 with a cluster-bootstrap CI excluding zero.
+  PHI0 -> gross  [PRIMARY]                    +0.3806 [-0.0386, +0.7513] (n=30, k=5)       null frac>=real 0.0190
+  PHI0 -> net                                 +0.7046 [+0.3108, +0.9253] (n=30, k=5)       null frac>=real 0.0000
+  PHI0 -> net (cost stress 1.0)               +0.6645 [+0.1565, +0.9017] (n=30, k=5)       null frac>=real 0.0000
+
+  control 3 -- which TERM of PHI carries the ranking?
+  PHI0 autocorrelation term -> gross          +0.3722 [-0.0424, +0.7268] (n=30, k=5)       null frac>=real 0.0215
+  PHI0 drift term only -> gross               +0.2476 [-0.0988, +0.5535] (n=30, k=5)       null frac>=real 0.0924
+  bare SR (no formula at all) -> gross        +0.0701 [-0.3485, +0.5132] (n=30, k=5)       null frac>=real 0.3568
+  bare rho(1) -> gross                        +0.0496 [-0.3163, +0.4801] (n=30, k=5)       null frac>=real 0.3959
+
+  robustness -- panel composition
+  PHI0 -> gross, de-duplicated (no MGC/MCL)   +0.4423 [+0.1236, +0.8819] (n=28, k=5)       null frac>=real 0.0089
+  PHI0 -> gross, roll_frac < 10%              +0.3806 [-0.0386, +0.7513] (n=30, k=5)       null frac>=real 0.0190
+  leave-one-asset-class-out Spearman(PHI0, gross): -energy:+0.459  -equity:+0.283  -fx:+0.550  -metals:+0.217  -rates:+0.385
+
+  LIQUIDITY CONFOUND -- is the net arm a trend result or a cost ranking?
+  Bid-ask bounce makes rho(1) negative in proportion to tick-over-
+  volatility, and that same ratio IS the cost.  So PHI0 and net P&L can
+  share a driver that has nothing to do with trend.  If rho(cost,net) is
+  large, the net arm is a liquidity ranking wearing the formula's coat.
+  rho(rho1, cost) -0.514   rho(PHI0, cost) -0.551   rho(cost, gross) -0.189   rho(cost, net) -0.863
+
+K2 -- OUT-OF-SAMPLE BY ERA (the actual pre-screen question)
+PHI estimated on era k must rank realised P&L on era k+1, and must beat
+the degenerate screen: era k's own realised P&L, which uses no theory.
+eras: 2010-2013, 2014-2017, 2018-2021, 2022-2026; an era is scored when it has >= 5000 bookable rows
+  2010-2013 -> 2014-2017  n=26   PHI +0.0530  [-0.4528, +0.5669] (n=26, k=5) degenerate(prior realised) +0.0359
+  2014-2017 -> 2018-2021  n=27   PHI +0.0269  [-0.3855, +0.3057] (n=27, k=5) degenerate(prior realised) +0.0385
+  2018-2021 -> 2022-2026  n=28   PHI +0.0203  [-0.2386, +0.1876] (n=28, k=5) degenerate(prior realised) +0.0164
+  POOLED (within-transition ranks, n=81): PHI +0.0327   degenerate +0.0301
+
+K2b -- ANNUAL OUT-OF-SAMPLE, EQUAL 4-YEAR ESTIMATION WINDOWS
+Three era transitions is too few to settle K2, so the same question is
+asked once per year: PHI from the trailing 4 years ranks the NEXT year.
+The window is a FIXED length for every product and every year, because a
+growing window has a shrinking sampling sd and would make later years'
+PHI systematically better estimated than earlier ones (LEARNINGS
+2026-08-03).  The degenerate benchmark uses the identical window.
+  year    n   rho(PHI)  rho(degenerate)
+  2012   22    -0.4252          -0.3665
+  2013   26     0.2103           0.1494
+  2014   26     0.0366           0.0250
+  2015   26     0.0578           0.0359
+  2016   26     0.1234           0.1562
+  2017   27     0.2088           0.2210
+  2018   27     0.3571           0.3474
+  2019   28     0.3448           0.3481
+  2020   28    -0.0142          -0.0142
+  2021   28     0.0733           0.0558
+  2022   28     0.5200           0.5660
+  2023   30     0.3633           0.3753
+  2024   30    -0.4407          -0.4234
+  2025   30     0.3713           0.3588
+  2026   30     0.0242           0.0207
+
+  pooled PHI          +0.1283 [-0.0121, +0.1618] (n=412, k=5)
+  pooled degenerate   +0.1316 [+0.0152, +0.1944] (n=412, k=5)
+  DIFFERENCE          -0.0033 [-0.0421, -0.0085] (n=412, k=5)   excludes zero
+  The difference is the decision statistic: two wide overlapping
+  intervals can still differ reliably, and 'does the theory beat the
+  no-theory benchmark' is a question about the difference.
+
+  WHY -- three diagnostics, each one line
+  (i)   Spearman(PHI, degenerate) within year, pooled  +0.9868
+        PHI over a window IS that window's in-sample trend P&L plus a
+        drift term, so 'the theory' and 'the backtest' are near enough
+        the same predictor.  The closed form does not add information
+        to a backtest; it is the backtest, written in closed form.
+  (ii)  rank persistence of PHI itself, year to year     +0.7654   (n=382)
+  (iii) rank persistence of REALISED P&L, year to year   +0.0508
+        If a product's own PHI does not persist from one window to the
+        next, no screen built on it can rank the next window -- and the
+        limit is then the STABILITY of the autocorrelation function,
+        not this particular formula.  That is a claim about every
+        autocorrelation-based screen at this horizon, not just this one.
+
+K3 -- THE DECLARED ORDERING (reported, decomposed, not a standalone gate)
+(a) does PHI reproduce the ordering of the REALISED EWMA rule -- a real test
+(b) does the realised EWMA ladder itself match noise_vwap's NQ>ES>YM/GC>RTY
+    -- a cross-family question: that ladder is an intraday BARRIER breakout
+    result, and the source item's own traps section says not to benchmark
+    the closed form against it.
+  vs declared ladder: (b1) predicted PHI0   NQ>ES>YM>RTY   2/3 adjacent pairs   failed: ES<=YM
+  vs declared ladder: (b2) realised gross   NQ>ES>YM>RTY   2/3 adjacent pairs   failed: ES<=YM
+  vs declared ladder: (b3) realised net     NQ>ES>YM>RTY   2/3 adjacent pairs   failed: ES<=YM
+  (a) PHI0 vs the REALISED ordering NQ > YM > ES > RTY     3/3 adjacent pairs
+      values  NQ PHI0 +0.0124 / gross +0.0036  ES PHI0 -0.0167 / gross -0.0065  YM PHI0 -0.0129 / gross -0.0025  RTY PHI0 -0.0479 / gross -0.0178
+
+  vs declared ladder: (b1) predicted PHI0   NQ>ES>GC>RTY   2/3 adjacent pairs   failed: ES<=GC
+  vs declared ladder: (b2) realised gross   NQ>ES>GC>RTY   2/3 adjacent pairs   failed: ES<=GC
+  vs declared ladder: (b3) realised net     NQ>ES>GC>RTY   2/3 adjacent pairs   failed: ES<=GC
+  (a) PHI0 vs the REALISED ordering NQ > GC > ES > RTY     3/3 adjacent pairs
+      values  NQ PHI0 +0.0124 / gross +0.0036  ES PHI0 -0.0167 / gross -0.0065  GC PHI0 -0.0044 / gross +0.0014  RTY PHI0 -0.0479 / gross -0.0178
+
+
+SENSITIVITY (a distribution, not an argmax -- HYP-0001 multiple-testing note)
+rule                    K1 rho(PHI0,gross)   rho(PHI0,net)  median gross  products net>0
+ewma span 8                         0.1582          0.6369       -0.0096         0 / 30
+ewma span 16                        0.2667          0.6570       -0.0091         0 / 30
+ewma span 32                        0.3806          0.7046       -0.0073         0 / 30
+ewma span 64                        0.5141          0.7451       -0.0062         0 / 30
+ewma span 128                       0.5604          0.7535       -0.0049         1 / 30
+crossover 16/64                     0.9680          0.7686       -0.0040         3 / 30

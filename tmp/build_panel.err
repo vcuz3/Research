@@ -1,0 +1,64 @@
+C:\Users\VuDoa\Research\futures\panel\trend_closedform\scripts\build_panel.py:46: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  emit(f"generated {pd.Timestamp.utcnow():%Y-%m-%d %H:%M} UTC")
+    (7.1s)
+    (7.1s)
+    (6.9s)
+    (7.3s)
+    (7.1s)
+    (5.9s)
+    (6.1s)
+    (6.8s)
+    (6.7s)
+    (4.0s)
+    (7.4s)
+    (7.0s)
+    (7.1s)
+    (7.1s)
+    (5.6s)
+    (2.9s)
+    (4.5s)
+    (7.0s)
+    (3.8s)
+    (5.8s)
+    (4.9s)
+    (4.6s)
+    (2.0s)
+    (4.7s)
+    (5.8s)
+    (6.2s)
+    (6.3s)
+    (5.8s)
+    (1.3s)
+    (0.9s)
+C:\Users\VuDoa\Research\.venv\Lib\site-packages\numpy\lib\_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+C:\Users\VuDoa\Research\futures\panel\trend_closedform\scripts\build_panel.py:150: RuntimeWarning: Mean of empty slice
+  f"{np.nanstd(x):>9.3f}{np.nanmean(x):>10.4f}")
+C:\Users\VuDoa\Research\.venv\Lib\site-packages\numpy\lib\_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+C:\Users\VuDoa\Research\futures\panel\trend_closedform\scripts\build_panel.py:150: RuntimeWarning: Mean of empty slice
+  f"{np.nanstd(x):>9.3f}{np.nanmean(x):>10.4f}")
+C:\Users\VuDoa\Research\.venv\Lib\site-packages\numpy\lib\_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+C:\Users\VuDoa\Research\futures\panel\trend_closedform\scripts\build_panel.py:150: RuntimeWarning: Mean of empty slice
+  f"{np.nanstd(x):>9.3f}{np.nanmean(x):>10.4f}")
+C:\Users\VuDoa\Research\.venv\Lib\site-packages\numpy\lib\_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+C:\Users\VuDoa\Research\futures\panel\trend_closedform\scripts\build_panel.py:150: RuntimeWarning: Mean of empty slice
+  f"{np.nanstd(x):>9.3f}{np.nanmean(x):>10.4f}")
+C:\Users\VuDoa\Research\.venv\Lib\site-packages\numpy\lib\_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+C:\Users\VuDoa\Research\futures\panel\trend_closedform\scripts\build_panel.py:150: RuntimeWarning: Mean of empty slice
+  f"{np.nanstd(x):>9.3f}{np.nanmean(x):>10.4f}")
+C:\Users\VuDoa\Research\.venv\Lib\site-packages\numpy\lib\_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+C:\Users\VuDoa\Research\futures\panel\trend_closedform\scripts\build_panel.py:150: RuntimeWarning: Mean of empty slice
+  f"{np.nanstd(x):>9.3f}{np.nanmean(x):>10.4f}")
+C:\Users\VuDoa\Research\.venv\Lib\site-packages\numpy\lib\_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+C:\Users\VuDoa\Research\futures\panel\trend_closedform\scripts\build_panel.py:150: RuntimeWarning: Mean of empty slice
+  f"{np.nanstd(x):>9.3f}{np.nanmean(x):>10.4f}")
+C:\Users\VuDoa\Research\.venv\Lib\site-packages\numpy\lib\_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+C:\Users\VuDoa\Research\futures\panel\trend_closedform\scripts\build_panel.py:150: RuntimeWarning: Mean of empty slice
+  f"{np.nanstd(x):>9.3f}{np.nanmean(x):>10.4f}")

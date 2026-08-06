@@ -1,0 +1,430 @@
+{
+  "caveats": [
+    "Historical actual/forecast/previous values are snapshots and are not vintage-verified.",
+    "LSE economics observation series are excluded because their dates are not verified release timestamps and the files are not point-in-time vintages.",
+    "LSE provides no GBP or NZD calendar and its EUR calendar starts in September 2025.",
+    "LSE enrichment uses conservative fuzzy one-to-one matches; unmatched LSE rows are reported but are not inserted as duplicate canonical releases.",
+    "ForexFactory page times were rendered in Australia/Sydney for this pull; changing fetch location/session requires revalidating the display timezone."
+  ],
+  "clean_price_coverage": {
+    "AUDUSD": {
+      "first_utc": "2011-07-19T00:00:00",
+      "last_utc": "2026-07-17T20:59:00",
+      "path": "forex/data/clean/AUDUSD_1m_clean.parquet",
+      "rows": 5536530
+    },
+    "EURUSD": {
+      "first_utc": "2011-07-19T00:00:00",
+      "last_utc": "2026-07-17T20:59:00",
+      "path": "forex/data/clean/EURUSD_1m_clean.parquet",
+      "rows": 5536573
+    },
+    "GBPUSD": {
+      "first_utc": "2011-07-19T00:00:00",
+      "last_utc": "2026-07-17T20:59:00",
+      "path": "forex/data/clean/GBPUSD_1m_clean.parquet",
+      "rows": 5536355
+    },
+    "NZDUSD": {
+      "first_utc": "2011-12-06T20:00:00",
+      "last_utc": "2026-07-17T20:59:00",
+      "path": "forex/data/clean/NZDUSD_1m_clean.parquet",
+      "rows": 5393136
+    }
+  },
+  "created_by": "forex/build_macro_events.py",
+  "inputs": {
+    "forexfactory_csv": {
+      "path": "forex/data/raw/forexfactory_calendar.csv",
+      "rows": 50488,
+      "sha256": "84d528fd310ad0eb6c29b9c9dc9baf2acb45522ba27eb685eb04ab8a5918af90"
+    },
+    "forexfactory_repo": {
+      "commit": "7098533984dad1272a2729d4475f1dbc5228c5df",
+      "page_display_timezone": "Australia/Sydney",
+      "source_metadata": "forex/data/raw/forexfactory_calendar.source.json",
+      "url": "https://github.com/ehsanrs2/forexfactory-scraper"
+    },
+    "lse_calendars": [
+      {
+        "path": "forex/data/lse/economic_calendar/economic_calendar_Australia.parquet",
+        "sha256": "2b6b67ee90a5c68ea48fe9f5352271583052c77a6f862a9c09a9ffce0653872e"
+      },
+      {
+        "path": "forex/data/lse/economic_calendar/economic_calendar_Euro_Area.parquet",
+        "sha256": "c3df4be5f1b098ae984e295189f5d252a919c82a1b5855ea658c39a534a4d454"
+      },
+      {
+        "path": "forex/data/lse/economic_calendar/economic_calendar_US.parquet",
+        "sha256": "3fe08520a6d8bb7c3add0fa22dc969193e058f6e99c4ad9a6a7b78cce0df9749"
+      }
+    ]
+  },
+  "join_contract": {
+    "event_time": "ts_utc is timezone-naive UTC, matching clean ts_utc dtype",
+    "join_bar_rule": "first clean minute at or after release, capped at 15 minutes",
+    "multiplicity": "multiple releases may share one pair/minute; aggregate or event-study intentionally before a many-to-one price join",
+    "recommended_key": [
+      "pair",
+      "join_bar_ts_utc"
+    ]
+  },
+  "lse_matching": {
+    "cross_provider_validation": {
+      "comparable_actual_values": 7622,
+      "exact_actual_value_agreement_rate": 0.9149829441091577,
+      "exact_actual_value_agreements": 6974,
+      "interpretation": "Most LSE matches are exactly 60 minutes later than ForexFactory; canonical timestamps therefore use ForexFactory, while LSE is enrichment only.",
+      "timestamp_delta_minutes_median": 60.0,
+      "timestamp_delta_minutes_top_counts": {
+        "0.0": 776,
+        "1.0": 18,
+        "30.0": 15,
+        "55.0": 10,
+        "56.0": 8,
+        "57.0": 12,
+        "58.0": 26,
+        "59.0": 136,
+        "60.0": 7252,
+        "61.0": 115,
+        "64.0": 10,
+        "65.0": 7,
+        "70.0": 7,
+        "75.0": 13,
+        "90.0": 18
+      },
+      "unique_matched_events": 8499
+    },
+    "forexfactory_rows_with_lse_match": 8499,
+    "lse_rows": 43583,
+    "match_thresholds": {
+      "max_minutes": 90,
+      "min_name_similarity": 0.58,
+      "min_score": 0.62
+    },
+    "matched_rows": 8499,
+    "unmatched_lse_rows": 35084
+  },
+  "output": "forex/data/macro/fx_macro_events.parquet",
+  "output_bytes": 6023634,
+  "output_sha256": "f5e8979fb62b9c96389024370c16383c78ec6e8f505fb32a1ceffcd9eed88b1e",
+  "quality": {
+    "by_currency": {
+      "AUD": 5459,
+      "EUR": 13729,
+      "GBP": 9210,
+      "NZD": 3405,
+      "USD": 73934
+    },
+    "by_impact": {
+      "High": 25379,
+      "Low": 53310,
+      "Medium": 26809,
+      "Non-Economic": 239
+    },
+    "by_pair": {
+      "AUDUSD": {
+        "exact_clean_bar_matches": 23700,
+        "first_utc": "2011-07-19T01:30:00",
+        "last_utc": "2026-07-17T14:00:00",
+        "rows": 24047,
+        "unique_provider_events": 24047,
+        "within_15m_clean_bar_matches": 23847
+      },
+      "EURUSD": {
+        "exact_clean_bar_matches": 32037,
+        "first_utc": "2011-07-19T09:00:00",
+        "last_utc": "2026-07-17T14:00:00",
+        "rows": 32317,
+        "unique_provider_events": 32317,
+        "within_15m_clean_bar_matches": 32096
+      },
+      "GBPUSD": {
+        "exact_clean_bar_matches": 27528,
+        "first_utc": "2011-07-19T12:30:00",
+        "last_utc": "2026-07-17T14:00:00",
+        "rows": 27798,
+        "unique_provider_events": 27798,
+        "within_15m_clean_bar_matches": 27586
+      },
+      "NZDUSD": {
+        "exact_clean_bar_matches": 20880,
+        "first_utc": "2011-12-07T13:30:00",
+        "last_utc": "2026-07-17T14:00:00",
+        "rows": 21575,
+        "unique_provider_events": 21575,
+        "within_15m_clean_bar_matches": 21251
+      }
+    },
+    "by_utc_hour": {
+      "AUDUSD": {
+        "0": 1894,
+        "1": 1658,
+        "10": 122,
+        "11": 194,
+        "12": 4117,
+        "13": 3591,
+        "14": 4339,
+        "15": 2159,
+        "16": 433,
+        "17": 725,
+        "18": 935,
+        "19": 565,
+        "2": 76,
+        "20": 728,
+        "21": 481,
+        "22": 520,
+        "23": 651,
+        "3": 216,
+        "4": 216,
+        "5": 124,
+        "6": 109,
+        "7": 69,
+        "8": 54,
+        "9": 71
+      },
+      "EURUSD": {
+        "0": 70,
+        "1": 60,
+        "10": 1655,
+        "11": 505,
+        "12": 4444,
+        "13": 3890,
+        "14": 4461,
+        "15": 2222,
+        "16": 492,
+        "17": 799,
+        "18": 972,
+        "19": 586,
+        "2": 42,
+        "20": 729,
+        "21": 385,
+        "22": 118,
+        "23": 122,
+        "3": 5,
+        "4": 4,
+        "5": 101,
+        "6": 1643,
+        "7": 2903,
+        "8": 2992,
+        "9": 3117
+      },
+      "GBPUSD": {
+        "0": 414,
+        "1": 58,
+        "10": 587,
+        "11": 763,
+        "12": 4553,
+        "13": 3839,
+        "14": 4460,
+        "15": 2226,
+        "16": 501,
+        "17": 826,
+        "18": 1008,
+        "19": 595,
+        "2": 44,
+        "20": 751,
+        "21": 386,
+        "22": 134,
+        "23": 670,
+        "3": 6,
+        "4": 4,
+        "5": 23,
+        "6": 980,
+        "7": 795,
+        "8": 2270,
+        "9": 1905
+      },
+      "NZDUSD": {
+        "0": 282,
+        "1": 292,
+        "10": 115,
+        "11": 183,
+        "12": 3996,
+        "13": 3564,
+        "14": 4418,
+        "15": 2119,
+        "16": 409,
+        "17": 699,
+        "18": 916,
+        "19": 580,
+        "2": 269,
+        "20": 858,
+        "21": 1442,
+        "22": 1023,
+        "23": 145,
+        "3": 145,
+        "4": 7,
+        "5": 5,
+        "6": 9,
+        "7": 47,
+        "8": 18,
+        "9": 34
+      }
+    },
+    "by_year": {
+      "AUDUSD": {
+        "2011": 657,
+        "2012": 1471,
+        "2013": 1487,
+        "2014": 1479,
+        "2015": 1515,
+        "2016": 1537,
+        "2017": 1612,
+        "2018": 1566,
+        "2019": 1620,
+        "2020": 1638,
+        "2021": 1660,
+        "2022": 1600,
+        "2023": 1607,
+        "2024": 1722,
+        "2025": 1816,
+        "2026": 1060
+      },
+      "EURUSD": {
+        "2011": 882,
+        "2012": 1978,
+        "2013": 2006,
+        "2014": 1992,
+        "2015": 2022,
+        "2016": 2082,
+        "2017": 2159,
+        "2018": 2108,
+        "2019": 2125,
+        "2020": 2184,
+        "2021": 2219,
+        "2022": 2176,
+        "2023": 2222,
+        "2024": 2326,
+        "2025": 2426,
+        "2026": 1410
+      },
+      "GBPUSD": {
+        "2011": 749,
+        "2012": 1677,
+        "2013": 1706,
+        "2014": 1693,
+        "2015": 1740,
+        "2016": 1777,
+        "2017": 1823,
+        "2018": 1789,
+        "2019": 1841,
+        "2020": 1925,
+        "2021": 1949,
+        "2022": 1885,
+        "2023": 1920,
+        "2024": 1995,
+        "2025": 2110,
+        "2026": 1219
+      },
+      "NZDUSD": {
+        "2011": 84,
+        "2012": 1335,
+        "2013": 1371,
+        "2014": 1351,
+        "2015": 1375,
+        "2016": 1405,
+        "2017": 1463,
+        "2018": 1419,
+        "2019": 1457,
+        "2020": 1507,
+        "2021": 1528,
+        "2022": 1470,
+        "2023": 1494,
+        "2024": 1616,
+        "2025": 1703,
+        "2026": 997
+      }
+    },
+    "duplicate_event_ids": 0,
+    "duplicate_pair_time_currency_event_keys": 0,
+    "lse_matched_rows_after_pair_expansion": 27615,
+    "missing_join_bar": 957,
+    "missing_join_by_pair_and_impact": {
+      "AUDUSD": {
+        "High": 16,
+        "Low": 71,
+        "Medium": 53,
+        "Non-Economic": 60
+      },
+      "EURUSD": {
+        "High": 27,
+        "Low": 64,
+        "Medium": 70,
+        "Non-Economic": 60
+      },
+      "GBPUSD": {
+        "High": 25,
+        "Low": 62,
+        "Medium": 64,
+        "Non-Economic": 61
+      },
+      "NZDUSD": {
+        "High": 28,
+        "Low": 166,
+        "Medium": 72,
+        "Non-Economic": 58
+      }
+    },
+    "out_of_order_pair_timestamps": 0,
+    "rows": 105737,
+    "unique_provider_events": 50391
+  },
+  "schema": {
+    "actual_comparator": "large_string",
+    "actual_parse_status": "large_string",
+    "actual_raw": "large_string",
+    "actual_unit": "large_string",
+    "actual_value": "double",
+    "consensus_comparator": "large_string",
+    "consensus_parse_status": "large_string",
+    "consensus_raw": "large_string",
+    "consensus_unit": "large_string",
+    "consensus_value": "double",
+    "currency": "large_string",
+    "currency_role": "large_string",
+    "datetime_local": "large_string",
+    "display_timezone": "large_string",
+    "event_id": "large_string",
+    "event_name": "large_string",
+    "exact_clean_bar_match": "bool",
+    "forecast_comparator": "large_string",
+    "forecast_parse_status": "large_string",
+    "forecast_raw": "large_string",
+    "forecast_unit": "large_string",
+    "forecast_value": "double",
+    "forexfactory_detail_url": "large_string",
+    "forexfactory_source_url": "large_string",
+    "impact": "large_string",
+    "join_bar_ts_utc": "timestamp[us]",
+    "join_delay_seconds": "double",
+    "lse_actual_raw": "large_string",
+    "lse_actual_revised": "bool",
+    "lse_consensus_raw": "large_string",
+    "lse_consensus_revised": "bool",
+    "lse_event": "large_string",
+    "lse_event_id": "large_string",
+    "lse_forecast_raw": "large_string",
+    "lse_forecast_revised": "bool",
+    "lse_match_score": "double",
+    "lse_matched": "bool",
+    "lse_period_hint": "large_string",
+    "lse_previous_raw": "large_string",
+    "lse_previous_revised": "bool",
+    "lse_ts_delta_minutes": "double",
+    "lse_ts_utc": "timestamp[us]",
+    "pair": "large_string",
+    "point_in_time_status": "large_string",
+    "previous_comparator": "large_string",
+    "previous_parse_status": "large_string",
+    "previous_raw": "large_string",
+    "previous_unit": "large_string",
+    "previous_value": "double",
+    "primary_source": "large_string",
+    "provider_event_id": "large_string",
+    "surprise_reference": "large_string",
+    "surprise_unit": "large_string",
+    "surprise_value": "double",
+    "ts_utc": "timestamp[us]"
+  }
+}
