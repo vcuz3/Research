@@ -1,0 +1,18 @@
+{
+  "pairs": ["EURUSD", "GBPUSD", "AUDUSD", "NZDUSD"],
+  "bar_minutes": 5,
+  "trailing_return_bars": 6,
+  "vol_window_bars": 100,
+  "vol_min_fraction": 0.9,
+  "entry_k": 2.0,
+  "stop_sigma": 1.5,
+  "stop_slippage_pips": 1.0,
+  "news_blackout_minutes": 30,
+  "fixed_horizon_bars": 6,
+  "session_boundary": "17:00 America/New_York",
+  "random_exit_draws": 1000,
+  "random_seed": 20260808,
+  "break_even_win_tolerance": 0.02,
+  "start": "2012-01-01T00:00:00Z",
+  "holdout_start": "2024-01-01T00:00:00Z"
+}

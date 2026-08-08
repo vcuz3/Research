@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0001",
+  "hypothesis_id": "HYP-0001",
+  "status": "planned",
+  "declared_utc": "2026-08-08T10:13:33.322633+00:00",
+  "config_path": "baseline_replication/configs/baseline.json",
+  "data_scope": "EURUSD, GBPUSD, AUDUSD, NZDUSD midpoint 1m OHLC; 2012-2023 consumed; 2024+ sealed holdout",
+  "code_ref": "working-tree pre-run",
+  "run_command": "python -u forex/exploration_4/_run_baseline.py",
+  "primary_metric": "Per-signal base-cost net R with UTC-day cluster-robust 95% confidence interval",
+  "builder": "Codex",
+  "outputs": []
+}
