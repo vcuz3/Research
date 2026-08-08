@@ -10,13 +10,13 @@
 ## Current status
 
 - Verdict: provisional
-- Last verified: 2026-08-06
+- Last verified: 2026-08-08
 - Lifecycle phase: data engineering
 - Reproduction command: `python forex/build_macro_events.py`
 - Primary evidence: `data/macro/manifest.json`, `data/MACRO_EVENTS.md`, `build_macro_events.py`
-- NZDUSD gap repair: inventory and resumable repair tooling completed at
-  `repair_fx_ibkr_gaps.py` / `data/repair/ibkr_nzdusd/README.md`; fetching is
-  waiting for a running read-only IBKR Gateway/TWS API session.
+- NZDUSD fixed-window repair was promoted on 2026-08-08. The canonical file is
+  now an explicitly hybrid IBKR/LSE series; full provenance, hashes, placebo
+  validation, and recovery path are in `data/repair/ibkr_nzdusd/README.md`.
 
 ## Confirmed findings
 
@@ -38,17 +38,21 @@
 - Historical actual, forecast, and previous values are snapshots and have not been vintage-verified.
 - ForexFactory page display timezone must be revalidated if the fetch location or session changes.
 - Conservative fuzzy matching leaves some LSE rows unmatched by design; exact counts live in the manifest.
-- The archived NZDUSD IBKR data has 2,944 fixed 15-minute acquisition holes at
-  13:00–15:14 ET (44,160 minutes). Archived raw/clean timestamp parity is exact,
-  confirming the defect is upstream of cleaning. The canonical Parquet remains
-  unchanged until the full repair passes and is promoted.
+- The archived NZDUSD IBKR data has 2,944 fixed 15-minute holes at 13:00–15:14
+  ET (44,160 minutes). Fresh IBKR MIDPOINT/BID/ASK and 5-second queries reproduce
+  them, locating the defect in IBKR's historical archive rather than the cleaner.
+- The promoted hybrid repair preserves all 5,393,136 original rows and supplies
+  all target minutes from adjusted LSE bars (43,795 direct; 365 sparse bins
+  carried flat; 172 gross outlier fields filtered). Placebo error across 44,880
+  known minutes is 0.15 pip median / 1.075 pips p95 / 3.175 pips p99.
 
 ## Next actions
 
 1. Treat macro studies as exploratory until forecast/actual vintages and publication latency are independently verified.
 2. Re-run the builder and inspect the manifest whenever either raw calendar changes.
-3. Start IBKR Gateway/TWS with read-only API enabled, run the resumable NZDUSD
-   repair fetch, then build/promote and rerun all FX data-quality reports.
+3. Treat repaired NZDUSD bars as hybrid-source estimates, not exact IBKR
+   midpoints; use the local validation manifest for carried/filtered-window
+   sensitivity exclusions in path-dependent research.
 
 ## Promotion candidates
 

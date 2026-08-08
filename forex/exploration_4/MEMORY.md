@@ -32,6 +32,19 @@ Independent review remains pending; builder: Codex, reviewer: unassigned.
 - All four pairs are negative at base costs. EURUSD, GBPUSD, and AUDUSD remain
   strongly negative independently, so the verdict does not depend on NZDUSD.
 
+## Post-closeout NZD data-repair sensitivity
+
+- The 2026-08-08 hybrid NZD repair was evaluated separately at
+  `artifacts/data_repair/NZDUSD_LSE_REPAIR_20260808/`; immutable `EXP-0001`
+  artifacts and its ledger row were not rewritten.
+- NZD path exclusions fell from 17,063 to 140. NZD consumed observations rose
+  from 3,973 to 15,886, but gross expectancy became significantly negative at
+  **−0.0617 R** (95% CI [−0.0854, −0.0379]) and base net was **−0.4826 R**.
+- The pooled consumed result remains **NO-GO**: base net **−0.3937 R** (95% CI
+  [−0.4077, −0.3797], n=67,871); holdout base net is **−0.5356 R**.
+- The visualization notebook smoke-executes against either artifact directory
+  via `FX_EXPLORATION4_ARTIFACT`.
+
 ## Data quality and implementation boundary
 
 - Source Parquets contain midpoint OHLC only. Contrary to the planning wording,
@@ -39,9 +52,9 @@ Independent review remains pending; builder: Codex, reviewer: unassigned.
 - The exact 17:00 New York rollover bar is unavailable. Session-boundary exits
   use the last attainable 5-minute open before it (16:55), preventing an
   impossible 17:00 fill.
-- NZDUSD has material late-era 18:00–19:00 UTC holes. The conservative complete-
-  path gate excludes 17,063 NZD candidates, fully enumerated by era/hour in the
-  data-quality report. This limits NZD-specific claims.
+- The frozen `EXP-0001` input had material NZD holes and excluded 17,063 NZD
+  candidates. The separately preserved repair sensitivity reduces this to 140;
+  it does not relabel or overwrite the original consumed experiment.
 - One position per pair is enforced statefully. The 30-minute news veto re-runs
   the state machine rather than post-filtering completed trades.
 

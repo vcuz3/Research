@@ -12,7 +12,7 @@ implementation detail.
 | EURUSD | 5,536,573 | 2011-07-19 → 2026-07-17 | 0 | 0 | none published (IBKR cash FX) |
 | GBPUSD | 5,536,355 | 2011-07-19 → 2026-07-17 | 0 | 0 | none published (IBKR cash FX) |
 | AUDUSD | 5,536,530 | 2011-07-19 → 2026-07-17 | 0 | 0 | none published (IBKR cash FX) |
-| NZDUSD | 5,393,136 | 2011-12-06 → 2026-07-17 | 0 | 0 | none published (IBKR cash FX) |
+| NZDUSD | 5,437,296 | 2011-12-06 → 2026-07-17 | 0 | 0 | none published (IBKR cash FX) |
 
 ## Stage 2 — session build
 
@@ -21,24 +21,19 @@ implementation detail.
 | fxday | EURUSD | 3,885 | 1423.7 / 1425 | 0.09% | 0.9812 | 0.981 |
 | fxday | GBPUSD | 3,885 | 1423.6 / 1425 | 0.10% | 0.9822 | 0.982 |
 | fxday | AUDUSD | 3,885 | 1423.7 / 1425 | 0.09% | 0.9843 | 0.984 |
-| fxday | NZDUSD | 3,782 | 1412.0 / 1425 | 0.91% | 0.9902 | 0.613 |
+| fxday | NZDUSD | 3,782 | 1423.7 / 1425 | 0.09% | 0.9902 | 0.990 |
 | active | EURUSD | 3,887 | 839.7 / 840 | 0.03% | 1.0000 | 0.996 |
 | active | GBPUSD | 3,887 | 839.7 / 840 | 0.03% | 1.0000 | 0.996 |
 | active | AUDUSD | 3,887 | 839.7 / 840 | 0.03% | 1.0000 | 0.996 |
-| active | NZDUSD | 3,780 | 828.1 / 840 | 1.42% | 1.0000 | 0.614 |
+| active | NZDUSD | 3,780 | 839.7 / 840 | 0.03% | 1.0000 | 0.996 |
 
 ### Low-coverage windows (<98% of sessions have a bar)
 
 | session | pair | window (ET) | minutes | coverage |
 | --- | --- | --- | ---: | ---: |
-| fxday | NZDUSD | 13:00–13:14 | 15 | 0.736 |
-| fxday | NZDUSD | 14:00–14:14 | 15 | 0.872 |
-| fxday | NZDUSD | 15:00–15:14 | 15 | 0.613 |
-| active | NZDUSD | 13:00–13:14 | 15 | 0.735 |
-| active | NZDUSD | 14:00–14:14 | 15 | 0.872 |
-| active | NZDUSD | 15:00–15:14 | 15 | 0.614 |
+| — | — | none | — | — |
 
-Every window above starts on the hour. This is an IBKR download chunk-boundary artifact, not a liquidity effect: it is a fixed minute-of-hour pattern, identical across eras, and is absent from the equally illiquid minutes at :15–:59 of the same hours.
+No sub-98% fixed window remains after the documented NZDUSD IBKR/LSE hybrid repair. See `forex/data/repair/ibkr_nzdusd/` for provenance and placebo error; repaired rows are not exact IBKR midpoint observations.
 
 
 ## Stage 3 — decisions and the noise band

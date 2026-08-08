@@ -75,7 +75,7 @@ def audit(pair: str, sess: str) -> dict:
                                         for h, v in hourly.sort_index().items()}
 
     # contiguous sub-98% coverage windows, labelled in ET, and their
-    # minute-of-hour signature (the IBKR chunk-boundary tell)
+    # Minute-of-hour signature used to detect the historical IBKR fixed-window defect.
     def et_label(m: int) -> str:
         t = (m + start_tod) % 1440
         return f"{t // 60:02d}:{t % 60:02d}"
@@ -229,11 +229,16 @@ def main(argv):
                          f"{w['minutes']} | {w['coverage']:.3f} |")
     if not any_win:
         lines.append("| — | — | none | — | — |")
-    lines += ["",
-              "Every window above starts on the hour. This is an IBKR download "
-              "chunk-boundary artifact, not a liquidity effect: it is a fixed "
-              "minute-of-hour pattern, identical across eras, and is absent from "
-              "the equally illiquid minutes at :15–:59 of the same hours.", ""]
+        lines += ["",
+                  "No sub-98% fixed window remains after the documented NZDUSD "
+                  "IBKR/LSE hybrid repair. See `forex/data/repair/ibkr_nzdusd/` "
+                  "for provenance and placebo error; repaired rows are not exact "
+                  "IBKR midpoint observations.", ""]
+    else:
+        lines += ["",
+                  "Every window above starts on the hour. Fresh IBKR re-queries "
+                  "reproduce the fixed pattern, locating it in IBKR's historical "
+                  "archive rather than local cleaning or market liquidity.", ""]
 
     lines += ["", "## Stage 3 — decisions and the noise band", "",
               "| session | pair | scheduled dec | lost to missing bars | bar avail | band cov | strict cov | saved by 9a | gap (med pips) |",

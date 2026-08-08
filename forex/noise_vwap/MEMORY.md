@@ -88,6 +88,11 @@ Concise handoff. Detailed evidence lives in `reports/` and
   FX day at 17:15 ET (not the nominal 17:00 roll, which gave NZDUSD a
   session-varying open) and pinning the decision clock to the ET wall clock
   (`:29`/`:59`), which cannot land in a hole. Both asserted in tests.
+- **E update (2026-08-08):** fresh IBKR queries reproduced the NZD intervals,
+  locating the defect in IBKR's historical archive rather than local chunking.
+  The shared canonical NZD file is now a documented IBKR/LSE hybrid repair;
+  rerun data quality reports show no sub-98% fixed windows. The 17:15 session
+  anchor and ET decision clock remain frozen for experiment reproducibility.
 
 ## Provisional hypotheses
 

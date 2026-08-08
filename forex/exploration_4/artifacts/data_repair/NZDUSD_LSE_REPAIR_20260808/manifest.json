@@ -1,0 +1,16 @@
+{
+  "created_utc": "2026-08-08T12:14:03Z",
+  "kind": "post-closeout data-repair sensitivity",
+  "status": "completed",
+  "canonical_nzdusd_sha256": "80d9fa9b919a9915092cf3df8a21956cd4c36531142889081bbda576f036bc24",
+  "original_experiment": "artifacts/runs/EXP-0001",
+  "original_experiment_rewritten": false,
+  "run_command": "python -u forex/exploration_4/_run_baseline.py --artifact-dir artifacts/data_repair/NZDUSD_LSE_REPAIR_20260808 --reports-dir artifacts/data_repair/NZDUSD_LSE_REPAIR_20260808",
+  "notebook_command": "$env:FX_EXPLORATION4_ARTIFACT='artifacts/data_repair/NZDUSD_LSE_REPAIR_20260808'; python -u forex/exploration_4/_smoke_run_trade_visualizations.py",
+  "tests": "4 passed",
+  "headline_trades": 83238,
+  "nzd_candidate_path_exclusions": 140,
+  "pooled_consumed_base_net_mean_R": -0.3936750618306926,
+  "pooled_consumed_base_net_ci": [-0.40767896967645156, -0.3796711539849337],
+  "verdict": "NO-GO"
+}

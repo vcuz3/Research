@@ -11,6 +11,7 @@ from the audited exploration_1 implementation.
 
 from __future__ import annotations
 
+import argparse
 import json
 import math
 import sys
@@ -623,7 +624,7 @@ to destroy alignment between path and reversion timing. It used
 {markdown_table(cost_view)}
 
 The full 24-hour table, including the expensive 21:00 UTC rollover and the
-with/without-volatility cost sweep, is `artifacts/runs/EXP-0001/cost_by_era_hour.csv`.
+with/without-volatility cost sweep, is `{ARTIFACT.relative_to(PROJECT).as_posix()}/cost_by_era_hour.csv`.
 For a constant round-trip pip charge, each cell's breakeven is its gross mean
 pips. Modeled commission alone is 0.7 pip round trip for all four quote-USD pairs.
 
@@ -668,18 +669,27 @@ be treated as deployment approval even if the mechanical verdict were GO.
 
 {markdown_table(pd.DataFrame([{"pair": p, "candidate_paths_excluded": n} for p, n in path_exclusions.items()]))}
 
-NZDUSD has recurring late-era 18:00–19:00 UTC gaps, so the conservative requirement
-for a completely observed path to the session-boundary event removes many more NZD
-candidates than for the other pairs. The exclusion is causal and fully enumerated
-by era/hour in `reports/DATA_QUALITY.md`, but it limits claims about NZD. It cannot
-explain the pooled NO-GO: each of EURUSD, GBPUSD, and AUDUSD is independently and
-strongly negative at base costs.
+Path exclusions are causal and fully enumerated by era/hour in the run's
+`DATA_QUALITY.md`. Data-repair sensitivity runs must use a separate artifact
+directory so they do not rewrite the frozen experiment. Regardless of NZD
+coverage, each of EURUSD, GBPUSD, and AUDUSD is independently and strongly
+negative at base costs.
 """
     (REPORTS / "FINDINGS.md").write_text(findings, encoding="utf-8")
     (ARTIFACT / "FINDINGS.md").write_text(findings, encoding="utf-8")
 
 
 def main() -> None:
+    global ARTIFACT, REPORTS
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--artifact-dir", default="artifacts/runs/EXP-0001")
+    parser.add_argument("--reports-dir", default="reports")
+    args = parser.parse_args()
+    ARTIFACT = (PROJECT / args.artifact_dir).resolve()
+    REPORTS = (PROJECT / args.reports_dir).resolve()
+    for label, path in (("artifact", ARTIFACT), ("reports", REPORTS)):
+        if PROJECT.resolve() not in path.parents:
+            raise SystemExit(f"{label} directory must stay inside {PROJECT}")
     cfg = read_config()
     ARTIFACT.mkdir(parents=True, exist_ok=True)
     REPORTS.mkdir(parents=True, exist_ok=True)

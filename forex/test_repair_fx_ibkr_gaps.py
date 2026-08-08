@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from repair_fx_ibkr_gaps import detect_target_holes, request_plan
+from repair_fx_ibkr_gaps import detect_target_holes, normalize_ibkr_bars, request_plan
 
 
 def synthetic_minutes(date: str, hour: int, include_prefix: bool) -> pd.DatetimeIndex:
@@ -41,3 +41,9 @@ def test_request_plan_pairs_consecutive_dates_only():
     assert len(plan) == 2
     assert plan[0]["duration"] == "2 D"
     assert plan[1]["duration"] == "1 D"
+
+
+def test_empty_ibkr_response_has_typed_timestamp_column():
+    frame = normalize_ibkr_bars([], None)
+    assert frame.empty
+    assert str(frame.ts_utc.dtype) == "datetime64[ns, UTC]"

@@ -219,7 +219,13 @@ def load_env() -> None:
 
 def normalize_ibkr_bars(bars, util) -> pd.DataFrame:
     if not bars:
-        return pd.DataFrame(columns=BAR_COLUMNS)
+        return pd.DataFrame({
+            "ts_utc": pd.Series(dtype="datetime64[ns, UTC]"),
+            "open": pd.Series(dtype="float64"),
+            "high": pd.Series(dtype="float64"),
+            "low": pd.Series(dtype="float64"),
+            "close": pd.Series(dtype="float64"),
+        })
     frame = util.df(bars).rename(columns={"date": "ts_utc"})
     frame["ts_utc"] = pd.to_datetime(frame.ts_utc, utc=True)
     frame = frame[BAR_COLUMNS].dropna().drop_duplicates("ts_utc", keep="last")
@@ -254,6 +260,27 @@ def fetch_one(ib, contract, util, end_utc: str, duration: str) -> pd.DataFrame:
                                 barSizeSetting="1 min", whatToShow="MIDPOINT",
                                 useRTH=False, formatDate=2)
     return normalize_ibkr_bars(bars, util)
+
+
+def fetch_with_retries(ib, contract, util, end_utc: str, duration: str,
+                       retries: int, pacing_sleep: float, label: str) -> tuple[pd.DataFrame, int]:
+    """Fetch one slice, treating IBKR's timeout-as-empty response as retryable."""
+    last_error: Exception | None = None
+    for attempt in range(1, retries + 1):
+        try:
+            frame = fetch_one(ib, contract, util, end_utc, duration)
+            if frame.empty:
+                raise TimeoutError("IBKR returned no bars")
+            return frame, attempt
+        except Exception as exc:
+            last_error = exc
+            if attempt == retries:
+                break
+            print(f"{label}: attempt {attempt}/{retries} failed: "
+                  f"{type(exc).__name__}: {exc}; retrying", flush=True)
+            time.sleep(pacing_sleep)
+    assert last_error is not None
+    raise last_error
 
 
 def command_fetch(args: argparse.Namespace) -> None:
@@ -296,8 +323,9 @@ def command_fetch(args: argparse.Namespace) -> None:
             expected = expected_index(inventory, request["window_ids"])
             print(f"{rid}: {request['duration']} ending {request['end_utc']} for {len(expected)} target minutes")
             try:
-                fetched = fetch_one(ib, contract, util, request["end_utc"], request["duration"])
-                calls = 1
+                fetched, calls = fetch_with_retries(
+                    ib, contract, util, request["end_utc"], request["duration"],
+                    args.retries, args.pacing_sleep, rid)
                 have = pd.DatetimeIndex(fetched.ts_utc)
                 missing = expected.difference(have)
                 # A missing target in a daily request gets a narrow four-hour retry
@@ -312,9 +340,12 @@ def command_fetch(args: argparse.Namespace) -> None:
                             continue
                         fallback_end = pd.Timestamp(window["start_utc"]) + pd.Timedelta(hours=2)
                         time.sleep(args.pacing_sleep)
-                        fallback_frames.append(fetch_one(ib, contract, util,
-                                                          fallback_end.isoformat(), "4 H"))
-                        calls += 1
+                        fallback, fallback_calls = fetch_with_retries(
+                            ib, contract, util, fallback_end.isoformat(), "14400 S",
+                            args.retries, args.pacing_sleep,
+                            f"{rid} fallback {window['window_id']}")
+                        fallback_frames.append(fallback)
+                        calls += fallback_calls
                     fetched = pd.concat([fetched, *fallback_frames], ignore_index=True)
                     fetched = fetched.drop_duplicates("ts_utc", keep="last").sort_values("ts_utc").reset_index(drop=True)
                     assert_ohlc(fetched, f"{rid} merged response")
@@ -339,11 +370,18 @@ def command_fetch(args: argparse.Namespace) -> None:
                 state["requests"][rid] = {"status": "error", "updated_utc": stamp(),
                                            "error": f"{type(exc).__name__}: {exc}"}
                 save_json(STATE, state)
-                raise
+                done += 1
+                print(f"{rid}: error after {args.retries} attempts: "
+                      f"{type(exc).__name__}: {exc}; continuing", flush=True)
+                time.sleep(args.pacing_sleep)
     finally:
         ib.disconnect()
     complete = sum(x.get("status") == "complete" for x in state["requests"].values())
     print(f"fetch progress: {complete}/{len(inventory['requests'])} requests complete")
+    errors = [rid for rid, value in state["requests"].items()
+              if value.get("status") == "error"]
+    if errors:
+        raise SystemExit(f"{len(errors)} requests remain in error; rerun fetch to retry them")
 
 
 def read_request_files() -> pd.DataFrame:
@@ -465,6 +503,7 @@ def parser() -> argparse.ArgumentParser:
     fetch.add_argument("--client-id", type=int, default=27)
     fetch.add_argument("--max-requests", type=int)
     fetch.add_argument("--pacing-sleep", type=float, default=11.0)
+    fetch.add_argument("--retries", type=int, default=3)
     fetch.set_defaults(func=command_fetch)
     build = sub.add_parser("build")
     build.set_defaults(func=command_build)

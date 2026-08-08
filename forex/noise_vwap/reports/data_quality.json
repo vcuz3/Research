@@ -342,7 +342,7 @@
     "pair": "NZDUSD",
     "session": "fxday",
     "stage1_raw": {
-      "rows": 5393136,
+      "rows": 5437296,
       "first": "2011-12-06 20:00:00+00:00",
       "last": "2026-07-17 20:59:00+00:00",
       "duplicate_timestamps": 0,
@@ -354,24 +354,24 @@
       "sessions": 3782,
       "first_session": "2011-12-07",
       "last_session": "2026-07-17",
-      "bars": 5340246,
+      "bars": 5384376,
       "expected_bars_per_session": 1425,
-      "mean_bars_per_session": 1412.016393442623,
+      "mean_bars_per_session": 1423.6848228450556,
       "min_bars_per_session": 1305,
-      "pct_sessions_full": 0.21734531993654152,
-      "missing_minutes_total": 49104,
-      "missing_minutes_pct": 0.009111302847282121,
-      "slot_coverage_min": 0.6134320465362242,
+      "pct_sessions_full": 0.9849286092014807,
+      "missing_minutes_total": 4974,
+      "missing_minutes_pct": 0.0009229313368031011,
+      "slot_coverage_min": 0.9902168164992068,
       "slot_coverage_median": 1.0,
       "worst_slots": {
-        "1305": 0.6134,
-        "1306": 0.6134,
-        "1307": 0.6134,
-        "1308": 0.6134,
-        "1309": 0.6134,
-        "1310": 0.6134,
-        "1311": 0.6134,
-        "1312": 0.6134
+        "0": 0.9902,
+        "1": 0.9905,
+        "2": 0.9905,
+        "3": 0.9905,
+        "4": 0.9905,
+        "5": 0.9905,
+        "6": 0.9905,
+        "7": 0.9905
       },
       "hourly_bar_coverage_et": {
         "0": 1.0,
@@ -387,9 +387,9 @@
         "10": 1.0,
         "11": 1.0,
         "12": 1.0,
-        "13": 0.9339,
-        "14": 0.968,
-        "15": 0.9026,
+        "13": 1.0,
+        "14": 1.0,
+        "15": 0.9989,
         "16": 0.9947,
         "17": 0.7429,
         "18": 0.9916,
@@ -399,26 +399,7 @@
         "22": 1.0,
         "23": 1.0
       },
-      "low_coverage_windows_et": [
-        {
-          "start": "13:00",
-          "end": "13:14",
-          "minutes": 15,
-          "coverage": 0.7356
-        },
-        {
-          "start": "14:00",
-          "end": "14:14",
-          "minutes": 15,
-          "coverage": 0.872
-        },
-        {
-          "start": "15:00",
-          "end": "15:14",
-          "minutes": 15,
-          "coverage": 0.6134
-        }
-      ],
+      "low_coverage_windows_et": [],
       "low_coverage_all_at_hour_start": true,
       "anchor_mfo_mode": 0,
       "anchor_mfo_stable_frac": 0.9902168164992068,
@@ -782,7 +763,7 @@
     "pair": "NZDUSD",
     "session": "active",
     "stage1_raw": {
-      "rows": 5393136,
+      "rows": 5437296,
       "first": "2011-12-06 20:00:00+00:00",
       "last": "2026-07-17 20:59:00+00:00",
       "duplicate_timestamps": 0,
@@ -794,24 +775,24 @@
       "sessions": 3780,
       "first_session": "2011-12-07",
       "last_session": "2026-07-17",
-      "bars": 3130080,
+      "bars": 3174240,
       "expected_bars_per_session": 840,
-      "mean_bars_per_session": 828.063492063492,
-      "min_bars_per_session": 765,
-      "pct_sessions_full": 0.21851851851851853,
-      "missing_minutes_total": 45120,
-      "missing_minutes_pct": 0.0142101284958428,
-      "slot_coverage_min": 0.6137566137566137,
+      "mean_bars_per_session": 839.7460317460317,
+      "min_bars_per_session": 780,
+      "pct_sessions_full": 0.9957671957671957,
+      "missing_minutes_total": 960,
+      "missing_minutes_pct": 0.0003023431594859627,
+      "slot_coverage_min": 0.9957671957671957,
       "slot_coverage_median": 1.0,
       "worst_slots": {
-        "720": 0.6138,
-        "721": 0.6138,
-        "722": 0.6138,
-        "723": 0.6138,
-        "724": 0.6138,
-        "725": 0.6138,
-        "726": 0.6138,
-        "727": 0.6138
+        "780": 0.9958,
+        "781": 0.9958,
+        "782": 0.9958,
+        "783": 0.9958,
+        "784": 0.9958,
+        "785": 0.9958,
+        "786": 0.9958,
+        "787": 0.9958
       },
       "hourly_bar_coverage_et": {
         "3": 1.0,
@@ -824,31 +805,12 @@
         "10": 1.0,
         "11": 1.0,
         "12": 1.0,
-        "13": 0.9339,
-        "14": 0.968,
-        "15": 0.9034,
+        "13": 1.0,
+        "14": 1.0,
+        "15": 1.0,
         "16": 0.9958
       },
-      "low_coverage_windows_et": [
-        {
-          "start": "13:00",
-          "end": "13:14",
-          "minutes": 15,
-          "coverage": 0.7354
-        },
-        {
-          "start": "14:00",
-          "end": "14:14",
-          "minutes": 15,
-          "coverage": 0.872
-        },
-        {
-          "start": "15:00",
-          "end": "15:14",
-          "minutes": 15,
-          "coverage": 0.6138
-        }
-      ],
+      "low_coverage_windows_et": [],
       "low_coverage_all_at_hour_start": true,
       "anchor_mfo_mode": 0,
       "anchor_mfo_stable_frac": 1.0,

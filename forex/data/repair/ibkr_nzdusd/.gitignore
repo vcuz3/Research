@@ -1,6 +1,10 @@
 inventory.json
 fetch_state.json
 validation.json
+lse_1m_state.json
+lse_1m_audit.json
+lse_validation.json
 requests/
+lse_1m_source/
 *.parquet
 *.tmp
