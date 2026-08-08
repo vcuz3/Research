@@ -1,0 +1,6 @@
+inventory.json
+fetch_state.json
+validation.json
+requests/
+*.parquet
+*.tmp

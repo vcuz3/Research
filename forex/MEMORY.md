@@ -14,6 +14,9 @@
 - Lifecycle phase: data engineering
 - Reproduction command: `python forex/build_macro_events.py`
 - Primary evidence: `data/macro/manifest.json`, `data/MACRO_EVENTS.md`, `build_macro_events.py`
+- NZDUSD gap repair: inventory and resumable repair tooling completed at
+  `repair_fx_ibkr_gaps.py` / `data/repair/ibkr_nzdusd/README.md`; fetching is
+  waiting for a running read-only IBKR Gateway/TWS API session.
 
 ## Confirmed findings
 
@@ -35,11 +38,17 @@
 - Historical actual, forecast, and previous values are snapshots and have not been vintage-verified.
 - ForexFactory page display timezone must be revalidated if the fetch location or session changes.
 - Conservative fuzzy matching leaves some LSE rows unmatched by design; exact counts live in the manifest.
+- The archived NZDUSD IBKR data has 2,944 fixed 15-minute acquisition holes at
+  13:00–15:14 ET (44,160 minutes). Archived raw/clean timestamp parity is exact,
+  confirming the defect is upstream of cleaning. The canonical Parquet remains
+  unchanged until the full repair passes and is promoted.
 
 ## Next actions
 
 1. Treat macro studies as exploratory until forecast/actual vintages and publication latency are independently verified.
 2. Re-run the builder and inspect the manifest whenever either raw calendar changes.
+3. Start IBKR Gateway/TWS with read-only API enabled, run the resumable NZDUSD
+   repair fetch, then build/promote and rerun all FX data-quality reports.
 
 ## Promotion candidates
 
