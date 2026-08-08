@@ -1,0 +1,15 @@
+{
+  "anchor_mode": "sma",
+  "arm_z": 2.5,
+  "atr_length": 14,
+  "atr_stop_mult": 2.0,
+  "bar_minutes": 15,
+  "max_arm_bars": 10,
+  "name": "sma_80",
+  "price_source": "hlc3",
+  "round_trip_cost_pips": 1.0,
+  "session_start_hour": 17,
+  "session_timezone": "America/New_York",
+  "sma_length": 80,
+  "target_r": 1.0
+}

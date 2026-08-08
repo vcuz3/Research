@@ -1,0 +1,265 @@
+{
+  "rule": "HYP-0002 \u00a76",
+  "entry_delay_bars": 0,
+  "ladder": [
+    5,
+    15,
+    30,
+    60,
+    120
+  ],
+  "unreported_coverage_defects": [],
+  "coverage_gate_pass": true,
+  "vr_by_tau": {
+    "5": 0.948308161982439,
+    "15": 0.9060218552123616,
+    "30": 0.888452914447365,
+    "60": 0.8757452626919325,
+    "120": 0.8688667020215488
+  },
+  "vr_lm_z_by_tau": {
+    "5": -12.400319325407256,
+    "15": -15.199127835335124,
+    "30": -15.046081152837193,
+    "60": -14.262746307961494,
+    "120": -12.78693362235515
+  },
+  "view2_best_common": {
+    "5": {
+      "gross_R": 0.1901693409438487,
+      "horizon_minutes": 240,
+      "n": 79695,
+      "ci_low": 0.120236823726065,
+      "ci_high": 0.26010185816163245
+    },
+    "15": {
+      "gross_R": 0.10000912603896737,
+      "horizon_minutes": 120,
+      "n": 26851,
+      "ci_low": 0.047951477187140074,
+      "ci_high": 0.15206677489079468
+    },
+    "30": {
+      "gross_R": 0.05750039609875486,
+      "horizon_minutes": 120,
+      "n": 14145,
+      "ci_low": 0.003060838616681813,
+      "ci_high": 0.11193995358082791
+    },
+    "60": {
+      "gross_R": 0.02130410814235317,
+      "horizon_minutes": 15,
+      "n": 6952,
+      "ci_low": 0.0016043589255293408,
+      "ci_high": 0.041003857359177
+    },
+    "120": {
+      "gross_R": -5.2740247681411825e-05,
+      "horizon_minutes": 30,
+      "n": 3294,
+      "ci_low": -0.027768062173193667,
+      "ci_high": 0.027662581677830842
+    }
+  },
+  "view2_best_maximal": {
+    "5": {
+      "gross_R": 0.15828282294667906,
+      "horizon_minutes": 480,
+      "n": 79695,
+      "ci_low": 0.05617470807360779,
+      "ci_high": 0.2603909378197503
+    },
+    "15": {
+      "gross_R": 0.08170557743860003,
+      "horizon_minutes": 120,
+      "n": 39853,
+      "ci_low": 0.037124986474255314,
+      "ci_high": 0.12628616840294477
+    },
+    "30": {
+      "gross_R": 0.0591307788879846,
+      "horizon_minutes": 120,
+      "n": 22221,
+      "ci_low": 0.01334910459632501,
+      "ci_high": 0.10491245317964418
+    },
+    "60": {
+      "gross_R": 0.0258003240155022,
+      "horizon_minutes": 15,
+      "n": 11763,
+      "ci_low": 0.007863528158725309,
+      "ci_high": 0.04373711987227909
+    },
+    "120": {
+      "gross_R": 0.005094560028433617,
+      "horizon_minutes": 15,
+      "n": 5597,
+      "ci_low": -0.013696334370455004,
+      "ci_high": 0.02388545442732224
+    }
+  },
+  "eligibility": [
+    {
+      "tau": 5,
+      "vr": 0.948308161982439,
+      "view2_gross_R": 0.1901693409438487,
+      "eligible": true
+    },
+    {
+      "tau": 15,
+      "vr": 0.9060218552123616,
+      "view2_gross_R": 0.10000912603896737,
+      "eligible": true
+    },
+    {
+      "tau": 30,
+      "vr": 0.888452914447365,
+      "view2_gross_R": 0.05750039609875486,
+      "eligible": true
+    },
+    {
+      "tau": 60,
+      "vr": 0.8757452626919325,
+      "view2_gross_R": 0.02130410814235317,
+      "eligible": true
+    },
+    {
+      "tau": 120,
+      "vr": 0.8688667020215488,
+      "view2_gross_R": -5.2740247681411825e-05,
+      "eligible": false
+    }
+  ],
+  "rank_by_vr": [
+    60,
+    30,
+    15,
+    5
+  ],
+  "rank_by_view2": [
+    5,
+    15,
+    30,
+    60
+  ],
+  "selection_basis": "views 1 and 2 DISAGREE; rule \u00a76.3 takes tau* from view 2, the conditional view, because VR is unconditional and linear and cannot see extreme-conditional behaviour",
+  "selected_tau": 5,
+  "selected_horizon_minutes": 240,
+  "horizon_candidates": [
+    {
+      "horizon_minutes": 15,
+      "gross_R": 0.1220689085720622,
+      "n": 79695
+    },
+    {
+      "horizon_minutes": 30,
+      "gross_R": 0.1430088207255473,
+      "n": 79695
+    },
+    {
+      "horizon_minutes": 60,
+      "gross_R": 0.1605271182882006,
+      "n": 79695
+    },
+    {
+      "horizon_minutes": 120,
+      "gross_R": 0.17860581281653817,
+      "n": 79695
+    },
+    {
+      "horizon_minutes": 240,
+      "gross_R": 0.1901693409438487,
+      "n": 79695
+    },
+    {
+      "horizon_minutes": 480,
+      "gross_R": 0.15828282294667906,
+      "n": 79695
+    }
+  ],
+  "rank_by_view3_pf": [
+    30,
+    15,
+    60,
+    5,
+    120
+  ],
+  "view3_agrees": false,
+  "outcome": "selected tau*=5 min, H*=240 min",
+  "shared_endpoint_control": {
+    "why": "open[i] == close[i-1] in this archive, so the delay-0 entry price is the same number that ends the displacement window; a transient pricing error there enters the displacement with +1 and the forward return with -1. The delay-1 arm puts one bar between them and is free of that artifact.",
+    "selected_tau": 5,
+    "selected_horizon_minutes": 240,
+    "view2_best": {
+      "5": {
+        "gross_R": 0.11216301978190274,
+        "horizon_minutes": 240,
+        "n": 79303,
+        "ci_low": 0.04157903854700605,
+        "ci_high": 0.18274700101679942
+      },
+      "15": {
+        "gross_R": 0.05533109844296148,
+        "horizon_minutes": 120,
+        "n": 26316,
+        "ci_low": 0.003685026130249097,
+        "ci_high": 0.10697717075567387
+      },
+      "30": {
+        "gross_R": 0.004784303753031959,
+        "horizon_minutes": 120,
+        "n": 13742,
+        "ci_low": -0.0459616879264773,
+        "ci_high": 0.05553029543254122
+      },
+      "60": {
+        "gross_R": 0.007561441055991129,
+        "horizon_minutes": 30,
+        "n": 6556,
+        "ci_low": -0.0184439740625129,
+        "ci_high": 0.03356685617449516
+      },
+      "120": {
+        "gross_R": -0.007845552423761422,
+        "horizon_minutes": 15,
+        "n": 2923,
+        "ci_low": -0.026246915023275044,
+        "ci_high": 0.010555810175752198
+      }
+    },
+    "eligibility": [
+      {
+        "tau": 5,
+        "vr": 0.948308161982439,
+        "view2_gross_R": 0.11216301978190274,
+        "eligible": true
+      },
+      {
+        "tau": 15,
+        "vr": 0.9060218552123616,
+        "view2_gross_R": 0.05533109844296148,
+        "eligible": true
+      },
+      {
+        "tau": 30,
+        "vr": 0.888452914447365,
+        "view2_gross_R": 0.004784303753031959,
+        "eligible": true
+      },
+      {
+        "tau": 60,
+        "vr": 0.8757452626919325,
+        "view2_gross_R": 0.007561441055991129,
+        "eligible": true
+      },
+      {
+        "tau": 120,
+        "vr": 0.8688667020215488,
+        "view2_gross_R": -0.007845552423761422,
+        "eligible": false
+      }
+    ],
+    "outcome": "selected tau*=5 min, H*=240 min",
+    "agrees_with_frozen_arm": true
+  }
+}

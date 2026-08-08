@@ -1,5 +1,14 @@
 # exploration_4 Findings — Frozen Mean-Reversion Baseline
 
+> **Scope note (2026-08-08).** Everything in this file is **EXP-0001**, the stopped
+> 5-minute baseline. It remains valid as reported, but it is **superseded as the
+> project's reference book**: the constraint set changed (the compulsory stop was
+> dropped), and the run-book arc restarted at Stage A. The current market map is
+> `MARKET_CHARACTERIZATION.md` (EXP-0002); the current coverage gate is
+> `DATA_QUALITY.md`, which EXP-0002 rewrote for the multi-grain work (the EXP-0001
+> snapshot is preserved at `../artifacts/runs/EXP-0001/DATA_QUALITY.md`). No Stage-B
+> reference book exists yet, so nothing here has been replaced by a newer *book*.
+
 ## Verdict: **NO-GO**
 
 This was one pre-specified baseline, not a sweep. The headline is per-signal

@@ -1,0 +1,19 @@
+{
+  "experiment_id": "EXP-0004",
+  "stage": "B",
+  "inherits": "baseline_replication/configs/stage_a.json",
+  "tau": 5,
+  "entry_k": 2.0,
+  "slot_lookback_sessions": 90,
+  "slot_min_fraction": 0.6667,
+  "holding_cap_minutes": 240,
+  "entry_delay_bars": [1, 0],
+  "primary_entry_delay_bars": 1,
+  "anchor_guard_sigma": 0.25,
+  "exit_treatments": ["guarded", "touch", "time"],
+  "primary_exit_treatment": "guarded",
+  "news_blackout_minutes": 30,
+  "friday_flat_ny_minute": 1015,
+  "cost_scenarios": ["optimistic", "base", "pessimistic"],
+  "primary_cost_scenario": "base"
+}

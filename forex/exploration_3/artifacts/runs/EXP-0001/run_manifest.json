@@ -1,0 +1,79 @@
+{
+  "created_utc": "2026-08-07T11:55:15.592411+00:00",
+  "data_files": [
+    {
+      "bytes": 81601056,
+      "first_ts": "2011-07-19 00:00:00",
+      "last_ts": "2026-07-17 20:59:00",
+      "pair": "AUDUSD",
+      "path": "forex\\data\\clean\\AUDUSD_1m_clean.parquet",
+      "rows": 5536530,
+      "sha256": "e6b6a291084a83973890167b85222a55c4fe69e4ea0f0ca85427b794f72bb895"
+    },
+    {
+      "bytes": 83373892,
+      "first_ts": "2011-07-19 00:00:00",
+      "last_ts": "2026-07-17 20:59:00",
+      "pair": "EURUSD",
+      "path": "forex\\data\\clean\\EURUSD_1m_clean.parquet",
+      "rows": 5536573,
+      "sha256": "abce793fe0f16cf41f8502afd74b8c1429a126430a6622eb5a00b8b3fa9cb8e1"
+    },
+    {
+      "bytes": 86302492,
+      "first_ts": "2011-07-19 00:00:00",
+      "last_ts": "2026-07-17 20:59:00",
+      "pair": "GBPUSD",
+      "path": "forex\\data\\clean\\GBPUSD_1m_clean.parquet",
+      "rows": 5536355,
+      "sha256": "45ecaf570fb239b546b280aa04d6bfafdee2864b5e8d725ad561563cfaf4793e"
+    },
+    {
+      "bytes": 78177453,
+      "first_ts": "2011-12-06 20:00:00",
+      "last_ts": "2026-07-17 20:59:00",
+      "pair": "NZDUSD",
+      "path": "forex\\data\\clean\\NZDUSD_1m_clean.parquet",
+      "rows": 5393136,
+      "sha256": "1f8f8dd15f1458e9a8be6345fe4863166302d603e4496e53fec245b25960e454"
+    }
+  ],
+  "kill_test_checks": {
+    "holdout_daily_sharpe_positive": false,
+    "holdout_net_mean_pips_positive": false,
+    "holdout_positive_pairs_at_least_3": false,
+    "oos_daily_sharpe_positive": false,
+    "oos_net_mean_pips_positive": false,
+    "oos_positive_pairs_at_least_3": false
+  },
+  "latest_data_timestamp": "2026-07-17 20:59:00",
+  "numpy": "2.4.4",
+  "pandas": "3.0.2",
+  "python": "3.14.4",
+  "run_command": "python run_research.py --output-dir C:\\Users\\VuDoa\\Research\\forex\\exploration_3\\artifacts\\runs\\EXP-0001",
+  "selected_config": {
+    "anchor_mode": "sma",
+    "arm_z": 2.5,
+    "atr_length": 14,
+    "atr_stop_mult": 2.0,
+    "bar_minutes": 15,
+    "max_arm_bars": 10,
+    "name": "sma_80",
+    "price_source": "hlc3",
+    "round_trip_cost_pips": 1.0,
+    "session_start_hour": 17,
+    "session_timezone": "America/New_York",
+    "sma_length": 80,
+    "target_r": 1.0
+  },
+  "selection_metric": "pre-2020 fixed-quantity portfolio daily net-pip Sharpe",
+  "smoke": false,
+  "split_boundaries": {
+    "embargo_unused": "2020-01-01 <= entry_time < 2021-01-01",
+    "holdout": "entry_time >= 2024-01-01",
+    "oos": "2021-01-01 <= entry_time < 2024-01-01",
+    "train": "entry_time < 2020-01-01"
+  },
+  "test_command": "python -m pytest backtest_engine/test_engine.py -q",
+  "verdict": "NO_GO_OOS_KILL_TEST"
+}

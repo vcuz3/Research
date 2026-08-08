@@ -1,5 +1,324 @@
 # Project Memory: Forex Exploration 1
 
+## 2026-08-07 CONVICTION SCORE (item 21) + SUPERVISED MODEL (item 22) — BOTH NO-GO; the joint/interaction question is now closed and depth (|z_twap|) is a near-sufficient statistic for conviction
+
+- Status: **NO-GO for both the combined conviction score and the supervised model**
+  (rule 25, recorded). Report `RSI_CONVICTION_SCORE_REPORT.md`; shared per-trade table
+  `_build_conviction_table.py` -> `rsi_conviction_trades.parquet` (~23,834 trades, all
+  decision-time features + R at delay 0/1 from the audited engine) + per-pair depth
+  frontier `rsi_conviction_frontier.json`; item 21 `_run_rsi_conviction_score.py` ->
+  `rsi_conviction_score_results.json`; item 22 `_run_rsi_supervised.py` ->
+  `rsi_supervised_results.json`. Consumed history; 2024+ sealed.
+- **Why this run existed:** the per-axis search (axes 1/2/3 redundant with depth, axis 6
+  external orthogonal-but-tail) could not rule out that COMBINING orthogonal axes, or
+  letting a model weight them jointly, beats depth. It does not.
+- **THE HONEST BAR = a matched-COUNT depth benchmark, not the frontier.** A top-decile
+  book fires ~270–285/yr, SPARSER than deepening z alone reaches (frontier bottoms at
+  ~285–305/yr @k=4.0), so "excess over the |z_twap| frontier" makes `np.interp` CLAMP to
+  the k=4.0 endpoint and FLATTERS (LEARNINGS 2026-08-05 trap, reproduced). Primary metric
+  is `vs_depth_topq`: mean R minus mean R of the top-q trades ranked by |z_twap| on the
+  identical book — exactly matched count, no extrapolation. The clamped frontier metric
+  said +0.008 (looked positive); the honest depth benchmark said **−0.040**.
+- **Item 21 (conviction score) NO-GO.** Correlation audit reproduces redundancy
+  (Spearman|rho| vs depth: decel5 .44, rv5 .38, zvel5 .37, vei .26, rv30 .24 = redundant;
+  abs_sigma .01, vix_z .02, xdiv .03, prox_hi .05 = orthogonal). One rep per axis (depth
+  absz_twap / abs-vol abs_sigma / xpair xdiv / calendar prox_hi / risk vix_z), orientation
+  learned early-era only, percentile-rank within pair, average, keep top decile. **vs
+  depth-top-q: all-axes −0.040 d0 / −0.021 d1 (1/4); depth-free (no |z|) −0.051 (1/4).**
+  The score is WORSE than ranking by |z_twap|; dropping depth is worse still.
+- **Item 22 (supervised) NO-GO. Decision-time features carry NO predictive skill: OOF
+  AUC ≈ 0.51 for every model** (logit + HistGBT, 11 features, 6 PURGED+EMBARGOED time
+  folds, embargo 1680min = 240m hold + 1 day, imputer/scaler fit on train only, label
+  R_d0>0 base rate 0.511). logit all-axes vs depth-top-q −0.016 (1/4); logit depth-only
+  ≈0 (sanity: logit-on-depth == depth rank). **The one positive flag — hgbt top-decile
+  +0.021 (3/4) — is a top-bucket fluke:** non-monotone (−0.009 @keep20, −0.014 @keep40)
+  and SEED-UNSTABLE (`vs_depth_topq` swings **−0.038 → +0.072** across 6 seeds; seed 0 was
+  a lucky draw). A real conviction edge degrades gracefully with keep and is seed-stable.
+- **Read-through:** there is no cross-axis interaction structure to harvest — the reversion
+  outcome is near-unpredictable from decision-time state (AUC 0.51) and **depth is a
+  near-sufficient statistic for conviction**. The conditioner programme (price-state axes
+  1–3, external axis 6, AND now their joint combination + a supervised model) is fully
+  exhausted. The only remaining live lever stays the ESTIMAND (prop-firm account sim), not
+  a better per-bet selection signal. Two reusable method notes -> candidate LEARNINGS:
+  (a) compare a top-decile selection to a matched-COUNT depth benchmark, never a
+  frontier-interp that clamps; (b) seed-sweep + keep-monotonicity-check any tree top-bucket
+  result before believing it (AUC≈0.5 can still throw a spurious +0.02 top decile).
+
+## 2026-08-07 SESSION-TWAP baseline: strongest construction yet, but the flat-cost pass DOES NOT survive a state-dependent spread (deep dislocations = widest-spread states). Conviction axes 1 (strength), 2 (vol regime), 3 (cross-pair divergence) AND axis 6 (macro/external: 18 calendar, 20 VIX-regime killed by a block null) ALL NO-GO — depth is the only conviction lever. NEW: news blackout ADOPTED as a tail constraint (veto ±30min of / holding-through a High-impact release; +58% mean_R, better tails). Item 19 (carry) data-limited to 2/4 pairs. One price-state test remains: liquid-hours-only book. The live lever is now the ESTIMAND (prop-firm account sim). Stop/horizon artifact fixed.
+
+- Status: **the strongest candidate the project has produced; promoted to the working
+  baseline for the conviction search.** Consumed history; **2024+ still sealed**. This is a
+  screen (rule 26), not yet a deployed GO — the decisive tests are (1) real spread at the
+  deep-dislocation states and (2) the 2024+ holdout. Scripts `_run_rsi_axis1_conviction.py`,
+  `_run_rsi_exit_horizon.py`, `_run_rsi_twap_anchor.py`; results `rsi_axis1_conviction_*`,
+  `rsi_exit_horizon_*`, `rsi_twap_anchor_*` json/csv.
+
+- **BASELINE DEFINITION (promoted):** fade displacement from the **SESSION TWAP** (cumulative
+  mean of log price since the 17:00 NY session open — the line institutions execute toward),
+  normalised by the causal **same-slot** trailing dispersion (`slot_z`, not a rolling window,
+  because a session-anchored displacement's scale grows through the session). Entry on the
+  event clock (first crossing of `|z_twap| >= k`), non-overlap, **horizon-scaled 3R stop**
+  (3 × the 240-min sigma = 3 × rv_30m × √8), 1-pip slippage. **Operating point |z_twap| >= 3.0**,
+  **time exit at 240 min** (cleaner null than the target exit). Supersedes the EMA-anchor /
+  30-min-hold framing as the reference the conviction work is scored against.
+
+- **Why the session-TWAP anchor wins (head-to-head vs EMA(20) z, both same baseline machinery):**
+  - **Non-redundant** — Spearman(z_ema, z_twap) = **0.27–0.31**. A slow session-long anchor
+    captures a different, longer-horizon dislocation than the fast EMA(20). (The rolling-20
+    TWAP, COM-matched to EMA20, was rejected by the user in favour of the session anchor for
+    its execution-benchmark economic rationale — and it would have been ~redundant anyway.)
+  - **Not a clock** — same-slot normalisation holds the per-slot firing-rate CV at 0.05–0.09.
+  - **~5× FEWER trades** (directly answers the "2.6k/yr is too many" concern): 539/yr @1.5,
+    350 @2.5, **319 @3.0**, 299 @3.5 — vs the EMA base's ~1110/yr @1.5. |z_twap|>=3.0 is ~8×
+    below the original count.
+  - **~2× the pips at deep z** (time exit, d0, median): TWAP 1.08/1.77/2.06 pip at k=2.5/3.0/3.5
+    vs EMA 0.43/0.53/0.78; mean_R 0.044/0.061/0.058 vs 0.023/0.027/0.035.
+  - **DELAY-ROBUST — the standout.** Survives the 1-min delay that killed every prior
+    EMA/RSI/freshness edge (those lost ~85%). |z|>=3.0 time exit: 1.77 pip (d0) → 1.16 (d1).
+    A session-benchmark dislocation is slow/structural, not a first-minute snap. Per the fill
+    model (LEARNINGS 2026-08-06) real latency ≈1.5s ≈ delay-0, so d0 is the honest case.
+  - **Clears realistic cost for the first time.** Net after a full 1.1-pip round trip
+    (comm+spread), time exit d0: +0.08 (k2.5), **+0.67 (k3.0)**, +0.90 (k3.5); at k3.0 ≈
+    **+214 pip/yr/pair net**, still positive under the over-conservative full-minute delay
+    (+0.06 @1.1). Net after 0.7-pip commission alone: positive from k>=2.0.
+  - **Target exit = genuine ~3.5h revert-to-TWAP hold** (median hold 200–240 min), vs the EMA
+    target exit's 12-min scalp. Validates the user's ~4h-hold thesis for THIS anchor.
+
+- **NULL (side-permutation, 300 draws, shuffle sides preserving L/S, re-execute real paths+exit;
+  target-exit reversion clock recomputed per shuffled side):** **reversion is REAL, not exit
+  geometry.** Target exit passes **16/16 cells** (frac>=real 0.000–0.023, z **+2.1 to +4.6**),
+  every pair, k=1.5 and 2.5. Time exit passes on most (z +1.0 to +2.7; weakest GBP/NZD @k1.5).
+  Nuance: the target-exit null centres **positive** (~+0.02 R) — the asymmetric barrier has a
+  mechanical component — but the real entries beat it by 2–4.6σ, so the entry adds ~+0.026 R of
+  directional info on top. The time-exit null centres ~0 (edge purely entry-driven, noisier).
+  Breadth: mean_R positive **4/4 pairs** at ~every depth; AUD/NZD strongest, GBP weakest (→0 at
+  deep z), the usual EUR/GBP-block weakness.
+
+- **Axis-1 (signal STRENGTH) conviction filters — NO-GO.** On the event clock every entry is a
+  first crossing (age 0), so freshness is degenerate. The dimensions that DO vary — penetration
+  velocity (Δ|z|/5min), short thrust (|r5|/rv5), deceleration/exhaustion (|ret1| vs 5-min mean) —
+  were tested both directions × 3 keeps (18 arms), scored as excess over the |z| depth frontier
+  at matched rate. **0/18 cleared** (≥+0.005 R, ≥3/4 pairs, delay1+late). Best (`decel5 hi 20`,
+  +0.008 R 3/4) is AUD-driven, dies at delay1 and in the late era. Mechanism: velocity/thrust/
+  decel are functions of the same recent-return path `z` already encodes — depth is the only
+  real strength lever. The two "lo" gates are also partly clocks (slot CV 0.32–0.39).
+
+- **Stop/horizon ARTIFACT (fixed).** The Axis-1 run first showed the naked 240m base flat/negative
+  — but the stop was fixed at 3 × the **30-min** sigma applied to a **4-hour** hold, truncating
+  35–48% of trades. Scaling the stop to the holding horizon (3 × 240-min sigma) rescued the base:
+  |z|>=1.5 went −0.033 R / 35% stopped → **+0.019 R / 5% stopped**. Reusable: **an R-unit stop
+  must scale with the HOLDING horizon, not the feature's estimation window.**
+
+- **Axis-2 (volatility REGIME) conviction — NO-GO on this baseline.**
+  `_run_rsi_axis2_volregime.py` / `rsi_axis2_volregime_*`. 24 gates (rv30_pct, rv5_pct,
+  vei_atr_z expansion, abs_sigma absolute, rv30&vei combined; hi/lo × keeps 0.4/0.2/0.1),
+  scored as excess over the |z_twap| depth frontier at matched rate, both exits, delay 0/1,
+  eras. **0/24 SUPPORTED.** High-vol gates land ON the frontier (best rv30 hi 20 +0.0002 R;
+  rv5 hi 40 +0.0099 but 2/4, clamped, late-negative = dial); low-vol gates are far WORSE
+  (−0.03 to −0.075 R). **Mechanism: a deep session-TWAP dislocation ALREADY selects elevated
+  volatility, so an explicit vol gate is redundant with depth** — same redundancy that killed
+  RSI-on-z and Axis-1 strength. Depth on |z_twap| remains the single best conviction lever;
+  the frontier is strong and monotone (time-exit mean_R 0.019→0.058 at k=1.5→3.0, peak ~k3.0,
+  reconfirming the |z_twap|>=3.0 operating point). Reversion-in-high-vol direction is
+  reconfirmed (lo gates negative) but it is not INCREMENTAL to depth.
+- **Axis-3 (CROSS-PAIR relative-value DIVERGENCE) conviction — NO-GO on this baseline.**
+  `_run_rsi_xpair_divergence.py` / `rsi_xpair_divergence_*`. Feature `xdiv = side · partner
+  z_twap` (hi = the cointegrated partner did NOT confirm this pair's dislocation), blocks
+  EUR↔GBP and AUD↔NZD. Divergence gates (hi/lo × keeps 0.4/0.2/0.1) scored as excess over the
+  |z_twap| depth frontier, then the LEARNINGS-2026-08-05 within-(30min-slot, era, side) donor
+  re-pairing null (400 draws, firing-rate invariant asserted — held on all 16 cells).
+  - **Screen: 0/6 gates cleared.** div_hi (the divergence thesis) sits ON the frontier
+    (div_hi 10 = +0.0007 R, a dial; div_hi 20 = −0.016) — it does NOT beat deepening z. div_lo
+    (confirmation) +0.0102 at keep10 but 2/4 pairs and late-era −0.059 → dial.
+  - **Directed null on the a-priori FOLLOWER legs: does NOT confirm.** The error-correction
+    assignment (early era, PRICE LEVELS only, never P&L) **independently re-derived
+    {EURUSD, NZDUSD}** as the followers — exactly the EMA-work assignment, and again EURUSD (the
+    most liquid pair) is a follower, so the assignment is non-trivial. But the directed divergence
+    fade on those legs is **0/8 cells at frac<0.05** (best NZDUSD keep10 target frac 0.065,
+    z+1.52; EURUSD followers frac 0.26–0.76). Followers median real_exc +0.011, frac 0.36 — a
+    whiff on the TARGET exit only, diluted below significance. The one "pass" (GBPUSD keep10 time,
+    frac 0.013) is an ANCHOR — the wrong leg per the hypothesis — i.e. noise, 1/8.
+  - **Mechanism / why it transferred on EMA but not here:** redundancy with depth is MUCH higher
+    on this baseline — Spearman(|z_twap|, xdiv) = **−0.41 to −0.58** (vs −0.10..−0.17 vs own-vol
+    on EMA). The session TWAP is ITSELF a relative-value / execution-benchmark line, so
+    displacement from it already absorbs most of the idiosyncratic-dislocation signal that
+    cross-pair divergence had to add separately on the cruder EMA(20) anchor. Divergence is also
+    partly a clock here (div_hi slot-CV 0.41–0.57). This STRENGTHENS the session-TWAP promotion:
+    the anchor swallows the last orthogonal own-data axis. **All three conviction axes (strength,
+    vol regime, cross-pair divergence) are now redundant with |z_twap| depth — the per-pair
+    price-state search is EXHAUSTED; depth is the single conviction lever.**
+- **Read-through for the search:** every conditioner built from the price/vol/cross-pair STATE is
+  redundant with |z_twap| depth. The only remaining levers condition on something OUTSIDE the
+  price state — calendar/liquidity gates (news blackout, session-overlap-only) — or change the
+  ESTIMAND (prop-firm account: pass-probability × payout), not the per-bet signal.
+- **Axis-6 item-18 (ECONOMIC-CALENDAR PROXIMITY, macro/external state) — NO-GO as a conviction
+  lever, but the FIRST feature orthogonal to depth since the cross-pair work, and a clean
+  mechanism.** `_run_rsi_axis6_calendar.py` / `rsi_axis6_calendar_*`. Feature `prox_hi` = minutes
+  to the NEAREST scheduled HIGH-impact release for the pair (data `forex/data/macro/
+  fx_macro_events.parquet`, 3.9–4.9k distinct High events/pair, 2011–2023; **timing + impact tag
+  ONLY, never the surprise VALUES** — so the file's uniform `not-vintage-verified` PIT caveat, which
+  is about values, does not bite; release TIMES are scheduled/causal). Gates scored as excess over
+  the |z_twap| depth frontier, both exits, delay 0/1, eras.
+  - **Mechanism CONFIRMED (the strong half):** dislocations firing NEAR news (`prox lo`) revert far
+    WORSE — **−0.074 R excess at keep-10, NEGATIVE on 4/4 pairs, worse in the late era** (−0.106),
+    monotone. Event-driven dislocations are bad fades (information/whipsaw, not liquidity noise).
+  - **But NO-GO as a lever:** `prox hi` (calendar-QUIET, the conviction candidate) is only a **dial**
+    (+0.0043 R, 2/4, doesn't clear +0.005; +AUD/GBP, −EUR/NZD); the ±15/30/60-min blackout vetoes are
+    dials-to-negative (blackout-15 +0.0005 R 0/4). Reason: the informative part (near-news) is only a
+    ~5–10% tail, so removing it barely lifts the average above the strong frontier, and the frontier
+    already prices the trade-count drop.
+  - **Genuinely orthogonal to depth** — Spearman(|z_twap|, prox_hi) = **−0.01 to −0.10** (vs axis-3's
+    −0.41 to −0.58). First non-redundant feature since cross-pair divergence on EMA — it just lives
+    in too small a tail to beat depth.
+  - **Spread interaction (points the WRONG way):** near-news bad trades tilt to LIQUID hours (US/EU
+    releases at 12:30–14:00 UTC = London/NY), so `prox hi` reselects Asia/late-NY (illiquid tilt
+    1.3–1.6×) and a news blackout would drop liquid-hour trades and KEEP the wide-spread ones — the
+    opposite of what the spread-economics finding needs. The news-proximate losers are NOT the
+    illiquid-hour trades.
+  - **ADOPTED as a deployment CONSTRAINT (user, 2026-08-07), not alpha.** `_run_rsi_news_blackout.py`
+    / `rsi_news_blackout_results.json`. Veto entries within ±30 min of a High-impact release OR whose
+    240-min hold would span one (fading a data surprise is structurally bad + spread/slippage/adverse
+    selection blow out around releases). At k=3.0, median across pairs: base 319/yr mean_R +0.058 →
+    combined veto 255/yr **+0.092 (+58%)**, worst-5% −2.36→−2.31, worst-day −6.04→−5.95; monotone-ish
+    4/4 pairs. **The holding-THROUGH-news veto is the bigger component** (+0.086 alone) than
+    entry-proximity (+0.071) — item 18 only tested entry-proximity so it UNDER-counted this; at 277/yr
+    veto_holdspan beats the |z| frontier (z3.5 = 0.053 @299/yr), so the holding-overlap veto MIGHT be
+    incremental alpha over depth (would need excess-over-frontier scoring + a null to claim it). Kept
+    as a constraint per the user; see [[forex-strategy-deployment-constraints]].
+- **Axis-6 item-20 (RISK-SENTIMENT / VIX regime, macro/external state) — NO-GO.**
+  `_run_rsi_axis6_risk.py` / `rsi_axis6_risk_*`. Feature: VIX daily close (CBOE intraday CSVs at
+  `futures/data/vix/`, 3.76k closes 2011–2026), as-of BACKWARD joined to each FX minute (Asia-hours
+  decisions use the prior US-session close — causal); regime = TRAILING-standardized VIX (elevation
+  vs own 60-session mean/sd, so a fixed cut is NOT a secular-era selector — the raw-level version is
+  run as the era-selector control). Gates hi/lo × keeps, both directions, scored as excess over the
+  |z_twap| depth frontier.
+  - **VIX is orthogonal to depth** (Spearman(|z_twap|, vix_z) = **+0.08 to +0.10**, like calendar
+    proximity) — genuinely a new dimension, NOT redundant like axes 1–3.
+  - **The trailing-z CONSTRUCTION was wrong (SUPERSEDED below), not the idea.** As a
+    trailing-standardized elevation it gave no coherent signal — two screen cells (`vixz lo 10`
+    +0.0219 R; `vixraw lo 40` +0.0098 R) both non-monotone in keep and AUD-driven → looked like a
+    keep-tail fluke. VIX IS orthogonal to depth (Spearman +0.08..+0.10). Reason it failed:
+    re-standardizing VIX vs its OWN recent level washes out the persistent risk-off STATE (see next).
+- **Axis-6 item-20 v2 (RISK regime via ABSOLUTE HYSTERESIS 25/20 + vol-of-VIX) — the fade edge is a
+  RISK-ON phenomenon; risk-OFF reversion is flat-to-negative. PROVISIONAL (coherent + cross-pair, but
+  needs a block null — 28 episodes).** User (2026-08-07) proposed a Schmitt trigger (VIX close ≥25 →
+  risk-off, ≤20 → risk-on, hold in the 20–25 dead-band) instead of the trailing z. `_run_rsi_axis6_
+  regime.py` / `rsi_axis6_regime_*`. Causal (hysteresis on VIX closes ≤ decision, as-of joined).
+  - **Coherent, cross-pair-consistent asymmetry (unlike the trailing-z):** mean_R risk_off vs risk_on
+    (time exit) = AUD +0.032/+0.049, EUR **−0.039**/+0.045, GBP **−0.048**/+0.028, NZD **−0.019**/
+    +0.022 — **risk_on > risk_off on 4/4 pairs; risk_off flat-to-NEGATIVE on 3/4.** Mechanism
+    confirmed: risk-off USD dislocations are flight-to-quality/deleveraging TRENDS that don't revert.
+  - **Deployable form = a risk-OFF VETO, not a conviction gate.** `risk_on` clears the screen
+    (+0.0098 R excess, 3/4, d1 +0.0074, late +0.0217, SUPPORTED; target exit +0.0113 t 2.39 4/4) but
+    keeps ~79% of trades so it barely filters — the value is AVOIDING risk-off, analogous to the news
+    blackout (a regime veto).
+  - **POWER CAVEAT (governed belief):** risk-off is only **28 distinct episodes** over 12 yr
+    (2011–12/2015–16/2018Q4/2020/2022), trades within an episode highly correlated; risk_off cluster-t
+    only −0.43. So a block null was required before believing the asymmetry.
+  - **BLOCK NULL → NO-GO (the asymmetry does NOT survive).** `_run_rsi_axis6_regime_null.py` /
+    `rsi_axis6_regime_null_results.json`. Circular-shift the daily risk-off state around the VIX
+    calendar (2000 shifts, min |s|=30d; preserves episode structure, destroys alignment with the fade
+    P&L — LEARNINGS 2026-08-03), statistic T = mean_R(on)−mean_R(off). **T passes 0/4 pairs, every
+    exit, both universes** (frac_ge_real 0.08–0.79). The real on−off gap sits inside what 28 clustered
+    episodes give by chance — the power concern realised. **AUDUSD's risk-off is actually BETTER than
+    risk-on** under honest labeling (+0.145 vs +0.089, frac 0.79) — the 4/4 asymmetry wasn't even
+    universal. **Under the news blackout the asymmetry vanishes** (time-exit T = +0.038/+0.003/−0.003/
+    +0.004 ≈ 0 on 3/4) — telling: the blackout was doing the real work, "risk-off" was partly a proxy
+    for "more news-driven dislocations" which the blackout already removes.
+  - **METHOD lesson (why the v2 run looked coherent and the null didn't):** the v2 run folded the
+    regime INTO the non-overlap ENTRY condition (`base & risk_on`), which picks a different, sparser
+    first-crossing sequence and manufactured a cleaner split; the null POST-HOC LABELS the base book,
+    which is what a VETO actually is (run the book, then the regime says whether each trade was in
+    risk-off). The deployment-faithful construction is weaker and the null kills it. **A regime VETO
+    must be tested by post-hoc labeling the base non-overlapping book, not by putting the regime in the
+    entry condition.** (→ candidate LEARNINGS.)
+  - **Vol-of-VIX (trailing std of daily VIX log-changes): NO-GO** — all dials/rejects, non-monotone.
+  - **NET item-20 verdict: NO-GO.** The fade edge is not meaningfully different in risk-on vs risk-off
+    once tested honestly. The only survivor from axis 6 is the news blackout (tail constraint, adopted).
+  - **Bonus (not a regime result): the blackout book mean_R is strong** — with both constraints on
+    (blackout, k=3.0, time exit): EUR +0.064, GBP +0.094, AUD +0.129, NZD +0.093 R; risk-off ~same, so
+    no regime veto needed. This is the current best deployable per-bet book (gross of the state spread).
+- **Axis-6 item-19 (CARRY / rate-differential direction) — NOT RUN (data-limited + weak mechanism).**
+  Local policy-rate parquets exist only for **USD (`fdtr`), EUR (`eurr002w`), AUD (`rbatctr`)** in
+  `forex/data/lse/economics/series_cache/`; **GBP & NZD rates are NOT on disk** (economics datasets
+  cover only US/Euro_Area/Australia), so carry differentials are buildable on just **2/4 pairs**
+  (EURUSD, AUDUSD — one leg of each cointegrated block). Compounding: on a 4-hour hold the actual
+  carry EARNED is negligible, so item 19 would really be a slow directional-bias/era test with very
+  few rate-sign flips over 2011–2023 (the "stable predictor of an unstable target" trap, LEARNINGS
+  2026-08-03). Deferred pending a decision to fetch GBP/NZD rate series; low expected value.
+- **AXIS-6 SUMMARY (macro/external state — one CONSTRAINT adopted, no conviction alpha):** the axis
+  produced the FIRST features orthogonal to |z_twap| depth since the cross-pair work (calendar
+  proximity −0.01..−0.10; VIX +0.08..+0.10), but no per-bet conviction alpha: calendar's informative
+  part is a ~5–10% tail that can't beat depth; the VIX risk-regime asymmetry looked coherent under
+  hysteresis but was KILLED by the circular-shift block null (0/4, and it vanishes under the news
+  blackout). **The one durable output is the NEWS BLACKOUT constraint** (tail control: +58% mean_R,
+  better worst-5%/worst-day; adopted). Item 19 (carry) data-limited to 2/4 pairs and mechanically
+  weak. External-state lever family now exhausted alongside the price-state one; the remaining live
+  lever is the ESTIMAND change (prop-firm account sim), not a per-bet conviction signal.
+- **SPREAD ECONOMICS — the flat-cost pass DOES NOT survive a state-dependent spread; edge is
+  cost-model-dependent and marginal-to-negative (rule 20).** `_run_rsi_spread_economics.py` /
+  `rsi_spread_economics_results.json`. **The archive has NO bid/ask — every FX file is mid-only
+  OHLC, so the quoted spread is NOT directly observable** (the fill-model caveat). What IS
+  measurable: the deep-dislocation states are, by construction, the **widest-spread** states,
+  confirmed three independent ways at k=3.0:
+  - **short-horizon vol at entry = 2.5–3.0× the median minute** (rv5 multiplier: EUR 2.49,
+    GBP 2.48, AUD 2.69, NZD 3.01) — and FX spread scales ~with short-horizon vol;
+  - **illiquid-hour tilt 1.8–2.0×** — 66–76% of entries fire in the Asia/late-NY window
+    (21:00–06:00 UTC) vs ~37% of all minutes;
+  - **Corwin-Schultz HL spread proxy 3.2–4.1× wider** at entry than baseline (mid-biased for
+    absolute level, so read as a RELATIVE ratio only — but it agrees with the other two).
+  Charging each trade a state-dependent round-trip spread = per-pair ECN anchor
+  (EUR .20/GBP .50/AUD .50/NZD 1.0 pip) × the measured per-trade vol multiplier (capped 4×) +
+  0.7 commission, at k=3.0: only **GBP (+0.05) and AUD (+0.46) net positive, barely; EUR −0.41,
+  NZD −2.11**. Under a **retail** spread (2× ECN, realistic for a prop account) **all four pairs
+  are negative at every k**; the old FLAT-1.1 assumption (which flattered GBP/AUD/NZD to
+  +0.9/+1.4/+0.4) was too generous precisely because it ignored that these trades sit in
+  wide-spread states. NZD dies hardest (widest base spread × highest vol multiplier).
+  - **The bind:** gating OUT the illiquid hours (the obvious fix) removes 66–76% of the sample
+    AND, per the fill-model LEARNINGS 2026-08-06, this edge's IC concentrates in exactly those
+    illiquid hours — signal and wide spreads live in the same hours. So a liquid-hours-only book
+    is the one remaining test but is unlikely to keep both the trades and the edge.
+  - Caveat kept: the vol→spread mapping and the ECN anchors are IMPORTED (mid-only data);
+    absolute verdict is assumption-dependent, but the ~2.5–4× state tilt is measured and robust,
+    so any realistic state-dependent spread hits this edge far harder than a flat one.
+- **Immediate next:** (1) the liquid-hours-only test (does a daytime-restricted book keep a net
+  edge, or does removing the illiquid hours also remove the signal?) — this is now the decisive
+  remaining question and is cheap; (2) if it survives, freeze a holdout spec; else this is a
+  NO-GO under realistic execution. Do NOT open the 2024+ holdout yet. NOTE this REVISES the
+  session-TWAP promotion from "clears realistic cost" down to "clears a FLAT cost only; the
+  deep-dislocation states are the widest-spread states and the edge is cost-model-dependent."
+  Conviction search (price-state axes 1–3 + external axis 6) is EXHAUSTED — the news blackout is
+  the only adopted addition; the remaining lever is the ESTIMAND (prop-firm account sim), not a
+  better per-bet signal. Two constraints now stand for all future arms: compulsory single-barrier
+  stop, no fixed clock, AND the news blackout (see [[forex-strategy-deployment-constraints]]).
+
+## 2026-08-06 Seconds-scale FILL MODEL — delay-0 next-open entry VALIDATED; delay-1 (full-minute) was far too conservative; economics UNCHANGED
+
+- Status: **fill assumption validated on the 1s tape (early era 2012–2020).** Frozen
+  `RSI_FILL_MODEL_SPEC.md`, report `RSI_FILL_MODEL_REPORT.md`, script `_run_rsi_fill_model.py`,
+  results `rsi_fill_model_results.json`. Data: `data/lse/fx/fx_*_1s*.parquet` (1-second MID OHLC,
+  ~111M rows/pair, spans 2009→2020-07 EUR/GBP … 2021-11 NZD). Consumed history; 2024+ sealed.
+- **Question (user):** the engine's `delay=1` bakes in a full 60s latency; real decision+route
+  latency is ~1.5s. Is a fill at the next candle open (`delay=0`, open of *t+1*) defensible?
+- **Answer: YES.** Sub-second adverse selection at 1.5s = **+0.02–0.04 pip** (vol-gate),
+  4–9% of gross. Vol-gate gross retention @1.5s vs @0s: EUR 91% / GBP 94% / AUD 93% / NZD 96%;
+  2.0R-stop mean_R retention 88–94%. The `delay=1` full minute removes **0.12–0.18 pip
+  (25–34% of gross)** — an ~order-of-magnitude over-penalty vs the true 1.5s cost.
+- **Shape:** the sub-second fill decay is **front-loaded in the first ~5–15s then plateaus**
+  (asel 0 → ~0.03 @1.5s → ~0.10 @5s → flat to 60s). So 1.5s beats 5s beats a full minute; a fast
+  loop is worth it. The user's knife-catch Case-A/B split is near-empty: 94–99% of signals move
+  <1 pip in 1.5s (~1–4% extend, ~1–4% revert, roughly cancel) — price barely travels in 1.5s.
+- **Two caveats that keep economics UNCHANGED:** (1) mid-only data settles **timing, not spread** —
+  the ~0.03 pip latency cost is trivial beside the ~0.70 pip commission+spread floor, which is
+  untouched; vol-gate @1.5s is still ~0.39–0.50 pip / 0.44–0.63 R gross, under the floor. (2)
+  coverage 67–80%; the uncovered 20–33% are the **illiquid-hour signals** (no 1s print within 120s
+  — rollover/Asia), exactly where the edge's IC concentrates and spreads are widest, so +0.03 pip is
+  an optimistic liquid-hours figure. Late era (2021–23) ≈ uncovered (1s tapes end 2020–21).
+- **Consequence:** for Workstream C, price entries at next-open mid **+ ~0.03 pip liquid-hours
+  latency haircut** (larger, unmeasured for illiquid hours), then Workstream-A spread/commission on
+  top. Retires the delay-1 conservatism that made the freshness increment look 85%-fragile — but
+  the SPREAD, not fill timing, remains the binding constraint. (→ LEARNINGS 2026-08-06.)
+
 ## 2026-08-05 Cross-pair COINTEGRATION / DIVERGENCE conditioner — NO-GO (null 2/4), but the most INDEPENDENT conditioner found; conditioner search now exhausted
 
 - Status: **NO-GO under the frozen spec** (rule 25, recorded). Frozen

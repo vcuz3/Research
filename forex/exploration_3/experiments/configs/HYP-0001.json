@@ -1,0 +1,25 @@
+{
+  "bar_minutes": 15,
+  "price_source": "hlc3",
+  "session_timezone": "America/New_York",
+  "session_start_hour": 17,
+  "arm_z": 2.5,
+  "max_arm_bars": 10,
+  "atr_length": 14,
+  "atr_stop_mult": 2.0,
+  "target_r": 1.0,
+  "round_trip_cost_pips": 1.0,
+  "training_candidates": [
+    {"name": "session_twap", "anchor_mode": "session"},
+    {"name": "sma_10", "anchor_mode": "sma", "sma_length": 10},
+    {"name": "sma_20", "anchor_mode": "sma", "sma_length": 20},
+    {"name": "sma_40", "anchor_mode": "sma", "sma_length": 40},
+    {"name": "sma_80", "anchor_mode": "sma", "sma_length": 80}
+  ],
+  "splits": {
+    "train": "entry_time < 2020-01-01",
+    "embargo_unused": "2020-01-01 <= entry_time < 2021-01-01",
+    "oos": "2021-01-01 <= entry_time < 2024-01-01",
+    "holdout": "entry_time >= 2024-01-01"
+  }
+}

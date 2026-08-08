@@ -1,0 +1,236 @@
+{
+  "rule": "HYP-0003 \u00a74",
+  "reference_arm": "abs",
+  "reference_k": 2.0,
+  "cv_pass_threshold": 0.25,
+  "matched_k_by_tau": [
+    {
+      "tau": 5,
+      "abs_k": 2.0,
+      "target_rate_abs": 0.03890790553489025,
+      "slot_k": 2.14,
+      "slot_rate": 0.039361603774769355,
+      "rate_gap_pct_of_target": 1.1660824031564896,
+      "slot_k_interior": true,
+      "achieved_rate_abs": 0.03337649739350292,
+      "achieved_rate_slot": 0.03606064312551061,
+      "achieved_gap_pct": 8.042023404559478
+    },
+    {
+      "tau": 15,
+      "abs_k": 2.0,
+      "target_rate_abs": 0.04060228829473153,
+      "slot_k": 2.12,
+      "slot_rate": 0.040362160733442856,
+      "rate_gap_pct_of_target": 0.5914138620601672,
+      "slot_k_interior": true,
+      "achieved_rate_abs": 0.03433913429654601,
+      "achieved_rate_slot": 0.036479620241902065,
+      "achieved_gap_pct": 6.233371892463098
+    },
+    {
+      "tau": 30,
+      "abs_k": 2.0,
+      "target_rate_abs": 0.04268236396816042,
+      "slot_k": 2.1,
+      "slot_rate": 0.042164012184817266,
+      "rate_gap_pct_of_target": 1.2144401929795339,
+      "slot_k_interior": true,
+      "achieved_rate_abs": 0.038682418209692974,
+      "achieved_rate_slot": 0.04032959776705647,
+      "achieved_gap_pct": 4.258212473776386
+    },
+    {
+      "tau": 60,
+      "abs_k": 2.0,
+      "target_rate_abs": 0.04530224225825596,
+      "slot_k": 2.06,
+      "slot_rate": 0.04508476200656864,
+      "rate_gap_pct_of_target": 0.4800650935720117,
+      "slot_k_interior": true,
+      "achieved_rate_abs": 0.040936440005514954,
+      "achieved_rate_slot": 0.04315377737952725,
+      "achieved_gap_pct": 5.41653688917154
+    },
+    {
+      "tau": 120,
+      "abs_k": 2.0,
+      "target_rate_abs": 0.048996106695839634,
+      "slot_k": 2.0,
+      "slot_rate": 0.049502879758035974,
+      "rate_gap_pct_of_target": 1.0343129207026802,
+      "slot_k_interior": true,
+      "achieved_rate_abs": 0.04193160194128178,
+      "achieved_rate_slot": 0.044360854034564974,
+      "achieved_gap_pct": 5.793368201589236
+    }
+  ],
+  "Q1_firing_rate": {
+    "abs_cv": 0.6628664285741741,
+    "slot_cv": 0.11948162008878953,
+    "pass": true,
+    "verdict": "normaliser works; Q2/Q3 interpretable"
+  },
+  "Q2_session_localisation": {
+    "abs": {
+      "k": 2.0,
+      "cells": {
+        "off": {
+          "n": 12061,
+          "gross_R_abs": 0.38323788290020666,
+          "ci_low": 0.19552252371839735,
+          "ci_high": 0.570953242082016,
+          "half_width": 0.18771535918180937
+        },
+        "asia": {
+          "n": 16689,
+          "gross_R_abs": 0.2299528287555477,
+          "ci_low": 0.08560579811041102,
+          "ci_high": 0.3742998594006844,
+          "half_width": 0.14434703064513668
+        },
+        "london": {
+          "n": 35720,
+          "gross_R_abs": -0.04396151965215104,
+          "ci_low": -0.15841717131016278,
+          "ci_high": 0.07049413200586069,
+          "half_width": 0.11445565165801172
+        }
+      },
+      "vs_london": {
+        "off": {
+          "gap": 0.4271994025523577,
+          "combined_half_width": 0.3021710108398211,
+          "exceeds": true
+        },
+        "asia": {
+          "gap": 0.27391434840769874,
+          "combined_half_width": 0.2588026823031484,
+          "exceeds": true
+        }
+      },
+      "localisation_survives": true
+    },
+    "slot": {
+      "k": 2.14,
+      "cells": {
+        "off": {
+          "n": 21238,
+          "gross_R_abs": 0.18959729282318913,
+          "ci_low": 0.06110174408829527,
+          "ci_high": 0.318092841558083,
+          "half_width": 0.12849554873489386
+        },
+        "asia": {
+          "n": 33255,
+          "gross_R_abs": 0.20657941279028236,
+          "ci_low": 0.11433175599611049,
+          "ci_high": 0.2988270695844542,
+          "half_width": 0.09224765679417185
+        },
+        "london": {
+          "n": 27396,
+          "gross_R_abs": 0.02064294561442528,
+          "ci_low": -0.11552698765336672,
+          "ci_high": 0.1568128788822173,
+          "half_width": 0.136169933267792
+        }
+      },
+      "vs_london": {
+        "off": {
+          "gap": 0.16895434720876384,
+          "combined_half_width": 0.26466548200268586,
+          "exceeds": false
+        },
+        "asia": {
+          "gap": 0.18593646717585707,
+          "combined_half_width": 0.22841759006196385,
+          "exceeds": false
+        }
+      },
+      "localisation_survives": false
+    },
+    "outcome": "thin-hours localisation DOES NOT survive: the EXP-0002 session breakdown is RETRACTED as a time-of-day selection artifact"
+  },
+  "Q3_grain": {
+    "ranking": [
+      5,
+      15,
+      60,
+      30,
+      120
+    ],
+    "detail": [
+      {
+        "tau": 5,
+        "k": 2.14,
+        "gross_R_abs": 0.10558788343798566,
+        "horizon_minutes": 240,
+        "n": 110124,
+        "ci_low": 0.04483648078407933,
+        "ci_high": 0.16633928609189197
+      },
+      {
+        "tau": 15,
+        "k": 2.12,
+        "gross_R_abs": 0.049814469611625105,
+        "horizon_minutes": 240,
+        "n": 36737,
+        "ci_low": -0.010771939584911433,
+        "ci_high": 0.11040087880816164
+      },
+      {
+        "tau": 30,
+        "k": 2.1,
+        "gross_R_abs": -0.004040507683645448,
+        "horizon_minutes": 60,
+        "n": 21448,
+        "ci_low": -0.03238038015733141,
+        "ci_high": 0.024299364790040516
+      },
+      {
+        "tau": 60,
+        "k": 2.06,
+        "gross_R_abs": 0.004707067968415194,
+        "horizon_minutes": 60,
+        "n": 10669,
+        "ci_low": -0.02340389995643167,
+        "ci_high": 0.03281803589326206
+      },
+      {
+        "tau": 120,
+        "k": 2.0,
+        "gross_R_abs": -0.01560651793786657,
+        "horizon_minutes": 60,
+        "n": 5138,
+        "ci_low": -0.04422901634994238,
+        "ci_high": 0.013015980474209238
+      }
+    ],
+    "top_tau": 5,
+    "tau5_confirmed": true,
+    "verdict": "tau*=5 CONFIRMED under same-slot normalisation"
+  },
+  "Q4_information": {
+    "abs": {
+      "n": 111023,
+      "horizon_minutes": 240,
+      "gross_R_abs": 0.06507436949813895,
+      "gross_pips": 0.24351564540681123,
+      "cost_pips_base": 1.15044055976703,
+      "ci_low": 0.003621410268292845,
+      "ci_high": 0.12652732872798506
+    },
+    "slot": {
+      "n": 110124,
+      "horizon_minutes": 240,
+      "gross_R_abs": 0.10558788343798566,
+      "gross_pips": 0.3834251616359732,
+      "cost_pips_base": 1.2085249050282638,
+      "ci_low": 0.04483648078407933,
+      "ci_high": 0.16633928609189197
+    },
+    "slot_minus_abs_R": 0.0405135139398467,
+    "note": "compared at matched firing rate on the common decision sample; gross_R_abs uses the SAME (absolute sigma) risk unit for both arms"
+  }
+}

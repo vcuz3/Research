@@ -1,0 +1,112 @@
+{
+  "experiment_id": "EXP-0002",
+  "stage": "A",
+  "hypothesis": "experiments/hypotheses/HYP-0002.md",
+  "config": {
+    "experiment_id": "EXP-0002",
+    "stage": "A",
+    "pairs": [
+      "EURUSD",
+      "GBPUSD",
+      "AUDUSD",
+      "NZDUSD"
+    ],
+    "grain_ladder_minutes": [
+      5,
+      15,
+      30,
+      60,
+      120
+    ],
+    "sigma_window_minutes": 28800,
+    "sigma_min_fraction": 0.9,
+    "entry_k_grid": [
+      1.5,
+      2.0,
+      2.5,
+      3.0
+    ],
+    "horizon_minutes": [
+      15,
+      30,
+      60,
+      120,
+      240,
+      480
+    ],
+    "entry_delay_bars": [
+      0,
+      1
+    ],
+    "primary_entry_delay_bars": 0,
+    "common_sample_horizon_minutes": 480,
+    "news_blackout_minutes": 30,
+    "bracket_k_signal": 2.0,
+    "bracket_tp_sigma": 1.0,
+    "bracket_sl_sigma": 1.0,
+    "bracket_stop_slippage_pips": 1.0,
+    "bracket_fixed_cap_minutes": 240,
+    "bracket_scaled_cap_bars": 8,
+    "retrace_fractions": [
+      0.5,
+      1.0
+    ],
+    "vr_max_lag_minutes": 120,
+    "sessions": {
+      "tokyo": {
+        "tz": "Asia/Tokyo",
+        "open_minute": 540,
+        "close_minute": 900
+      },
+      "london": {
+        "tz": "Europe/London",
+        "open_minute": 480,
+        "close_minute": 990
+      },
+      "new_york": {
+        "tz": "America/New_York",
+        "open_minute": 480,
+        "close_minute": 1020
+      }
+    },
+    "friday_flat_ny_minute": 1015,
+    "start": "2012-01-01T00:00:00Z",
+    "era_split": "2021-01-01T00:00:00Z",
+    "holdout_start": "2024-01-01T00:00:00Z",
+    "cost_scenarios": [
+      "optimistic",
+      "base",
+      "pessimistic"
+    ],
+    "tie_tolerance_R": 0.005,
+    "tie_tolerance_vr": 0.005
+  },
+  "generated_utc": "2026-08-08T12:58:00.117630+00:00",
+  "inputs": {
+    "EURUSD_1m_clean.parquet": {
+      "sha256": "abce793fe0f16cf41f8502afd74b8c1429a126430a6622eb5a00b8b3fa9cb8e1",
+      "bytes": 83373892
+    },
+    "GBPUSD_1m_clean.parquet": {
+      "sha256": "45ecaf570fb239b546b280aa04d6bfafdee2864b5e8d725ad561563cfaf4793e",
+      "bytes": 86302492
+    },
+    "AUDUSD_1m_clean.parquet": {
+      "sha256": "e6b6a291084a83973890167b85222a55c4fe69e4ea0f0ca85427b794f72bb895",
+      "bytes": 81601056
+    },
+    "NZDUSD_1m_clean.parquet": {
+      "sha256": "80d9fa9b919a9915092cf3df8a21956cd4c36531142889081bbda576f036bc24",
+      "bytes": 79827772
+    }
+  },
+  "imported_from_exploration_1": [
+    "_bracket_engine.simulate_bracket",
+    "_cost_model.round_trip_pips",
+    "_rsi_stop_engine.PIP",
+    "_run_rsi_axis6_calendar.high_impact_times"
+  ],
+  "signals_total": 1029126,
+  "signals_news_vetoed": 115227,
+  "bracket_trades": 899551
+}

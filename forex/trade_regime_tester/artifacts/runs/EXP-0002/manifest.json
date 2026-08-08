@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0002",
+  "hypothesis_id": "HYP-0001",
+  "status": "abandoned",
+  "declared_utc": "2026-08-07T14:32:17.190110+00:00",
+  "config_path": "forex/trade_regime_tester/trade_regime_tester.ipynb",
+  "data_scope": "AUDUSD sma_80; train 2012-2019, 2020 embargo, test 2021-2023, 2024+ sealed.",
+  "code_ref": "forex/trade_regime_tester/trade_regime_tester.ipynb",
+  "run_command": "='0'; python forex/trade_regime_tester/_smoke_run_notebook.py",
+  "primary_metric": "All code cells complete under default dates and 500-per-feature null; holdout stays sealed.",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-08-07T14:32:52.299075+00:00",
+  "result_summary": "Not run: the registered PowerShell environment-variable command was malformed by shell interpolation.",
+  "reviewer": "Pending independent reviewer",
+  "review_status": "not-reviewed"
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0001",
+  "hypothesis_id": "HYP-0001",
+  "status": "completed",
+  "declared_utc": "2026-08-07T11:54:26.178445+00:00",
+  "config_path": "experiments/configs/HYP-0001.json",
+  "data_scope": "Four clean FX 1m files; train pre-2020, 2020 embargo, OOS 2021-2023, holdout 2024-latest.",
+  "code_ref": "strategy/twap_zband.py; backtest_engine/engine.py; run_research.py",
+  "run_command": "python run_research.py --output-dir artifacts/runs/EXP-0001",
+  "primary_metric": "Pre-2020 selected fixed-quantity portfolio daily net-pip Sharpe; OOS kill test as declared.",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-08-07T11:58:43.824987+00:00",
+  "result_summary": "NO-GO: SMA80 selected pre-2020; OOS +0.350 gross/-0.650 net pips per trade, Sharpe -0.929; holdout +0.357 gross/-0.643 net, Sharpe -1.220; 0/4 pairs positive net in both.",
+  "reviewer": "not assigned",
+  "review_status": "not-reviewed"
+}

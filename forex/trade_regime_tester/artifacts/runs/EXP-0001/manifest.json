@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0001",
+  "hypothesis_id": "HYP-0001",
+  "status": "completed",
+  "declared_utc": "2026-08-07T14:25:14.297831+00:00",
+  "config_path": "forex/trade_regime_tester/trade_regime_tester.ipynb",
+  "data_scope": "AUDUSD sma_80; smoke sample 2019 train, 2021 test; 2024+ holdout sealed by parquet predicates.",
+  "code_ref": "forex/trade_regime_tester/trade_regime_tester.ipynb",
+  "run_command": "python forex/trade_regime_tester/_smoke_run_notebook.py",
+  "primary_metric": "All notebook code cells complete; holdout status remains sealed.",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-08-07T14:30:52.848804+00:00",
+  "result_summary": "All 26 code cells (54 total cells) executed successfully on 757 frozen AUDUSD trades and 81,994 completed 15-minute bars in smoke mode; 2024+ holdout remained excluded. This validates execution, not a regime edge.",
+  "reviewer": "Pending independent reviewer",
+  "review_status": "pending"
+}

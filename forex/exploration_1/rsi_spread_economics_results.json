@@ -1,0 +1,458 @@
+{
+  "metadata": {
+    "generated_at": "2026-08-06T15:09:05.864093+00:00",
+    "note": "NO bid/ask in archive; mid-only. Spread is an imported per-pair ECN anchor scaled by measured per-trade vol multiplier; swept by regime.",
+    "commission_rt_pips": 0.7,
+    "base_rt_spread": {
+      "EURUSD": 0.2,
+      "GBPUSD": 0.5,
+      "AUDUSD": 0.5,
+      "NZDUSD": 1.0
+    },
+    "regimes": {
+      "ECN": 1.0,
+      "retail": 2.0,
+      "wide": 3.0
+    },
+    "vol_mult_cap": 4.0,
+    "ks": [
+      2.5,
+      3.0,
+      3.5
+    ]
+  },
+  "pairs": [
+    {
+      "pair": "EURUSD",
+      "median_rv5_pips": 2.193947172757039,
+      "median_cs_pips": 0.09298623893029329,
+      "all_minute_illiquid_share": 0.3677255767329834,
+      "base_rt_spread": 0.2,
+      "by_k": {
+        "2.5": {
+          "signals": 1950,
+          "signals_per_year": 353.01724137931035,
+          "gross_mean_pips": 0.38438239425636334,
+          "entry_vol_mult_median": 2.283318250826344,
+          "entry_vol_mult_mean": 2.447813883993981,
+          "entry_rv5_pips_median": 5.009479620905006,
+          "cs_at_entry_median_pips": 0.388265930203031,
+          "cs_ratio_entry_vs_all": 4.175520320744372,
+          "illiquid_share": 0.6256410256410256,
+          "illiquid_tilt": 1.7013802281567225,
+          "net_flat_1.1_mean_pips": -0.715617605743637,
+          "net_by_regime": {
+            "ECN": {
+              "mean_rt_spread_pips": 0.4895627767987963,
+              "mean_net_pips": -0.8051803825424334,
+              "annual_net_pips": -284.24255745786763,
+              "hit_rate_net": 0.4938461538461538
+            },
+            "retail": {
+              "mean_rt_spread_pips": 0.9791255535975926,
+              "mean_net_pips": -1.2947431593412295,
+              "annual_net_pips": -457.0666584053737,
+              "hit_rate_net": 0.48615384615384616
+            },
+            "wide": {
+              "mean_rt_spread_pips": 1.468688330396389,
+              "mean_net_pips": -1.784305936140026,
+              "annual_net_pips": -629.8907593528799,
+              "hit_rate_net": 0.4728205128205128
+            }
+          }
+        },
+        "3.0": {
+          "signals": 1168,
+          "signals_per_year": 322.38335158817085,
+          "gross_mean_pips": 0.809415915419011,
+          "entry_vol_mult_median": 2.491535173143464,
+          "entry_vol_mult_mean": 2.584392696422578,
+          "entry_rv5_pips_median": 5.466296548942823,
+          "cs_at_entry_median_pips": 0.38415963114944673,
+          "cs_ratio_entry_vs_all": 4.131360033148886,
+          "illiquid_share": 0.6806506849315068,
+          "illiquid_tilt": 1.8509745527593469,
+          "net_flat_1.1_mean_pips": -0.29058408458098967,
+          "net_by_regime": {
+            "ECN": {
+              "mean_rt_spread_pips": 0.5168785392845157,
+              "mean_net_pips": -0.40746262386550464,
+              "annual_net_pips": -131.3591663286716,
+              "hit_rate_net": 0.5136986301369864
+            },
+            "retail": {
+              "mean_rt_spread_pips": 1.0337570785690313,
+              "mean_net_pips": -0.9243411631500206,
+              "annual_net_pips": -297.9922021872119,
+              "hit_rate_net": 0.5077054794520548
+            },
+            "wide": {
+              "mean_rt_spread_pips": 1.550635617853547,
+              "mean_net_pips": -1.4412197024345363,
+              "annual_net_pips": -464.6252380457521,
+              "hit_rate_net": 0.4948630136986301
+            }
+          }
+        },
+        "3.5": {
+          "signals": 772,
+          "signals_per_year": 315.3063209076175,
+          "gross_mean_pips": 0.9490695092447312,
+          "entry_vol_mult_median": 2.856466236241547,
+          "entry_vol_mult_mean": 2.7564938990726695,
+          "entry_rv5_pips_median": 6.266936023078082,
+          "cs_at_entry_median_pips": 0.37413075403741414,
+          "cs_ratio_entry_vs_all": 4.023506685950376,
+          "illiquid_share": 0.6878238341968912,
+          "illiquid_tilt": 1.8704813527190163,
+          "net_flat_1.1_mean_pips": -0.1509304907552689,
+          "net_by_regime": {
+            "ECN": {
+              "mean_rt_spread_pips": 0.5512987798145339,
+              "mean_net_pips": -0.3022292705698029,
+              "annual_net_pips": -95.29479937395743,
+              "hit_rate_net": 0.5194300518134715
+            },
+            "retail": {
+              "mean_rt_spread_pips": 1.1025975596290678,
+              "mean_net_pips": -0.8535280503843369,
+              "annual_net_pips": -269.1227893581368,
+              "hit_rate_net": 0.5129533678756477
+            },
+            "wide": {
+              "mean_rt_spread_pips": 1.653896339443602,
+              "mean_net_pips": -1.404826830198871,
+              "annual_net_pips": -442.9507793423162,
+              "hit_rate_net": 0.49740932642487046
+            }
+          }
+        }
+      }
+    },
+    {
+      "pair": "GBPUSD",
+      "median_rv5_pips": 2.7965585138793703,
+      "median_cs_pips": 0.09991219836057275,
+      "all_minute_illiquid_share": 0.36769559097702487,
+      "base_rt_spread": 0.5,
+      "by_k": {
+        "2.5": {
+          "signals": 2035,
+          "signals_per_year": 358.8663400979706,
+          "gross_mean_pips": 1.5933697811767278,
+          "entry_vol_mult_median": 2.268274910340838,
+          "entry_vol_mult_mean": 2.436235549691345,
+          "entry_rv5_pips_median": 6.343363512332637,
+          "cs_at_entry_median_pips": 0.4103649025157135,
+          "cs_ratio_entry_vs_all": 4.1072552626131715,
+          "illiquid_share": 0.6,
+          "illiquid_tilt": 1.631784592264775,
+          "net_flat_1.1_mean_pips": 0.49336978117672736,
+          "net_by_regime": {
+            "ECN": {
+              "mean_rt_spread_pips": 1.2181177748456724,
+              "mean_net_pips": -0.32474799366894486,
+              "annual_net_pips": -116.54112394213317,
+              "hit_rate_net": 0.514004914004914
+            },
+            "retail": {
+              "mean_rt_spread_pips": 2.436235549691345,
+              "mean_net_pips": -1.5428657685146172,
+              "annual_net_pips": -553.6825916092833,
+              "hit_rate_net": 0.48992628992628995
+            },
+            "wide": {
+              "mean_rt_spread_pips": 3.6543533245370163,
+              "mean_net_pips": -2.760983543360289,
+              "annual_net_pips": -990.8240592764334,
+              "hit_rate_net": 0.4776412776412776
+            }
+          }
+        },
+        "3.0": {
+          "signals": 1249,
+          "signals_per_year": 329.234309623431,
+          "gross_mean_pips": 2.0451926253566035,
+          "entry_vol_mult_median": 2.4756688306720567,
+          "entry_vol_mult_mean": 2.587066445426053,
+          "entry_rv5_pips_median": 6.923352745961726,
+          "cs_at_entry_median_pips": 0.3203838201525808,
+          "cs_ratio_entry_vs_all": 3.2066536960416876,
+          "illiquid_share": 0.6581265012009607,
+          "illiquid_tilt": 1.7898678073680878,
+          "net_flat_1.1_mean_pips": 0.9451926253566034,
+          "net_by_regime": {
+            "ECN": {
+              "mean_rt_spread_pips": 1.2935332227130265,
+              "mean_net_pips": 0.05165940264357692,
+              "annual_net_pips": 17.008047764916892,
+              "hit_rate_net": 0.5116092874299439
+            },
+            "retail": {
+              "mean_rt_spread_pips": 2.587066445426053,
+              "mean_net_pips": -1.2418738200694497,
+              "annual_net_pips": -408.8674697899782,
+              "hit_rate_net": 0.49479583666933546
+            },
+            "wide": {
+              "mean_rt_spread_pips": 3.8805996681390793,
+              "mean_net_pips": -2.535407042782476,
+              "annual_net_pips": -834.7429873448732,
+              "hit_rate_net": 0.477982385908727
+            }
+          }
+        },
+        "3.5": {
+          "signals": 746,
+          "signals_per_year": 302.7246376811594,
+          "gross_mean_pips": 1.9052200058059579,
+          "entry_vol_mult_median": 2.731243769487879,
+          "entry_vol_mult_mean": 2.7168136745580855,
+          "entry_rv5_pips_median": 7.638083017041312,
+          "cs_at_entry_median_pips": 0.42424585121894043,
+          "cs_ratio_entry_vs_all": 4.246186733754784,
+          "illiquid_share": 0.7024128686327078,
+          "illiquid_tilt": 1.91031082740559,
+          "net_flat_1.1_mean_pips": 0.8052200058059589,
+          "net_by_regime": {
+            "ECN": {
+              "mean_rt_spread_pips": 1.3584068372790428,
+              "mean_net_pips": -0.1531868314730849,
+              "annual_net_pips": -46.373428055214454,
+              "hit_rate_net": 0.5067024128686327
+            },
+            "retail": {
+              "mean_rt_spread_pips": 2.7168136745580855,
+              "mean_net_pips": -1.5115936687521279,
+              "annual_net_pips": -457.5966456941224,
+              "hit_rate_net": 0.4865951742627346
+            },
+            "wide": {
+              "mean_rt_spread_pips": 4.075220511837129,
+              "mean_net_pips": -2.870000506031171,
+              "annual_net_pips": -868.8198633330303,
+              "hit_rate_net": 0.47319034852546915
+            }
+          }
+        }
+      }
+    },
+    {
+      "pair": "AUDUSD",
+      "median_rv5_pips": 2.10062651522039,
+      "median_cs_pips": 0.08086991349917703,
+      "all_minute_illiquid_share": 0.3677196623365605,
+      "base_rt_spread": 0.5,
+      "by_k": {
+        "2.5": {
+          "signals": 1983,
+          "signals_per_year": 344.39421088904203,
+          "gross_mean_pips": 1.2592455600322492,
+          "entry_vol_mult_median": 2.348342703906457,
+          "entry_vol_mult_mean": 2.512999376403809,
+          "entry_rv5_pips_median": 4.9329909506502485,
+          "cs_at_entry_median_pips": 0.31673142315596814,
+          "cs_ratio_entry_vs_all": 3.9165544941406587,
+          "illiquid_share": 0.6833081190115986,
+          "illiquid_tilt": 1.8582311173401205,
+          "net_flat_1.1_mean_pips": 0.15924556003224857,
+          "net_by_regime": {
+            "ECN": {
+              "mean_rt_spread_pips": 1.2564996882019046,
+              "mean_net_pips": -0.6972541281696556,
+              "annual_net_pips": -240.13028526011553,
+              "hit_rate_net": 0.4831064044377206
+            },
+            "retail": {
+              "mean_rt_spread_pips": 2.512999376403809,
+              "mean_net_pips": -1.9537538163715604,
+              "annual_net_pips": -672.8615038607379,
+              "hit_rate_net": 0.46394351991931415
+            },
+            "wide": {
+              "mean_rt_spread_pips": 3.769499064605714,
+              "mean_net_pips": -3.210253504573465,
+              "annual_net_pips": -1105.5927224613602,
+              "hit_rate_net": 0.44175491679273826
+            }
+          }
+        },
+        "3.0": {
+          "signals": 1203,
+          "signals_per_year": 316.1167883211679,
+          "gross_mean_pips": 2.5242021347717762,
+          "entry_vol_mult_median": 2.6858399780882447,
+          "entry_vol_mult_mean": 2.7217657319034867,
+          "entry_rv5_pips_median": 5.641946673611118,
+          "cs_at_entry_median_pips": 0.33551049622632745,
+          "cs_ratio_entry_vs_all": 4.148767838483489,
+          "illiquid_share": 0.7373233582709892,
+          "illiquid_tilt": 2.0051235595776866,
+          "net_flat_1.1_mean_pips": 1.4242021347717757,
+          "net_by_regime": {
+            "ECN": {
+              "mean_rt_spread_pips": 1.3608828659517433,
+              "mean_net_pips": 0.46331926882003216,
+              "annual_net_pips": 146.4629992267004,
+              "hit_rate_net": 0.49542809642560265
+            },
+            "retail": {
+              "mean_rt_spread_pips": 2.7217657319034867,
+              "mean_net_pips": -0.8975635971317113,
+              "annual_net_pips": -283.7349216392712,
+              "hit_rate_net": 0.47298420615128844
+            },
+            "wide": {
+              "mean_rt_spread_pips": 4.082648597855231,
+              "mean_net_pips": -2.2584464630834544,
+              "annual_net_pips": -713.9328425052427,
+              "hit_rate_net": 0.4513715710723192
+            }
+          }
+        },
+        "3.5": {
+          "signals": 734,
+          "signals_per_year": 295.47603833865816,
+          "gross_mean_pips": 3.2749630119032296,
+          "entry_vol_mult_median": 3.0428628700314677,
+          "entry_vol_mult_mean": 2.8752209506316575,
+          "entry_rv5_pips_median": 6.391918426967717,
+          "cs_at_entry_median_pips": 0.3989111998357631,
+          "cs_ratio_entry_vs_all": 4.932751657262779,
+          "illiquid_share": 0.7833787465940054,
+          "illiquid_tilt": 2.1303694820567065,
+          "net_flat_1.1_mean_pips": 2.1749630119032295,
+          "net_by_regime": {
+            "ECN": {
+              "mean_rt_spread_pips": 1.4376104753158288,
+              "mean_net_pips": 1.1373525365874009,
+              "annual_net_pips": 336.06042170526894,
+              "hit_rate_net": 0.5217983651226158
+            },
+            "retail": {
+              "mean_rt_spread_pips": 2.8752209506316575,
+              "mean_net_pips": -0.30025793872842776,
+              "annual_net_pips": -88.71902621520738,
+              "hit_rate_net": 0.494550408719346
+            },
+            "wide": {
+              "mean_rt_spread_pips": 4.312831425947486,
+              "mean_net_pips": -1.7378684140442562,
+              "annual_net_pips": -513.4984741356836,
+              "hit_rate_net": 0.4604904632152589
+            }
+          }
+        }
+      }
+    },
+    {
+      "pair": "NZDUSD",
+      "median_rv5_pips": 1.9624512014819808,
+      "median_cs_pips": 0.05857820199427023,
+      "all_minute_illiquid_share": 0.37605151532703557,
+      "base_rt_spread": 1.0,
+      "by_k": {
+        "2.5": {
+          "signals": 2258,
+          "signals_per_year": 347.5968234575443,
+          "gross_mean_pips": 1.1021244161756627,
+          "entry_vol_mult_median": 2.526776213206924,
+          "entry_vol_mult_mean": 2.647254132685763,
+          "entry_rv5_pips_median": 4.958675015484017,
+          "cs_at_entry_median_pips": 0.2209799605628769,
+          "cs_ratio_entry_vs_all": 3.7723923411731177,
+          "illiquid_share": 0.7077059344552702,
+          "illiquid_tilt": 1.8819387919227217,
+          "net_flat_1.1_mean_pips": 0.002124416175662238,
+          "net_by_regime": {
+            "ECN": {
+              "mean_rt_spread_pips": 2.647254132685763,
+              "mean_net_pips": -2.2451297165101005,
+              "annual_net_pips": -780.3999577090478,
+              "hit_rate_net": 0.45969884853852966
+            },
+            "retail": {
+              "mean_rt_spread_pips": 5.294508265371526,
+              "mean_net_pips": -4.8923838491958636,
+              "annual_net_pips": -1700.5770851154755,
+              "hit_rate_net": 0.4021257750221435
+            },
+            "wide": {
+              "mean_rt_spread_pips": 7.941762398057288,
+              "mean_net_pips": -7.5396379818816275,
+              "annual_net_pips": -2620.7542125219034,
+              "hit_rate_net": 0.3538529672276351
+            }
+          }
+        },
+        "3.0": {
+          "signals": 1436,
+          "signals_per_year": 316.32167832167835,
+          "gross_mean_pips": 1.485973574813508,
+          "entry_vol_mult_median": 3.0072655976892015,
+          "entry_vol_mult_mean": 2.8966091667761944,
+          "entry_rv5_pips_median": 5.901611985360601,
+          "cs_at_entry_median_pips": 0.23227616024038317,
+          "cs_ratio_entry_vs_all": 3.9652319861764114,
+          "illiquid_share": 0.7646239554317549,
+          "illiquid_tilt": 2.0332957700404286,
+          "net_flat_1.1_mean_pips": 0.3859735748135074,
+          "net_by_regime": {
+            "ECN": {
+              "mean_rt_spread_pips": 2.8966091667761944,
+              "mean_net_pips": -2.1106355919626862,
+              "annual_net_pips": -667.639792775106,
+              "hit_rate_net": 0.47701949860724235
+            },
+            "retail": {
+              "mean_rt_spread_pips": 5.793218333552389,
+              "mean_net_pips": -5.00724475873888,
+              "annual_net_pips": -1583.9000658517098,
+              "hit_rate_net": 0.41434540389972147
+            },
+            "wide": {
+              "mean_rt_spread_pips": 8.689827500328581,
+              "mean_net_pips": -7.903853925515074,
+              "annual_net_pips": -2500.1603389283136,
+              "hit_rate_net": 0.36768802228412256
+            }
+          }
+        },
+        "3.5": {
+          "signals": 909,
+          "signals_per_year": 294.8108108108108,
+          "gross_mean_pips": 2.103352110308108,
+          "entry_vol_mult_median": 3.6508019218308254,
+          "entry_vol_mult_mean": 3.1558470055777343,
+          "entry_rv5_pips_median": 7.164520617869628,
+          "cs_at_entry_median_pips": 0.30038387848994713,
+          "cs_ratio_entry_vs_all": 5.127912231231147,
+          "illiquid_share": 0.8096809680968097,
+          "illiquid_tilt": 2.1531118346715488,
+          "net_flat_1.1_mean_pips": 1.0033521103081076,
+          "net_by_regime": {
+            "ECN": {
+              "mean_rt_spread_pips": 3.1558470055777343,
+              "mean_net_pips": -1.7524948952696264,
+              "annual_net_pips": -516.6544410162455,
+              "hit_rate_net": 0.48404840484048406
+            },
+            "retail": {
+              "mean_rt_spread_pips": 6.311694011155469,
+              "mean_net_pips": -4.90834190084736,
+              "annual_net_pips": -1447.0322555254866,
+              "hit_rate_net": 0.4235423542354235
+            },
+            "wide": {
+              "mean_rt_spread_pips": 9.4675410167332,
+              "mean_net_pips": -8.064188906425095,
+              "annual_net_pips": -2377.4100700347276,
+              "hit_rate_net": 0.36853685368536854
+            }
+          }
+        }
+      }
+    }
+  ]
+}

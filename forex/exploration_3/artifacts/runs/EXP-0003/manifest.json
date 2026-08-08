@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0003",
+  "hypothesis_id": "HYP-0003",
+  "status": "completed",
+  "declared_utc": "2026-08-08T04:49:30.912297+00:00",
+  "config_path": "forex/exploration_3/single_pair_rsi_crossover_workbench.ipynb",
+  "data_scope": "EURUSD shortened smoke, then full train 2012-2019 and OOS 2021-2023; 2024+ excluded.",
+  "code_ref": "forex/exploration_3/_build_rsi_crossover_notebook.py; forex/exploration_3/_smoke_run_rsi_crossover_notebook.py",
+  "run_command": "python forex/exploration_3/_smoke_run_rsi_crossover_notebook.py",
+  "primary_metric": "Notebook execution and causal invariant checks",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-08-08T04:53:24.948234+00:00",
+  "result_summary": "PASS: shortened and full-date executions completed all 19 notebook sections. Full EURUSD run produced 3,474 train and 1,347 OOS trades, enforced first-arm persistence, next-bar causality/non-overlap, and loaded no rows from 2024 onward. This validates tooling only, not strategy edge.",
+  "reviewer": "Codex",
+  "review_status": "not-reviewed"
+}
