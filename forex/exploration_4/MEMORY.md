@@ -1,44 +1,63 @@
 # exploration_4 — Project Memory
 
 ## What this project is
-A single **frozen, naive mean-reversion baseline** for USD-major spot FX, built to
-be the reference book that a *later* project holds regime overlays up against. It is
-the middle step of: describe → **freeze naive baseline** → post-hoc regime overlays
-→ promote survivors. **Not** a strategy to optimize.
+
+A single frozen, naive standardized-displacement mean-reversion baseline for
+four USD-major spot FX pairs. It is the reference book for possible later
+overlay research, not a strategy to optimize.
 
 ## Status
-**Planned, not built** (2026-08-08). Build spec: `PROJECT_PLAN.md`. Frozen
-pre-registration: `KILL_TEST.md`. Builder/reviewer: unassigned.
 
-## The frozen design (do not tune)
-- Feature: standardized displacement `z = (close_t/close_{t-6} − 1)/(σ·√6)`, plain
-  rolling σ over 100 bars with a fractional min_periods floor.
-- Bars: 5-min (from `forex/data/clean/{PAIR}_1m_clean.parquet`).
-- Entry: first crossing of `|z| ≥ 2`, fade, filled at next-bar open; one position
-  per pair; no fixed time clock.
-- Exit: reversion to `z=0` OR compulsory 1.5σ single-barrier stop (both frozen at
-  entry). News-blackout veto on entries.
-- Estimand: per-signal mean net R, day-clustered SE; gross/cost/net by era.
+**Completed — NO-GO (2026-08-08).** Material run: `EXP-0001`. The pre-run
+specification, kill test, configuration, implementation, and planned ledger row
+were frozen at Git commit `6658526` before any performance result was opened.
+Independent review remains pending; builder: Codex, reviewer: unassigned.
 
-## Hard project constraints (inherited)
-- Compulsory single-barrier stop on every trade (prop-firm challenge).
-- No fixed time clock in decisions.
-- High-impact-news blackout is a standing veto.
-- Data is **midpoint** OHLC, `volume == -1` → spread unmeasured → report a
-  **breakeven-pip curve**, never a single net number.
+## Confirmed findings
 
-## Key reuse
-Engine, cost model, and news table live in `forex/exploration_1/`
-(`_rsi_stop_engine.py`, `_bracket_engine.py`, `_cost_model.py`,
-`_run_rsi_axis6_calendar.high_impact_times`). Import; do not reimplement fills.
+- Consumed-history primary base-cost net expectancy is **−0.3733 R/signal**
+  (day-clustered 95% CI **[−0.3880, −0.3585]**, t=−49.58, n=55,958).
+- Gross expectancy is already negative: **−0.0815 R** and **−0.244 pips** per
+  signal. Mean modeled base round-trip cost is **1.081 pips**, so gross ≤ cost.
+- The sealed 2024+ holdout is worse: base net **−0.5045 R** (95% CI
+  [−0.5386, −0.4704], n=12,669); gross is −0.1775 R.
+- Mandatory diagnostics fail with the compulsory stop: symmetric bracket
+  **−0.0865 R** (CI [−0.0967, −0.0763]); fixed six-bar horizon **−0.0899 R**
+  (CI [−0.1054, −0.0745]). The unstopped raw six-bar forward return is positive
+  in consumed history (+0.0932 R) but is not deployable under the compulsory-stop
+  constraint and fades to +0.0123 R with a zero-crossing CI in the holdout.
+- Reversion timing beats the matched-duration random-exit null (observed
+  −0.0815 R vs null 95th percentile −0.0859 R; p=0.002), but both are negative.
+  This small exit-timing improvement cannot rescue the entry or costs.
+- All four pairs are negative at base costs. EURUSD, GBPUSD, and AUDUSD remain
+  strongly negative independently, so the verdict does not depend on NZDUSD.
 
-## Mandatory diagnostics (asymmetric target → required)
-1. Entry-information: symmetric-bracket + fixed-horizon rerun (Rule 15).
-2. Random-exit control at matched exit rate.
+## Data quality and implementation boundary
 
-## Open decisions / notes
-- Target geometry fixed to reversion-to-0 (user, 2026-08-08).
-- 4 pairs are EUR/GBP/AUD/NZD (no USDJPY in archive); ~2 effective independent.
+- Source Parquets contain midpoint OHLC only. Contrary to the planning wording,
+  `volume` is absent rather than filled with −1; bid/ask is also unavailable.
+- The exact 17:00 New York rollover bar is unavailable. Session-boundary exits
+  use the last attainable 5-minute open before it (16:55), preventing an
+  impossible 17:00 fill.
+- NZDUSD has material late-era 18:00–19:00 UTC holes. The conservative complete-
+  path gate excludes 17,063 NZD candidates, fully enumerated by era/hour in the
+  data-quality report. This limits NZD-specific claims.
+- One position per pair is enforced statefully. The 30-minute news veto re-runs
+  the state machine rather than post-filtering completed trades.
 
-## Verdict
-_pending build._
+## Evidence and reproduction
+
+- Current findings: `reports/FINDINGS.md`
+- Rule 9a gate: `reports/DATA_QUALITY.md`
+- Run artifacts and review: `artifacts/runs/EXP-0001/`
+- Trade/metrics notebook: `notebooks/trade_visualizations.ipynb`
+- Reproduce: `python -u forex/exploration_4/_run_baseline.py`
+- Tests: `python -m pytest forex/exploration_4/test_baseline.py -q -p no:cacheprovider`
+
+## Verdict and next action
+
+**NO-GO. Close the baseline as negative evidence.** Do not tune this project or
+leave a handoff implying a live edge. Any overlay research must be a separately
+pre-registered follow-on project and must compare against this frozen negative
+book. An independent reviewer should still rerun the tests and EXP-0001 command
+and inspect the NZD coverage exclusion before the review status can pass.

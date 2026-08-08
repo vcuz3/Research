@@ -1,0 +1,33 @@
+{
+  "verdict": "NO-GO",
+  "conditions": {
+    "gross_le_base_cost": true,
+    "win_rate_near_geometry_break_even": false,
+    "base_net_not_strictly_positive": true,
+    "symmetric_diagnostic_fails": true,
+    "fixed_horizon_diagnostic_fails": true,
+    "random_exit_null_fails": false
+  },
+  "gross_mean_pips": -0.2439010206154163,
+  "base_cost_mean_pips": 1.0808565269806905,
+  "base_net_mean_R": -0.3732784217824011,
+  "base_net_ci": [
+    -0.38803501240752275,
+    -0.3585218311572795
+  ],
+  "realized_win_rate": 0.4039994281425355,
+  "reward_risk_proxy": 3.9078083046439134,
+  "geometry_break_even_win_rate": 0.2037569395393399,
+  "win_rate_tolerance": 0.02,
+  "random_exit": {
+    "observed_mean_gross_R": -0.08149078976399385,
+    "null_mean": -0.09175712858071214,
+    "null_sd": 0.00338670983783963,
+    "null_q05": -0.09725885326280936,
+    "null_q95": -0.08590018932191441,
+    "one_sided_p": 0.001998001998001998,
+    "passes": true,
+    "preserves": "pair/hour exit-duration distribution, paths, entries, stops, costs",
+    "destroys": "alignment between each path and its reversion-exit time"
+  }
+}

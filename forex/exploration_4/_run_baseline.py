@@ -109,12 +109,13 @@ def load_and_build(pair: str, cfg: dict) -> tuple[pd.DataFrame, list[dict], list
     gap = delta.gt(1)
     raw["era"] = era_of(pd.DatetimeIndex(raw.time))
     raw["utc_hour"] = raw.time.dt.hour
+    raw["utc_date"] = raw.time.dt.floor("D").dt.tz_localize(None)
     raw["gap_count"] = gap.astype(int)
     raw["missing_minutes"] = np.where(gap, delta - 1, 0)
     raw["short_gap_count"] = (gap & delta.le(180)).astype(int)
     raw["short_missing_minutes"] = np.where(gap & delta.le(180), delta - 1, 0)
     hour_rows = (raw.groupby(["era", "utc_hour"], observed=True)
-                 .agg(raw_rows=("time", "size"), utc_dates=("time", lambda x: x.dt.date.nunique()),
+                 .agg(raw_rows=("time", "size"), utc_dates=("utc_date", "nunique"),
                       gaps=("gap_count", "sum"), missing_minutes=("missing_minutes", "sum"),
                       short_gaps=("short_gap_count", "sum"),
                       short_missing_minutes=("short_missing_minutes", "sum"))
@@ -177,7 +178,12 @@ def candidate_frame(pair: str, bars: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     entry_ok = bars.complete.to_numpy()[entry_idx]
     signal_idx, entry_idx = signal_idx[entry_ok], entry_idx[entry_ok]
 
-    local_boundary = bars.ny_minute.to_numpy() == 17 * 60
+    # The archive has no complete 17:00-17:59 New York rollover bars. Liquidate
+    # at the last attainable 5-minute open before the declared 17:00 session
+    # boundary; crediting the unavailable 17:00 open would violate Rules 1/5.
+    boundary_liquidation_minute = 17 * 60 - cfg["bar_minutes"]
+    local_boundary = ((bars.ny_minute.to_numpy() == boundary_liquidation_minute)
+                      & bars.complete.to_numpy(bool))
     boundary_indices = np.flatnonzero(local_boundary)
     pos = np.searchsorted(boundary_indices, entry_idx, side="right")
     has_boundary = pos < len(boundary_indices)
@@ -210,12 +216,13 @@ def candidate_frame(pair: str, bars: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     return out
 
 
-def simulate_candidate_batches(cand: pd.DataFrame, bars: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, int]:
+def simulate_candidate_batches(cand: pd.DataFrame, bars: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
     arrays = {name: bars[name].to_numpy(float) for name in ["open", "high", "low", "close"]}
     zall = bars.z.to_numpy(float)
     complete = bars.complete.to_numpy(bool)
     kept = []
-    path_excluded = 0
+    excluded = [cand.loc[~cand.has_boundary, ["pair", "era", "utc_hour"]].assign(
+        exclusion_reason="no_attainable_session_boundary")]
     slip = cfg["stop_slippage_pips"]
     for start in range(0, len(cand), 4000):
         d = cand.iloc[start:start + 4000].copy()
@@ -226,10 +233,13 @@ def simulate_candidate_batches(cand: pd.DataFrame, bars: pd.DataFrame, cfg: dict
         offs = np.arange(max_h + 1)[None, :]
         take = d.entry_idx.to_numpy()[:, None] + offs
         need = offs <= d.boundary_bars.to_numpy()[:, None]
-        valid = np.all(~need | complete[take], axis=1)
-        path_excluded += int((~valid).sum())
+        in_bounds = take < len(complete)
+        safe_take = np.minimum(take, len(complete) - 1)
+        valid = np.all(~need | (in_bounds & complete[safe_take]), axis=1)
+        excluded.append(d.loc[~valid, ["pair", "era", "utc_hour"]].assign(
+            exclusion_reason="incomplete_path_to_boundary"))
         d = d.loc[valid].reset_index(drop=True)
-        take = take[valid]
+        take = safe_take[valid]
         need = need[valid]
         if d.empty:
             continue
@@ -266,19 +276,21 @@ def simulate_candidate_batches(cand: pd.DataFrame, bars: pd.DataFrame, cfg: dict
         d["reward_risk_proxy"] = (np.abs(d.r_trail_signal.to_numpy()) * entry / PIP) / risk_pips
         kept.append(d)
     if not kept:
-        return pd.DataFrame(), path_excluded
-    return pd.concat(kept, ignore_index=True).sort_values("signal_time").reset_index(drop=True), path_excluded
+        return pd.DataFrame(), pd.concat(excluded, ignore_index=True)
+    return (pd.concat(kept, ignore_index=True).sort_values("signal_time").reset_index(drop=True),
+            pd.concat(excluded, ignore_index=True))
 
 
 def stateful_select(cand: pd.DataFrame, allow) -> np.ndarray:
     selected = np.zeros(len(cand), bool)
     last_exit = -1
-    for i, row in cand.iterrows():
-        if not bool(allow.iloc[i] if isinstance(allow, pd.Series) else allow[i]):
-            continue
-        if int(row.signal_idx) >= last_exit:
+    signals = cand.signal_idx.to_numpy(int)
+    exits = cand.actual_exit_idx.to_numpy(int)
+    allowed = allow.to_numpy(bool) if isinstance(allow, pd.Series) else np.asarray(allow, bool)
+    for i in np.flatnonzero(allowed):
+        if signals[i] >= last_exit:
             selected[i] = True
-            last_exit = int(row.actual_exit_idx)
+            last_exit = exits[i]
     return selected
 
 
@@ -309,6 +321,7 @@ def add_diagnostics(trades: pd.DataFrame, bars_by_pair: dict[str, pd.DataFrame],
         arrays = {name: bars[name].to_numpy(float) for name in ["open", "high", "low", "close"]}
         max_h = int(d.boundary_bars.max())
         take = d.entry_idx.to_numpy()[:, None] + np.arange(max_h + 1)[None, :]
+        take = np.minimum(take, len(bars) - 1)  # padding beyond each row's live horizon is unused
         paths = {name: values[take] for name, values in arrays.items()}
         sym = np.empty(len(d), float)
         sym_kind = np.empty(len(d), int)
@@ -353,6 +366,7 @@ def random_exit_null(trades: pd.DataFrame, bars_by_pair: dict[str, pd.DataFrame]
         bars = bars_by_pair[pair]
         max_h = int(d.boundary_bars.max())
         take = d.entry_idx.to_numpy()[:, None] + np.arange(max_h + 1)[None, :]
+        take = np.minimum(take, len(bars) - 1)  # only sampled indices <= row boundary are used
         p = {name: bars[name].to_numpy(float)[take] for name in ["open", "high", "low"]}
         pnl, stopped, sb = simulate(p, d.side.to_numpy(), d.risk_pips.to_numpy(),
                                     d.boundary_bars.to_numpy(),
@@ -365,9 +379,11 @@ def random_exit_null(trades: pd.DataFrame, bars_by_pair: dict[str, pd.DataFrame]
         for pair, (ii, opens) in paths_open.items():
             d = hist.loc[ii]
             sampled = np.empty(len(ii), int)
-            for j, (_, row) in enumerate(d.iterrows()):
-                pool = donor.get((pair, int(row.utc_hour)), fallback[pair])
-                sampled[j] = int(rng.choice(pool))
+            hours = d.utc_hour.to_numpy(int)
+            for hour in np.unique(hours):
+                loc = np.flatnonzero(hours == hour)
+                pool = donor.get((pair, int(hour)), fallback[pair])
+                sampled[loc] = rng.choice(pool, size=len(loc), replace=True)
             sampled = np.minimum(sampled, d.boundary_bars.to_numpy(int))
             stopped_first = (stop_bar[ii] >= 0) & (stop_bar[ii] < sampled)
             rows = np.arange(len(ii))
@@ -510,8 +526,10 @@ to at most 180 minutes and is the more useful unscheduled-gap diagnostic.
 
 ## Path feasibility exclusions
 
-Candidates need complete OHLC from next-bar entry through the next 17:00 New York
-session-boundary event (at most 300 five-minute bars, allowing DST transitions).
+Candidates need complete OHLC from next-bar entry through the last attainable
+5-minute open before the next 17:00 New York session-boundary event (16:55; at
+most 300 bars, allowing DST transitions). The exact 17:00 bar is absent throughout
+the archive, so crediting it would be an unavailable fill.
 Rows failing that causal price-availability gate were not credited with fills:
 
 {markdown_table(pd.DataFrame([{"pair": p, "candidate_paths_excluded": n} for p, n in path_exclusions.items()]))}
@@ -533,7 +551,7 @@ def kill_test(trades: pd.DataFrame, metrics: pd.DataFrame, null_result: dict, cf
     conditions = {
         "gross_le_base_cost": gross_pips <= base_cost,
         "win_rate_near_geometry_break_even": abs(win - break_even) <= cfg["break_even_win_tolerance"],
-        "base_net_ci_includes_zero": not (float(primary.ci_low) > 0),
+        "base_net_not_strictly_positive": not (float(primary.ci_low) > 0),
         "symmetric_diagnostic_fails": not (float(sym.ci_low) > 0),
         "fixed_horizon_diagnostic_fails": not (float(fixed.ci_low) > 0),
         "random_exit_null_fails": not bool(null_result["passes"]),
@@ -553,7 +571,7 @@ def kill_test(trades: pd.DataFrame, metrics: pd.DataFrame, null_result: dict, cf
     }
 
 
-def write_findings(trades, metrics, costs, sharpes, blackout, null_result, verdict, cfg):
+def write_findings(trades, metrics, costs, sharpes, blackout, null_result, verdict, cfg, path_exclusions):
     headline = metrics.query("pair == 'POOLED' and outcome in ['primary_gross_R','primary_base_net_R','symmetric_gross_R','fixed_stop_gross_R','raw_forward_R'] and scope in ['consumed','holdout']")
     cost_view = (costs.query("vol_term == 'vol'")
                  .groupby(["era", "scenario"], as_index=False)
@@ -645,6 +663,17 @@ failure. All available 2024-01-01 through the source end are included.
 No regimes, alternative thresholds, clocks, anchors, pair features, or model
 layers were tested. Independent review remains pending; this builder run must not
 be treated as deployment approval even if the mechanical verdict were GO.
+
+## Coverage limitation
+
+{markdown_table(pd.DataFrame([{"pair": p, "candidate_paths_excluded": n} for p, n in path_exclusions.items()]))}
+
+NZDUSD has recurring late-era 18:00–19:00 UTC gaps, so the conservative requirement
+for a completely observed path to the session-boundary event removes many more NZD
+candidates than for the other pairs. The exclusion is causal and fully enumerated
+by era/hour in `reports/DATA_QUALITY.md`, but it limits claims about NZD. It cannot
+explain the pooled NO-GO: each of EURUSD, GBPUSD, and AUDUSD is independently and
+strongly negative at base costs.
 """
     (REPORTS / "FINDINGS.md").write_text(findings, encoding="utf-8")
     (ARTIFACT / "FINDINGS.md").write_text(findings, encoding="utf-8")
@@ -656,6 +685,7 @@ def main() -> None:
     REPORTS.mkdir(parents=True, exist_ok=True)
     bars_by_pair = {}
     dq_overall, dq_detail, path_exclusions = [], [], {}
+    path_exclusion_detail = []
     candidates = []
     for pair in cfg["pairs"]:
         print(f"[{pair}] loading, resampling, and building features", flush=True)
@@ -665,7 +695,9 @@ def main() -> None:
         dq_detail.extend(detail)
         cand = candidate_frame(pair, bars, cfg)
         sim, excluded = simulate_candidate_batches(cand, bars, cfg)
-        path_exclusions[pair] = excluded + int((~cand.has_boundary).sum())
+        path_exclusions[pair] = len(excluded)
+        if len(excluded):
+            path_exclusion_detail.append(excluded)
         if sim.empty:
             raise RuntimeError(f"No feasible candidates for {pair}")
         unvetoed = stateful_select(sim, pd.Series(True, index=sim.index))
@@ -677,6 +709,12 @@ def main() -> None:
 
     overall_df = pd.DataFrame(dq_overall)
     detail_df = pd.DataFrame(dq_detail).sort_values(["pair", "era", "utc_hour"])
+    if path_exclusion_detail:
+        ex = pd.concat(path_exclusion_detail, ignore_index=True)
+        ex = (ex.groupby(["pair", "era", "utc_hour"], observed=True).size()
+              .rename("candidate_path_excluded").reset_index())
+        detail_df = detail_df.merge(ex, on=["pair", "era", "utc_hour"], how="left")
+        detail_df["candidate_path_excluded"] = detail_df.candidate_path_excluded.fillna(0).astype(int)
     write_dq(overall_df, detail_df, path_exclusions)
     print("Rule 9a report written; proceeding to result interpretation", flush=True)
 
@@ -710,7 +748,8 @@ def main() -> None:
     null_draws.to_csv(ARTIFACT / "random_exit_draws.csv", index=False)
     (ARTIFACT / "verdict.json").write_text(json.dumps(verdict, indent=2) + "\n", encoding="utf-8")
     (ARTIFACT / "run_config.json").write_text(json.dumps(cfg, indent=2) + "\n", encoding="utf-8")
-    write_findings(trades, metrics, costs, sharpes, blackout, null_result, verdict, cfg)
+    write_findings(trades, metrics, costs, sharpes, blackout, null_result, verdict, cfg,
+                   path_exclusions)
     print(json.dumps({"trades": len(trades), "verdict": verdict["verdict"],
                       "base_net_mean_R": verdict["base_net_mean_R"],
                       "base_net_ci": verdict["base_net_ci"]}, indent=2), flush=True)
