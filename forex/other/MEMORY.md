@@ -2,7 +2,8 @@
 
 ## Scope
 
-- Objective: maintain reusable clean price and macro-event data for FX research.
+- Objective: maintain reusable clean price, exchange-traded volume, and
+  macro-event data for FX research.
 - Instruments or markets: EURUSD, GBPUSD, AUDUSD, NZDUSD.
 - Data coverage: minute prices from 2011-07/2011-12 through 2026-07; 105,737 pair-event rows through 2026-07-17.
 - Current phase: data engineering.
@@ -21,17 +22,33 @@
 ## Confirmed findings
 
 - The four clean price files have unique, monotonically increasing, timezone-naive UTC minute timestamps.
+- The 2026-08-09 futures-volume rebuild installed sandbox-created Parquets with
+  protected owner-only Windows ACLs because `os.replace` preserved the staged
+  files' permissions. Inheritance was restored on all four canonical files on
+  2026-08-11, and `build_clean_futures_volume.py` now re-enables parent ACL
+  inheritance after each installation. Evidence: file ACL inspection and
+  `build_clean_futures_volume.py::enable_parent_acl_inheritance`.
 - LSE calendar coverage is incomplete for this use: no GBP/NZD, USD/AUD begin in 2015, and EUR begins in 2025-09.
 - The referenced ForexFactory scraper labels displayed page times with the supplied timezone; for the 2026-08-06 pull the page was rendered in Australia/Sydney. A 2025 NFP probe parsed correctly only with that display timezone.
 - The canonical output has 50,391 unique provider events expanded to 105,737 pair-event rows, zero duplicate IDs/keys, zero out-of-order pair timestamps, and 104,780 rows (99.09%) mapped to a clean price bar within 15 minutes.
 - Conservative matching links 8,499 unique LSE/ForexFactory events. Of 7,622 comparable actual values, 6,974 (91.50%) agree exactly; 7,252 matched LSE timestamps are exactly 60 minutes later than ForexFactory, supporting the decision not to use LSE timestamps as canonical.
+- The four canonical clean minute files preserve the prior spot midpoint OHLC
+  exactly and add nullable CME futures `volume` by exact UTC-minute join:
+  EURUSD→6E (92.91% matched), GBPUSD→6B (86.82%), AUDUSD→6A (91.02%), and
+  NZDUSD→6N (74.76%). Evidence: `data/clean/futures_volume_manifest.json`.
 
 ## Decisions and constraints
 
 - ForexFactory is the primary release calendar; conservatively matched LSE rows are enrichment/provenance, not duplicate canonical releases.
 - LSE economics observation series are excluded from the event table because they are not point-in-time vintages and do not provide verified release timestamps.
+- The LSE NZ2Y history has four provider-side gaps over seven calendar days:
+  1994-12-28→1998-12-07, 2013-10-16→2014-12-15,
+  2019-11-14→2020-11-20, and 2021-10-13→2021-10-29. The raw series is
+  preserved without filling; see `data/lse/bond_yields/manifest.json`.
 - Canonical event timestamps are stored as timezone-naive UTC to match `data/clean`; `join_bar_ts_utc` is capped at the first clean bar within 15 minutes.
 - Raw macro values remain authoritative. Numeric parsing is convenience-only.
+- Unmatched futures minutes remain null; do not silently read them as zero
+  volume. No as-of or forward-filled volume is permitted in the clean files.
 
 ## Known risks and open questions
 
@@ -45,6 +62,10 @@
   all target minutes from adjusted LSE bars (43,795 direct; 365 sparse bins
   carried flat; 172 gross outlier fields filtered). Placebo error across 44,880
   known minutes is 0.15 pip median / 1.075 pips p95 / 3.175 pips p99.
+- London Strategic Edge sovereign 2-year yields are maintained for AU, NZ, DE,
+  UK, US, and JP under `data/lse/bond_yields/`; the reproducible downloader and
+  exact coverage/quality evidence are `download_lse_2y_yields.py` and
+  `data/lse/bond_yields/manifest.json`.
 
 ## Next actions
 

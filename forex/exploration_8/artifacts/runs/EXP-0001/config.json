@@ -1,0 +1,20 @@
+{
+  "start": "2015-01-01",
+  "end": "2021-01-01",
+  "signal_timeframe_minutes": 30,
+  "zscore_lookback_bars": 100,
+  "entry_z": 3.0,
+  "basis_mode": "log",
+  "signal_mode": "cross",
+  "delays_minutes": [
+    0,
+    1,
+    2,
+    5,
+    10,
+    15,
+    30
+  ],
+  "holding_minutes": 30,
+  "round_trip_cost_bps_per_leg": 0.5
+}

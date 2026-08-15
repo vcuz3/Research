@@ -1,0 +1,472 @@
+{
+  "experiment": "EXP-0004",
+  "stage": "B",
+  "estimand": "stateful one-position-per-pair book (greedy non-overlap); all-signal per-signal is a diagnostic",
+  "inherited_params_note": "tau=5/H=240 are Stage-A consumed-history P&L-selected candidates, not untuned/confirmed (Stage-A review F1)",
+  "book": {
+    "tau": 5,
+    "entry": "|z_slot| >= 2.0, first crossing",
+    "entry_fill": "delay-1 (two bars after signal)",
+    "hold_cap_min": 240,
+    "exit": "guarded anchor-retrace, g=0.25 sigma_slot",
+    "diagnostic_exits": "touch-fill (g=0) and time-exit comparators (NOT payoff bounds)",
+    "stop": "none",
+    "no_entry_rule": "reject if anchor already crossed at entry (causal)",
+    "vetoes": "news +/-30min; Friday 16:55 NY flat"
+  },
+  "exclusion_funnel_pooled": {
+    "signals_pre_veto": 198812,
+    "news_vetoed": 15471,
+    "zero_cap_friday": 211,
+    "no_entry_already_crossed": 7105,
+    "incomplete_path": 15985,
+    "book_eligible": 160040,
+    "friday_shortened": 5053
+  },
+  "primary_arm_stateful": {
+    "delay": 1,
+    "treatment": "guarded",
+    "cell": {
+      "n": 66912,
+      "gross_R_slot": -0.0279028787975142,
+      "gross_R_slot_ci": [
+        -0.08319790821608297,
+        0.027392150621054566
+      ],
+      "gross_R_abs": -0.05027525184386537,
+      "gross_pips": -0.17160412183165843,
+      "cost_pips_base": 1.23398652188439,
+      "net_R_slot": -0.565283690852707,
+      "net_R_slot_ci": [
+        -0.6208860312436292,
+        -0.5096813504617849
+      ],
+      "net_R_abs": -0.4448407707296118,
+      "win_rate": 0.7411824485891918,
+      "anchor_fill_rate": 0.6968555714968915,
+      "timeout_rate": 0.3031444285031086,
+      "mean_hold_min": 109.41403634624581,
+      "abs_z": 2.7707938157752503
+    }
+  },
+  "all_signal_diagnostic": {
+    "delay": 1,
+    "treatment": "guarded",
+    "cell": {
+      "n": 132614,
+      "gross_R_slot": -0.020539748731224272,
+      "gross_R_slot_ci": [
+        -0.08282042069450107,
+        0.04174092323205253
+      ],
+      "gross_R_abs": -0.038741362442845616,
+      "gross_pips": -0.13503608216327126,
+      "cost_pips_base": 1.2179953431040118,
+      "net_R_slot": -0.5507118972389214,
+      "net_R_slot_ci": [
+        -0.6131640403061995,
+        -0.4882597541716434
+      ],
+      "net_R_abs": -0.4246732730364443,
+      "win_rate": 0.7532915076839549,
+      "anchor_fill_rate": 0.7145474836744236,
+      "timeout_rate": 0.2854525163255765,
+      "mean_hold_min": 104.32317100758593,
+      "abs_z": 2.7976061945747266
+    }
+  },
+  "gross_first_stateful": {
+    "note": "positive gross reversion is ESTABLISHED only if the CI excludes zero on the positive side.",
+    "delay1_guarded": {
+      "n": 66912,
+      "gross_R_slot": -0.0279028787975142,
+      "gross_R_slot_ci": [
+        -0.08319790821608297,
+        0.027392150621054566
+      ],
+      "gross_R_abs": -0.05027525184386537,
+      "gross_pips": -0.17160412183165843,
+      "cost_pips_base": 1.23398652188439,
+      "net_R_slot": -0.565283690852707,
+      "net_R_slot_ci": [
+        -0.6208860312436292,
+        -0.5096813504617849
+      ],
+      "net_R_abs": -0.4448407707296118,
+      "win_rate": 0.7411824485891918,
+      "anchor_fill_rate": 0.6968555714968915,
+      "timeout_rate": 0.3031444285031086,
+      "mean_hold_min": 109.41403634624581,
+      "abs_z": 2.7707938157752503
+    },
+    "delay1_touch_diagnostic": {
+      "n": 69488,
+      "gross_R_slot": 0.15626574980859045,
+      "gross_R_slot_ci": [
+        0.10322135924343448,
+        0.20931014037374643
+      ],
+      "gross_R_abs": 0.10274928890354801,
+      "gross_pips": 0.3476146960626294,
+      "cost_pips_base": 1.2334297734587008,
+      "net_R_slot": -0.38133906695910624,
+      "net_R_slot_ci": [
+        -0.43467606453219476,
+        -0.3280020693860177
+      ],
+      "net_R_abs": -0.2918277648742032,
+      "win_rate": 0.7625489293115358,
+      "anchor_fill_rate": 0.7258951185816256,
+      "timeout_rate": 0.2741048814183744,
+      "mean_hold_min": 100.40270262491366,
+      "abs_z": 2.7676060413817214
+    },
+    "delay1_time_comparator": {
+      "n": 41386,
+      "gross_R_slot": 0.2583141078751343,
+      "gross_R_slot_ci": [
+        0.15193424992392135,
+        0.3646939658263473
+      ],
+      "gross_R_abs": 0.1540284877396689,
+      "gross_pips": 0.6275228942154385,
+      "cost_pips_base": 1.2394362187777501,
+      "net_R_slot": -0.2924403250344191,
+      "net_R_slot_ci": [
+        -0.3988986363340419,
+        -0.18598201373479628
+      ],
+      "net_R_abs": -0.24439325673658405,
+      "win_rate": 0.5143285168897694,
+      "anchor_fill_rate": 0.0,
+      "timeout_rate": 1.0,
+      "mean_hold_min": 235.46404581259364,
+      "abs_z": 2.725449799335864
+    },
+    "delay0_guarded_diagnostic": {
+      "n": 68947,
+      "gross_R_slot": 0.06303492332889352,
+      "gross_R_slot_ci": [
+        0.009596838029477486,
+        0.11647300862830955
+      ],
+      "gross_R_abs": 0.011282031278541403,
+      "gross_pips": 0.03504503459178774,
+      "cost_pips_base": 1.2385614808278846,
+      "net_R_slot": -0.4798362255500796,
+      "net_R_slot_ci": [
+        -0.5334914638722584,
+        -0.4261809872279008
+      ],
+      "net_R_abs": -0.38436755091842106,
+      "win_rate": 0.7424543489927046,
+      "anchor_fill_rate": 0.7085297402352532,
+      "timeout_rate": 0.29147025976474683,
+      "mean_hold_min": 107.59145430548102,
+      "abs_z": 2.768493740606313
+    }
+  },
+  "cost_curve_primary": [
+    {
+      "scenario": "optimistic",
+      "n": 66912,
+      "net_R_slot": -0.49463196310453755,
+      "ci_low": -0.5501667518909658,
+      "ci_high": -0.43909717431810935,
+      "mean_cost_pips": 1.0737905653190731,
+      "mean_gross_pips": -0.17160412183165843
+    },
+    {
+      "scenario": "base",
+      "n": 66912,
+      "net_R_slot": -0.565283690852707,
+      "ci_low": -0.6208860312436292,
+      "ci_high": -0.5096813504617849,
+      "mean_cost_pips": 1.23398652188439,
+      "mean_gross_pips": -0.17160412183165843
+    },
+    {
+      "scenario": "pessimistic",
+      "n": 66912,
+      "net_R_slot": -0.6830365704329896,
+      "ci_low": -0.7387736042183732,
+      "ci_high": -0.627299536647606,
+      "mean_cost_pips": 1.500979782826585,
+      "mean_gross_pips": -0.17160412183165843
+    }
+  ],
+  "three_sharpes_primary": [
+    {
+      "sharpe_zero_day": -0.2373123715988005,
+      "sharpe_trade_days": -0.25799098846724167,
+      "sharpe_vol_targeted": -0.1429645087563145,
+      "n_days_zero_filled": 4380,
+      "n_trade_days": 3706,
+      "era": "consumed",
+      "basis": "gross",
+      "trades": 66912,
+      "mean_R_slot": -0.027902878797514206
+    },
+    {
+      "sharpe_zero_day": -4.715110133120903,
+      "sharpe_trade_days": -5.167498310840512,
+      "sharpe_vol_targeted": -4.751711551750327,
+      "n_days_zero_filled": 4380,
+      "n_trade_days": 3706,
+      "era": "consumed",
+      "basis": "net",
+      "trades": 66912,
+      "mean_R_slot": -0.565283690852707
+    },
+    {
+      "sharpe_zero_day": -0.7797696400195362,
+      "sharpe_trade_days": -0.8457713329292869,
+      "sharpe_vol_targeted": -0.6739985729332784,
+      "n_days_zero_filled": 928,
+      "n_trade_days": 789,
+      "era": "holdout",
+      "basis": "gross",
+      "trades": 13787,
+      "mean_R_slot": -0.09642224277252981
+    },
+    {
+      "sharpe_zero_day": -5.445010012626299,
+      "sharpe_trade_days": -5.9668613422452905,
+      "sharpe_vol_targeted": -5.288756606973053,
+      "n_days_zero_filled": 928,
+      "n_trade_days": 789,
+      "era": "holdout",
+      "basis": "net",
+      "trades": 13787,
+      "mean_R_slot": -0.6920629245658757
+    }
+  ],
+  "overlap_reduction": [
+    {
+      "pair": "AUDUSD",
+      "delay": 0,
+      "treatment": "guarded",
+      "eligible": 39917,
+      "book_trades": 19903,
+      "occupancy_drop_pct": 50.13903850489767
+    },
+    {
+      "pair": "AUDUSD",
+      "delay": 0,
+      "treatment": "time",
+      "eligible": 39917,
+      "book_trades": 12288,
+      "occupancy_drop_pct": 69.21612345617156
+    },
+    {
+      "pair": "AUDUSD",
+      "delay": 0,
+      "treatment": "touch",
+      "eligible": 39917,
+      "book_trades": 20736,
+      "occupancy_drop_pct": 48.0522083322895
+    },
+    {
+      "pair": "AUDUSD",
+      "delay": 1,
+      "treatment": "guarded",
+      "eligible": 38306,
+      "book_trades": 19368,
+      "occupancy_drop_pct": 49.43873022503003
+    },
+    {
+      "pair": "AUDUSD",
+      "delay": 1,
+      "treatment": "time",
+      "eligible": 38306,
+      "book_trades": 12131,
+      "occupancy_drop_pct": 68.33133190622878
+    },
+    {
+      "pair": "AUDUSD",
+      "delay": 1,
+      "treatment": "touch",
+      "eligible": 38306,
+      "book_trades": 20118,
+      "occupancy_drop_pct": 47.4808124053673
+    },
+    {
+      "pair": "EURUSD",
+      "delay": 0,
+      "treatment": "guarded",
+      "eligible": 39756,
+      "book_trades": 19995,
+      "occupancy_drop_pct": 49.70570479927559
+    },
+    {
+      "pair": "EURUSD",
+      "delay": 0,
+      "treatment": "time",
+      "eligible": 39756,
+      "book_trades": 12156,
+      "occupancy_drop_pct": 69.42348324781165
+    },
+    {
+      "pair": "EURUSD",
+      "delay": 0,
+      "treatment": "touch",
+      "eligible": 39756,
+      "book_trades": 20737,
+      "occupancy_drop_pct": 47.83931985109165
+    },
+    {
+      "pair": "EURUSD",
+      "delay": 1,
+      "treatment": "guarded",
+      "eligible": 38043,
+      "book_trades": 19398,
+      "occupancy_drop_pct": 49.010330415582374
+    },
+    {
+      "pair": "EURUSD",
+      "delay": 1,
+      "treatment": "time",
+      "eligible": 38043,
+      "book_trades": 11998,
+      "occupancy_drop_pct": 68.46200352233
+    },
+    {
+      "pair": "EURUSD",
+      "delay": 1,
+      "treatment": "touch",
+      "eligible": 38043,
+      "book_trades": 20072,
+      "occupancy_drop_pct": 47.23865100018401
+    },
+    {
+      "pair": "GBPUSD",
+      "delay": 0,
+      "treatment": "guarded",
+      "eligible": 40422,
+      "book_trades": 20457,
+      "occupancy_drop_pct": 49.39142051358171
+    },
+    {
+      "pair": "GBPUSD",
+      "delay": 0,
+      "treatment": "time",
+      "eligible": 40422,
+      "book_trades": 12416,
+      "occupancy_drop_pct": 69.28405323833556
+    },
+    {
+      "pair": "GBPUSD",
+      "delay": 0,
+      "treatment": "touch",
+      "eligible": 40422,
+      "book_trades": 21300,
+      "occupancy_drop_pct": 47.305922517441005
+    },
+    {
+      "pair": "GBPUSD",
+      "delay": 1,
+      "treatment": "guarded",
+      "eligible": 38667,
+      "book_trades": 19860,
+      "occupancy_drop_pct": 48.63837380712235
+    },
+    {
+      "pair": "GBPUSD",
+      "delay": 1,
+      "treatment": "time",
+      "eligible": 38667,
+      "book_trades": 12234,
+      "occupancy_drop_pct": 68.36061758088292
+    },
+    {
+      "pair": "GBPUSD",
+      "delay": 1,
+      "treatment": "touch",
+      "eligible": 38667,
+      "book_trades": 20659,
+      "occupancy_drop_pct": 46.572012310238705
+    },
+    {
+      "pair": "NZDUSD",
+      "delay": 0,
+      "treatment": "guarded",
+      "eligible": 46901,
+      "book_trades": 22798,
+      "occupancy_drop_pct": 51.3912283320185
+    },
+    {
+      "pair": "NZDUSD",
+      "delay": 0,
+      "treatment": "time",
+      "eligible": 46901,
+      "book_trades": 13687,
+      "occupancy_drop_pct": 70.81725336346774
+    },
+    {
+      "pair": "NZDUSD",
+      "delay": 0,
+      "treatment": "touch",
+      "eligible": 46901,
+      "book_trades": 23658,
+      "occupancy_drop_pct": 49.557578729664606
+    },
+    {
+      "pair": "NZDUSD",
+      "delay": 1,
+      "treatment": "guarded",
+      "eligible": 45024,
+      "book_trades": 22073,
+      "occupancy_drop_pct": 50.9750355366027
+    },
+    {
+      "pair": "NZDUSD",
+      "delay": 1,
+      "treatment": "time",
+      "eligible": 45024,
+      "book_trades": 13550,
+      "occupancy_drop_pct": 69.90493958777542
+    },
+    {
+      "pair": "NZDUSD",
+      "delay": 1,
+      "treatment": "touch",
+      "eligible": 45024,
+      "book_trades": 22899,
+      "occupancy_drop_pct": 49.14045842217484
+    }
+  ],
+  "sealed_holdout_2024plus": {
+    "note": "opened once; delay-1 guarded, pooled, stateful",
+    "cell": {
+      "n": 13787,
+      "gross_R_slot": -0.0964222427725298,
+      "gross_R_slot_ci": [
+        -0.2227424015997887,
+        0.02989791605472912
+      ],
+      "gross_R_abs": -0.10619927070237337,
+      "gross_pips": -0.25495575542177046,
+      "cost_pips_base": 1.0483688167012601,
+      "net_R_slot": -0.6920629245658757,
+      "net_R_slot_ci": [
+        -0.818823404704055,
+        -0.5653024444276964
+      ],
+      "net_R_abs": -0.5351909765059535,
+      "win_rate": 0.7430187858127222,
+      "anchor_fill_rate": 0.7055922245593675,
+      "timeout_rate": 0.29440777544063246,
+      "mean_hold_min": 106.96148545731486,
+      "abs_z": 2.7230002574292476
+    }
+  },
+  "verdict": {
+    "gross_reversion_established": false,
+    "gross_pips": -0.17160412183165843,
+    "rebate_to_zero_pips": 0.1716,
+    "modelled_base_round_trip_pips": 1.23398652188439,
+    "gross_covers_cost": false,
+    "net_ci_excludes_zero_positive": false,
+    "summary": "reference book frozen (stateful one-position); positive gross reversion NOT established (CI includes 0); NET negative; gross -0.172 pips vs 1.234 modelled cost (gross negative: a 0.172-pip rebate would be needed to reach zero)."
+  }
+}

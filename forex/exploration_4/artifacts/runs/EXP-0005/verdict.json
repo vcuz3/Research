@@ -1,0 +1,68 @@
+{
+  "experiment": "EXP-0005",
+  "stage": "C",
+  "axis": "displacement_depth",
+  "base_book_t2.0": {
+    "n": 66912,
+    "pairs": 4,
+    "clusters": 3706,
+    "gross_R_slot": -0.027902878797514206,
+    "gross_ci_low": -0.08319790821608297,
+    "gross_ci_high": 0.02739215062105456,
+    "net_R_slot": -0.565283690852707,
+    "net_ci_low": -0.6208860312436292,
+    "net_ci_high": -0.5096813504617849,
+    "gross_R_abs": -0.05027525184386538,
+    "gross_pips": -0.17160412183165843,
+    "net_R_abs": -0.4448407707296118,
+    "cost_pips": 1.23398652188439,
+    "anchor_fill_rate": 0.6968555714968915,
+    "timeout_rate": 0.3031444285031086,
+    "sigma_slot_pips": 2.8621392916538237,
+    "abs_z": 2.7707938157752503
+  },
+  "gross_depth_slope_per_unit_z": 0.05691573912972355,
+  "best_deployable_net": {
+    "depth_threshold": 3.8,
+    "n": 10286,
+    "net_R_slot": -0.5001090310118441,
+    "net_ci": [
+      -0.7066726748126052,
+      -0.29354538721108303
+    ],
+    "gross_R_slot": 0.0825204352847529,
+    "gross_pips": 0.12830060276103877,
+    "cost_pips": 1.2507732029254153
+  },
+  "net_clears_zero_at_deployable_count": false,
+  "null_gated": {
+    "spent": false,
+    "reason": "primary did NOT clear at any deployable depth -> null unnecessary (gate-nullc-on-success-metric)",
+    "result": null
+  },
+  "sealed_holdout_deepest": {
+    "n": 1536,
+    "pairs": 4,
+    "clusters": 468,
+    "gross_R_slot": -0.3920605742180299,
+    "gross_ci_low": -1.043264172447911,
+    "gross_ci_high": 0.25914302401185113,
+    "net_R_slot": -1.0291373969931301,
+    "net_ci_low": -1.6819406281980038,
+    "net_ci_high": -0.3763341657882563,
+    "gross_R_abs": -0.30740749178957416,
+    "gross_pips": -0.8058593749999936,
+    "net_R_abs": -0.7239519551590572,
+    "cost_pips": 1.0656618212296822,
+    "anchor_fill_rate": 0.6015625,
+    "timeout_rate": 0.3984375,
+    "sigma_slot_pips": 2.0909880236672174,
+    "abs_z": 5.320544660102595,
+    "depth_threshold": 4.0
+  },
+  "verdict": {
+    "depth_accepted_as_rescue": false,
+    "depth_orders_gross": true,
+    "summary": "DEPTH REJECTED as a rescue: net R_slot never clears zero at a deployable depth; gross does order by depth (deeper = higher gross). The gross depth-response curve is retained as the Stage-C benchmark."
+  }
+}

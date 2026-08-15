@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0002",
+  "hypothesis_id": "HYP-0001",
+  "status": "completed",
+  "declared_utc": "2026-08-13T09:54:57.073294+00:00",
+  "config_path": "experiments/configs/blackout_diagnostic.json",
+  "data_scope": "Local AUDUSD, AUDJPY, USDJPY one-minute midpoint OHLC, 2015-01-01 through 2020-12-31; 15-minute primary and 30-minute consistency arm.",
+  "code_ref": "working-tree",
+  "run_command": "python run_blackout.py --config experiments/configs/blackout_diagnostic.json --output-dir artifacts/runs/EXP-0002",
+  "primary_metric": "Change in 15-minute 30-minute-horizon three-leg residual mean gross/net bp and signal count after the 16:45-18:00 ET blackout.",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-08-13T09:59:11.698106+00:00",
+  "result_summary": "BLACKOUT DIAGNOSTIC: 16:45-18:00 ET removed 58.3% of raw 15-minute crossings. Primary residual gross changed +1.0671 to +0.9954 bp; net stayed negative (-0.4329 to -0.5046 bp). With two-bar delay, blackout gross was +0.0674 bp and net -1.4326 bp.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

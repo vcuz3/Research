@@ -81,7 +81,7 @@
     "tie_tolerance_R": 0.005,
     "tie_tolerance_vr": 0.005
   },
-  "generated_utc": "2026-08-08T12:58:00.117630+00:00",
+  "generated_utc": "2026-08-09T07:58:32.035684+00:00",
   "inputs": {
     "EURUSD_1m_clean.parquet": {
       "sha256": "abce793fe0f16cf41f8502afd74b8c1429a126430a6622eb5a00b8b3fa9cb8e1",

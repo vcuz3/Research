@@ -170,6 +170,17 @@ def test_pip_scaling():
 # friday cap
 # --------------------------------------------------------------------------- #
 
+def test_anchor_favourable_flags_already_crossed():
+    # long: anchor above entry is favourable; anchor at/below entry is not (no-entry).
+    fav = sb.anchor_favourable(side=[1, 1, 1], entry_px=[100.0, 100.0, 100.0],
+                               anchor_px=[101.0, 100.0, 99.5])
+    assert fav.tolist() == [True, False, False]
+    # short: anchor below entry is favourable.
+    fav = sb.anchor_favourable(side=[-1, -1, -1], entry_px=[100.0, 100.0, 100.0],
+                               anchor_px=[99.0, 100.0, 100.5])
+    assert fav.tolist() == [True, False, False]
+
+
 def test_friday_cap_minutes():
     cap = sb.friday_cap_minutes(
         ny_weekday=[4, 4, 2, 4], ny_minute=[900, 1000, 800, 1015],

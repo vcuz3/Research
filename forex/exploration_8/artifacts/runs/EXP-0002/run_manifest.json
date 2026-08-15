@@ -1,0 +1,54 @@
+{
+  "config": {
+    "start": "2015-01-01",
+    "end": "2021-01-01",
+    "timeframes": [
+      {
+        "minutes": 15,
+        "zscore_lookback_bars": 200
+      },
+      {
+        "minutes": 30,
+        "zscore_lookback_bars": 100
+      }
+    ],
+    "entry_z": 3.0,
+    "basis_mode": "log",
+    "signal_mode": "cross",
+    "blackout": {
+      "timezone": "America/New_York",
+      "start_time": "16:45",
+      "end_time": "18:00"
+    },
+    "horizon_minutes": [
+      30,
+      90,
+      360
+    ],
+    "entry_delay_bars": [
+      1,
+      2
+    ],
+    "round_trip_cost_bps_per_leg": 0.5,
+    "non_overlapping": true
+  },
+  "data_fingerprints": {
+    "AUDUSD": {
+      "path": "C:\\Users\\VuDoa\\Research\\forex\\data\\clean\\AUDUSD_1m_clean.parquet",
+      "bytes": 78813094,
+      "sha256": "46501384a03d1a40eda184149e627d607eba2da3622a0abe9a3e27da9411615c"
+    },
+    "AUDJPY": {
+      "path": "C:\\Users\\VuDoa\\Research\\forex\\data\\audjpy_intraday_1min.csv",
+      "bytes": 357073626,
+      "sha256": "44f776a16e68ae34283ece474655f7aeef544517900dd2067d343da15c6808b3"
+    },
+    "USDJPY": {
+      "path": "C:\\Users\\VuDoa\\Research\\forex\\data\\USDJPY_1m.parquet",
+      "bytes": 107746576,
+      "sha256": "a4b043740db6022354aa76d335d4e1bb357b52e129ad725bc5fe40aa2084ac29"
+    }
+  },
+  "result_rows": 96,
+  "event_rows": 15690
+}

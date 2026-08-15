@@ -29,7 +29,7 @@
       "first_utc": "2011-12-06T20:00:00",
       "last_utc": "2026-07-17T20:59:00",
       "path": "forex/data/clean/NZDUSD_1m_clean.parquet",
-      "rows": 5393136
+      "rows": 5437296
     }
   },
   "created_by": "forex/build_macro_events.py",
@@ -106,8 +106,8 @@
     "unmatched_lse_rows": 35084
   },
   "output": "forex/data/macro/fx_macro_events.parquet",
-  "output_bytes": 6023634,
-  "output_sha256": "f5e8979fb62b9c96389024370c16383c78ec6e8f505fb32a1ceffcd9eed88b1e",
+  "output_bytes": 6020432,
+  "output_sha256": "fca276bfa096e92de8e795fa37f72ddeb416a0b75318dd44bb815736596b551e",
   "quality": {
     "by_currency": {
       "AUD": 5459,
@@ -148,7 +148,7 @@
         "within_15m_clean_bar_matches": 27586
       },
       "NZDUSD": {
-        "exact_clean_bar_matches": 20880,
+        "exact_clean_bar_matches": 21241,
         "first_utc": "2011-12-07T13:30:00",
         "last_utc": "2026-07-17T14:00:00",
         "rows": 21575,

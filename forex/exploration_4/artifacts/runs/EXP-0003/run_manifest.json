@@ -89,7 +89,7 @@
     "fine_k_max": 3.4,
     "fine_k_step": 0.02
   },
-  "generated_utc": "2026-08-08T13:50:04.522816+00:00",
+  "generated_utc": "2026-08-09T08:08:29.157768+00:00",
   "signals_total": 2495437,
   "reuses": "forex/exploration_4/_run_stage_a.py (loading, forward outcomes, costs, cell pooling, cluster-robust estimator) and _stage_a_lib.py"
 }

@@ -14,8 +14,11 @@ What this step does, and nothing more:
   * assert OHLC sanity (low <= min(open,close), high >= max(open,close), > 0);
   * store `ts_utc`, `open`, `high`, `low`, `close` as float64 parquet.
 
-Volume is deliberately NOT carried forward: carrying a constant -1 column would
-let a downstream feature silently "weight" by it.
+IBKR's constant -1 volume is deliberately NOT carried forward: carrying it
+would let a downstream feature silently "weight" by a placeholder. These are
+price-only intermediate files. Run `python forex/build_clean_futures_volume.py`
+afterward to install the canonical clean files with exact-minute CME futures
+volume and archive these intermediates.
 """
 from __future__ import annotations
 

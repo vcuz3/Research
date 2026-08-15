@@ -1,0 +1,17 @@
+{
+  "experiment_id": "EXP-0006",
+  "stage": "C",
+  "axis": "volatility_regime",
+  "inherits": "baseline_replication/configs/stage_b.json",
+  "overlay_arm_delay": 1,
+  "overlay_arm_treatment": "guarded",
+  "vol_regime_source": "sigma_abs",
+  "keep_fraction_min": 0.10,
+  "keep_fraction_max": 0.90,
+  "keep_fraction_step": 0.05,
+  "regime_quantile_buckets": [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+  "depth_benchmark_csv": "artifacts/runs/EXP-0005/depth_frontier.csv",
+  "deployable_min_trades": 2000,
+  "null_permutations": 500,
+  "null_seed": 20260809
+}

@@ -10,7 +10,7 @@
 ## Current status
 
 - Verdict: **NO-GO for the superseded late-session momentum implementation; corrected continuous 200-observed-bar strategy not yet fully rerun.**
-- Last verified: 2026-08-04
+- Last verified: 2026-08-09
 - Lifecycle phase: corrected engine audit passed; full research run pending
 - Baseline replication: not applicable (user-specified strategy)
 - Engine audit: five synthetic timing/fill/window invariants pass. Corrected smoke execution gives BB(200) coverage 99.73% in the shortened pre-2021 slice and effectively 100% in 2021-2023; only initial warm-up and rare invalid/partial bars are missing.
@@ -27,12 +27,44 @@
 - Critical scope correction: the old engine reset BB at every non-five-minute link. The archives have about 3,200 such gaps per pair, almost one per trading day. Consequently BB(200) was defined on only 30.1% of rows and, for EURUSD/GBPUSD/AUDUSD, on session slots 202-287 only (about 09:50-17:00 New York). BB(300)'s very small sample was a coverage artefact. The old run does **not** support a whole-day verdict.
 - The breakout engine now rolls Bollinger means and population standard deviations over valid observed closes across scheduled rollover/weekend closures. Execution still blocks next-open entries across a gap, while RV30/ATR/VEI remain segmented to preserve their stated short horizons. Baseline trades carry causal before/after-gap distances for post-hoc diagnostics. Evidence: `_bollinger_engine.py`, `_test_bollinger_engine.py`, regenerated `bollinger_breakout_regime_sweep.ipynb`.
 - The breakout notebook forcibly reloads `_bollinger_engine.py` and prints engine version `2026-08-04-continuous-observed-bb-v2`, preventing a long-lived Jupyter kernel from silently retaining the old segmented construction. BB(200) coverage is displayed separately from the all-feature minimum, which can be low because causal regime features require long history.
+- A separate causal same-slot area-fade test now lives in
+  `area_mean_reversion_entry_variants.ipynb` with execution logic in
+  `_area_mean_reversion_engine.py`. It compares the first inside-to-outside
+  crossing per FX session with a non-overlapping 30-minute checkpoint policy;
+  both enter at the next open and exit open-to-open after exactly 60 minutes.
+  Four synthetic causality/timing invariants and a full pre-2024 EURUSD smoke
+  execution pass. The smoke is diagnostic, not a registered experiment.
 
 ## Provisional hypotheses
 
 - High volatility acceleration or stronger higher-timeframe trends may condition breakout performance.
   - Kill test: positive net average R in both pre-2021 and 2021-2023, at least 3/4 pair agreement, one-pip cost survival, and neighbouring-parameter stability.
   - Evidence needed: full four-pair run, matched-selectivity controls, claim-matched null, then a frozen 2024+ test.
+- Same-slot 90th/10th percentile session-return breaches show a positive but
+  small provisional gross fade before 2024. The unchanged four-pair verification
+  measures 15/30/60/120-minute direction-adjusted returns, separates upper/lower
+  breaches, and compares the one-per-session primary rule with a symmetric
+  same-slot large-move control matched exactly on trade count for 3/4 pairs and
+  within three trades on GBPUSD. Gross first-cross means are positive on both
+  sides at 60 minutes for 4/4 pairs, but all cells remain negative after the
+  explicit pair-level ECN spread anchor, 0.10-pip-per-side slippage, and
+  0.70-pip round-trip commission assumptions. Those costs are imported rather
+  than measured in the midpoint archive. Evidence:
+  `area_mean_reversion_entry_variants.ipynb`; EURUSD smoke reproduction:
+  `python _smoke_run_area_mean_reversion_notebook.py`.
+- Incremental validation is implemented in
+  `area_mean_reversion_incremental_validation.ipynb` with paired session panels,
+  20-session moving-block bootstrap inference, common-date cross-pair alignment,
+  and a volatility-scaled signal-state spread proxy. At 60 minutes, gross
+  primary-minus-control differences per eligible session were EUR +0.247
+  [0.005, 0.487], GBP +0.064 [-0.300, 0.464], AUD +0.411 [0.019, 0.803], and
+  NZD -0.124 [-0.504, 0.266] pips; the equal-weight common-date result was
+  +0.131 [-0.050, 0.318]. Thus the preregistered-style incremental kill rule
+  fails: the portfolio interval includes zero and pair signs are not stable.
+  All eight pair/side primary cells remain negative after the ECN-anchor
+  signal-state cost proxy. This is a research-level NO-GO for incremental area
+  information and an economic NO-GO under the proxy, not measured-spread fill
+  evidence. Evidence helpers: `_area_validation.py`, `_test_area_validation.py`.
 
 ## Decisions and constraints
 
@@ -62,6 +94,14 @@
 3. Read the fixed-horizon entry-information table before the bracket result; reject the mean-reversion candidate if gross re-entry expectancy does not clear plausible costs.
 4. Compare any RV-gated survivor with a deeper outer-band entry at matched selection rate; inspect but do not filter post-hoc rollover-proximity rows.
 5. Resolve any surviving target/stop configuration on one-minute paths, then freeze it and add a claim-matched path-preserving null before opening 2024+.
+6. For the area-fade notebook, inspect gross direction-adjusted returns before
+   costs, require upper/lower agreement, compare both entry variants with a
+   matched-rate generic large-move control, and register a hypothesis before a
+   material cross-pair or parameter run.
+7. Do not tune the area fade around EUR/AUD survivors: the paired common-date
+   portfolio failed its 60-minute kill rule and NZD was wrong-signed. Any future
+   revisit needs genuinely new information (measured bid/ask, a prespecified
+   mechanism, or unconsumed future data), not another threshold search.
 
 ## Promotion candidates
 

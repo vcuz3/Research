@@ -260,6 +260,82 @@ def surface(signals: pd.DataFrame, cfg: dict) -> pd.DataFrame:
 # Decision rules (HYP-0003 §4), applied mechanically
 # --------------------------------------------------------------------------- #
 
+def cluster_diff_means(y: np.ndarray, group: np.ndarray, cluster: np.ndarray,
+                       a: str, b: str) -> dict:
+    """UTC-day-clustered CI for the difference in mean(y) between two groups a and b.
+
+    Stage-A repair F3: the addendum's original session test compared a gap against the
+    SUM of two marginal CI half-widths, which is neither a CI for the difference nor
+    aware of the covariance between the two session estimators when they share a UTC
+    day. This is the proper contrast: influence functions per cluster, subtracted within
+    the cluster so same-day covariance is captured, then a one-way cluster-robust SE.
+
+        mean_a = S_a/N_a ; psi_g(mean_a) = (sum_{i in g,a}(y_i - mean_a)) / N_a
+        diff = mean_a - mean_b ; psi_g(diff) = psi_g(mean_a) - psi_g(mean_b)
+        Var(diff) = (G/(G-1)) * sum_g psi_g(diff)^2
+    """
+    ma = group == a
+    mb = group == b
+    ya, yb = y[ma], y[mb]
+    if len(ya) == 0 or len(yb) == 0:
+        return {"a": a, "b": b, "diff": np.nan, "se": np.nan, "ci_low": np.nan,
+                "ci_high": np.nan, "n_a": int(len(ya)), "n_b": int(len(yb)), "clusters": 0}
+    mean_a, mean_b = ya.mean(), yb.mean()
+    na, nb = len(ya), len(yb)
+    # per-cluster influence contributions
+    ca, cb = cluster[ma], cluster[mb]
+    codes, _ = pd.factorize(np.concatenate([ca, cb]))
+    ga = codes[:na]
+    gb = codes[na:]
+    G = codes.max() + 1
+    psi_a = np.bincount(ga, weights=(ya - mean_a), minlength=G) / na
+    psi_b = np.bincount(gb, weights=(yb - mean_b), minlength=G) / nb
+    psi = psi_a - psi_b
+    var = (G / (G - 1.0)) * np.square(psi).sum() if G > 1 else np.nan
+    se = float(np.sqrt(var)) if np.isfinite(var) and var > 0 else np.nan
+    diff = mean_a - mean_b
+    return {"a": a, "b": b, "diff": float(diff), "se": float(se),
+            "ci_low": float(diff - 1.96 * se), "ci_high": float(diff + 1.96 * se),
+            "n_a": int(na), "n_b": int(nb), "clusters": int(G)}
+
+
+def session_contrast(signals: pd.DataFrame, match: pd.DataFrame, cfg: dict,
+                     tau: int = 5, horizon: int = 240) -> dict:
+    """Proper UTC-day-clustered off/asia − london contrasts (F3), both arms.
+
+    Recomputes the per-signal gross_R_abs on the τ=5, delay-1, H=240 slot cell at the
+    rate-matched k (and the abs cell at the reference k) on consumed history, then runs
+    the clustered difference test. This is the test that would be needed to UPGRADE the
+    clock-artifact attribution from provisional; reported here so the retraction rests on
+    a difference CI, not the sum-of-half-widths heuristic.
+    """
+    mk = match.set_index("tau")
+    k_slot = float(mk.loc[tau, "slot_k"])
+    k_abs = float(cfg["reference_k"])
+    gp = signals[f"gross_pips_d1_{horizon}"].to_numpy()
+    comp = signals[f"complete_d1_{horizon}"].to_numpy(bool)
+    r_abs = gp * PIP / (signals.sigma_abs.to_numpy() * signals.entry_price.to_numpy())
+    base = pd.DataFrame({
+        "arm": signals.arm.to_numpy(), "k": signals.k.to_numpy(),
+        "tau": signals.tau.to_numpy(), "session": signals.session.to_numpy(),
+        "utc_day": signals.utc_day.to_numpy(), "era": signals.era.to_numpy(),
+        "news_veto": signals.news_veto.to_numpy(), "complete": comp, "r_abs": r_abs})
+    base = base[(base.tau == tau) & base.complete & ~base.news_veto
+                & base.era.ne("holdout")].dropna(subset=["r_abs"])
+    out = {"tau": tau, "horizon_minutes": horizon,
+           "note": "UTC-day-clustered CI for the difference in mean gross_R_abs; "
+                   "captures same-day covariance, unlike the sum-of-half-widths screen"}
+    for arm, k in (("slot", k_slot), ("abs", k_abs)):
+        d = base[(base.arm == arm) & (base.k == k)]
+        y = d.r_abs.to_numpy()
+        g = d.session.to_numpy()
+        c = d.utc_day.to_numpy()
+        out[arm] = {pair: cluster_diff_means(y, g, c, a, "london")
+                    for pair, a in (("off_minus_london", "off"),
+                                    ("asia_minus_london", "asia"))}
+    return out
+
+
 def decide(cv: pd.DataFrame, match: pd.DataFrame, surf: pd.DataFrame, cfg: dict) -> dict:
     tau_ref = 5
     out = {"rule": "HYP-0003 §4", "reference_arm": cfg["reference_arm"],
@@ -306,33 +382,60 @@ def decide(cv: pd.DataFrame, match: pd.DataFrame, surf: pd.DataFrame, cfg: dict)
                    "localisation_survives": bool(any(g["exceeds"] for g in gaps.values()))}
     q2["outcome"] = ("thin-hours localisation SURVIVES the same-slot normalisation"
                      if q2["slot"]["localisation_survives"] else
-                     "thin-hours localisation DOES NOT survive: the EXP-0002 session "
-                     "breakdown is RETRACTED as a time-of-day selection artifact")
+                     "thin-hours localisation is NOT ESTABLISHED under the same-slot "
+                     "normalisation: the EXP-0002 session breakdown is retracted as an "
+                     "actionable prior. The clock-artifact ATTRIBUTION is PROVISIONAL "
+                     "(this screen compares a gap to the sum of two marginal half-widths, "
+                     "not a difference CI; see the clustered contrast for the proper test)")
+    q2["matching_departure"] = ("HYP-0003 §4 specifies matching at a per-hour firing rate; "
+                                "choose_matched_k matches ONE pooled crossing rate across "
+                                "all hours (matched total count). Sensible, but a declared "
+                                "departure from the frozen contract, not 'no departures'.")
     out["Q2_session_localisation"] = q2
 
     # ---- Q3: does the grain choice survive? -------------------------------- #
-    order = []
-    for tau in cfg["grain_ladder_minutes"]:
-        if tau not in mk.index:
-            continue
-        k = float(mk.loc[tau, "slot_k"])
-        q = surf.query("pair == 'POOLED' and era == 'consumed' and session == 'all' and "
-                       "arm == 'slot' and k == @k and tau == @tau and entry_delay_bars == 1")
-        if q.empty:
-            continue
-        best = q.loc[q.gross_R_abs.idxmax()]
-        order.append({"tau": int(tau), "k": k, "gross_R_abs": float(best.gross_R_abs),
-                      "horizon_minutes": int(best.horizon_minutes), "n": int(best.n),
-                      "ci_low": float(best.gross_R_abs_ci_low),
-                      "ci_high": float(best.gross_R_abs_ci_high)})
-    ranked = sorted(order, key=lambda r: -r["gross_R_abs"])
-    top = ranked[0]["tau"] if ranked else None
+    # Two rankings (Stage-A repair F4). PRIMARY: at the preregistered horizon H*=240
+    # (HYP-0003 §4), so no horizon is searched. AUX: best-over-{60,240}, which IS a
+    # two-horizon search and is labelled as such -- it can only flatter a grain by
+    # picking its better horizon, so it is a robustness read, never the decision.
+    fixed_h = int(max(cfg["horizon_minutes"]))   # 240, the frozen H*
+
+    def rank_at(horizon):
+        order = []
+        for tau in cfg["grain_ladder_minutes"]:
+            if tau not in mk.index:
+                continue
+            k = float(mk.loc[tau, "slot_k"])
+            q = surf.query("pair == 'POOLED' and era == 'consumed' and session == 'all' and "
+                           "arm == 'slot' and k == @k and tau == @tau and entry_delay_bars == 1")
+            if horizon is not None:
+                q = q.query("horizon_minutes == @horizon")
+            if q.empty:
+                continue
+            best = q.loc[q.gross_R_abs.idxmax()]
+            order.append({"tau": int(tau), "k": k, "gross_R_abs": float(best.gross_R_abs),
+                          "horizon_minutes": int(best.horizon_minutes), "n": int(best.n),
+                          "ci_low": float(best.gross_R_abs_ci_low),
+                          "ci_high": float(best.gross_R_abs_ci_high)})
+        ranked = sorted(order, key=lambda r: -r["gross_R_abs"])
+        top = ranked[0]["tau"] if ranked else None
+        return order, [r["tau"] for r in ranked], top
+
+    order, ranking, top = rank_at(fixed_h)                    # PRIMARY: fixed H*=240
+    order_search, ranking_search, top_search = rank_at(None)  # AUX: best-of-horizon
     out["Q3_grain"] = {
-        "ranking": [r["tau"] for r in ranked], "detail": order, "top_tau": top,
+        "primary_horizon_minutes": fixed_h,
+        "ranking": ranking, "detail": order, "top_tau": top,
         "tau5_confirmed": bool(top == 5),
-        "verdict": ("tau*=5 CONFIRMED under same-slot normalisation" if top == 5 else
-                    f"tau*=5 RE-OPENED: same-slot normalisation ranks tau={top} first; "
-                    "Stage B may not freeze a grain until this is resolved")}
+        "search_ranking": ranking_search, "search_detail": order_search,
+        "search_top_tau": top_search,
+        "search_note": ("AUX ONLY -- best-over-horizon {60,240} is a two-horizon "
+                        "search that can only flatter a grain; the decision uses the "
+                        f"fixed preregistered H*={fixed_h} ranking above"),
+        "verdict": (f"tau*=5 CONFIRMED under same-slot normalisation at fixed H*={fixed_h}"
+                    if top == 5 else
+                    f"tau*=5 RE-OPENED: same-slot normalisation ranks tau={top} first at "
+                    f"fixed H*={fixed_h}; Stage B may not freeze a grain until resolved")}
 
     # ---- Q4: does normalising destroy the information? --------------------- #
     def pooled(arm, k, delay=1, tau=tau_ref):
@@ -417,6 +520,31 @@ def main() -> None:
     run.log("applying the frozen decision rules")
     verdict = decide(cv, match, surf, cfg)
 
+    run.log("F3: UTC-day-clustered session-difference contrast")
+    cc = session_contrast(signals, match, cfg)
+    verdict["Q2_session_localisation"]["clustered_contrast"] = cc
+
+    def _clears(d):
+        return np.isfinite(d["ci_low"]) and np.isfinite(d["ci_high"]) and \
+            (d["ci_low"] > 0 or d["ci_high"] < 0)
+    off_s = cc["slot"]["off_minus_london"]
+    asia_s = cc["slot"]["asia_minus_london"]
+    verdict["Q2_session_localisation"]["clustered_conclusion"] = (
+        f"Proper UTC-day-clustered difference (slot arm): off−london "
+        f"{off_s['diff']:+.3f} CI[{off_s['ci_low']:+.3f},{off_s['ci_high']:+.3f}] "
+        f"({'excludes' if _clears(off_s) else 'includes'} 0); asia−london "
+        f"{asia_s['diff']:+.3f} CI[{asia_s['ci_low']:+.3f},{asia_s['ci_high']:+.3f}] "
+        f"({'excludes' if _clears(asia_s) else 'includes'} 0). "
+        "Normalising SHRINKS both gaps versus the confounded abs arm (off "
+        f"{cc['abs']['off_minus_london']['diff']:+.3f}→{off_s['diff']:+.3f}, asia "
+        f"{cc['abs']['asia_minus_london']['diff']:+.3f}→{asia_s['diff']:+.3f}), so the "
+        "clock explained most of off's apparent localisation and part of asia's. "
+        "What remains is a MARGINAL asia gap on INSPECTED history, one of several "
+        "contrasts, without the arm-by-session interaction Codex asked for. Verdict: "
+        "off−london not established; asia−london provisional and NOT actionable yet — "
+        "it is the motivation for the axis-4 session test (full pipeline), not a prior "
+        "to fold into an overlay now.")
+
     run.log("writing artifacts")
     (ARTIFACT / "verdict.json").write_text(json.dumps(verdict, indent=2, default=str), encoding="utf-8")
     (ARTIFACT / "run_manifest.json").write_text(json.dumps({
@@ -461,6 +589,7 @@ def write_report(cfg, rates, cv, match, surf, verdict) -> None:
          "gross_R_abs_t", "gross_pips"]].sort_values(["session", "arm"])
 
     grain = pd.DataFrame(verdict["Q3_grain"]["detail"])
+    grain_search = pd.DataFrame(verdict["Q3_grain"]["search_detail"])
     q4 = verdict["Q4_information"]
 
     ladder = surf.query("pair == 'POOLED' and era == 'consumed' and session == 'all' and "
@@ -478,6 +607,14 @@ Contract: `experiments/hypotheses/HYP-0003.md`, frozen before this run. Reproduc
 
 **Numbering:** the run-book assigns EXP-0003 to Stage B; the ledger requires
 `EXP-\\d{{4}}`, so this addendum is EXP-0003 and **Stage B becomes EXP-0004**.
+
+**Honest label (Stage-A repair F1):** this addendum re-runs the grain/threshold
+selection on the SAME inspected 2012–2023 outcomes with a new normaliser. It is a
+confound test and a reconstruction, **not independent confirmation**. τ\\*=5 / H\\*=240
+remain **consumed-history, gross-P&L-selected candidates**; "confirmed under the
+same-slot arm" below means the selection is stable to removing the clock confound, not
+that it cleared a fresh holdout. Any inferential claim on the selected maximum needs a
+full-pipeline null that repeats the selection. Only future data is a clean holdout now.
 
 ## Why
 
@@ -522,19 +659,51 @@ sum of the two cells' 95% CI half-widths.
 {tt(sess, 4)}
 
 ```json
-{json.dumps(q2, indent=2, default=str)}
+{json.dumps({k: v for k, v in q2.items() if k != 'clustered_contrast'}, indent=2, default=str)}
 ```
 
 **{q2['outcome']}**
 
+### Proper UTC-day-clustered difference contrast (F3)
+
+The screen above compares a session gap to the **sum of two marginal CI half-widths** —
+a deliberately conservative heuristic, not a confidence interval for the difference, and
+blind to the covariance between two session estimators that share a UTC day. The correct
+test is a UTC-day-clustered CI on the difference itself (`off − london`, `asia − london`),
+influence functions subtracted within each cluster. Both arms shown; the `slot` arm is the
+decision arm.
+
+```json
+{json.dumps(q2.get('clustered_contrast', {}), indent=2, default=str)}
+```
+
+**{q2.get('clustered_conclusion', '')}**
+
+The sum-of-half-widths screen (above) is strictly more conservative than this difference CI;
+where the two disagree, the difference CI is the correct test. It clears zero for `asia` and
+not for `off`, so the clean "both retracted" reading from the screen is too strong. The
+economics are unchanged either way: gross stays ~3× under cost, and a thin-hour like `asia`
+carries a mechanical R_slot lift (its σ_slot is small), so a positive `asia` R gap is exactly
+what the busy/thin-hour σ structure predicts and is not by itself evidence of tradable edge.
+
+**Departure from the frozen contract:** {q2['matching_departure']}
+
 ## Q3 — Does the grain choice survive?
 
+**Primary ranking: fixed preregistered horizon H\\*={q3['primary_horizon_minutes']}** (HYP-0003 §4).
 Ladder ranked by `gross_R_abs`, `slot` arm, delay-1, each rung at its own rate-matched
-`k`, best horizon:
+`k`, **no horizon searched**:
 
 {tt(grain, 4)}
 
 **{q3['verdict']}**
+
+*Robustness only (not the decision):* the same ladder ranked by the **best of horizons
+{{60, 240}}** — a two-horizon search that can only flatter a grain by picking its better
+horizon. It ranks {q3['search_ranking']} with top τ={q3['search_top_tau']}. This is
+reported for transparency; the grain decision rests on the fixed-H\\* table above.
+
+{tt(grain_search, 4)}
 
 ### Full ladder, both arms side by side (delay-1, rate-matched)
 

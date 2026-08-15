@@ -1,13 +1,62 @@
-# exploration_4 Findings — Frozen Mean-Reversion Baseline
+# exploration_4 Findings
 
-> **Scope note (2026-08-08).** Everything in this file is **EXP-0001**, the stopped
-> 5-minute baseline. It remains valid as reported, but it is **superseded as the
-> project's reference book**: the constraint set changed (the compulsory stop was
-> dropped), and the run-book arc restarted at Stage A. The current market map is
-> `MARKET_CHARACTERIZATION.md` (EXP-0002); the current coverage gate is
-> `DATA_QUALITY.md`, which EXP-0002 rewrote for the multi-grain work (the EXP-0001
-> snapshot is preserved at `../artifacts/runs/EXP-0001/DATA_QUALITY.md`). No Stage-B
-> reference book exists yet, so nothing here has been replaced by a newer *book*.
+> **Scope note (updated 2026-08-09).** The **active reference book is now EXP-0004**
+> (Stage B) — see `STAGE_B_REFERENCE_BOOK.md`. The market map is
+> `MARKET_CHARACTERIZATION.md` (EXP-0002) with its addendum `SAME_SLOT_ADDENDUM.md`
+> (EXP-0003); the coverage gate is `DATA_QUALITY.md`. The **EXP-0001 body below** (the
+> stopped 5-minute compulsory-stop baseline) remains valid as reported but is
+> **superseded as the project's reference book** (the constraint set changed and the arc
+> restarted at Stage A). The EXP-0001 coverage snapshot is at
+> `../artifacts/runs/EXP-0001/DATA_QUALITY.md`.
+
+---
+
+## Stage B — frozen reference book (EXP-0004, 2026-08-09) — NO-GO ruler
+
+Full report: `STAGE_B_REFERENCE_BOOK.md`. Review + response: `../artifacts/runs/EXP-0004/review.md`
+(§8 responds to Codex's `independent_review_codex.md`). **Numbers below are post-review**
+(F1 stateful estimand, F2 causal no-entry + consumed-only cost median, F4 coverage funnel,
+F3/minor language). τ=5 same-slot z, fade `|z_slot| ≥ 2.0` first crossing, delay-1 entry,
+240-min cap, **no stop**, causal no-entry if the anchor is already crossed, news ±30 min +
+Friday-16:55-NY vetoes. Exit = **guarded anchor-retrace** (credited only on a 0.25·σ_slot
+trade-through, filled at the anchor); `touch`/`time` are **diagnostics, not payoff bounds**.
+Inherited τ=5/H=240 are Stage-A **consumed-history P&L-selected candidates**, not confirmed.
+**Estimand = the stateful one-position-per-pair book** (greedy non-overlap); all-signal
+per-signal is a diagnostic.
+
+Pooled, consumed, delay-1, **stateful book**:
+
+```text
+ exit arm              n  gross_R_slot         95% CI  gross_pips  cost_pips_base  fill_rate  win_rate
+ time comparator   41386        0.2583 [0.152, 0.365]       0.628           1.234      0.000     0.51
+ touch diagnostic  69488        0.1563 [0.103, 0.209]       0.348           1.234      0.727     0.76
+ guarded = BOOK    66912       -0.0279 [-0.083, 0.027]     -0.172           1.234      0.700     0.74
+```
+
+- The **book** (guarded) has **no established gross reversion** at delay-1 (CI includes 0);
+  gross −0.172 pips is a *rebate to zero*, not a breakeven. Net **−0.565 R_slot**
+  [−0.621, −0.510] base cost; negative in every scenario/era; net Sharpe ≈ −4.7. Sealed 2024+
+  holdout agrees (gross −0.255 pips, net −0.692). n=66,912 stateful vs 132,614 all-signal
+  diagnostic (same direction).
+- **Why touch/time stay positive but guarded does not:** the reversion "completes" to the
+  anchor and stalls — the **retrace target is the reversal point**. A bare-touch fill (touch)
+  or a fixed-horizon exit (time, which credits the level implicitly and reproduces EXP-0003's
+  direction) books a profit that a realistic 0.25σ trade-through misses. So the τ=5 reversion
+  is **not capturable by a realistic passive exit** — a second, independent NO-GO reason
+  beyond EXP-0003's "3× too small to pay costs."
+- **Coverage funnel** (`../artifacts/runs/EXP-0004/exclusion_funnel.csv`): 198,812 signals →
+  15,471 news → 7,105 already-crossed no-entry → 15,985 incomplete-path → **160,040
+  book-eligible**; non-overlap then drops ≈49%. Path loss concentrates at 17–21 UTC
+  (rollover/weekend), not hour-neutral.
+
+**This stateful book is a valid ruler (Rule 25).** Stage-C overlays are scored as excess over
+it at matched count and **re-run through the non-overlap machinery** (overlays change exits →
+occupancy), never by filtering a completed-trade list. Reviewer verdict: changes required →
+**corrections applied, pending re-verification.**
+
+---
+
+## EXP-0001 (superseded as reference book) — Frozen compulsory-stop baseline
 
 ## Verdict: **NO-GO**
 

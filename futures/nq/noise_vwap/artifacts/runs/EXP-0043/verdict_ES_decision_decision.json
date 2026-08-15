@@ -1,0 +1,147 @@
+{
+  "inst": "ES",
+  "primary_stop_book": "decision",
+  "primary_reset": "decision",
+  "rr_null_hazard": 0.17302582092285154,
+  "rr_null_n_mean": 2566.65,
+  "rr_null_dSharpe_mean": 0.03891686719578313,
+  "rr_null_dSharpe_sd": 0.05439730029310144,
+  "rr_null_frac_ge_real_sharpe": 0.0,
+  "rr_null_frac_ge_real_sumR": 0.0,
+  "sessions": 3628,
+  "base": {
+    "n": 2996,
+    "sharpe": 0.8305422329755336,
+    "netR": 68.4175210330156,
+    "gross_pt": 1.0362983978638178,
+    "max_dd": 8.642340417460085,
+    "recent_sharpe": 0.6863949262047764
+  },
+  "require_reset": {
+    "n": 2579,
+    "sharpe": 1.0545508959559347,
+    "netR": 83.22833291262171,
+    "gross_pt": 1.2705506010081424,
+    "max_dd": 6.831705669979325,
+    "recent_sharpe": 0.8804317677148513
+  },
+  "d_sharpe": 0.224008662980401,
+  "d_sumR": 14.810811879606106,
+  "real_gate_passed": true,
+  "decomposition": {
+    "removed": {
+      "n": 417,
+      "mean_netR": -0.03551753448346789,
+      "gross_pt": -0.41247002398081534,
+      "hit": 0.30455635491606714
+    },
+    "added": {
+      "n": 0,
+      "mean_netR": NaN,
+      "gross_pt": NaN,
+      "hit": NaN
+    },
+    "kept_common": {
+      "n": 2579,
+      "mean_netR": 0.03227155211811621,
+      "gross_pt": 1.2705506010081427,
+      "hit": 0.37572702597906166
+    }
+  },
+  "matched_K": 852,
+  "cand_pool": 852,
+  "rand_frac_ge_real_sharpe": NaN,
+  "rand_frac_ge_real_sumR": NaN,
+  "rand_dSharpe_mean": null,
+  "rand_n_mean": null,
+  "cells": [
+    {
+      "stop_book": "every_bar",
+      "reset": "(baseline)",
+      "n": 4326,
+      "retain": 1.0,
+      "gross_pt": 0.7300046232085065,
+      "expR": 0.011898412802811132,
+      "sumR": 51.47253378496096,
+      "sharpe": 0.6977602857863777,
+      "d_sharpe": 0.0,
+      "d_sumR": 0.0,
+      "max_dd": 7.449063658906993,
+      "recent_sharpe": 0.7990898909444336
+    },
+    {
+      "stop_book": "every_bar",
+      "reset": "every_bar",
+      "n": 3872,
+      "retain": 0.8950531668978271,
+      "gross_pt": 0.7589746900826443,
+      "expR": 0.01266012075110335,
+      "sumR": 49.01998754827217,
+      "sharpe": 0.7004189380439808,
+      "d_sharpe": 0.002658652257603089,
+      "d_sumR": -2.4525462366887893,
+      "max_dd": 7.542042729868574,
+      "recent_sharpe": 0.9251176234374201
+    },
+    {
+      "stop_book": "every_bar",
+      "reset": "decision",
+      "n": 2884,
+      "retain": 0.6666666666666666,
+      "gross_pt": 0.8290568654646321,
+      "expR": 0.015385416098656535,
+      "sumR": 44.371540028525445,
+      "sharpe": 0.7167048335372842,
+      "d_sharpe": 0.018944547750906482,
+      "d_sumR": -7.100993756435514,
+      "max_dd": 10.178630182495453,
+      "recent_sharpe": 1.2452372087646235
+    },
+    {
+      "stop_book": "decision",
+      "reset": "(baseline)",
+      "n": 2996,
+      "retain": 1.0,
+      "gross_pt": 1.0362983978638178,
+      "expR": 0.022836288729310948,
+      "sumR": 68.4175210330156,
+      "sharpe": 0.8305422329755336,
+      "d_sharpe": 0.0,
+      "d_sumR": 0.0,
+      "max_dd": 8.642340417460085,
+      "recent_sharpe": 0.6863949262047764
+    },
+    {
+      "stop_book": "decision",
+      "reset": "every_bar",
+      "n": 2916,
+      "retain": 0.9732977303070761,
+      "gross_pt": 1.0914780521261997,
+      "expR": 0.023991926707442643,
+      "sumR": 69.96045827890275,
+      "sharpe": 0.8643773025365482,
+      "d_sharpe": 0.033835069561014564,
+      "d_sumR": 1.5429372458871455,
+      "max_dd": 10.1314192273422,
+      "recent_sharpe": 0.7832784826563968
+    },
+    {
+      "stop_book": "decision",
+      "reset": "decision",
+      "n": 2579,
+      "retain": 0.8608144192256342,
+      "gross_pt": 1.2705506010081424,
+      "expR": 0.03227155211811621,
+      "sumR": 83.22833291262171,
+      "sharpe": 1.0545508959559347,
+      "d_sharpe": 0.224008662980401,
+      "d_sumR": 14.810811879606106,
+      "max_dd": 6.831705669979325,
+      "recent_sharpe": 0.8804317677148513
+    }
+  ],
+  "nullc_z": 2.238647566703806,
+  "nullc_frac_ge_real": 0.0,
+  "nullc_dSharpe_mean": 0.02330554112676842,
+  "control1_matched_count": "DEGENERATE (K==pool); superseded by control 1b random-unlock"
+}

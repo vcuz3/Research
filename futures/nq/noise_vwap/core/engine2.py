@@ -33,7 +33,11 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
                      flat_before_close=0, cond_regime=None,
                      hivol_cadence=15, lovol_cadence=1,
                      init_stop_atr=0.0, tp_gate=None,
-                     stop_gate=None) -> list[dict]:
+                     stop_gate=None, reentry="later_decision",
+                     reset_check="decision", audit_out=None,
+                     reset_hazard=None, reset_seed=0,
+                     hard_stop_buf_atr=None, hard_stop_trigger="touch",
+                     hard_stop_atr_col=None, track_excursion=False) -> list[dict]:
     """
     Simulate one session.
 
@@ -45,11 +49,24 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
                        the (interpolated-to-every-bar) band by entry_buf_atr*ATR
                        points AND (if require_vwap) on the correct side of VWAP.
     exit_check: "decision" (only at clock) or "every_bar".
+    reentry (HYP-0031, default-off):
+        "later_decision" -- current/baseline behaviour: after a stop-out the same
+                       side may be retaken at any later decision bar whose
+                       breakout condition still holds.
+        "require_reset" -- after a STOP exit on side S, block fresh same-side
+                       entries until price has been observed back INSIDE the
+                       noise area (lower <= close <= upper). Opposite-side
+                       entries and flips are never blocked. State
+                       (stopped_side, reset_observed) is per session.
+    reset_check: cadence on which a reset is recognised, "decision" (the source
+                       spec: only at scheduled checkpoints) or "every_bar".
     """
     b = bars.sort_values("mfo").reset_index(drop=True)
     mfo = b["mfo"].to_numpy()
     opn = b["open"].to_numpy()
     close = b["close"].to_numpy()
+    high = b["high"].to_numpy()
+    low = b["low"].to_numpy()
     vwap = b["vwap"].to_numpy()
     is_rth = b["is_rth"].to_numpy()
     # Higher-timeframe trend filter (rule 18, side-aware entry gate): only take longs
@@ -132,6 +149,42 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
     # flat only. All off by default (ladder=False) -> baseline is untouched.
     lad_r = np.nan
     lad_step = 0
+    hard_line = np.nan     # entry-frozen mandatory stop price (resting order)
+    hard_risk = np.nan     # its distance from the fill, in points
+    mae = 0.0              # max adverse excursion, points (intraday risk, rule 22)
+    mfe = 0.0              # max favourable excursion, points
+    # Optional INTRADAY causal volatility scale for the hard stop, read at the entry
+    # bar, instead of the session-constant prior-14-session range ATR. Supplied as a
+    # bars column so the causal construction stays in one place upstream.
+    iatr = (b[hard_stop_atr_col].to_numpy()
+            if (hard_stop_atr_col is not None and hard_stop_atr_col in b.columns)
+            else None)
+    # HYP-0031 same-side re-entry lock. `stopped_side` is the side of the most
+    # recent STOP exit (a flip does not arm the lock -- it is an opposite-side
+    # entry, which the rule never blocks); `reset_observed` records whether price
+    # has since been seen back inside the noise area. Both are session-local, so
+    # the first entry of a day is never blocked. Initialised unlocked, which makes
+    # "later_decision" and "require_reset" identical until the first stop.
+    # "random_reset" is the matched NULL for "require_reset" (HYP-0031 control 1b):
+    # it keeps the lock and its PERSISTENCE -- same side-scoping, same cadence, the
+    # lock survives across checkpoints -- but clears it on a coin flip at hazard
+    # `reset_hazard` per checked bar instead of on "price is back inside the band".
+    # It therefore destroys ONLY the information the rule claims to use. This is the
+    # control a one-shot entry blocklist cannot express: blocking every candidate key
+    # once still removes fewer trades than the persistent lock does.
+    require_reset = reentry in ("require_reset", "random_reset")
+    random_reset = (reentry == "random_reset")
+    if reentry not in ("later_decision", "require_reset", "random_reset"):
+        raise ValueError(f"unknown reentry policy {reentry!r}")
+    if random_reset and reset_hazard is None:
+        raise ValueError("reentry='random_reset' requires reset_hazard")
+    # Per-session RNG so draws are reproducible and independent across sessions.
+    rrng = (np.random.default_rng([int(reset_seed),
+                                   int(pd.Timestamp(b["sdate"].iloc[0]).value % (2 ** 31))])
+            if random_reset else None)
+    stopped_side = 0
+    reset_observed = True
+    blocked: list[dict] = []   # audit trail of entries the lock suppressed
     trades: list[dict] = []
 
     def fill(i):
@@ -141,13 +194,56 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
             return opn[i + 1], mfo[i + 1]
         return None, None
 
-    def open_pos(side, px, pmfo):
+    def stop_ref_at(m_, i_, side):
+        """The strategy's OWN stop reference at a bar: max(band,VWAP) long /
+        min(band,VWAP) short, per stop_ref. This is the level the soft trail would
+        exit at, and the anchor the mandatory hard stop is frozen to."""
+        if entry_mode == "threshold":
+            up_e, lo_e = up_arr[i_], lo_arr[i_]
+        else:
+            up_e, lo_e = band_map.get(m_, (np.nan, np.nan))
+        w_e = vwap[i_]
+        if stop_ref == "vwap":
+            return w_e
+        if stop_ref == "band":
+            return up_e if side == 1 else lo_e
+        return (max(up_e, w_e) if side == 1 else min(lo_e, w_e))
+
+    def open_pos(side, px, pmfo, ref_m=None, ref_i=None):
         nonlocal pos, entry_px, entry_mfo, banked, taken_frac, partial_done, be_on, fav_max
-        nonlocal lad_r, lad_step
+        nonlocal lad_r, lad_step, hard_line, hard_risk, mae, mfe
         pos, entry_px, entry_mfo = side, px, pmfo
         banked, taken_frac, partial_done, be_on = 0.0, 0.0, False, False
         fav_max = 0.0
         lad_r, lad_step = np.nan, 0
+        # ---- mandatory protective stop (prop-firm constraint), entry-frozen (rule 14).
+        # Anchored on the strategy's own band/VWAP touch level at entry, widened by a
+        # volatility buffer: risk = (entry - stop_ref)+ + buf*ATR. The (.)+ floor matters
+        # because ~29% of signals sit within 0.10 ATR of their own reference (and a gap
+        # can even fill through it), so a bare b=0 line would be pure noise-stop.
+        hard_line, hard_risk = np.nan, np.nan
+        mae, mfe = 0.0, 0.0
+        if hard_stop_buf_atr is not None:
+            base_e = stop_ref_at(ref_m, ref_i, side) if ref_i is not None else np.nan
+            atr_u = (iatr[ref_i] if (iatr is not None and ref_i is not None) else atr)
+            buf = (hard_stop_buf_atr * atr_u) if np.isfinite(atr_u) else 0.0
+            raw = ((px - base_e) if side == 1 else (base_e - px)) if np.isfinite(base_e) else 0.0
+            hard_risk = max(float(raw), 0.0) + buf
+            if hard_risk > 0:
+                hard_line = px - side * hard_risk
+
+    def close_at(i, px, reason):
+        """Close at an explicit price inside bar i (used by the resting hard stop,
+        which fills at its own level, not at a later bar's open)."""
+        nonlocal pos, entry_px, entry_mfo, hard_line, hard_risk
+        runner = (px - entry_px) * pos
+        trades.append(dict(sdate=the_date, side=pos, entry_mfo=entry_mfo,
+                           exit_mfo=int(mfo[i]), entry_px=entry_px, exit_px=px,
+                           points=banked + (1.0 - taken_frac) * runner, reason=reason,
+                           tp_frac=taken_frac, hard_risk=hard_risk, mae=mae, mfe=mfe))
+        pos, entry_px, entry_mfo = 0, np.nan, None
+        hard_line, hard_risk = np.nan, np.nan
+        return True
 
     def close_trade(i, reason):
         # Blend the banked partial with the runner's realised exit: a trade's points are
@@ -161,7 +257,7 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
         pts = banked + (1.0 - taken_frac) * runner
         trades.append(dict(sdate=the_date, side=pos, entry_mfo=entry_mfo, exit_mfo=pmfo,
                            entry_px=entry_px, exit_px=px, points=pts, reason=reason,
-                           tp_frac=taken_frac))
+                           tp_frac=taken_frac, hard_risk=hard_risk, mae=mae, mfe=mfe))
         pos, entry_px, entry_mfo = 0, np.nan, None
         return True
 
@@ -218,12 +314,61 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
         c = close[i]
         w = vwap[i]
 
+        # ---- max adverse / favourable excursion (rule 22: risk where it accumulates).
+        # Updated before any exit logic so the exit bar's own extreme is included.
+        if track_excursion and pos != 0:
+            adv = (entry_px - low[i]) if pos == 1 else (high[i] - entry_px)
+            fav = (high[i] - entry_px) if pos == 1 else (entry_px - low[i])
+            if adv > mae:
+                mae = adv
+            if fav > mfe:
+                mfe = fav
+
+        # ---- mandatory protective stop: a RESTING order, so it is live on EVERY bar
+        # (including the fill bar, rule 3) regardless of the soft trail's check cadence,
+        # and it is checked FIRST because it would execute intrabar before any
+        # close-based decision. Gap-through fills at the first tradable price -- the
+        # bar's open -- never at the stop level (rule 5).
+        if pos != 0 and np.isfinite(hard_line):
+            # A hard stop IS a stop-driven exit, so it must arm the same-side re-entry
+            # lock exactly as the soft trail does. Without this the engine re-buys the
+            # very breakout the protective stop just closed (it inflated trade count
+            # ~48% at b=0), which is the churn `require_reset` exists to prevent.
+            if hard_stop_trigger == "touch":
+                hit_h = ((opn[i] <= hard_line or low[i] <= hard_line) if pos == 1
+                         else (opn[i] >= hard_line or high[i] >= hard_line))
+                if hit_h:
+                    px_h = (opn[i] if ((opn[i] <= hard_line) if pos == 1
+                                       else (opn[i] >= hard_line)) else hard_line)
+                    stopped_side, reset_observed = pos, False
+                    close_at(i, px_h, "hard_stop")
+                    continue
+            else:  # close-confirmed variant, for comparability with the soft trail
+                if (c < hard_line) if pos == 1 else (c > hard_line):
+                    stopped_side, reset_observed = pos, False
+                    if close_trade(i, "hard_stop"):
+                        continue
+
         # Clock mode mirrors core.engine: a bar whose minute has no band (its
         # same-time-of-day sigma was dropped for lack of history) is skipped
         # entirely -- no entry, no stop, no flip. (Threshold mode carries the
         # band forward every bar, so this guard does not apply there.)
         if entry_mode == "clock" and m not in band_map:
             continue
+
+        # ---- HYP-0031 step 1: recognise a reset BEFORE the exit/entry logic ----
+        # The evaluation order is load-bearing (source spec): observing "price is
+        # inside the band" first means a bar that both resets and stops ends up
+        # LOCKED, because the stop clears the flag afterwards.
+        if m in band_map and (reset_check == "every_bar" or is_decision):
+            if random_reset:
+                # same lock, same cadence, uninformative trigger
+                if not reset_observed and rrng.random() < reset_hazard:
+                    reset_observed = True
+            else:
+                _up, _lo = band_map[m]
+                if _lo <= c <= _up:
+                    reset_observed = True
 
         # ---- desired entry direction ----
         want = 0
@@ -367,11 +512,14 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
                           or (the_date, int(m), int(pos)) in stop_gate)
             if (hit and check_here and stop_armed) or flip:
                 stop_reason = "istop" if (hit and istop_binds and not flip) else "stop"
+                if not flip:
+                    # ---- HYP-0031 step 2: a STOP exit arms the same-side lock ----
+                    stopped_side, reset_observed = pos, False
                 if (close_trade(i, "flip" if flip else stop_reason) and flip
                         and gate_ok(m, want)):
                     px, pmfo = fill(i)
                     if px is not None:
-                        open_pos(want, px, pmfo)
+                        open_pos(want, px, pmfo, ref_m=m, ref_i=i)
                 continue
             # ---- partial take-profit: bank tp_frac at the next open once price has run
             #      tp_atr in favour (momentum-confirmed close + next-open fill = honest,
@@ -391,12 +539,22 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
 
         # ---- fresh entry ----
         if pos == 0 and want != 0:
+            # ---- HYP-0031 step 3: same-side permission ----
+            # Audit every post-stop SAME-SIDE re-entry candidate (the pool the
+            # matched-count random control must draw from), flagging the ones the
+            # lock actually suppresses. Under "later_decision" nothing is blocked,
+            # so the same call records the unfiltered pool.
+            same_side_post_stop = (stopped_side == want)
+            reset_block = require_reset and same_side_post_stop and not reset_observed
+            if same_side_post_stop and audit_out is not None:
+                audit_out.append(dict(sdate=the_date, mfo=m, side=int(want),
+                                      blocked=bool(reset_block)))
             can_enter = ((is_decision if entry_mode == "clock" else True)
-                         and gate_ok(m, want))
+                         and gate_ok(m, want) and not reset_block)
             if can_enter:
                 px, pmfo = fill(i)
                 if px is not None:
-                    open_pos(want, px, pmfo)
+                    open_pos(want, px, pmfo, ref_m=m, ref_i=i)
                     if ladder:
                         # 1R = distance from the fill to the band/VWAP stop reference
                         # at the entry bar, frozen (rule 14). Same reference the
@@ -419,7 +577,7 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
         trades.append(dict(sdate=the_date, side=pos, entry_mfo=entry_mfo,
                            exit_mfo=int(mfo[flat_i]), entry_px=entry_px,
                            exit_px=last_close, points=banked + (1.0 - taken_frac) * runner,
-                           reason="eod", tp_frac=taken_frac))
+                           reason="eod", tp_frac=taken_frac, hard_risk=hard_risk, mae=mae, mfe=mfe))
     return trades
 
 
@@ -433,7 +591,11 @@ def run(bars: pd.DataFrame, bands: pd.DataFrame, decision_mfos,
         ladder_frac=0.5, exit_bands=None, exit_y=0.0,
         flat_before_close=0, cond_regime=None,
         hivol_cadence=15, lovol_cadence=1,
-        init_stop_atr=0.0, tp_gate=None, stop_gate=None) -> pd.DataFrame:
+        init_stop_atr=0.0, tp_gate=None, stop_gate=None,
+        reentry="later_decision", reset_check="decision",
+        audit_out=None, reset_hazard=None, reset_seed=0,
+        hard_stop_buf_atr=None, hard_stop_trigger="touch",
+        hard_stop_atr_col=None, track_excursion=False) -> pd.DataFrame:
     band_by = {d: g for d, g in bands.groupby("sdate", sort=False)}
     exit_band_by = ({d: g for d, g in exit_bands.groupby("sdate", sort=False)}
                     if exit_bands is not None else None)
@@ -461,7 +623,14 @@ def run(bars: pd.DataFrame, bands: pd.DataFrame, decision_mfos,
                                     cond_regime=cr, hivol_cadence=hivol_cadence,
                                     lovol_cadence=lovol_cadence,
                                     init_stop_atr=init_stop_atr, tp_gate=tp_gate,
-                                    stop_gate=stop_gate))
+                                    stop_gate=stop_gate, reentry=reentry,
+                                    reset_check=reset_check, audit_out=audit_out,
+                                    reset_hazard=reset_hazard,
+                                    reset_seed=reset_seed,
+                                    hard_stop_buf_atr=hard_stop_buf_atr,
+                                    hard_stop_trigger=hard_stop_trigger,
+                                    hard_stop_atr_col=hard_stop_atr_col,
+                                    track_excursion=track_excursion))
     df = pd.DataFrame(out)
     if not df.empty:
         df = df.rename(columns={"sdate": "date"})

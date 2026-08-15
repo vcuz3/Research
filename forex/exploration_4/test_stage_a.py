@@ -111,6 +111,45 @@ def test_vr_session_cells_require_both_endpoints_in_session():
     assert acc["n_k"][0, len(lib.ALL_SESSIONS) - 1] == 5   # pooled cell bridges them
 
 
+def test_vr_session_cells_use_session_demeaned_returns_f5():
+    """Stage-A repair F5: a per-session VR must be demeaned WITHIN the session.
+
+    Two contiguous iid (random-walk) sessions with opposite drifts. Globally demeaned,
+    each session still carries a constant offset, which a lag-k autocovariance reads as
+    strong spurious POSITIVE serial correlation (VR >> 1). Session-demeaning removes the
+    offset and the per-session VR returns to ~1, while the pooled 'all' cell is ~1 in
+    both cases (it is globally demeaned regardless).
+    """
+    rng = np.random.default_rng(19)
+    n = 200_000
+    r0 = rng.standard_normal(n) + 0.30       # session 0: +drift
+    r1 = rng.standard_normal(n) - 0.30       # session 1: -drift
+    r = np.concatenate([r0, r1])
+    minute_pos = np.arange(2 * n, dtype=np.int64)          # fully contiguous
+    sess = np.concatenate([np.zeros(n, np.int16), np.ones(n, np.int16)])
+    valid = np.ones(2 * n, bool)
+    dm = r - r.mean()                                       # global demean
+    dm_sess = np.array(dm, copy=True)                       # session demean
+    for code in (0, 1):
+        cell = sess == code
+        dm_sess[cell] = r[cell] - r[cell].mean()
+
+    # Without the F5 fix (session cells fed the globally-demeaned series): inflated.
+    acc_bad = lib.accumulate_vr(dm, minute_pos, valid, sess, max_lag=30)
+    vr_bad = lib.variance_ratio(acc_bad, 30, cell=0)
+    assert vr_bad["vr"] > 2.5, vr_bad["vr"]                 # spurious, offset-driven
+
+    # With the F5 fix: session-demeaned returns feed the session cells -> VR ~ 1.
+    acc = lib.accumulate_vr(dm, minute_pos, valid, sess, max_lag=30, returns_sess=dm_sess)
+    vr0 = lib.variance_ratio(acc, 30, cell=0)
+    assert vr0["vr"] == pytest.approx(1.0, abs=0.05), vr0["vr"]
+    # the pooled 'all' cell is unaffected by returns_sess (still globally demeaned)
+    all_cell = len(lib.ALL_SESSIONS) - 1
+    vr_all_a = lib.variance_ratio(acc, 30, cell=all_cell)["vr"]
+    vr_all_b = lib.variance_ratio(acc_bad, 30, cell=all_cell)["vr"]
+    assert vr_all_a == pytest.approx(vr_all_b, abs=1e-9)
+
+
 def test_vr_invalid_returns_are_excluded_not_zero_filled():
     rng = np.random.default_rng(5)
     r = rng.standard_normal(50_000)

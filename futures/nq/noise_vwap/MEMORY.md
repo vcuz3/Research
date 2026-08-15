@@ -259,6 +259,63 @@ the linked reports, code, and run artifacts.
   14 focused tests pass. Evidence: `artifacts/runs/EXP-0042/`; reproduce
   `python -u -m futures.nq.noise_vwap.scripts.hyp_0030_trend_hysteresis`.
 
+- `EXP-0043` (HYP-0031, `require_reset` same-side re-entry lock; user-supplied external
+  rule from a friend's independent Noise-Area implementation, `Require reset rule.md`
+  "run 18"). Rule: after a STOP exit on one side, block fresh same-side entries until
+  price is observed back INSIDE the noise area; opposite-side entries and flips are
+  never blocked. **SPLIT VERDICT — the splitting variable is the STOP-CHECK CADENCE,
+  and the two mechanisms are SUBSTITUTES.** PRIMARY preregistered cell (this project's
+  deployed every-bar continuous-stop book): **NO-GO on both markets** — NQ dSharpe
+  −0.011 / netR −4.41, ES +0.003 / netR −2.45, both fail the gate so Null C was not
+  spent; an exposure-matched random drop from the same candidate pool does at least as
+  well (frac(random≥real) 0.655 NQ / 0.825 ES) and the trades the lock removes are
+  PROFITABLE (+0.0103 R NQ, +0.0054 ES) = exposure trimming, no selection. SECONDARY
+  cell (decision-clock stop = the source spec's own run-18 cadence; **SEARCHED, not
+  preregistered**): PASSES — NQ dSharpe **+0.117** / netR +4.77, ES **+0.224** / netR
+  +14.81, removed trades are LOSERS (−0.0121 NQ / −0.0355 ES R, gross −2.36 pt NQ),
+  gross/trade +23% both markets, ES maxDD 8.64→6.83. **DECISIVE control (1b): same
+  lock, RANDOM unlock** — keep the lock, its side-scoping, cadence and PERSISTENCE,
+  replace only its trigger with a coin flip at hazard p bisected to match the trade
+  count exactly (NQ p=0.177 → n 2528 vs rule 2528; ES p=0.173 → 2567 vs 2579): real
+  +0.117 vs null −0.012 sd 0.054 **frac 0.005** (NQ); +0.224 vs +0.039 sd 0.054
+  **frac 0.000** (ES). The null centres at ~0, so cooling off for the same duration at
+  matched exposure is worth NOTHING — the entire effect is WHERE the lock releases
+  (price back inside the band), i.e. the reset CONDITION carries the information, which
+  is precisely the spec's claim. Null C (40 draws): ES real +0.224 vs null +0.023,
+  z+2.24, frac **0.000** PASS; NQ real +0.117 vs null **−0.038**, z+1.75, frac **0.075**
+  = MISS vs the preregistered 0.05 (null centre NEGATIVE ⇒ tied to the thing being cut,
+  the EXP-0013 signature, NOT fewer-trades variance amplification — but a miss, recorded
+  as a miss). Diffusivity gate preserved exactly on both (NQ 0.2500=0.2500, ES
+  0.0000=0.0000). MECHANISM: a 12×/day stop lets price run far outside the band before
+  exiting, so the breakout is usually still true at the next checkpoint and the engine
+  immediately re-buys the move that just failed; the lock removes that churn. An
+  every-minute stop exits before that state forms, so little churn remains and what the
+  lock then removes is profitable. Consistent with EXP-0031 (close-confirmed continuous
+  stop retained): **the continuous stop already captures this value by another route.**
+  Rejected clock-artifact explanation (the winning cell shares reset+stop clocks):
+  control 1b holds the cadence FIXED and randomises only the trigger, and the effect
+  transfers to ES with the same sign and larger magnitude. Retain the deployed
+  baseline; do NOT promote as alpha; `reentry`/`reset_check`/`random_reset` kept
+  default-off on `core/engine2.py` (bit-exact parity asserted on both stop books;
+  `tests/test_require_reset.py` 7/7, incl. the load-bearing spec evaluation order —
+  the stop bar is itself usually INSIDE the band, so checking reset after the stop
+  would make the rule a no-op). **Two controls were produced INVALID in-run and are
+  preserved rather than discarded:** (1) the first matched-count control matched lock
+  FIRINGS not exposure — one blocked key removes only 0.586 trades, so the random arm
+  cut ~666 NQ trades vs the rule's 430 and was flattered; corrected numbers 0.655/0.825
+  replace an earlier 0.740/0.955; (2) on the secondary cells that control went
+  DEGENERATE at K==pool (every draw identical, sd 0.0000) and printed a FALSE
+  frac=0.000 that would have read as the run's strongest confirmation — a one-shot
+  blocklist cannot imitate a PERSISTENT lock (blocking 100% of the pool once removes
+  only ~153–310 trades vs the rule's 395), now guarded in code. Also recorded:
+  **58% of ES and 39% of NQ minutes open exactly at the prior close**, so the
+  next-open fill convention is frequently the same NUMBER as the signal close — a
+  pre-existing project-wide caveat, identical across treatment and baseline.
+  Evidence: `artifacts/runs/EXP-0043/` (`review.md`, `cells_*.csv`,
+  `decomposition_*.json`, `random_reset_null_*.csv`, `nullc_*.csv`, `verdict_*.json`);
+  reproduce `python -u -m futures.nq.noise_vwap.scripts.hyp_0031_require_reset real NQ`
+  and `... real NQ 40 decision decision`.
+
 ## Provisional hypotheses
 
 - None currently promoted.

@@ -1,0 +1,15 @@
+{
+  "experiment_id": "EXP-0005",
+  "stage": "C",
+  "axis": "displacement_depth",
+  "inherits": "baseline_replication/configs/stage_b.json",
+  "overlay_arm_delay": 1,
+  "overlay_arm_treatment": "guarded",
+  "depth_threshold_min": 2.0,
+  "depth_threshold_max": 4.0,
+  "depth_threshold_step": 0.05,
+  "depth_quantile_buckets": [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+  "deployable_min_trades": 2000,
+  "null_permutations": 500,
+  "null_seed": 20260809
+}

@@ -124,10 +124,38 @@ Evidence: `futures/nq/vei_exploration` (EXP-0009 §I; EXP-0008 §H), `futures/nq
   open silently deletes some pairs' decisions. Check whether a coverage gap has a
   fixed minute-of-hour signature (a download-chunk artifact) before reading it as
   microstructure.
+- **A PADDED data vintage deletes exactly the events a session-boundary study is
+  about, and it deletes them SILENTLY by making the boundary disappear** (2026-08-12,
+  `provisional`; confirm on a second padded archive). Three of nine spot-FX archives
+  carry **Saturday bars** — NZDJPY 181,699 of them, uniform across all 24 hours in
+  2021-23, with weekday bars rising to exactly 1440/day against ~1400 elsewhere.
+  Spot FX does not trade Saturdays, so that vintage is gap-filled. The trap is the
+  failure MODE: a weekend gap defined as "the move across this series' own ≥24h
+  break" found only 637/782 and 653/782 weekends on the padded pairs, because
+  padding means **no break exists** — and the ~145 missing weekends were not random,
+  they were precisely the padded era. **Diagnostic: count bars on days the market
+  is closed, and bars-per-day by YEAR** (a step from ~1400 to exactly 1440 is the
+  tell); a uniform-across-all-24-hours histogram on a closed day is fabrication, a
+  high zero-range fraction is stale padding. **Fix: derive one canonical session
+  calendar from a clean archive and impose it on every instrument**, snapping each
+  to its own nearest real bar with a recorded tolerance. This also removes a
+  confound that exists even with clean data — otherwise pairs are compared on
+  slightly different session windows. Reassuring check afterwards: the six CLEAN
+  archives carried the effect more strongly (+0.356, t 4.52) than the three padded
+  ones (+0.177, t 1.87), i.e. padding dilutes rather than manufactures.
+- **A delayed-entry (boundary-artifact) control must hold the HOLDING PERIOD
+  constant, or it silently becomes a horizon sweep** (2026-08-12, `provisional`).
+  Anchoring the exit at `event + h` while sweeping entry delay `d` shortens the
+  trade by `d`; at `h=60min, d=60min` the trade had **zero duration** and the
+  control read as a total collapse of the effect. Anchor exits at `entry + H`
+  instead. The distinction is invisible at long horizons (a 60-min delay costs 4%
+  of a 1-day hold) and fatal at short ones — which is exactly where boundary
+  artifacts live, so the control is broken precisely where it is needed.
 
 Evidence: `forex/exploration_1/RSI_FIVE_MINUTE_CLOCK_REPORT.md`, `futures/gc/noise_vwap/reports/DATA_QUALITY.md`,
 `forex/exploration_1/RSI_COHERENCE_TIMEEXIT_REPORT.md`, `futures/forex/vwap_exploration` (EXP-0003, EXP-0001),
-`forex/exploration_4/reports/DATA_QUALITY.md`.
+`forex/exploration_4/reports/DATA_QUALITY.md`, `forex/exploration_7/reports/DATA_QUALITY.md`
++ `artifacts/runs/EXP-0002/review.md`.
 
 ---
 
@@ -220,6 +248,19 @@ Evidence: `forex/noise_vwap` FINDINGS §B–E, `futures/nq/claude_exploration_1`
 - **Score an argmax agreement rate against the MODAL-CATEGORY base rate, not a uniform
   null** (2026-08-03). "Predicted cell won on 3/3" looked like p≈1/64 but the modal
   block wins 71% of units, so expected hits = observed = zero information.
+- **A synthetic-injection power check must inject into a DE-MEANED series, or it
+  measures real+injected and reports absurd sensitivity** (2026-08-12,
+  `provisional`). Injecting `m` on top of the effect already present made a
+  weekend-gap study report a minimum detectable effect of **0.05 sigma** when the
+  true MDE was **0.58 sigma** — an order of magnitude wrong, and wrong in the
+  dangerous direction (it certified the measurement as sensitive enough to trust a
+  null). For a simple mean the whole thing collapses to one line: **MDE ≈ 2 × the
+  cluster-robust SE**, so compute that first and only build an injection harness if
+  the estimator is not a mean. The tell that something was off: the study's headline
+  effect (0.53) was *below* its claimed MDE yet had t=1.85 — if a "detectable"
+  effect isn't significant, the MDE is wrong. Pairs with the positive-control gate
+  above: that gate proves the measurement can see a KNOWN effect, this one prices
+  how big the effect must be.
 - **For two autocorrelated series on a cyclical index, use a CIRCULAR SHIFT, not a
   label shuffle** (2026-08-03) — a free permutation destroys the autocorrelation and
   is anti-conservative.
@@ -234,10 +275,68 @@ Evidence: `forex/noise_vwap` FINDINGS §B–E, `futures/nq/claude_exploration_1`
 - **A small-n guard that returns NaN feeding a comparison that treats NaN as a pass**
   prints false significance (2026-08-03) — `NaN <= NaN` scored as p=0.0000 on all
   units. Guards that degrade to NaN are only safe if every downstream comparison
-  treats NaN as a FAILURE.
+  treats NaN as a FAILURE. **Re-seen 2026-08-11 in a placebo family**: a degenerate
+  anchor with a handful of date clusters printed |t| = 1.4e16, and because
+  `NaN >= real` is False the NaN cells silently counted as "did not beat the real
+  arm" — i.e. the guard made the test EASIER to pass. Drop unusable cells from the
+  null explicitly and REPORT the count; never let them sit in the comparison.
+- **A NULL RESULT IS UNINTERPRETABLE WITHOUT A POSITIVE CONTROL** (2026-08-11,
+  `provisional`; confirm the second time a diagnostic's null is read). "X carries no
+  information" and "my measurement cannot see information" are the same output. So
+  before reading a null, run the identical code path on a case where the effect is
+  KNOWN to exist and show it is detected. On an FX session-anchor sweep the control
+  (NQ's real 09:30 cash open, which the sibling project proves is load-bearing)
+  **FAILED on the first execution** — which located a construction bug in the sweep,
+  not a fact about FX. Declare the control as a VALIDITY GATE in the preregistration
+  with "control fails ⇒ INCONCLUSIVE, fix the method", because that converts the
+  most likely way to fool yourself into a routine, non-negotiable step. Corollary:
+  the control also CALIBRATES the effect size — the real NQ anchor stood **≈21×**
+  above its placebo family's median effect while FX's best stood ≈2.3×, which is a
+  far more legible discriminator than either t-stat alone.
+- **When porting a session-anchored construct, match the DECISION UNIVERSE, not just
+  the anchor** (2026-08-11, `provisional`; confirm on a second port). The identical
+  NQ 09:30 anchor scored cluster-t **+3.68** on its native 390-min RTH session and
+  **+1.60** when forced to a 1425-min all-hours session — same instrument, same
+  anchor, same code, only the session length differing. Spreading decisions across
+  hours the construct never claimed to work in dilutes the structure the anchor
+  organises, and it will suppress a real effect and fake a null.
+- **`Series.astype("int64")` on datetimes returns the integer in the dtype's UNIT,
+  and this workspace MIXES units across instruments** (2026-08-11). `forex/data/**`
+  is `datetime64[us]`; `futures/nq/data/**` is `datetime64[ns, UTC]`. Both hold
+  exact whole-minute values (0 of 5.54M EURUSD rows have a nonzero second or
+  microsecond) — this is a STORAGE-unit hazard, not data precision, which is why it
+  reads as harmless. A hard-coded `// 60_000_000_000` was therefore right on the NQ
+  control and wrong by 1000× on FX, collapsing 576,000 distinct minutes onto 577
+  colliding values. **The danger is that it is instrument-dependent inside ONE code
+  path: correct on the positive control, broken on the subject** — the exact
+  configuration that would have validated a method and then fed it garbage. Divide
+  by a `pd.Timedelta` (exact at any unit) and assert index uniqueness after
+  building it. Check `df[ts].dtype` when a loader spans two data sources.
+- **A PERSISTENT/stateful rule cannot be controlled by a ONE-SHOT filter — randomise
+  the STATE TRANSITION, not the trade list** (2026-08-11, `provisional`; confirm on a
+  second stateful rule — a cooldown, a hysteresis latch, a regime lock). A re-entry LOCK
+  ("after a stop, block this side until condition X") re-fires at every later decision
+  bar while it stays armed, so it is not equivalent to any set of blocked entry keys.
+  Two control failures in one run: (1) matching on the number of times the lock FIRES
+  overshoots badly — one blocked key removed only **0.586** trades (the engine re-enters
+  at the next checkpoint), so the "matched" random arm cut ~666 trades against the rule's
+  430 and was flattered in a book where fewer trades mechanically raises Sharpe.
+  **Calibrate to reproduce the treatment's TRADE COUNT and print the achieved count.**
+  (2) Even corrected, the control went **degenerate at K == pool**: matching a persistent
+  lock's exposure required 100% of the candidate pool, so all 200 draws were the same
+  deterministic blocklist, sd=0.0000 — and it printed **frac=0.000**, which would have
+  read as the run's strongest confirmation. Blocking the whole pool once still removed
+  only ~153–310 trades vs the lock's 395. **Fix: keep the state machine, randomise only
+  its TRIGGER** — same arming, side-scoping, cadence and persistence, but release on a
+  coin flip at a hazard bisected to match the trade count. Decisive and well-powered: it
+  centred at ~0 (random release is worth nothing) while the real condition scored +0.117
+  NQ / +0.224 ES, frac 0.005/0.000. Generalises the NaN-guard trap above: **a control
+  with sd==0 is not a null — assert non-degeneracy before reading any frac.**
 
-Evidence: `futures/nq/noise_vwap` (EXP-0013), `forex/exploration_1` (cointegration null,
-gate null, conviction/supervised reports), `futures/forex/vwap_exploration` EXP-0007.
+Evidence: `futures/nq/noise_vwap` (EXP-0013, EXP-0043), `forex/exploration_1` (cointegration
+null, gate null, conviction/supervised reports), `futures/forex/vwap_exploration` EXP-0007,
+`forex/noise_vwap/artifacts/runs/EXP-0003/review.md` (positive control, NaN-in-null,
+decision-universe and datetime-resolution items).
 
 ---
 
@@ -270,6 +369,20 @@ gate null, conviction/supervised reports), `futures/forex/vwap_exploration` EXP-
   reversion, paired t=−12.2 at n=112k. Run the check before designing the study, not after:
   it decides whether `open(m+1)` is a real fix or a cosmetic one. What survived was still
   real at the finest grain and zero at τ≥60min.
+- **A CONDITIONER correlated with the boundary noise inherits the shared-close artifact
+  and masquerades as a real effect** (2026-08-09, `provisional`; confirm on a second
+  conditioner or asset). Testing whether *volume* confirms a move (high-vol → continue,
+  thin move → reverse) on spot FX + CME-futures volume, EURUSD showed a dir-return spread
+  of +1.49 pips (day-clustered t=4.21) among |z|≥2 displacements. A **paired 1-bar
+  embargo** (enter `open[t+2]`) removed **~84%** of it (t→0.70); post-embargo all 4 USD
+  majors were insignificant AND sign-disagreed. Because volume co-moves with the size of
+  the shared-close pricing error, the artifact's manufactured reversion sorted on the
+  conditioner and looked like a volume edge. **Run the paired embargo BEFORE reading any
+  volume/vol/size-conditioned continuation result.** Post-embargo the residual directional
+  IC(volume, dir) was ≈ −0.008 (sub-pip, gone by τ≥15min); the only robust signal was
+  volume→forward-|move| (IC +0.084) — magnitude, not direction (name the object the
+  decision consumes, §4). Two-sided slot-z normalisation is anti-conservative, so this
+  null is strong. Evidence: `forex/exploration_6/reports/FINDINGS.md`.
 - **A fixed-PIP slippage charged against VOL-UNIT barriers is a grain selector**
   (2026-08-08). With TP=SL=1.0σ_τ and 1 pip adverse stop slippage, the realised mean loss
   exceeded the nominal 1.0R stop by exactly `slippage/σ_τ` at all five rungs (0.327 vs
@@ -280,10 +393,26 @@ gate null, conviction/supervised reports), `futures/forex/vwap_exploration` EXP-
   compare only at matched σ.** The ABSOLUTE reading (PF<1 everywhere) still stands. Tell:
   a win rate ABOVE the algebraic break-even `1/(1+RR)` alongside negative expectancy means
   the asymmetry is in the fill charge, not the barriers.
+- **A passive level-retrace exit's entire edge can be the touch-vs-fill assumption when the
+  retrace TARGET is also the reversal point** (2026-08-09, `provisional`; confirm by
+  re-running on a second retrace-target family — VWAP or prior-close — or with L1 quote data).
+  A spot-FX z-fade whose exit is a limit at the pre-displacement anchor prints **≈+0.35 gross
+  pips** if a bare TOUCH of the anchor is credited as a fill, but **≈−0.17 (CI includes 0)** once
+  the fill requires trading THROUGH the anchor by a vol-scaled guard of 0.25·σ — same entries,
+  same paths, fill still credited AT the anchor (Rule 1). Trade-by-trade the both-fill and
+  both-timeout cells are identical; the whole ~0.5-pip swing is a **~2.6% marginal band** where
+  price reverts *just* to the anchor and reverses, so touch books +7.6 pips and the guarded arm
+  misses and times out at −12.1. (Robust to the deployable one-position estimand.) The reversion completes to the level and stalls there — the
+  level is resistance — so a touch is not a fill (Rule 4) in the strongest way: crediting it
+  manufactures the edge. Diagnostic: report a **touch (g=0) ceiling, a guarded (g·σ) book, and a
+  time-exit floor** side by side; if the edge lives only at g≈0 it is not capturable. A pure
+  fixed-horizon/time exit reproduces the touch number (both credit the level implicitly), so a
+  fixed-horizon "reversion" result is NOT evidence a passive exit can harvest it.
 
 Evidence: `futures/gc/vwap_reversion` EXP-0000, `forex/exploration_1/RSI_FILL_MODEL_REPORT.md`,
 `futures/nq/claude_exploration_1` §G, `futures/forex/vwap_exploration`,
-`forex/exploration_4/artifacts/runs/EXP-0002/review.md` §2/§4.
+`forex/exploration_4/artifacts/runs/EXP-0002/review.md` §2/§4,
+`forex/exploration_4/reports/STAGE_B_REFERENCE_BOOK.md` + `artifacts/runs/EXP-0004/review.md` §3.
 
 ---
 
@@ -306,6 +435,20 @@ Evidence: `futures/gc/vwap_reversion` EXP-0000, `forex/exploration_1/RSI_FILL_MO
   better selection + less exposure = no risk-adjusted gain. The only Sharpe-beater
   (`disagree` filter) failed its re-pairing null with the null centred at ~0 =
   consumed-history screen, not an edge.
+- **An IMPORTED rule's benefit can be entirely redundant with a fix your baseline
+  already has — re-test it on YOUR baseline, and sweep the baseline choice it
+  interacts with** (2026-08-11, `provisional`). An external "require_reset" re-entry
+  lock (block same-side re-entry after a stop until price returns inside the noise
+  band) reproduced its author's reported gain on THEIR configuration (+0.117 NQ /
+  +0.224 ES, and it survives a matched random-unlock null at frac 0.005/0.000) yet was
+  worth **−0.011 / +0.003** on the same code with the stop checked every minute instead
+  of 12×/day. The two are SUBSTITUTES: a slow stop lets price run outside the band, so
+  the breakout is still true at the next checkpoint and the engine re-buys the failed
+  move; a fast stop exits before that state forms. Tell: the trades the rule removes are
+  LOSERS under the slow stop (−0.012 R) but PROFITABLE under the fast one (+0.010 R) —
+  **the sign of the removed-trade expectancy flips with the baseline**, so read it before
+  reading the Sharpe. Corollary: when importing any overlay, the first sweep is the
+  baseline parameter it is implicitly compensating for.
 - **Continuous/every-bar stop value scales with the drift/noise ratio** (2026-07-19,
   confirmed). It shrinks the loser tail identically everywhere but clips winners:
   NQ +0.145 Sharpe (GO), ES wash, GC inverts (−0.52). Never transfer an exit upgrade

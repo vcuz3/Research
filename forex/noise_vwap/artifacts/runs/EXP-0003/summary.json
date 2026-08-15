@@ -1,0 +1,170 @@
+{
+  "primary": {
+    "gate": true,
+    "horizon": 60,
+    "embargo": 1
+  },
+  "nq_control_390": {
+    "label": "NQ positive control @390 (VALIDITY GATE)",
+    "passed": true,
+    "criteria": [
+      {
+        "anchor": "RTH_OPEN",
+        "abs_t": 3.6753143230462597,
+        "mean_bw": 0.03693581723864025,
+        "frac_placebo_ge": 0.058823529411764705,
+        "c1_t_ge_2": true,
+        "c2_sign_consistent": true,
+        "c3_beats_placebo_p90": true,
+        "anchor_stability_ok": true,
+        "pass_all": true
+      }
+    ],
+    "n_placebo_usable": 17,
+    "n_placebo_dropped": 1,
+    "dropped_anchors": [
+      "ET1115"
+    ],
+    "placebo_median_abs_t": 0.9785377841169473,
+    "placebo_p90_abs_t": 2.5987815830075935,
+    "placebo_max_abs_t": 3.9615519359219182
+  },
+  "nq_control_1425": {
+    "label": "NQ positive control @1425",
+    "passed": false,
+    "criteria": [
+      {
+        "anchor": "RTH_OPEN",
+        "abs_t": 1.6015660143375299,
+        "mean_bw": 0.006210826673304947,
+        "frac_placebo_ge": 0.17391304347826086,
+        "c1_t_ge_2": false,
+        "c2_sign_consistent": true,
+        "c3_beats_placebo_p90": false,
+        "anchor_stability_ok": true,
+        "pass_all": false
+      }
+    ],
+    "n_placebo_usable": 23,
+    "n_placebo_dropped": 1,
+    "dropped_anchors": [
+      "ET1715"
+    ],
+    "placebo_median_abs_t": 0.8036281296207538,
+    "placebo_p90_abs_t": 1.720836396203322,
+    "placebo_max_abs_t": 2.260089995383667
+  },
+  "fx_1425": {
+    "label": "FX anchor hypothesis @1425",
+    "passed": false,
+    "criteria": [
+      {
+        "anchor": "NY_ROLL",
+        "abs_t": 3.644728810378128,
+        "mean_bw": -0.010613859588097541,
+        "frac_placebo_ge": 0.125,
+        "c1_t_ge_2": true,
+        "c2_sign_consistent": true,
+        "c3_beats_placebo_p90": false,
+        "anchor_stability_ok": true,
+        "pass_all": false
+      },
+      {
+        "anchor": "TOK_OPEN",
+        "abs_t": 3.282331856377309,
+        "mean_bw": -0.008734616685112554,
+        "frac_placebo_ge": 0.125,
+        "c1_t_ge_2": true,
+        "c2_sign_consistent": true,
+        "c3_beats_placebo_p90": false,
+        "anchor_stability_ok": true,
+        "pass_all": false
+      },
+      {
+        "anchor": "LON_OPEN",
+        "abs_t": 1.4117312132505881,
+        "mean_bw": -0.003324503176993617,
+        "frac_placebo_ge": 0.5416666666666666,
+        "c1_t_ge_2": false,
+        "c2_sign_consistent": true,
+        "c3_beats_placebo_p90": false,
+        "anchor_stability_ok": true,
+        "pass_all": false
+      },
+      {
+        "anchor": "LON_FIX",
+        "abs_t": 0.5679314986007252,
+        "mean_bw": -0.0016709387631749697,
+        "frac_placebo_ge": 0.9166666666666666,
+        "c1_t_ge_2": false,
+        "c2_sign_consistent": true,
+        "c3_beats_placebo_p90": false,
+        "anchor_stability_ok": true,
+        "pass_all": false
+      }
+    ],
+    "n_placebo_usable": 24,
+    "n_placebo_dropped": 0,
+    "dropped_anchors": [],
+    "placebo_median_abs_t": 1.4662303219180788,
+    "placebo_p90_abs_t": 3.3883688816731268,
+    "placebo_max_abs_t": 5.008826962377247
+  },
+  "fx_390": {
+    "label": "FX anchor hypothesis @390",
+    "passed": false,
+    "criteria": [
+      {
+        "anchor": "NY_ROLL",
+        "abs_t": 2.544450433678708,
+        "mean_bw": -0.039746181176779284,
+        "frac_placebo_ge": 0.16666666666666666,
+        "c1_t_ge_2": true,
+        "c2_sign_consistent": true,
+        "c3_beats_placebo_p90": false,
+        "anchor_stability_ok": true,
+        "pass_all": false
+      },
+      {
+        "anchor": "LON_FIX",
+        "abs_t": 2.0608537675847067,
+        "mean_bw": -0.02677180007442843,
+        "frac_placebo_ge": 0.20833333333333334,
+        "c1_t_ge_2": true,
+        "c2_sign_consistent": true,
+        "c3_beats_placebo_p90": false,
+        "anchor_stability_ok": true,
+        "pass_all": false
+      },
+      {
+        "anchor": "TOK_OPEN",
+        "abs_t": 1.7883260550538842,
+        "mean_bw": -0.023758943502962964,
+        "frac_placebo_ge": 0.25,
+        "c1_t_ge_2": false,
+        "c2_sign_consistent": true,
+        "c3_beats_placebo_p90": false,
+        "anchor_stability_ok": true,
+        "pass_all": false
+      },
+      {
+        "anchor": "LON_OPEN",
+        "abs_t": 1.2335609942960428,
+        "mean_bw": -0.011551196705082539,
+        "frac_placebo_ge": 0.6666666666666666,
+        "c1_t_ge_2": false,
+        "c2_sign_consistent": true,
+        "c3_beats_placebo_p90": false,
+        "anchor_stability_ok": true,
+        "pass_all": false
+      }
+    ],
+    "n_placebo_usable": 24,
+    "n_placebo_dropped": 0,
+    "dropped_anchors": [],
+    "placebo_median_abs_t": 1.3295113778482799,
+    "placebo_p90_abs_t": 2.548831776502176,
+    "placebo_max_abs_t": 3.725428011621596
+  },
+  "final": "HYP-0003 REJECTED \u2014 the control detects NQ's real anchor, and no structural FX anchor beats its placebo family. The anchor was NOT the binding constraint; the Noise-Area family is closed for spot FX."
+}

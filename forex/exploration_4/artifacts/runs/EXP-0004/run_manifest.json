@@ -1,0 +1,125 @@
+{
+  "experiment_id": "EXP-0004",
+  "stage": "B",
+  "hypothesis": "experiments/hypotheses/HYP-0004.md",
+  "kill_test": "artifacts/runs/EXP-0004/KILL_TEST.md",
+  "review_corrections": "F1 stateful estimand; F2 no-entry + consumed-median cost; F3/minor language; F4 coverage funnel",
+  "config": {
+    "experiment_id": "EXP-0004",
+    "stage": "B",
+    "pairs": [
+      "EURUSD",
+      "GBPUSD",
+      "AUDUSD",
+      "NZDUSD"
+    ],
+    "grain_ladder_minutes": [
+      5,
+      15,
+      30,
+      60,
+      120
+    ],
+    "sigma_window_minutes": 28800,
+    "sigma_min_fraction": 0.9,
+    "entry_k_grid": [
+      1.5,
+      2.0,
+      2.5,
+      3.0
+    ],
+    "horizon_minutes": [
+      15,
+      30,
+      60,
+      120,
+      240,
+      480
+    ],
+    "entry_delay_bars": [
+      1,
+      0
+    ],
+    "primary_entry_delay_bars": 1,
+    "common_sample_horizon_minutes": 480,
+    "news_blackout_minutes": 30,
+    "bracket_k_signal": 2.0,
+    "bracket_tp_sigma": 1.0,
+    "bracket_sl_sigma": 1.0,
+    "bracket_stop_slippage_pips": 1.0,
+    "bracket_fixed_cap_minutes": 240,
+    "bracket_scaled_cap_bars": 8,
+    "retrace_fractions": [
+      0.5,
+      1.0
+    ],
+    "vr_max_lag_minutes": 120,
+    "sessions": {
+      "tokyo": {
+        "tz": "Asia/Tokyo",
+        "open_minute": 540,
+        "close_minute": 900
+      },
+      "london": {
+        "tz": "Europe/London",
+        "open_minute": 480,
+        "close_minute": 990
+      },
+      "new_york": {
+        "tz": "America/New_York",
+        "open_minute": 480,
+        "close_minute": 1020
+      }
+    },
+    "friday_flat_ny_minute": 1015,
+    "start": "2012-01-01T00:00:00Z",
+    "era_split": "2021-01-01T00:00:00Z",
+    "holdout_start": "2024-01-01T00:00:00Z",
+    "cost_scenarios": [
+      "optimistic",
+      "base",
+      "pessimistic"
+    ],
+    "tie_tolerance_R": 0.005,
+    "tie_tolerance_vr": 0.005,
+    "tau": 5,
+    "entry_k": 2.0,
+    "slot_lookback_sessions": 90,
+    "slot_min_fraction": 0.6667,
+    "holding_cap_minutes": 240,
+    "anchor_guard_sigma": 0.25,
+    "exit_treatments": [
+      "guarded",
+      "touch",
+      "time"
+    ],
+    "primary_exit_treatment": "guarded",
+    "primary_cost_scenario": "base"
+  },
+  "generated_utc": "2026-08-08T15:22:09.213582+00:00",
+  "funnel_all_delays": {
+    "signals_pre_veto": 397624,
+    "news_vetoed": 30942,
+    "zero_cap_friday": 211,
+    "no_entry_already_crossed": 7113,
+    "incomplete_path": 32322,
+    "book_eligible": 327036,
+    "friday_shortened": 10418
+  },
+  "funnel_primary_delay": {
+    "signals_pre_veto": 198812,
+    "news_vetoed": 15471,
+    "zero_cap_friday": 211,
+    "no_entry_already_crossed": 7105,
+    "incomplete_path": 15985,
+    "book_eligible": 160040,
+    "friday_shortened": 5053
+  },
+  "trade_rows": 981108,
+  "imported_from_exploration_1": [
+    "_cost_model.round_trip_pips",
+    "_run_rsi_axis6_calendar.high_impact_times",
+    "_run_rsi_broad_regime_sweep.PIP"
+  ],
+  "exit_simulator": "forex/exploration_4/_stage_b_lib.simulate_anchor_retrace (test_stage_b.py)"
+}

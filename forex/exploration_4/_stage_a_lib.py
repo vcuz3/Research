@@ -96,7 +96,8 @@ def session_codes(index: pd.DatetimeIndex, sessions_cfg: dict) -> np.ndarray:
 # View 1: variance ratio with Lo-MacKinlay heteroskedasticity-robust inference
 # --------------------------------------------------------------------------- #
 
-def accumulate_vr(returns, minute_pos, valid, sess_code, max_lag: int) -> dict:
+def accumulate_vr(returns, minute_pos, valid, sess_code, max_lag: int,
+                  returns_sess=None) -> dict:
     """Autocovariance sums for VR, per session cell and pooled ('all').
 
     ``returns`` must already be demeaned over the analysed subset, with zeros where
@@ -105,11 +106,21 @@ def accumulate_vr(returns, minute_pos, valid, sess_code, max_lag: int) -> dict:
     apart, so a data gap can never masquerade as a k-minute serial link. Session
     cells additionally require both endpoints in the same session.
 
+    ``returns`` feeds the pooled 'all' cell (globally demeaned over the analysed
+    subset). ``returns_sess`` feeds the per-session cells and, when supplied, must be
+    demeaned WITHIN each (era, session) group. This matters (Stage-A repair F5): a
+    per-session VR built on a globally-demeaned series prices each session's serial
+    dependence against the whole-day mean, so a session with its own drift leaks that
+    drift into its autocovariances and looks more (or less) reverting than it is. When
+    ``returns_sess`` is omitted the session cells fall back to ``returns`` (the old
+    behaviour), so existing pooled-only callers are unchanged.
+
     Returns arrays indexed [lag-1, cell] for lags 1..max_lag, where cell indexes
     ``ALL_SESSIONS`` (the final 'all' cell pools sessions and does NOT require the
     endpoints to share a session -- it is the ambient map).
     """
     r = np.asarray(returns, float)
+    rs = r if returns_sess is None else np.asarray(returns_sess, float)
     mp = np.asarray(minute_pos, np.int64)
     ok = np.asarray(valid, bool)
     sc = np.asarray(sess_code, np.int16)
@@ -118,10 +129,11 @@ def accumulate_vr(returns, minute_pos, valid, sess_code, max_lag: int) -> dict:
 
     s0 = np.zeros(n_cell)
     n0 = np.zeros(n_cell)
-    sq = np.where(ok, r * r, 0.0)
-    s0[:len(SESSION_LABELS)] = np.bincount(sc[ok], weights=sq[ok], minlength=len(SESSION_LABELS))
+    sq_all = np.where(ok, r * r, 0.0)
+    sq_sess = np.where(ok, rs * rs, 0.0)
+    s0[:len(SESSION_LABELS)] = np.bincount(sc[ok], weights=sq_sess[ok], minlength=len(SESSION_LABELS))
     n0[:len(SESSION_LABELS)] = np.bincount(sc[ok], minlength=len(SESSION_LABELS))
-    s0[all_cell] = sq.sum()
+    s0[all_cell] = sq_all.sum()
     n0[all_cell] = ok.sum()
 
     s_k = np.zeros((max_lag, n_cell))
@@ -129,19 +141,19 @@ def accumulate_vr(returns, minute_pos, valid, sess_code, max_lag: int) -> dict:
     n_k = np.zeros((max_lag, n_cell))
 
     for k in range(1, max_lag + 1):
-        a, b = r[k:], r[:-k]
         base = ok[k:] & ok[:-k] & ((mp[k:] - mp[:-k]) == k)
-        prod = a * b
-        # pooled 'all' cell: no same-session requirement
+        # pooled 'all' cell: globally-demeaned returns, no same-session requirement
+        prod = r[k:] * r[:-k]
         w = np.where(base, prod, 0.0)
         s_k[k - 1, all_cell] = w.sum()
         d_k[k - 1, all_cell] = np.square(w).sum()
         n_k[k - 1, all_cell] = base.sum()
-        # per-session cells
+        # per-session cells: session-demeaned returns, same-session requirement
         same = base & (sc[k:] == sc[:-k])
         if same.any():
+            prod_s = rs[k:] * rs[:-k]
             cs = sc[k:][same]
-            ps = prod[same]
+            ps = prod_s[same]
             s_k[k - 1, :len(SESSION_LABELS)] = np.bincount(cs, weights=ps, minlength=len(SESSION_LABELS))
             d_k[k - 1, :len(SESSION_LABELS)] = np.bincount(cs, weights=ps * ps, minlength=len(SESSION_LABELS))
             n_k[k - 1, :len(SESSION_LABELS)] = np.bincount(cs, minlength=len(SESSION_LABELS))

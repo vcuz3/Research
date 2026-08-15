@@ -1,0 +1,35 @@
+{
+  "timezone": "Australia/Sydney",
+  "schedule_time": "22:00",
+  "email_recipient": "vd373094@gmail.com",
+  "email_top_n": 25,
+  "candidate_limit_per_source": 100,
+  "download_max_bytes": 26214400,
+  "quality_threshold": 0.62,
+  "deterministic_min_score": 2,
+  "ai": {
+    "enabled": true,
+    "base_url_env": "OMNIROUTE_BASE_URL",
+    "api_key_env": "OMNIROUTE_API_KEY",
+    "model_env": "OMNIROUTE_MODEL",
+    "required_model_name_fragment": "free",
+    "max_calls_per_run": 40,
+    "max_input_tokens_per_run": 180000,
+    "max_chars_per_document": 24000,
+    "max_output_tokens": 500
+  },
+  "sources": {
+    "arxiv": {"enabled": true},
+    "crossref": {"enabled": true, "mailto": "vd373094@gmail.com"},
+    "openalex": {"enabled": true, "api_key_env": "OPENALEX_API_KEY"},
+    "sciencedirect": {"enabled": true, "api_key_env": "ELSEVIER_API_KEY"},
+    "feeds": [
+      {"name": "Aligrithm", "url": "https://aligrithm.com/rss/", "enabled": true, "exclude_terms": ["premium"], "exclude_page_terms": ["paying subscribers only"]},
+      {"name": "Concretum Research", "url": "https://concretumgroup.substack.com/feed", "enabled": true, "exclude_terms": ["paid subscriber"], "exclude_page_terms": ["paid subscribers only", "paying subscribers only"]},
+      {"name": "Quantocracy", "url": "https://quantocracy.com/feed/", "enabled": true, "discovery_only": true},
+      {"name": "NBER New Working Papers", "url": "https://www.nber.org/rss/new.xml", "enabled": false, "note": "Endpoint rejects automated clients; Crossref covers NBER paper metadata."},
+      {"name": "BIS Research Papers", "url": "https://www.bis.org/doclist/bis_fsi_publs.rss", "enabled": true},
+      {"name": "Central Bank Research Hub", "url": "https://www.bis.org/doclist/reshub_papers.rss", "enabled": true}
+    ]
+  }
+}

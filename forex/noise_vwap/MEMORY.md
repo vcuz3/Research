@@ -20,8 +20,9 @@ Concise handoff. Detailed evidence lives in `reports/` and
 - **Verdict: NO-GO.** The strategy loses at the GROSS level on all four pairs,
   in both session definitions, in 88 of 96 declared cells. Both preregistered
   kill-test gates fail. This is a rule-25 successful negative result, not an
-  unfinished investigation.
-- Last verified: 2026-08-01 (EXP-0001, EXP-0002).
+  unfinished investigation. **EXP-0003 additionally closes the last open
+  explanation for that failure (the arbitrary session anchor).**
+- Last verified: 2026-08-11 (EXP-0003; EXP-0001 and EXP-0002 on 2026-08-01).
 - Lifecycle phase: closeout.
 - Baseline replication: N/A — this is a cross-instrument port, not a paper
   replication. The external reference is `futures/nq/noise_vwap`.
@@ -43,6 +44,8 @@ Concise handoff. Detailed evidence lives in `reports/` and
   - `python -u -m forex.noise_vwap.tests.test_parity`
   - `python -u -m forex.noise_vwap.scripts.run_grid`
   - `python -u -m forex.noise_vwap.scripts.entry_information`
+  - `python -u -m forex.noise_vwap.tests.test_anchors` (17 invariants)
+  - `python -u -m forex.noise_vwap.scripts.anchor_sweep`
 - Primary evidence: `reports/FINDINGS.md`, `artifacts/runs/EXP-0001/review.md`,
   `artifacts/runs/EXP-0002/review.md`.
 
@@ -51,8 +54,9 @@ Concise handoff. Detailed evidence lives in `reports/` and
 - Specification: `paper/PAPER_SPEC.md`
 - Data quality (rule 9a): `reports/DATA_QUALITY.md`
 - Findings synthesis: `reports/FINDINGS.md`
-- Hypotheses: `experiments/hypotheses/HYP-0001.md`, `HYP-0002.md`
-- Runs: `artifacts/runs/EXP-0001/`, `artifacts/runs/EXP-0002/`
+- Hypotheses: `experiments/hypotheses/HYP-0001.md`, `HYP-0002.md`, `HYP-0003.md`
+- Runs: `artifacts/runs/EXP-0001/`, `artifacts/runs/EXP-0002/`,
+  `artifacts/runs/EXP-0003/`
 
 ## Confirmed findings
 
@@ -94,9 +98,38 @@ Concise handoff. Detailed evidence lives in `reports/` and
   rerun data quality reports show no sub-98% fixed windows. The 17:15 session
   anchor and ET decision clock remain frozen for experiment reproducibility.
 
+- **F — the ARBITRARY SESSION ANCHOR is not the cause (EXP-0003).** The last
+  untested explanation for the NO-GO: on NQ the anchor is a real auction boundary
+  (09:30 cash open) while `fxday`'s 17:15 ET was chosen for archive-defect
+  reasons, so the band's reference price might simply be noise. Swept the anchor
+  over 24 hourly ET placebos plus four structural FX boundaries (NY value-date
+  roll, London open, Tokyo open, post-WM-fix), each derived from its own timezone
+  with real DST, holding everything else fixed. **All four structural FX anchors
+  FAIL the preregistered test in both session lengths** (best: NY_ROLL @1425
+  t −3.64, frac(placebo ≥) 0.125; @390 t −2.54, frac 0.167). The POSITIVE CONTROL
+  passes at NQ's native 390-min length (09:30 open mean/bw +0.0369, t +3.68,
+  frac 0.056 — the only placebo above it is 09:15, the same boundary), so the
+  diagnostic demonstrably detects a real anchor. **Decisive: 24/24 FX placebos
+  are negative at 1425 and 23/24 at 390** — mild reversion at every hour of the
+  day, a property of the tape rather than of any anchor. The best structural FX
+  anchor stands only 2.3–2.5× above its family median effect against 21× for NQ.
+  Every FX sign is reversion, so even at face value the momentum construct points
+  the wrong way (consistent with finding C). Sensitivity, reported and NOT
+  adopted: filtering placebos to `anchor_stability ≥ 0.98` would pass NY_ROLL and
+  TOK_OPEN at frac 0.045 — but only in the @1425 arm, whose own positive control
+  FAILS; at @390 it still fails. No Null C (gate rule). Evidence:
+  `artifacts/runs/EXP-0003/review.md`.
+- **G — session LENGTH matters more than the anchor for this construct
+  (EXP-0003, method finding).** The identical NQ 09:30 anchor scores t +3.68 at a
+  390-minute RTH session and t +1.60 when forced to 1425 minutes. Spreading
+  decisions across all 24 hours dilutes the RTH structure the anchor organises.
+  Any future cross-market port of this construct should match the DECISION
+  UNIVERSE, not just the anchor. This is why the first execution's positive
+  control failed and why HYP-0003 carries Amendment 1.
+
 ## Provisional hypotheses
 
-- None. Both registered hypotheses are resolved.
+- None. All three registered hypotheses are resolved.
 
 ## Invalidated or superseded findings
 
@@ -106,6 +139,8 @@ Concise handoff. Detailed evidence lives in `reports/` and
   preregistered bar (2/4 pairs). Note that the first pass of EXP-0002, using a
   session-averaged estimand, would have reported it as CONFIRMED; that reading
   is invalid and must not be cited.
+- HYP-0003 (the FX failure is caused by an arbitrary session anchor):
+  **rejected**, EXP-0003, with a passing positive control.
 - HYP-0002 criterion 3 ("fade beats momentum on gross") was **badly specified
   by the builder** and carries no information: in the exit-neutral cell the fade
   is the exact algebraic negation of the momentum version (same entries, same
@@ -137,10 +172,18 @@ Concise handoff. Detailed evidence lives in `reports/` and
 
 ## Next actions
 
-1. Obtain independent review of EXP-0001 and EXP-0002.
-2. Do not spend further effort on this construct for FX. The recommended
-   next steps for FX intraday research are recorded in `reports/FINAL_REVIEW.md`.
+1. Obtain independent review of EXP-0001, EXP-0002 and EXP-0003.
+2. **Do not spend further effort on this construct for FX.** Three registered
+   experiments now reject it on three separate explanations: negative gross
+   (EXP-0001), no directional information (EXP-0002), and not-an-anchor-problem
+   (EXP-0003). The recommended next steps for FX intraday research are recorded
+   in `reports/FINAL_REVIEW.md`; see also
+   `ai_shared_memory/EDGE_DENSITY_MAP.md`, which scores price/anchor/threshold
+   transforms as an exhausted terrain.
 3. Consider promoting finding D after a second-project confirmation.
+4. Consider promoting finding G (match the decision universe, not just the
+   anchor, when porting a session-anchored construct) once a second project
+   reproduces it.
 
 ## Promotion candidates
 

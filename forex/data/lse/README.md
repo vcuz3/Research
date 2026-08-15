@@ -11,6 +11,11 @@ workspace-root `.env` and is never written here.
 - `economic_calendar/`: release events for US, Euro Area, and Australia,
   including actual, previous, consensus, forecast, revision flags, and UTC
   timestamps where supplied.
+- `bond_yields/`: full daily 2-year government yield histories for Australia,
+  New Zealand, Germany, the United Kingdom, the United States, and Japan. It
+  contains one Parquet file per country, a combined panel, the provider catalog
+  snapshot, and a download/quality manifest. Rebuild with
+  `python forex/download_lse_2y_yields.py`.
 - `manifest.json`: SHA-256 hashes, schemas, row counts, coverage, and quality
   checks.
 
@@ -40,3 +45,6 @@ timestamp, it writes `fx/full_history_manifest.json`.
   are a source-coverage limitation.
 - The 1-second FX feed is sparse/event-based rather than a guaranteed row for
   every wall-clock second. `manifest.json` reports timestamp gaps and ordering.
+- The provider's NZ2Y history contains four gaps longer than seven calendar
+  days, including 1994-12-28 to 1998-12-07. Exact intervals are recorded in
+  `bond_yields/manifest.json`; the downloader preserves rather than fills them.

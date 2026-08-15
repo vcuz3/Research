@@ -1,0 +1,111 @@
+Building weekend events (exits anchored at entry+H) ...
+
+==============================================================================
+A. HONEST POWER: minimum detectable effect, de-meaned
+==============================================================================
+   MDE = 2 x clustered SE. The observed effect is detectable only if
+   it exceeds this. (EXP-0001 reported 0.05 sigma; that was wrong -
+   it injected on top of the existing effect.)
+    k  H(min)      n    mean R      se     MDE       t  detected
+  1.5      60    787   +0.2917  0.0692  0.1384   +4.22      True
+  1.5     240    787   +0.2464  0.1159  0.2317   +2.13      True
+  1.5    1440    787   +0.5314  0.2888  0.5777   +1.84     False
+  2.0      60    534   +0.3686  0.0877  0.1754   +4.20      True
+  2.0     240    534   +0.3176  0.1523  0.3046   +2.09      True
+  2.0    1440    534   +0.9948  0.3594  0.7188   +2.77      True
+
+==============================================================================
+B. FULL SURFACE with hold anchored at entry (d=5), pooled mean R
+==============================================================================
+    k               H=60              H=240             H=1440       n
+  0.0      +0.086/t+5.94      +0.036/t+1.36      +0.024/t+0.37   6,723
+  0.5      +0.155/t+5.48      +0.099/t+1.98      +0.159/t+1.36   2,877
+  1.0      +0.227/t+4.65      +0.183/t+2.31      +0.294/t+1.48   1,377
+  1.5      +0.292/t+4.22      +0.246/t+2.13      +0.531/t+1.84     787
+  2.0      +0.369/t+4.20      +0.318/t+2.09      +0.995/t+2.77     534
+  2.5      +0.404/t+3.84      +0.321/t+1.65      +1.129/t+2.46     376
+
+==============================================================================
+C. BOUNDARY-ARTIFACT CONTROL, corrected (hold duration held constant)
+==============================================================================
+   Paired: identical weekends across all delays. On this archive
+   open[t]==close[t-1] ~always, so a noisy reopen print inflates the
+   measured gap AND flatters the fade from the next bar.
+
+   k=1.5  (paired n=787)
+   delay               H=60              H=240             H=1440
+     1min      +0.322/t+4.58      +0.284/t+2.48      +0.585/t+2.04
+     5min      +0.292/t+4.22      +0.246/t+2.13      +0.531/t+1.84
+    15min      +0.231/t+3.17      +0.203/t+1.64      +0.538/t+1.86
+    60min      +0.181/t+2.94      -0.081/t-0.40      +0.357/t+1.20
+   retention (d=60 / d=1): H=60: 0.56, H=240: -0.29, H=1440: 0.61
+
+   k=2.0  (paired n=534)
+   delay               H=60              H=240             H=1440
+     1min      +0.413/t+4.63      +0.376/t+2.53      +1.061/t+2.99
+     5min      +0.369/t+4.20      +0.318/t+2.09      +0.995/t+2.77
+    15min      +0.311/t+3.45      +0.264/t+1.61      +1.014/t+2.82
+    60min      +0.253/t+3.13      -0.125/t-0.43      +0.770/t+2.05
+   retention (d=60 / d=1): H=60: 0.61, H=240: -0.33, H=1440: 0.73
+
+==============================================================================
+D. WEEKNIGHT PLACEBO at every hold (same clock, no weekend)
+==============================================================================
+    k        arm       n               H=60              H=240             H=1440
+  1.5    weekend     787      +0.292/t+4.22      +0.246/t+2.13      +0.531/t+1.84
+  1.5  weeknight   3,662      +0.181/t+1.91      +0.227/t+1.29      +0.179/t+0.37
+  2.0    weekend     534      +0.369/t+4.20      +0.318/t+2.09      +0.995/t+2.77
+  2.0  weeknight   1,977      +0.173/t+1.15      +0.423/t+1.54      +0.448/t+0.64
+
+==============================================================================
+E. SELECTION-AWARE NULL: randomise the gap SIGN
+==============================================================================
+   Preserves selection, paths, volatility and counts; destroys only the
+   link between gap DIRECTION and subsequent direction - which is the
+   whole claim. Compares the real MAX |t| over the 6x3 surface against
+   the null distribution of that same maximum (selection reproduced).
+   ... 100/400 draws
+   ... 200/400 draws
+   ... 300/400 draws
+   ... 400/400 draws
+   real max |t| over the surface = 5.94
+   null max |t|: mean 1.83  p50 1.76  p95 2.86  max 3.75  sd 0.545
+   frac(null >= real) = 0.0000   (non-degenerate: sd>0 = True)
+
+==============================================================================
+F. THE 1-HOUR CELL IN TRADABLE UNITS (discovery cell - not preregistered)
+==============================================================================
+
+   k=1.5
+    pair     n    mean R       t  gross pips  reopen rng   net@1x   net@2x
+  EURUSD    75   +0.2125   +1.03      +2.307        4.60    -2.29    -6.89
+  AUDUSD    94   +0.5232   +2.76      +5.125        4.20    +0.93    -3.27
+  GBPUSD    84   +0.3311   +2.29      +4.318        5.97    -1.66    -7.63
+  NZDUSD    94   +0.2995   +2.35      +3.102        3.87    -0.77    -4.65
+  USDJPY    93   +0.1708   +1.23      +3.083        1.50    +1.58    +0.08
+  NZDJPY   110   +0.0502   +0.56      -2.631        4.10    -6.73   -10.83
+  EURJPY    80   +0.3597   +2.57      +6.449        3.65    +2.80    -0.85
+  AUDJPY    88   +0.3443   +2.55      +6.699        4.17    +2.52    -1.65
+  GBPJPY    69   +0.4060   +2.51     +10.363        8.75    +1.61    -7.14
+   POOLED gross +3.973 pips | pairs positive 9/9 | net@1x reopen-range 5/9 positive
+
+   k=2.0
+    pair     n    mean R       t  gross pips  reopen rng   net@1x   net@2x
+  EURUSD    54   +0.1253   +0.45      +2.732        6.37    -3.64   -10.02
+  AUDUSD    64   +0.6609   +2.60      +5.476        4.60    +0.88    -3.72
+  GBPUSD    55   +0.4285   +2.08      +5.834        5.25    +0.58    -4.67
+  NZDUSD    54   +0.3816   +1.95      +3.861        4.47    -0.61    -5.09
+  USDJPY    64   +0.1890   +1.03      +4.225        1.55    +2.67    +1.12
+  NZDJPY    82   +0.0778   +0.69      -2.082        4.35    -6.43   -10.78
+  EURJPY    56   +0.5246   +3.03      +9.430        4.00    +5.43    +1.43
+  AUDJPY    56   +0.5529   +3.15      +9.339        3.73    +5.61    +1.89
+  GBPJPY    49   +0.5061   +2.35     +12.720        8.80    +3.92    -4.88
+   POOLED gross +5.246 pips | pairs positive 9/9 | net@1x reopen-range 6/9 positive
+
+==============================================================================
+G. ERA STABILITY of the 1-hour cell (k=1.5, H=60)
+==============================================================================
+   2011-14: mean +0.1498  t +1.36  n=159  gross +1.82 pips
+   2015-18: mean +0.5593  t +4.34  n=195  gross +8.65 pips
+   2019-22: mean +0.1259  t +1.06  n=258  gross +0.56 pips
+   2023-26: mean +0.3669  t +2.08  n=175  gross +5.75 pips

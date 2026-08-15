@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0043",
+  "hypothesis_id": "HYP-0031",
+  "status": "completed",
+  "declared_utc": "2026-08-10T15:56:06.337353+00:00",
+  "config_path": "scripts/hyp_0031_require_reset.py",
+  "data_scope": "NQ and ES clean Databento 1-minute RTH, 2011-12 .. 2026-07, common",
+  "code_ref": "working-tree",
+  "run_command": "python -u -m futures.nq.noise_vwap.scripts.hyp_0031_require_reset real NQ",
+  "primary_metric": "full-sample zero-trade-day daily net-ATR-R Sharpe uplift",
+  "builder": "Claude",
+  "outputs": [],
+  "closed_utc": "2026-08-10T18:38:57.714107+00:00",
+  "result_summary": "SPLIT VERDICT; splitting variable is STOP-CHECK CADENCE. PRIMARY (deployed every-bar continuous stop, preregistered): NO-GO both markets -- NQ dSharpe -0.011/netR -4.41, ES +0.003/netR -2.45, both fail the gate so Null C not spent; exposure-matched random drop from the same pool does at least as well (frac 0.655 NQ / 0.825 ES) = no selection information, and the removed trades are PROFITABLE (+0.0103 R NQ). SECONDARY (decision-clock stop = the source spec's run-18 cadence; SEARCHED, not preregistered): PASSES -- NQ +0.117/netR +4.77, ES +0.224/netR +14.81, removed trades are LOSERS (-0.0121 NQ / -0.0355 ES R), gross/trade +23%, ES maxDD 8.64->6.83. DECISIVE control 1b (same lock, RANDOM unlock, hazard bisected to match trade count exactly): real +0.117 vs null -0.012 (frac 0.005) NQ; +0.224 vs +0.039 (frac 0.000) ES -- null centres at ~0, so cooling off for the same duration is worth NOTHING and the entire effect is the band-reset CONDITION. Null C: ES frac 0.000 z+2.24 PASS; NQ frac 0.075 z+1.75 MISS vs the preregistered 0.05 (null centre NEGATIVE = not variance amplification). MECHANISM: require_reset and the continuous stop are SUBSTITUTES -- a 12x/day stop lets price run outside the band so the breakout is still true at the next checkpoint and the engine re-buys the failed move; an every-minute stop exits before that state forms. Retain deployed baseline; do NOT promote as alpha. TWO INVALID CONTROLS produced and corrected in-run (documented, not discarded): (1) first matched-count control matched lock FIRINGS not exposure (one blocked key removes only 0.586 trades) so the random arm cut ~666 vs the rule's 430, flattering it -- overturned an earlier 0.740/0.955 claim; (2) on the secondary cells that control went DEGENERATE at K==pool (sd 0.0000) printing a FALSE frac=0.000, now guarded in code -- a one-shot blocklist cannot imitate a PERSISTENT lock.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

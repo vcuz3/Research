@@ -88,8 +88,19 @@ edge past a ~1.2-pip round trip. Still short by roughly 3×.
 
 ## 4. Departures and limitations
 
-- **No departures from HYP-0003.** All four decision rules were applied as frozen and are
-  executed in `decide()`, not narrated.
+> **Update 2026-08-09 (Stage-A repair, Codex finding 3/4):** the "No departures" line
+> below is corrected. There ARE two declared departures from the frozen HYP-0003:
+> (a) **rate matching** — HYP-0003 §4 specifies a *per-hour* firing rate; `choose_matched_k`
+> matches ONE *pooled* crossing rate across all hours (matched total count). Sensible, but a
+> departure, now labelled as such in `verdict.json` (`Q2…matching_departure`) and the report.
+> (b) **grain ranking** — the Q3 confirmation originally took each grain's *better* of
+> H∈{60,240}, an undeclared two-horizon search. The primary ranking is now at the
+> preregistered **fixed H\*=240** (no horizon searched); the best-of-horizon table is retained
+> as a labelled robustness aux only. Neither departure changes τ\*=5's large descriptive lead.
+
+- ~~**No departures from HYP-0003.**~~ **Corrected above.** The four decision rules are
+  executed in `decide()`, not narrated, but two implementation choices depart from the frozen
+  contract (pooled- vs per-hour rate matching; fixed-H\* vs best-of-horizon grain ranking).
 - **One implementation change made before results were read:** the first draft matched
   rates on the coarse reporting grid, which left gaps up to 16% of target — large enough
   (≈0.01–0.02 R along the threshold curve) to contaminate Q4, whose effect is 0.041 R. It

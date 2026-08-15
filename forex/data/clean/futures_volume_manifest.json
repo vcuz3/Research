@@ -1,0 +1,1144 @@
+{
+  "created_utc": "2026-08-09T10:15:45.043672+00:00",
+  "price_source": "existing canonical spot-FX midpoint OHLC",
+  "volume_source": "Databento GLBX.MDP3 ohlcv-1m volume-ranked continuous futures",
+  "join": "exact UTC minute, left join preserving every spot row",
+  "pairs": {
+    "EURUSD": {
+      "futures_product": "6E",
+      "spot_input_path": "forex/data/clean/EURUSD_1m_clean.parquet",
+      "spot_input_sha256": "abce793fe0f16cf41f8502afd74b8c1429a126430a6622eb5a00b8b3fa9cb8e1",
+      "futures_input_path": "futures/data/databento/6E_ohlcv-1m_6Ev0_20100606_20260728.parquet",
+      "futures_input_sha256": "ac8a1a4e071436783f775f455be1011170fc6cc1b3f381003cd2affd44fdc622",
+      "archive_path": "forex/data/archive/EURUSD_1m_clean_pre_futures_volume_20260809T101545Z.parquet",
+      "output_path": "forex/data/clean/EURUSD_1m_clean.parquet",
+      "staged_output_sha256": "c65b49b8b663589dc02b5de0af20f770d1e9522e61903f724d221b931f82641c",
+      "quality": {
+        "spot_rows": 5536573,
+        "output_rows": 5536573,
+        "first_utc": "2011-07-19T00:00:00",
+        "last_utc": "2026-07-17T20:59:00",
+        "duplicate_output_timestamps": 0,
+        "out_of_order_output_timestamps": 0,
+        "spot_gaps_over_1_minute": 3889,
+        "largest_spot_gap_minutes": 4501.0,
+        "matched_futures_minutes": 5143968,
+        "unmatched_futures_minutes": 392605,
+        "futures_volume_match_rate": 0.9290888063789641,
+        "matched_zero_volume_minutes": 0,
+        "negative_futures_volume_minutes": 0,
+        "futures_source_rows": 5546426,
+        "futures_source_first_utc": "2010-06-07T00:00:00",
+        "futures_source_last_utc": "2026-07-27T23:59:00",
+        "futures_roll_boundaries": 65,
+        "coverage_by_year": [
+          {
+            "year": 2011,
+            "spot_rows": 169220,
+            "matched_rows": 159296,
+            "match_rate": 0.9413544498286255
+          },
+          {
+            "year": 2012,
+            "spot_rows": 370221,
+            "matched_rows": 343583,
+            "match_rate": 0.9280483819124253
+          },
+          {
+            "year": 2013,
+            "spot_rows": 368525,
+            "matched_rows": 331703,
+            "match_rate": 0.9000827623634761
+          },
+          {
+            "year": 2014,
+            "spot_rows": 368700,
+            "matched_rows": 313816,
+            "match_rate": 0.851141849742338
+          },
+          {
+            "year": 2015,
+            "spot_rows": 368700,
+            "matched_rows": 341780,
+            "match_rate": 0.9269867100623813
+          },
+          {
+            "year": 2016,
+            "spot_rows": 368700,
+            "matched_rows": 341447,
+            "match_rate": 0.9260835367507458
+          },
+          {
+            "year": 2017,
+            "spot_rows": 367771,
+            "matched_rows": 345883,
+            "match_rate": 0.940484703796656
+          },
+          {
+            "year": 2018,
+            "spot_rows": 368556,
+            "matched_rows": 349001,
+            "match_rate": 0.946941577399364
+          },
+          {
+            "year": 2019,
+            "spot_rows": 368640,
+            "matched_rows": 343286,
+            "match_rate": 0.9312228732638889
+          },
+          {
+            "year": 2020,
+            "spot_rows": 370157,
+            "matched_rows": 347904,
+            "match_rate": 0.9398822661735425
+          },
+          {
+            "year": 2021,
+            "spot_rows": 370361,
+            "matched_rows": 345158,
+            "match_rate": 0.931950178339512
+          },
+          {
+            "year": 2022,
+            "spot_rows": 370222,
+            "matched_rows": 350385,
+            "match_rate": 0.9464186353053033
+          },
+          {
+            "year": 2023,
+            "spot_rows": 367155,
+            "matched_rows": 346654,
+            "match_rate": 0.9441625471531098
+          },
+          {
+            "year": 2024,
+            "spot_rows": 370290,
+            "matched_rows": 347312,
+            "match_rate": 0.9379459342677361
+          },
+          {
+            "year": 2025,
+            "spot_rows": 368700,
+            "matched_rows": 347602,
+            "match_rate": 0.9427773257390832
+          },
+          {
+            "year": 2026,
+            "spot_rows": 200655,
+            "matched_rows": 189158,
+            "match_rate": 0.9427026488250978
+          }
+        ],
+        "coverage_by_utc_hour": [
+          {
+            "hour_utc": 0,
+            "spot_rows": 233340,
+            "matched_rows": 223146,
+            "match_rate": 0.9563126767806635
+          },
+          {
+            "hour_utc": 1,
+            "spot_rows": 233340,
+            "matched_rows": 223841,
+            "match_rate": 0.9592911631096255
+          },
+          {
+            "hour_utc": 2,
+            "spot_rows": 233340,
+            "matched_rows": 218981,
+            "match_rate": 0.9384631867660924
+          },
+          {
+            "hour_utc": 3,
+            "spot_rows": 233340,
+            "matched_rows": 214533,
+            "match_rate": 0.9194008742607354
+          },
+          {
+            "hour_utc": 4,
+            "spot_rows": 233340,
+            "matched_rows": 210441,
+            "match_rate": 0.9018642324505014
+          },
+          {
+            "hour_utc": 5,
+            "spot_rows": 233340,
+            "matched_rows": 218671,
+            "match_rate": 0.9371346532956202
+          },
+          {
+            "hour_utc": 6,
+            "spot_rows": 233340,
+            "matched_rows": 227747,
+            "match_rate": 0.976030684837576
+          },
+          {
+            "hour_utc": 7,
+            "spot_rows": 233400,
+            "matched_rows": 230619,
+            "match_rate": 0.9880848329048844
+          },
+          {
+            "hour_utc": 8,
+            "spot_rows": 233400,
+            "matched_rows": 230799,
+            "match_rate": 0.9888560411311054
+          },
+          {
+            "hour_utc": 9,
+            "spot_rows": 233400,
+            "matched_rows": 230650,
+            "match_rate": 0.9882176520994002
+          },
+          {
+            "hour_utc": 10,
+            "spot_rows": 233400,
+            "matched_rows": 230504,
+            "match_rate": 0.987592116538132
+          },
+          {
+            "hour_utc": 11,
+            "spot_rows": 233400,
+            "matched_rows": 230957,
+            "match_rate": 0.9895329905741217
+          },
+          {
+            "hour_utc": 12,
+            "spot_rows": 233400,
+            "matched_rows": 231276,
+            "match_rate": 0.9908997429305912
+          },
+          {
+            "hour_utc": 13,
+            "spot_rows": 233400,
+            "matched_rows": 231449,
+            "match_rate": 0.9916409597257926
+          },
+          {
+            "hour_utc": 14,
+            "spot_rows": 233400,
+            "matched_rows": 231442,
+            "match_rate": 0.9916109682947729
+          },
+          {
+            "hour_utc": 15,
+            "spot_rows": 233400,
+            "matched_rows": 231136,
+            "match_rate": 0.990299914310197
+          },
+          {
+            "hour_utc": 16,
+            "spot_rows": 233340,
+            "matched_rows": 230574,
+            "match_rate": 0.9881460529699152
+          },
+          {
+            "hour_utc": 17,
+            "spot_rows": 233340,
+            "matched_rows": 227805,
+            "match_rate": 0.9762792491643096
+          },
+          {
+            "hour_utc": 18,
+            "spot_rows": 233340,
+            "matched_rows": 224843,
+            "match_rate": 0.9635853261335391
+          },
+          {
+            "hour_utc": 19,
+            "spot_rows": 233340,
+            "matched_rows": 223531,
+            "match_rate": 0.9579626296391531
+          },
+          {
+            "hour_utc": 20,
+            "spot_rows": 233220,
+            "matched_rows": 216652,
+            "match_rate": 0.9289597804647972
+          },
+          {
+            "hour_utc": 21,
+            "spot_rows": 193076,
+            "matched_rows": 71113,
+            "match_rate": 0.3683161035032837
+          },
+          {
+            "hour_utc": 22,
+            "spot_rows": 211332,
+            "matched_rows": 129817,
+            "match_rate": 0.6142799008195635
+          },
+          {
+            "hour_utc": 23,
+            "spot_rows": 231605,
+            "matched_rows": 203441,
+            "match_rate": 0.8783964076768637
+          }
+        ],
+        "unmatched_policy": "nullable UInt64; no zero-fill or as-of fill"
+      },
+      "output_sha256": "c65b49b8b663589dc02b5de0af20f770d1e9522e61903f724d221b931f82641c",
+      "output_bytes": 80664705,
+      "output_columns": [
+        "ts_utc",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ]
+    },
+    "GBPUSD": {
+      "futures_product": "6B",
+      "spot_input_path": "forex/data/clean/GBPUSD_1m_clean.parquet",
+      "spot_input_sha256": "45ecaf570fb239b546b280aa04d6bfafdee2864b5e8d725ad561563cfaf4793e",
+      "futures_input_path": "futures/data/databento/6B_ohlcv-1m_6Bv0_20100606_20260728.parquet",
+      "futures_input_sha256": "2bda9044a0a264e6d468822764eee60ae891d25015871fddc4817b9ac25ed914",
+      "archive_path": "forex/data/archive/GBPUSD_1m_clean_pre_futures_volume_20260809T101545Z.parquet",
+      "output_path": "forex/data/clean/GBPUSD_1m_clean.parquet",
+      "staged_output_sha256": "7021bc9db1dc01100588c2d1d7b567d1e162a81e430d0f39024bbf037399676d",
+      "quality": {
+        "spot_rows": 5536355,
+        "output_rows": 5536355,
+        "first_utc": "2011-07-19T00:00:00",
+        "last_utc": "2026-07-17T20:59:00",
+        "duplicate_output_timestamps": 0,
+        "out_of_order_output_timestamps": 0,
+        "spot_gaps_over_1_minute": 3889,
+        "largest_spot_gap_minutes": 4501.0,
+        "matched_futures_minutes": 4806729,
+        "unmatched_futures_minutes": 729626,
+        "futures_volume_match_rate": 0.8682118469642933,
+        "matched_zero_volume_minutes": 0,
+        "negative_futures_volume_minutes": 0,
+        "futures_source_rows": 5177538,
+        "futures_source_first_utc": "2010-06-07T00:00:00",
+        "futures_source_last_utc": "2026-07-27T23:58:00",
+        "futures_roll_boundaries": 65,
+        "coverage_by_year": [
+          {
+            "year": 2011,
+            "spot_rows": 169116,
+            "matched_rows": 149736,
+            "match_rate": 0.8854041013268998
+          },
+          {
+            "year": 2012,
+            "spot_rows": 370094,
+            "matched_rows": 319713,
+            "match_rate": 0.8638697195847541
+          },
+          {
+            "year": 2013,
+            "spot_rows": 368525,
+            "matched_rows": 313773,
+            "match_rate": 0.8514293467200326
+          },
+          {
+            "year": 2014,
+            "spot_rows": 368700,
+            "matched_rows": 286593,
+            "match_rate": 0.777306753458096
+          },
+          {
+            "year": 2015,
+            "spot_rows": 368700,
+            "matched_rows": 305271,
+            "match_rate": 0.8279658258746949
+          },
+          {
+            "year": 2016,
+            "spot_rows": 368700,
+            "matched_rows": 315580,
+            "match_rate": 0.8559262272850556
+          },
+          {
+            "year": 2017,
+            "spot_rows": 367771,
+            "matched_rows": 320871,
+            "match_rate": 0.8724749912309562
+          },
+          {
+            "year": 2018,
+            "spot_rows": 368556,
+            "matched_rows": 329627,
+            "match_rate": 0.8943742606279643
+          },
+          {
+            "year": 2019,
+            "spot_rows": 368640,
+            "matched_rows": 321226,
+            "match_rate": 0.8713812934027778
+          },
+          {
+            "year": 2020,
+            "spot_rows": 370170,
+            "matched_rows": 332035,
+            "match_rate": 0.8969797660534349
+          },
+          {
+            "year": 2021,
+            "spot_rows": 370361,
+            "matched_rows": 325250,
+            "match_rate": 0.8781972183896253
+          },
+          {
+            "year": 2022,
+            "spot_rows": 370222,
+            "matched_rows": 337808,
+            "match_rate": 0.9124471263188033
+          },
+          {
+            "year": 2023,
+            "spot_rows": 367155,
+            "matched_rows": 326777,
+            "match_rate": 0.8900246489902085
+          },
+          {
+            "year": 2024,
+            "spot_rows": 370290,
+            "matched_rows": 322749,
+            "match_rate": 0.8716114396824111
+          },
+          {
+            "year": 2025,
+            "spot_rows": 368700,
+            "matched_rows": 323258,
+            "match_rate": 0.8767507458638459
+          },
+          {
+            "year": 2026,
+            "spot_rows": 200655,
+            "matched_rows": 176462,
+            "match_rate": 0.8794298671849692
+          }
+        ],
+        "coverage_by_utc_hour": [
+          {
+            "hour_utc": 0,
+            "spot_rows": 233340,
+            "matched_rows": 197949,
+            "match_rate": 0.8483286191823091
+          },
+          {
+            "hour_utc": 1,
+            "spot_rows": 233340,
+            "matched_rows": 199845,
+            "match_rate": 0.8564541013113911
+          },
+          {
+            "hour_utc": 2,
+            "spot_rows": 233340,
+            "matched_rows": 185616,
+            "match_rate": 0.7954744150167138
+          },
+          {
+            "hour_utc": 3,
+            "spot_rows": 233340,
+            "matched_rows": 176934,
+            "match_rate": 0.7582669066598097
+          },
+          {
+            "hour_utc": 4,
+            "spot_rows": 233340,
+            "matched_rows": 169072,
+            "match_rate": 0.7245735836118968
+          },
+          {
+            "hour_utc": 5,
+            "spot_rows": 233340,
+            "matched_rows": 186969,
+            "match_rate": 0.8012728207765493
+          },
+          {
+            "hour_utc": 6,
+            "spot_rows": 233340,
+            "matched_rows": 215329,
+            "match_rate": 0.922812205365561
+          },
+          {
+            "hour_utc": 7,
+            "spot_rows": 233400,
+            "matched_rows": 228102,
+            "match_rate": 0.9773007712082262
+          },
+          {
+            "hour_utc": 8,
+            "spot_rows": 233400,
+            "matched_rows": 229572,
+            "match_rate": 0.983598971722365
+          },
+          {
+            "hour_utc": 9,
+            "spot_rows": 233400,
+            "matched_rows": 229051,
+            "match_rate": 0.9813667523564695
+          },
+          {
+            "hour_utc": 10,
+            "spot_rows": 233400,
+            "matched_rows": 228471,
+            "match_rate": 0.9788817480719795
+          },
+          {
+            "hour_utc": 11,
+            "spot_rows": 233400,
+            "matched_rows": 229013,
+            "match_rate": 0.9812039417309341
+          },
+          {
+            "hour_utc": 12,
+            "spot_rows": 233400,
+            "matched_rows": 230072,
+            "match_rate": 0.9857412167952013
+          },
+          {
+            "hour_utc": 13,
+            "spot_rows": 233400,
+            "matched_rows": 230818,
+            "match_rate": 0.9889374464438732
+          },
+          {
+            "hour_utc": 14,
+            "spot_rows": 233400,
+            "matched_rows": 230950,
+            "match_rate": 0.989502999143102
+          },
+          {
+            "hour_utc": 15,
+            "spot_rows": 233400,
+            "matched_rows": 230515,
+            "match_rate": 0.9876392459297344
+          },
+          {
+            "hour_utc": 16,
+            "spot_rows": 233340,
+            "matched_rows": 228562,
+            "match_rate": 0.9795234421873661
+          },
+          {
+            "hour_utc": 17,
+            "spot_rows": 233340,
+            "matched_rows": 223401,
+            "match_rate": 0.9574055026999229
+          },
+          {
+            "hour_utc": 18,
+            "spot_rows": 233340,
+            "matched_rows": 219821,
+            "match_rate": 0.9420630839118882
+          },
+          {
+            "hour_utc": 19,
+            "spot_rows": 233340,
+            "matched_rows": 216765,
+            "match_rate": 0.9289663152481358
+          },
+          {
+            "hour_utc": 20,
+            "spot_rows": 233220,
+            "matched_rows": 192227,
+            "match_rate": 0.8242303404510762
+          },
+          {
+            "hour_utc": 21,
+            "spot_rows": 192904,
+            "matched_rows": 60008,
+            "match_rate": 0.3110770123999502
+          },
+          {
+            "hour_utc": 22,
+            "spot_rows": 211286,
+            "matched_rows": 103627,
+            "match_rate": 0.4904584307526291
+          },
+          {
+            "hour_utc": 23,
+            "spot_rows": 231605,
+            "matched_rows": 164040,
+            "match_rate": 0.7082748645322856
+          }
+        ],
+        "unmatched_policy": "nullable UInt64; no zero-fill or as-of fill"
+      },
+      "output_sha256": "7021bc9db1dc01100588c2d1d7b567d1e162a81e430d0f39024bbf037399676d",
+      "output_bytes": 82246272,
+      "output_columns": [
+        "ts_utc",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ]
+    },
+    "AUDUSD": {
+      "futures_product": "6A",
+      "spot_input_path": "forex/data/clean/AUDUSD_1m_clean.parquet",
+      "spot_input_sha256": "e6b6a291084a83973890167b85222a55c4fe69e4ea0f0ca85427b794f72bb895",
+      "futures_input_path": "futures/data/databento/6A_ohlcv-1m_6Av0_20100606_20260728.parquet",
+      "futures_input_sha256": "2d39ce56b79aa29ed9dd22fe5b6dbd7d87ef1a9f5725a7fe3f168df2167a2834",
+      "archive_path": "forex/data/archive/AUDUSD_1m_clean_pre_futures_volume_20260809T101545Z.parquet",
+      "output_path": "forex/data/clean/AUDUSD_1m_clean.parquet",
+      "staged_output_sha256": "46501384a03d1a40eda184149e627d607eba2da3622a0abe9a3e27da9411615c",
+      "quality": {
+        "spot_rows": 5536530,
+        "output_rows": 5536530,
+        "first_utc": "2011-07-19T00:00:00",
+        "last_utc": "2026-07-17T20:59:00",
+        "duplicate_output_timestamps": 0,
+        "out_of_order_output_timestamps": 0,
+        "spot_gaps_over_1_minute": 3889,
+        "largest_spot_gap_minutes": 4501.0,
+        "matched_futures_minutes": 5039171,
+        "unmatched_futures_minutes": 497359,
+        "futures_volume_match_rate": 0.9101677404439242,
+        "matched_zero_volume_minutes": 0,
+        "negative_futures_volume_minutes": 0,
+        "futures_source_rows": 5425994,
+        "futures_source_first_utc": "2010-06-07T00:00:00",
+        "futures_source_last_utc": "2026-07-27T23:59:00",
+        "futures_roll_boundaries": 65,
+        "coverage_by_year": [
+          {
+            "year": 2011,
+            "spot_rows": 169229,
+            "matched_rows": 156023,
+            "match_rate": 0.9219637296208096
+          },
+          {
+            "year": 2012,
+            "spot_rows": 370168,
+            "matched_rows": 336489,
+            "match_rate": 0.9090169868816321
+          },
+          {
+            "year": 2013,
+            "spot_rows": 368527,
+            "matched_rows": 326673,
+            "match_rate": 0.8864289455046713
+          },
+          {
+            "year": 2014,
+            "spot_rows": 368700,
+            "matched_rows": 308639,
+            "match_rate": 0.8371006238133984
+          },
+          {
+            "year": 2015,
+            "spot_rows": 368700,
+            "matched_rows": 336592,
+            "match_rate": 0.912915649579604
+          },
+          {
+            "year": 2016,
+            "spot_rows": 368700,
+            "matched_rows": 338583,
+            "match_rate": 0.9183157038242473
+          },
+          {
+            "year": 2017,
+            "spot_rows": 367771,
+            "matched_rows": 327583,
+            "match_rate": 0.8907254786266454
+          },
+          {
+            "year": 2018,
+            "spot_rows": 368555,
+            "matched_rows": 334022,
+            "match_rate": 0.906301637476089
+          },
+          {
+            "year": 2019,
+            "spot_rows": 368640,
+            "matched_rows": 319170,
+            "match_rate": 0.8658040364583334
+          },
+          {
+            "year": 2020,
+            "spot_rows": 370157,
+            "matched_rows": 338900,
+            "match_rate": 0.9155574526484708
+          },
+          {
+            "year": 2021,
+            "spot_rows": 370361,
+            "matched_rows": 345390,
+            "match_rate": 0.9325765941878329
+          },
+          {
+            "year": 2022,
+            "spot_rows": 370222,
+            "matched_rows": 349144,
+            "match_rate": 0.9430665924769462
+          },
+          {
+            "year": 2023,
+            "spot_rows": 367155,
+            "matched_rows": 345663,
+            "match_rate": 0.9414634146341463
+          },
+          {
+            "year": 2024,
+            "spot_rows": 370290,
+            "matched_rows": 347166,
+            "match_rate": 0.9375516487077696
+          },
+          {
+            "year": 2025,
+            "spot_rows": 368700,
+            "matched_rows": 342008,
+            "match_rate": 0.9276050989964741
+          },
+          {
+            "year": 2026,
+            "spot_rows": 200655,
+            "matched_rows": 187126,
+            "match_rate": 0.9325758142084672
+          }
+        ],
+        "coverage_by_utc_hour": [
+          {
+            "hour_utc": 0,
+            "spot_rows": 233340,
+            "matched_rows": 224179,
+            "match_rate": 0.9607396931516242
+          },
+          {
+            "hour_utc": 1,
+            "spot_rows": 233340,
+            "matched_rows": 225695,
+            "match_rate": 0.9672366503814177
+          },
+          {
+            "hour_utc": 2,
+            "spot_rows": 233340,
+            "matched_rows": 220904,
+            "match_rate": 0.9467043798748607
+          },
+          {
+            "hour_utc": 3,
+            "spot_rows": 233340,
+            "matched_rows": 214601,
+            "match_rate": 0.9196922945058713
+          },
+          {
+            "hour_utc": 4,
+            "spot_rows": 233340,
+            "matched_rows": 209832,
+            "match_rate": 0.8992543070197995
+          },
+          {
+            "hour_utc": 5,
+            "spot_rows": 233340,
+            "matched_rows": 215556,
+            "match_rate": 0.9237850347132939
+          },
+          {
+            "hour_utc": 6,
+            "spot_rows": 233340,
+            "matched_rows": 222126,
+            "match_rate": 0.9519413731036256
+          },
+          {
+            "hour_utc": 7,
+            "spot_rows": 233400,
+            "matched_rows": 226507,
+            "match_rate": 0.9704670094258783
+          },
+          {
+            "hour_utc": 8,
+            "spot_rows": 233400,
+            "matched_rows": 227117,
+            "match_rate": 0.9730805484147387
+          },
+          {
+            "hour_utc": 9,
+            "spot_rows": 233400,
+            "matched_rows": 225615,
+            "match_rate": 0.9666452442159383
+          },
+          {
+            "hour_utc": 10,
+            "spot_rows": 233400,
+            "matched_rows": 224100,
+            "match_rate": 0.9601542416452442
+          },
+          {
+            "hour_utc": 11,
+            "spot_rows": 233400,
+            "matched_rows": 224885,
+            "match_rate": 0.9635175664095973
+          },
+          {
+            "hour_utc": 12,
+            "spot_rows": 233400,
+            "matched_rows": 227992,
+            "match_rate": 0.9768294772922023
+          },
+          {
+            "hour_utc": 13,
+            "spot_rows": 233400,
+            "matched_rows": 229659,
+            "match_rate": 0.9839717223650386
+          },
+          {
+            "hour_utc": 14,
+            "spot_rows": 233400,
+            "matched_rows": 230321,
+            "match_rate": 0.9868080548414738
+          },
+          {
+            "hour_utc": 15,
+            "spot_rows": 233400,
+            "matched_rows": 229264,
+            "match_rate": 0.9822793487574979
+          },
+          {
+            "hour_utc": 16,
+            "spot_rows": 233340,
+            "matched_rows": 225844,
+            "match_rate": 0.9678752035656124
+          },
+          {
+            "hour_utc": 17,
+            "spot_rows": 233340,
+            "matched_rows": 219621,
+            "match_rate": 0.9412059655438416
+          },
+          {
+            "hour_utc": 18,
+            "spot_rows": 233340,
+            "matched_rows": 217458,
+            "match_rate": 0.9319362303934173
+          },
+          {
+            "hour_utc": 19,
+            "spot_rows": 233340,
+            "matched_rows": 214336,
+            "match_rate": 0.9185566126682094
+          },
+          {
+            "hour_utc": 20,
+            "spot_rows": 233220,
+            "matched_rows": 196707,
+            "match_rate": 0.8434396706971958
+          },
+          {
+            "hour_utc": 21,
+            "spot_rows": 193045,
+            "matched_rows": 63331,
+            "match_rate": 0.32806340490559194
+          },
+          {
+            "hour_utc": 22,
+            "spot_rows": 211318,
+            "matched_rows": 122460,
+            "match_rate": 0.5795057685573402
+          },
+          {
+            "hour_utc": 23,
+            "spot_rows": 231607,
+            "matched_rows": 201061,
+            "match_rate": 0.8681127945183004
+          }
+        ],
+        "unmatched_policy": "nullable UInt64; no zero-fill or as-of fill"
+      },
+      "output_sha256": "46501384a03d1a40eda184149e627d607eba2da3622a0abe9a3e27da9411615c",
+      "output_bytes": 78813094,
+      "output_columns": [
+        "ts_utc",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ]
+    },
+    "NZDUSD": {
+      "futures_product": "6N",
+      "spot_input_path": "forex/data/clean/NZDUSD_1m_clean.parquet",
+      "spot_input_sha256": "80d9fa9b919a9915092cf3df8a21956cd4c36531142889081bbda576f036bc24",
+      "futures_input_path": "futures/data/databento/6N_ohlcv-1m_6Nv0_20100606_20260728.parquet",
+      "futures_input_sha256": "c6e3366d70e6b77b2ffc676109c26f88be9c74d3b1c3bb657c05b052894d9e56",
+      "archive_path": "forex/data/archive/NZDUSD_1m_clean_pre_futures_volume_20260809T101545Z.parquet",
+      "output_path": "forex/data/clean/NZDUSD_1m_clean.parquet",
+      "staged_output_sha256": "abe6d3890d01ec86651c70a2ffd040e3d31b89b6a378467e86c848d0d4ad802d",
+      "quality": {
+        "spot_rows": 5437296,
+        "output_rows": 5437296,
+        "first_utc": "2011-12-06T20:00:00",
+        "last_utc": "2026-07-17T20:59:00",
+        "duplicate_output_timestamps": 0,
+        "out_of_order_output_timestamps": 0,
+        "spot_gaps_over_1_minute": 789,
+        "largest_spot_gap_minutes": 4501.0,
+        "matched_futures_minutes": 4064747,
+        "unmatched_futures_minutes": 1372549,
+        "futures_volume_match_rate": 0.7475677248396997,
+        "matched_zero_volume_minutes": 0,
+        "negative_futures_volume_minutes": 0,
+        "futures_source_rows": 4323466,
+        "futures_source_first_utc": "2010-06-07T00:14:00",
+        "futures_source_last_utc": "2026-07-27T23:59:00",
+        "futures_roll_boundaries": 65,
+        "coverage_by_year": [
+          {
+            "year": 2011,
+            "spot_rows": 25830,
+            "matched_rows": 9246,
+            "match_rate": 0.35795586527293843
+          },
+          {
+            "year": 2012,
+            "spot_rows": 373019,
+            "matched_rows": 213133,
+            "match_rate": 0.5713730399791968
+          },
+          {
+            "year": 2013,
+            "spot_rows": 371602,
+            "matched_rows": 220993,
+            "match_rate": 0.5947034730706509
+          },
+          {
+            "year": 2014,
+            "spot_rows": 371775,
+            "matched_rows": 210179,
+            "match_rate": 0.5653392508909959
+          },
+          {
+            "year": 2015,
+            "spot_rows": 371790,
+            "matched_rows": 258880,
+            "match_rate": 0.6963070550579629
+          },
+          {
+            "year": 2016,
+            "spot_rows": 371805,
+            "matched_rows": 269129,
+            "match_rate": 0.7238444883742822
+          },
+          {
+            "year": 2017,
+            "spot_rows": 370905,
+            "matched_rows": 279235,
+            "match_rate": 0.7528477642523018
+          },
+          {
+            "year": 2018,
+            "spot_rows": 371715,
+            "matched_rows": 291536,
+            "match_rate": 0.7842997995776334
+          },
+          {
+            "year": 2019,
+            "spot_rows": 371715,
+            "matched_rows": 266677,
+            "match_rate": 0.7174232947284882
+          },
+          {
+            "year": 2020,
+            "spot_rows": 373275,
+            "matched_rows": 298195,
+            "match_rate": 0.7988614292411761
+          },
+          {
+            "year": 2021,
+            "spot_rows": 373515,
+            "matched_rows": 303953,
+            "match_rate": 0.8137638381323374
+          },
+          {
+            "year": 2022,
+            "spot_rows": 373410,
+            "matched_rows": 319042,
+            "match_rate": 0.854401328298653
+          },
+          {
+            "year": 2023,
+            "spot_rows": 370245,
+            "matched_rows": 317313,
+            "match_rate": 0.8570352064173723
+          },
+          {
+            "year": 2024,
+            "spot_rows": 372900,
+            "matched_rows": 318629,
+            "match_rate": 0.8544623223384286
+          },
+          {
+            "year": 2025,
+            "spot_rows": 371295,
+            "matched_rows": 316313,
+            "match_rate": 0.8519182859990034
+          },
+          {
+            "year": 2026,
+            "spot_rows": 202500,
+            "matched_rows": 172294,
+            "match_rate": 0.8508345679012346
+          }
+        ],
+        "coverage_by_utc_hour": [
+          {
+            "hour_utc": 0,
+            "spot_rows": 227280,
+            "matched_rows": 171633,
+            "match_rate": 0.7551610348468849
+          },
+          {
+            "hour_utc": 1,
+            "spot_rows": 227280,
+            "matched_rows": 177412,
+            "match_rate": 0.7805878211897219
+          },
+          {
+            "hour_utc": 2,
+            "spot_rows": 227280,
+            "matched_rows": 162767,
+            "match_rate": 0.7161518831397395
+          },
+          {
+            "hour_utc": 3,
+            "spot_rows": 227280,
+            "matched_rows": 149352,
+            "match_rate": 0.6571277719112988
+          },
+          {
+            "hour_utc": 4,
+            "spot_rows": 227280,
+            "matched_rows": 139082,
+            "match_rate": 0.6119412178810278
+          },
+          {
+            "hour_utc": 5,
+            "spot_rows": 227280,
+            "matched_rows": 147989,
+            "match_rate": 0.6511307638155579
+          },
+          {
+            "hour_utc": 6,
+            "spot_rows": 227280,
+            "matched_rows": 172296,
+            "match_rate": 0.7580781414994721
+          },
+          {
+            "hour_utc": 7,
+            "spot_rows": 227340,
+            "matched_rows": 194376,
+            "match_rate": 0.8550013196093956
+          },
+          {
+            "hour_utc": 8,
+            "spot_rows": 227340,
+            "matched_rows": 200669,
+            "match_rate": 0.8826823260314947
+          },
+          {
+            "hour_utc": 9,
+            "spot_rows": 227340,
+            "matched_rows": 195698,
+            "match_rate": 0.8608163983460896
+          },
+          {
+            "hour_utc": 10,
+            "spot_rows": 227340,
+            "matched_rows": 189707,
+            "match_rate": 0.8344637987155802
+          },
+          {
+            "hour_utc": 11,
+            "spot_rows": 227340,
+            "matched_rows": 190276,
+            "match_rate": 0.8369666578692707
+          },
+          {
+            "hour_utc": 12,
+            "spot_rows": 227340,
+            "matched_rows": 203718,
+            "match_rate": 0.896093956188968
+          },
+          {
+            "hour_utc": 13,
+            "spot_rows": 227340,
+            "matched_rows": 212987,
+            "match_rate": 0.9368654878156066
+          },
+          {
+            "hour_utc": 14,
+            "spot_rows": 227340,
+            "matched_rows": 216562,
+            "match_rate": 0.9525908331133984
+          },
+          {
+            "hour_utc": 15,
+            "spot_rows": 227340,
+            "matched_rows": 212137,
+            "match_rate": 0.9331265945280197
+          },
+          {
+            "hour_utc": 16,
+            "spot_rows": 227280,
+            "matched_rows": 197191,
+            "match_rate": 0.8676126363956354
+          },
+          {
+            "hour_utc": 17,
+            "spot_rows": 227280,
+            "matched_rows": 182737,
+            "match_rate": 0.8040170714537135
+          },
+          {
+            "hour_utc": 18,
+            "spot_rows": 227040,
+            "matched_rows": 182715,
+            "match_rate": 0.8047700845665962
+          },
+          {
+            "hour_utc": 19,
+            "spot_rows": 227040,
+            "matched_rows": 174641,
+            "match_rate": 0.7692080690627202
+          },
+          {
+            "hour_utc": 20,
+            "spot_rows": 226860,
+            "matched_rows": 139927,
+            "match_rate": 0.6167989068147757
+          },
+          {
+            "hour_utc": 21,
+            "spot_rows": 217979,
+            "matched_rows": 42264,
+            "match_rate": 0.19389023713293482
+          },
+          {
+            "hour_utc": 22,
+            "spot_rows": 221130,
+            "matched_rows": 75828,
+            "match_rate": 0.34291140957807625
+          },
+          {
+            "hour_utc": 23,
+            "spot_rows": 225667,
+            "matched_rows": 132783,
+            "match_rate": 0.5884023804986994
+          }
+        ],
+        "unmatched_policy": "nullable UInt64; no zero-fill or as-of fill"
+      },
+      "output_sha256": "abe6d3890d01ec86651c70a2ffd040e3d31b89b6a378467e86c848d0d4ad802d",
+      "output_bytes": 75382484,
+      "output_columns": [
+        "ts_utc",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ]
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "start": "2015-01-01",
+  "end": "2021-01-01",
+  "timeframes": [
+    {"minutes": 15, "zscore_lookback_bars": 200},
+    {"minutes": 30, "zscore_lookback_bars": 100}
+  ],
+  "entry_z": 3.0,
+  "basis_mode": "log",
+  "signal_mode": "cross",
+  "blackout": {
+    "timezone": "America/New_York",
+    "start_time": "16:45",
+    "end_time": "18:00"
+  },
+  "horizon_minutes": [30, 90, 360],
+  "entry_delay_bars": [1, 2],
+  "round_trip_cost_bps_per_leg": 0.5,
+  "non_overlapping": true
+}

@@ -4,10 +4,19 @@ Reproduce from the workspace root:
     python -u forex/exploration_4/_run_stage_a.py
 
 Contract: `experiments/hypotheses/HYP-0002.md` (frozen before this ran) and
-`RUNBOOK.md` §STAGE A. This is DESCRIPTION. It commits no strategy and issues no
+`RUNBOOK.md` §STAGE A. This is DESCRIPTION: it commits no strategy and issues no
 GO/NO-GO. Its one output decision is the (decision grain, holding-horizon cap) that
-Stage B will freeze its reference book at, chosen by the pre-committed rule in
-HYP-0002 §6 -- never by strategy net PnL.
+Stage B will freeze its reference book at.
+
+HONEST LABEL (Stage-A repair F1): that (grain, horizon) is selected by the
+pre-committed rule in HYP-0002 §6, which maximizes the z-fade's **gross** strategy
+return over horizons and ranks grains by that maximum. So tau=5 / H=240 are
+CONSUMED-HISTORY, GROSS-P&L-SELECTED candidates -- not net-P&L-tuned, but not
+"untuned" either, and not confirmed. The raw CI on the selected maximum is not
+selection-adjusted; "only rung whose CI excludes zero" is descriptive, not
+confirmatory. The 2024+ segment was opened once here and its tau=5 CI included zero,
+so it did NOT confirm the selection and is no longer a clean holdout. Only future
+observations can now provide a clean temporal holdout.
 
 Order of operations is deliberate: the Rule 9a coverage bookkeeping is collected
 before any statistic is interpreted, then the three views, then the pre-committed
@@ -135,9 +144,12 @@ def load_minutes(pair: str, cfg: dict):
 def pair_vr_accumulators(frame: pd.DataFrame, cfg: dict) -> dict:
     """Per-era-group VR accumulators from 1-minute log returns.
 
-    Returns are demeaned WITHIN each era group before accumulation so a drift
-    difference between eras cannot leak into the autocovariances, and a return is
-    valid only when the preceding minute actually exists.
+    Returns for the pooled 'all' cell are demeaned WITHIN each era group so a drift
+    difference between eras cannot leak into the ambient autocovariances. For the
+    per-session cells the returns are additionally demeaned WITHIN each (era-group,
+    session) group (Stage-A repair F5): a per-session VR built on the whole-day mean
+    would otherwise charge each session's own drift to its serial dependence. A return
+    is valid only when the preceding minute actually exists.
     """
     idx = pd.DatetimeIndex(frame.time)
     mpos = lib.minute_positions(idx)
@@ -158,7 +170,16 @@ def pair_vr_accumulators(frame: pd.DataFrame, cfg: dict) -> dict:
         if valid.sum() < 1000:
             continue
         dm = np.where(valid, r - r[valid].mean(), 0.0)
-        out[name] = lib.accumulate_vr(dm, mpos, valid, sess, max_lag=cfg["vr_max_lag_minutes"] - 1)
+        # session-demeaned copy: subtract the mean of each session within this
+        # era-group. Sessions can overlap in code space, so demean per session code.
+        dm_sess = np.array(dm, copy=True)
+        for code in np.unique(sess[valid]):
+            cell = valid & (sess == code)
+            if cell.any():
+                dm_sess[cell] = r[cell] - r[cell].mean()
+        out[name] = lib.accumulate_vr(dm, mpos, valid, sess,
+                                      max_lag=cfg["vr_max_lag_minutes"] - 1,
+                                      returns_sess=dm_sess)
     return out
 
 
@@ -422,8 +443,15 @@ def attach_costs(signals: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     Nothing here is measured: the archive has no bid/ask. The number that decides
     anything is the breakeven round-trip pip reported beside gross.
     """
-    med = signals.groupby(["pair", "tau"], observed=True).sigma_pips.transform("median")
-    vol_ratio = (signals.sigma_pips / med).to_numpy()
+    # F2 (Stage-A repair): the vol_ratio denominator is a per-(pair,tau) sigma
+    # median. Computing it over ALL rows leaks the sealed 2024+ holdout into every
+    # consumed-era cost. Estimate the median on consumed eras only and map it back
+    # onto every row (holdout rows are priced against the consumed median, causal).
+    consumed = signals.loc[signals.era.ne("holdout")]
+    med_map = consumed.groupby(["pair", "tau"], observed=True).sigma_pips.median()
+    keys = pd.MultiIndex.from_arrays([signals.pair, signals.tau])
+    med = keys.map(med_map).to_numpy(dtype=float)
+    vol_ratio = signals.sigma_pips.to_numpy() / med
     cost_era = signals.era.map(ERA_TO_COST_ERA).to_numpy()
     hour = signals.utc_hour.to_numpy()
     pair_arr = signals.pair.to_numpy()
@@ -1192,12 +1220,25 @@ Contract: `experiments/hypotheses/HYP-0002.md` (frozen before this run) and
 **This report describes the market. It commits no strategy and issues no GO/NO-GO.**
 Its only decision is the decision grain and holding-horizon cap that Stage B will
 freeze its reference book at, taken by the pre-committed rule in HYP-0002 §6 and
-applied mechanically in `apply_grain_rule` — never by strategy net PnL.
+applied mechanically in `apply_grain_rule`.
+
+**Honest label (Stage-A repair F1):** that rule maximizes the z-fade's **gross**
+strategy return over horizons and ranks grains by it, so **τ\\* = 5 / H\\* = 240 are
+consumed-history, GROSS-P&L-selected candidates** — not net-tuned, but not "untuned"
+and not confirmed. The CI on the selected maximum is not selection-adjusted, so "only
+rung whose CI excludes zero" is descriptive, not confirmatory. 2024+ was opened once
+(§8) with a tau=5 CI that included zero: it did not confirm the choice and is no longer
+a clean holdout; only future data can now serve as one.
 
 Grain outcome: {headline}
 
 Coverage gate: `reports/DATA_QUALITY.md`. Every table below prints its **n**. The
-sealed 2024+ holdout is segregated everywhere and opened once, in §8.
+sealed 2024+ holdout is kept out of every gross statistic and the grain selection and
+is opened once, in §8. **Cost caveat (F2):** the modelled-cost `vol_ratio` denominator
+now uses the **consumed-era** per-(pair,tau) σ median only; the earlier build computed
+it over the full table including 2024+, so pre-repair net/cost columns had a small
+holdout leak (medians 2–7% lower). Gross statistics and the grain selection never used
+the cost column and are unaffected.
 
 ---
 

@@ -150,17 +150,129 @@
       },
       "localisation_survives": false
     },
-    "outcome": "thin-hours localisation DOES NOT survive: the EXP-0002 session breakdown is RETRACTED as a time-of-day selection artifact"
+    "outcome": "thin-hours localisation is NOT ESTABLISHED under the same-slot normalisation: the EXP-0002 session breakdown is retracted as an actionable prior. The clock-artifact ATTRIBUTION is PROVISIONAL (this screen compares a gap to the sum of two marginal half-widths, not a difference CI; see the clustered contrast for the proper test)",
+    "matching_departure": "HYP-0003 \u00a74 specifies matching at a per-hour firing rate; choose_matched_k matches ONE pooled crossing rate across all hours (matched total count). Sensible, but a declared departure from the frozen contract, not 'no departures'.",
+    "clustered_contrast": {
+      "tau": 5,
+      "horizon_minutes": 240,
+      "note": "UTC-day-clustered CI for the difference in mean gross_R_abs; captures same-day covariance, unlike the sum-of-half-widths screen",
+      "slot": {
+        "off_minus_london": {
+          "a": "off",
+          "b": "london",
+          "diff": 0.16895434720876387,
+          "se": 0.0978077924593324,
+          "ci_low": -0.022748926011527615,
+          "ci_high": 0.36065762042905536,
+          "n_a": 21238,
+          "n_b": 27396,
+          "clusters": 3665
+        },
+        "asia_minus_london": {
+          "a": "asia",
+          "b": "london",
+          "diff": 0.1859364671758571,
+          "se": 0.08507378643611754,
+          "ci_low": 0.019191845761066723,
+          "ci_high": 0.3526810885906475,
+          "n_a": 33255,
+          "n_b": 27396,
+          "clusters": 3100
+        }
+      },
+      "abs": {
+        "off_minus_london": {
+          "a": "off",
+          "b": "london",
+          "diff": 0.42719940255235783,
+          "se": 0.11298195446546619,
+          "ci_low": 0.20575477180004412,
+          "ci_high": 0.6486440333046716,
+          "n_a": 12061,
+          "n_b": 35720,
+          "clusters": 3509
+        },
+        "asia_minus_london": {
+          "a": "asia",
+          "b": "london",
+          "diff": 0.27391434840769874,
+          "se": 0.09680946643560806,
+          "ci_low": 0.08416779419390694,
+          "ci_high": 0.4636609026214905,
+          "n_a": 16689,
+          "n_b": 35720,
+          "clusters": 3103
+        }
+      }
+    },
+    "clustered_conclusion": "Proper UTC-day-clustered difference (slot arm): off\u2212london +0.169 CI[-0.023,+0.361] (includes 0); asia\u2212london +0.186 CI[+0.019,+0.353] (excludes 0). Normalising SHRINKS both gaps versus the confounded abs arm (off +0.427\u2192+0.169, asia +0.274\u2192+0.186), so the clock explained most of off's apparent localisation and part of asia's. What remains is a MARGINAL asia gap on INSPECTED history, one of several contrasts, without the arm-by-session interaction Codex asked for. Verdict: off\u2212london not established; asia\u2212london provisional and NOT actionable yet \u2014 it is the motivation for the axis-4 session test (full pipeline), not a prior to fold into an overlay now."
   },
   "Q3_grain": {
+    "primary_horizon_minutes": 240,
     "ranking": [
+      5,
+      15,
+      30,
+      60,
+      120
+    ],
+    "detail": [
+      {
+        "tau": 5,
+        "k": 2.14,
+        "gross_R_abs": 0.10558788343798566,
+        "horizon_minutes": 240,
+        "n": 110124,
+        "ci_low": 0.04483648078407933,
+        "ci_high": 0.16633928609189197
+      },
+      {
+        "tau": 15,
+        "k": 2.12,
+        "gross_R_abs": 0.049814469611625105,
+        "horizon_minutes": 240,
+        "n": 36737,
+        "ci_low": -0.010771939584911433,
+        "ci_high": 0.11040087880816164
+      },
+      {
+        "tau": 30,
+        "k": 2.1,
+        "gross_R_abs": -0.017093932934820432,
+        "horizon_minutes": 240,
+        "n": 19315,
+        "ci_low": -0.07803473309485462,
+        "ci_high": 0.04384686722521376
+      },
+      {
+        "tau": 60,
+        "k": 2.06,
+        "gross_R_abs": -0.018088839017330497,
+        "horizon_minutes": 240,
+        "n": 9420,
+        "ci_low": -0.07570242172926325,
+        "ci_high": 0.039524743694602266
+      },
+      {
+        "tau": 120,
+        "k": 2.0,
+        "gross_R_abs": -0.042819454303629156,
+        "horizon_minutes": 240,
+        "n": 4387,
+        "ci_low": -0.10426634756899486,
+        "ci_high": 0.018627438961736548
+      }
+    ],
+    "top_tau": 5,
+    "tau5_confirmed": true,
+    "search_ranking": [
       5,
       15,
       60,
       30,
       120
     ],
-    "detail": [
+    "search_detail": [
       {
         "tau": 5,
         "k": 2.14,
@@ -207,9 +319,9 @@
         "ci_high": 0.013015980474209238
       }
     ],
-    "top_tau": 5,
-    "tau5_confirmed": true,
-    "verdict": "tau*=5 CONFIRMED under same-slot normalisation"
+    "search_top_tau": 5,
+    "search_note": "AUX ONLY -- best-over-horizon {60,240} is a two-horizon search that can only flatter a grain; the decision uses the fixed preregistered H*=240 ranking above",
+    "verdict": "tau*=5 CONFIRMED under same-slot normalisation at fixed H*=240"
   },
   "Q4_information": {
     "abs": {
@@ -217,7 +329,7 @@
       "horizon_minutes": 240,
       "gross_R_abs": 0.06507436949813895,
       "gross_pips": 0.24351564540681123,
-      "cost_pips_base": 1.15044055976703,
+      "cost_pips_base": 1.138005175000098,
       "ci_low": 0.003621410268292845,
       "ci_high": 0.12652732872798506
     },
@@ -226,7 +338,7 @@
       "horizon_minutes": 240,
       "gross_R_abs": 0.10558788343798566,
       "gross_pips": 0.3834251616359732,
-      "cost_pips_base": 1.2085249050282638,
+      "cost_pips_base": 1.1961326276984214,
       "ci_low": 0.04483648078407933,
       "ci_high": 0.16633928609189197
     },

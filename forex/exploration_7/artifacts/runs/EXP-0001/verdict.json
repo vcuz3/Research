@@ -1,0 +1,27 @@
+{
+  "hypothesis": "HYP-0001",
+  "primary": {
+    "k": 1.5,
+    "d": 5,
+    "h": 1440
+  },
+  "gate_pass": true,
+  "mde_sigma": 0.05,
+  "kill_test": {
+    "P1": false,
+    "P2": true,
+    "P3": true,
+    "P4": true,
+    "P5": true
+  },
+  "verdict": "NO-GO",
+  "pooled": {
+    "n": 787,
+    "n_clusters": 295,
+    "mean": 0.5305135723386,
+    "se": 0.2872231918778887,
+    "t": 1.847042952451224
+  },
+  "pooled_gross_pips": 9.33367217280814,
+  "pairs_positive": 8
+}

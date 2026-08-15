@@ -6,6 +6,14 @@ Contract: `experiments/hypotheses/HYP-0003.md`, frozen before this run. Reproduc
 **Numbering:** the run-book assigns EXP-0003 to Stage B; the ledger requires
 `EXP-\d{4}`, so this addendum is EXP-0003 and **Stage B becomes EXP-0004**.
 
+**Honest label (Stage-A repair F1):** this addendum re-runs the grain/threshold
+selection on the SAME inspected 2012–2023 outcomes with a new normaliser. It is a
+confound test and a reconstruction, **not independent confirmation**. τ\*=5 / H\*=240
+remain **consumed-history, gross-P&L-selected candidates**; "confirmed under the
+same-slot arm" below means the selection is stable to removing the clock confound, not
+that it cleared a fresh holdout. Any inferential claim on the selected maximum needs a
+full-pipeline null that repeats the selection. Only future data is a clean holdout now.
+
 ## Why
 
 EXP-0002 measured `z = ret_τ / σ_τ` against an all-hours 28,800-minute σ. That window
@@ -199,16 +207,111 @@ overlap slot  16808      -0.0603             -0.2496               0.1290       
     },
     "localisation_survives": false
   },
-  "outcome": "thin-hours localisation DOES NOT survive: the EXP-0002 session breakdown is RETRACTED as a time-of-day selection artifact"
+  "outcome": "thin-hours localisation is NOT ESTABLISHED under the same-slot normalisation: the EXP-0002 session breakdown is retracted as an actionable prior. The clock-artifact ATTRIBUTION is PROVISIONAL (this screen compares a gap to the sum of two marginal half-widths, not a difference CI; see the clustered contrast for the proper test)",
+  "matching_departure": "HYP-0003 \u00a74 specifies matching at a per-hour firing rate; choose_matched_k matches ONE pooled crossing rate across all hours (matched total count). Sensible, but a declared departure from the frozen contract, not 'no departures'.",
+  "clustered_conclusion": "Proper UTC-day-clustered difference (slot arm): off\u2212london +0.169 CI[-0.023,+0.361] (includes 0); asia\u2212london +0.186 CI[+0.019,+0.353] (excludes 0). Normalising SHRINKS both gaps versus the confounded abs arm (off +0.427\u2192+0.169, asia +0.274\u2192+0.186), so the clock explained most of off's apparent localisation and part of asia's. What remains is a MARGINAL asia gap on INSPECTED history, one of several contrasts, without the arm-by-session interaction Codex asked for. Verdict: off\u2212london not established; asia\u2212london provisional and NOT actionable yet \u2014 it is the motivation for the axis-4 session test (full pipeline), not a prior to fold into an overlay now."
 }
 ```
 
-**thin-hours localisation DOES NOT survive: the EXP-0002 session breakdown is RETRACTED as a time-of-day selection artifact**
+**thin-hours localisation is NOT ESTABLISHED under the same-slot normalisation: the EXP-0002 session breakdown is retracted as an actionable prior. The clock-artifact ATTRIBUTION is PROVISIONAL (this screen compares a gap to the sum of two marginal half-widths, not a difference CI; see the clustered contrast for the proper test)**
+
+### Proper UTC-day-clustered difference contrast (F3)
+
+The screen above compares a session gap to the **sum of two marginal CI half-widths** —
+a deliberately conservative heuristic, not a confidence interval for the difference, and
+blind to the covariance between two session estimators that share a UTC day. The correct
+test is a UTC-day-clustered CI on the difference itself (`off − london`, `asia − london`),
+influence functions subtracted within each cluster. Both arms shown; the `slot` arm is the
+decision arm.
+
+```json
+{
+  "tau": 5,
+  "horizon_minutes": 240,
+  "note": "UTC-day-clustered CI for the difference in mean gross_R_abs; captures same-day covariance, unlike the sum-of-half-widths screen",
+  "slot": {
+    "off_minus_london": {
+      "a": "off",
+      "b": "london",
+      "diff": 0.16895434720876387,
+      "se": 0.0978077924593324,
+      "ci_low": -0.022748926011527615,
+      "ci_high": 0.36065762042905536,
+      "n_a": 21238,
+      "n_b": 27396,
+      "clusters": 3665
+    },
+    "asia_minus_london": {
+      "a": "asia",
+      "b": "london",
+      "diff": 0.1859364671758571,
+      "se": 0.08507378643611754,
+      "ci_low": 0.019191845761066723,
+      "ci_high": 0.3526810885906475,
+      "n_a": 33255,
+      "n_b": 27396,
+      "clusters": 3100
+    }
+  },
+  "abs": {
+    "off_minus_london": {
+      "a": "off",
+      "b": "london",
+      "diff": 0.42719940255235783,
+      "se": 0.11298195446546619,
+      "ci_low": 0.20575477180004412,
+      "ci_high": 0.6486440333046716,
+      "n_a": 12061,
+      "n_b": 35720,
+      "clusters": 3509
+    },
+    "asia_minus_london": {
+      "a": "asia",
+      "b": "london",
+      "diff": 0.27391434840769874,
+      "se": 0.09680946643560806,
+      "ci_low": 0.08416779419390694,
+      "ci_high": 0.4636609026214905,
+      "n_a": 16689,
+      "n_b": 35720,
+      "clusters": 3103
+    }
+  }
+}
+```
+
+**Proper UTC-day-clustered difference (slot arm): off−london +0.169 CI[-0.023,+0.361] (includes 0); asia−london +0.186 CI[+0.019,+0.353] (excludes 0). Normalising SHRINKS both gaps versus the confounded abs arm (off +0.427→+0.169, asia +0.274→+0.186), so the clock explained most of off's apparent localisation and part of asia's. What remains is a MARGINAL asia gap on INSPECTED history, one of several contrasts, without the arm-by-session interaction Codex asked for. Verdict: off−london not established; asia−london provisional and NOT actionable yet — it is the motivation for the axis-4 session test (full pipeline), not a prior to fold into an overlay now.**
+
+The sum-of-half-widths screen (above) is strictly more conservative than this difference CI;
+where the two disagree, the difference CI is the correct test. It clears zero for `asia` and
+not for `off`, so the clean "both retracted" reading from the screen is too strong. The
+economics are unchanged either way: gross stays ~3× under cost, and a thin-hour like `asia`
+carries a mechanical R_slot lift (its σ_slot is small), so a positive `asia` R gap is exactly
+what the busy/thin-hour σ structure predicts and is not by itself evidence of tradable edge.
+
+**Departure from the frozen contract:** HYP-0003 §4 specifies matching at a per-hour firing rate; choose_matched_k matches ONE pooled crossing rate across all hours (matched total count). Sensible, but a declared departure from the frozen contract, not 'no departures'.
 
 ## Q3 — Does the grain choice survive?
 
+**Primary ranking: fixed preregistered horizon H\*=240** (HYP-0003 §4).
 Ladder ranked by `gross_R_abs`, `slot` arm, delay-1, each rung at its own rate-matched
-`k`, best horizon:
+`k`, **no horizon searched**:
+
+```text
+ tau    k  gross_R_abs  horizon_minutes      n  ci_low  ci_high
+   5 2.14       0.1056              240 110124  0.0448   0.1663
+  15 2.12       0.0498              240  36737 -0.0108   0.1104
+  30 2.10      -0.0171              240  19315 -0.0780   0.0438
+  60 2.06      -0.0181              240   9420 -0.0757   0.0395
+ 120 2.00      -0.0428              240   4387 -0.1043   0.0186
+```
+
+**tau*=5 CONFIRMED under same-slot normalisation at fixed H*=240**
+
+*Robustness only (not the decision):* the same ladder ranked by the **best of horizons
+{60, 240}** — a two-horizon search that can only flatter a grain by picking its better
+horizon. It ranks [5, 15, 60, 30, 120] with top τ=5. This is
+reported for transparency; the grain decision rests on the fixed-H\* table above.
 
 ```text
  tau    k  gross_R_abs  horizon_minutes      n  ci_low  ci_high
@@ -219,32 +322,30 @@ Ladder ranked by `gross_R_abs`, `slot` arm, delay-1, each rung at its own rate-m
  120 2.00      -0.0156               60   5138 -0.0442   0.0130
 ```
 
-**tau*=5 CONFIRMED under same-slot normalisation**
-
 ### Full ladder, both arms side by side (delay-1, rate-matched)
 
 ```text
  tau  arm    k  horizon_minutes      n  gross_R_abs  gross_R_abs_t  gross_pips  cost_pips_base
-   5  abs 2.00               60 117456       0.0601         3.7967      0.1941          1.1451
-   5 slot 2.14               60 121743       0.0612         4.3848      0.2111          1.1894
-   5  abs 2.00              240 111023       0.0651         2.0755      0.2435          1.1504
-   5 slot 2.14              240 110124       0.1056         3.4065      0.3834          1.2085
-  15  abs 2.00               60  40214       0.0272         1.7217      0.1530          1.1296
-  15 slot 2.12               60  40750       0.0200         1.3894      0.1506          1.1731
-  15  abs 2.00              240  37927       0.0146         0.4542      0.0750          1.1352
-  15 slot 2.12              240  36737       0.0498         1.6115      0.3903          1.1920
-  30  abs 2.00               60  22265      -0.0028        -0.1779     -0.0462          1.1190
-  30 slot 2.10               60  21448      -0.0040        -0.2794     -0.0934          1.1634
-  30  abs 2.00              240  20778      -0.0186        -0.6050     -0.2316          1.1262
-  30 slot 2.10              240  19315      -0.0171        -0.5498     -0.2082          1.1819
-  60  abs 2.00               60  11174       0.0005         0.0361     -0.0314          1.1044
-  60 slot 2.06               60  10669       0.0047         0.3282      0.0085          1.1489
-  60  abs 2.00              240  10190      -0.0473        -1.5852     -0.4272          1.1148
-  60 slot 2.06              240   9420      -0.0181        -0.6154     -0.1791          1.1703
- 120  abs 2.00               60   5251      -0.0172        -1.2254     -0.3448          1.1081
- 120 slot 2.00               60   5138      -0.0156        -1.0687     -0.2196          1.1438
- 120  abs 2.00              240   4137      -0.0600        -1.8783     -0.6494          1.1438
- 120 slot 2.00              240   4387      -0.0428        -1.3658     -0.4184          1.1677
+   5  abs 2.00               60 117456       0.0601         3.7967      0.1941          1.1329
+   5 slot 2.14               60 121743       0.0612         4.3848      0.2111          1.1776
+   5  abs 2.00              240 111023       0.0651         2.0755      0.2435          1.1380
+   5 slot 2.14              240 110124       0.1056         3.4065      0.3834          1.1961
+  15  abs 2.00               60  40214       0.0272         1.7217      0.1530          1.1191
+  15 slot 2.12               60  40750       0.0200         1.3894      0.1506          1.1628
+  15  abs 2.00              240  37927       0.0146         0.4542      0.0750          1.1244
+  15 slot 2.12              240  36737       0.0498         1.6115      0.3903          1.1811
+  30  abs 2.00               60  22265      -0.0028        -0.1779     -0.0462          1.1092
+  30 slot 2.10               60  21448      -0.0040        -0.2794     -0.0934          1.1535
+  30  abs 2.00              240  20778      -0.0186        -0.6050     -0.2316          1.1162
+  30 slot 2.10              240  19315      -0.0171        -0.5498     -0.2082          1.1715
+  60  abs 2.00               60  11174       0.0005         0.0361     -0.0314          1.0949
+  60 slot 2.06               60  10669       0.0047         0.3282      0.0085          1.1390
+  60  abs 2.00              240  10190      -0.0473        -1.5852     -0.4272          1.1049
+  60 slot 2.06              240   9420      -0.0181        -0.6154     -0.1791          1.1598
+ 120  abs 2.00               60   5251      -0.0172        -1.2254     -0.3448          1.0992
+ 120 slot 2.00               60   5138      -0.0156        -1.0687     -0.2196          1.1346
+ 120  abs 2.00              240   4137      -0.0600        -1.8783     -0.6494          1.1339
+ 120 slot 2.00              240   4387      -0.0428        -1.3658     -0.4184          1.1580
 ```
 
 ## Q4 — Does normalising destroy the information?
@@ -258,7 +359,7 @@ Compared at matched firing rate, same risk unit, delay-1, τ=5:
     "horizon_minutes": 240,
     "gross_R_abs": 0.06507436949813895,
     "gross_pips": 0.24351564540681123,
-    "cost_pips_base": 1.15044055976703,
+    "cost_pips_base": 1.138005175000098,
     "ci_low": 0.003621410268292845,
     "ci_high": 0.12652732872798506
   },
@@ -267,7 +368,7 @@ Compared at matched firing rate, same risk unit, delay-1, τ=5:
     "horizon_minutes": 240,
     "gross_R_abs": 0.10558788343798566,
     "gross_pips": 0.3834251616359732,
-    "cost_pips_base": 1.2085249050282638,
+    "cost_pips_base": 1.1961326276984214,
     "ci_low": 0.04483648078407933,
     "ci_high": 0.16633928609189197
   },

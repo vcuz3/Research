@@ -22,10 +22,12 @@ Three rules govern the fill, all conservative:
   ignores the anchor entirely and is the market-exit floor.
 * **No unavailable price improvement (Rule 1).** A gap that opens beyond the anchor still
   fills at the anchor price, never the better open.
-* **Adverse/degenerate cases ride to the cap.** If the anchor is not strictly favourable at
-  entry (price already retraced past it before we entered -- possible on a sharp snapback at
-  delay-1), there is no valid limit to rest, so the trade holds to the time cap rather than
-  booking a fabricated fill.
+* **Adverse/degenerate cases are pre-filtered, and defended here too.** If the anchor is not
+  strictly favourable at entry (price already retraced past it before we entered -- possible
+  on a sharp snapback at delay-1), there is no valid limit to rest. The book excludes these as
+  a causal no-entry (see ``anchor_favourable``); should any reach the simulator it holds them
+  to the cap rather than booking a fabricated fill. This defensive branch is therefore
+  unreachable for the frozen book but kept so the function is safe in isolation.
 
 Path indexing matches the audited engines: ``paths[name]`` is ``(n, width)``, column m is
 the minute ``entry + m``, entry price is ``open[:, 0]``, the position lives through bars
@@ -105,6 +107,22 @@ def simulate_anchor_retrace(paths, side, entry_px, anchor_px, guard_px, cap,
     pnl = np.where(filled, anchor_pnl, market_pnl)
     kind = np.where(filled, 1, 0)
     return pnl, kind, exit_bar
+
+
+def anchor_favourable(side, entry_px, anchor_px):
+    """True where the anchor is strictly on the favourable side of the entry.
+
+    The book's thesis is a reversion TO the anchor, so the exit limit must rest on the
+    favourable side of entry (a sell limit above a long, a buy limit below a short). If
+    price has already retraced to or through the anchor by the (delayed) entry, the limit
+    is marketable and the reversion premise is spent -- a causal **no-entry** condition,
+    since both the entry price and the anchor are known at entry. The book drops these
+    signals rather than resting a non-deployable limit or booking a fabricated fill; this
+    is the prespecified handling for the case ``simulate_anchor_retrace`` otherwise treats
+    defensively by holding to the cap.
+    """
+    s = np.asarray(side, float)
+    return s * (np.asarray(anchor_px, float) - np.asarray(entry_px, float)) > 0
 
 
 def friday_cap_minutes(ny_weekday, ny_minute, base_cap: int, friday_flat_ny_minute: int):

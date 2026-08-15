@@ -1,0 +1,99 @@
+{
+  "experiment": "EXP-0006",
+  "stage": "C",
+  "axis": "volatility_regime",
+  "base_book_full": {
+    "n": 66796,
+    "pairs": 4,
+    "clusters": 3706,
+    "gross_R_slot": -0.027476998353535637,
+    "gross_ci_low": -0.08286649487729826,
+    "gross_ci_high": 0.027912498170226983,
+    "net_R_slot": -0.5647980314061829,
+    "net_ci_low": -0.6204966529365847,
+    "net_ci_high": -0.5090994098757811,
+    "gross_R_abs": -0.04979540226681674,
+    "gross_pips": -0.16985485657823715,
+    "net_R_abs": -0.4442263083316212,
+    "cost_pips": 1.2331831599005187,
+    "anchor_fill_rate": 0.6969579016707588,
+    "timeout_rate": 0.3030420983292413,
+    "sigma_slot_pips": 2.8614193677074593,
+    "abs_z": 2.771074125604566
+  },
+  "corr_vrz_absz_consumed": 0.13368349163322904,
+  "arms_best_deployable": {
+    "compression": {
+      "arm": "compression",
+      "keep_fraction": 0.15,
+      "vr_threshold": -1.1963151748932799,
+      "n": 11869,
+      "net_R_slot": -0.5262633439480181,
+      "net_ci": [
+        -0.6274354996755094,
+        -0.4250911882205268
+      ],
+      "gross_R_slot": 0.01837657724963802,
+      "gross_pips": -0.05827891987529781,
+      "cost_pips": 1.2485011043384284,
+      "abs_z": 2.6705586269075208,
+      "bench_net_R_slot": -0.5235885675368384,
+      "excess_net_R_slot": -0.0026747764111797467,
+      "excess_gross_R_slot": -0.03691092792157108,
+      "net_clears_zero": false,
+      "beats_depth_net": false
+    },
+    "expansion": {
+      "arm": "expansion",
+      "keep_fraction": 0.6,
+      "vr_threshold": -0.203504040551491,
+      "n": 36965,
+      "net_R_slot": -0.5465974945170313,
+      "net_ci": [
+        -0.6255745653470712,
+        -0.46762042368699136
+      ],
+      "gross_R_slot": -0.015957680307354293,
+      "gross_pips": -0.12536419586095104,
+      "cost_pips": 1.22232292337429,
+      "abs_z": 2.8385870004793285,
+      "bench_net_R_slot": -0.5695204606354123,
+      "excess_net_R_slot": 0.02292296611838096,
+      "excess_gross_R_slot": 0.002353798359880605,
+      "net_clears_zero": false,
+      "beats_depth_net": true
+    }
+  },
+  "null_gated": {
+    "spent": false,
+    "reason": "primary did NOT clear on either arm (net<=0 or fails to beat depth at matched count) -> null unnecessary (gate-nullc-on-success-metric)",
+    "result": null
+  },
+  "sealed_holdout": {
+    "n": 2794,
+    "pairs": 4,
+    "clusters": 306,
+    "gross_R_slot": -0.1695359443103004,
+    "gross_ci_low": -0.42901788457383533,
+    "gross_ci_high": 0.08994599595323455,
+    "net_R_slot": -0.7873240108659524,
+    "net_ci_low": -1.04875204213527,
+    "net_ci_high": -0.5258959795966347,
+    "gross_R_abs": -0.15337896353068875,
+    "gross_pips": -0.2792859699355863,
+    "net_R_abs": -0.6508769067262811,
+    "cost_pips": 1.0477886346544694,
+    "anchor_fill_rate": 0.6975662133142448,
+    "timeout_rate": 0.3024337866857552,
+    "sigma_slot_pips": 2.0888802685621237,
+    "abs_z": 2.6138553578024757,
+    "arm": "compression",
+    "keep_fraction": 0.15,
+    "vr_threshold": -1.1963151748932799
+  },
+  "verdict": {
+    "vol_regime_accepted_as_rescue": false,
+    "decision_arm": null,
+    "summary": "VOL REGIME REJECTED as a rescue: on both arms, net R_slot never clears zero at a deployable count and/or fails to beat the EXP-0005 depth benchmark at matched count (i.e. any gross ordering is consistent with re-selecting depth). compression: best net -0.526 R_slot CI[-0.627,-0.425] (clears0=False), excess vs depth net -0.003 (beats=False) | expansion: best net -0.547 R_slot CI[-0.626,-0.468] (clears0=False), excess vs depth net +0.023 (beats=True)"
+  }
+}

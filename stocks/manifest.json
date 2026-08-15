@@ -1,0 +1,20 @@
+{
+  "created_utc": "2026-08-11T09:59:56.614354+00:00",
+  "window": {
+    "start": "2016-08-11",
+    "end": "2026-08-11"
+  },
+  "timeframe": "1m",
+  "price_source": "London Strategic Edge vault API",
+  "membership_source": "https://en.wikipedia.org/wiki/List_of_NASDAQ-100_companies",
+  "membership_source_sha256": "3777e913f975b11566099903bcc47935218e0dcd0c716b899526a7c59fd0404d",
+  "current_security_count": 102,
+  "historical_ticker_count": 194,
+  "membership_interval_count": 202,
+  "lse_catalog_present_count": 163,
+  "lse_downloadable_count": 163,
+  "membership_covered_count": 157,
+  "survivorship_bias_gate": "failed",
+  "download_complete": false,
+  "warning": "LSE does not cover every historical constituent over its membership interval."
+}
