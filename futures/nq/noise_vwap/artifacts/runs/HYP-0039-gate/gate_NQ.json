@@ -1,0 +1,22 @@
+{
+  "inst": "NQ",
+  "n_train": 2230,
+  "n_test": 1487,
+  "train_span": [
+    "2011-08-02",
+    "2020-07-23"
+  ],
+  "test_span": [
+    "2020-07-24",
+    "2026-07-14"
+  ],
+  "oos_r2_baseline_priorvol": 0.5222193689238808,
+  "oos_r2_full_plus_earlyrv": 0.6409243077752524,
+  "oos_r2_added_by_earlyrv": 0.11870493885137168,
+  "train_coef_earlyrv": 0.5232007930730302,
+  "train_hac_t_earlyrv": 23.956163558505338,
+  "GATE1_earlyrv_adds_and_significant": true,
+  "placebo_train_hac_t_direction": 0.20894317822281286,
+  "placebo_oos_corr_direction": 0.03544745100010303,
+  "PLACEBO3_no_directional_leak": true
+}

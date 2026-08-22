@@ -37,7 +37,10 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
                      reset_check="decision", audit_out=None,
                      reset_hazard=None, reset_seed=0,
                      hard_stop_buf_atr=None, hard_stop_trigger="touch",
-                     hard_stop_atr_col=None, track_excursion=False) -> list[dict]:
+                     hard_stop_atr_col=None, track_excursion=False,
+                     fast_overlay=False, fast_release="opposite", fast_horizon=5,
+                     fast_entry=True, fast_exit=True, fast_fixed_delay=5,
+                     fast_hazard=None, fast_seed=0, fast_audit=None) -> list[dict]:
     """
     Simulate one session.
 
@@ -186,6 +189,65 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
     reset_observed = True
     blocked: list[dict] = []   # audit trail of entries the lock suppressed
     trades: list[dict] = []
+
+    # ---- HYP-0034 fast-alpha execution overlay (default OFF -> bit-exact) -------
+    # A fast-decaying reversal alpha used only to TIME the base strategy's entries
+    # and stop-exits (never traded directly). The alpha at bar i is the sign of the
+    # trailing `fast_horizon`-minute return close[i]-close[i-h], known at the close
+    # of bar i; every fill stays next-open (rule 1/2). Entries are held pending
+    # after a breakout and released on a micro-pullback; stop-exits are held pending
+    # after the stop triggers and released on a favourable bounce. `fast_release`
+    # swaps ONLY the release trigger so the controls share the identical wait
+    # machinery: "opposite"=the paper, "same"=inverted, "fixed"=blind N-bar wait,
+    # "random"=coin flip (the decisive matched-exposure null, EXP-0043 control 1b).
+    h = int(fast_horizon)
+    ret_h = np.full(n, np.nan)
+    if fast_overlay and 0 < h < n:
+        ret_h[h:] = close[h:] - close[:-h]
+    if fast_release not in ("opposite", "same", "fixed", "random"):
+        raise ValueError(f"unknown fast_release {fast_release!r}")
+    if fast_overlay and fast_release == "random" and fast_hazard is None:
+        raise ValueError("fast_release='random' requires fast_hazard")
+    frng = (np.random.default_rng([int(fast_seed),
+                                   int(pd.Timestamp(b["sdate"].iloc[0]).value % (2 ** 31))])
+            if (fast_overlay and fast_release == "random") else None)
+    pend_entry = 0            # armed pending-entry side (0 = none)
+    pend_entry_arm = -1       # bar index the pending entry was armed
+    pend_entry_arm_mfo = -1
+    pend_entry_ref_m = None
+    pend_exit = False         # a stop has triggered; liquidation is pending
+    pend_exit_arm = -1
+    pend_exit_arm_mfo = -1
+    pend_exit_reason = "stop"
+
+    def _sgn(x):
+        return int(x > 0) - int(x < 0)
+
+    def _release_entry(i):
+        """Release a pending entry of side `pend_entry` at bar i (fill next-open)."""
+        if fast_release == "fixed":
+            return (i - pend_entry_arm) >= int(fast_fixed_delay)
+        if fast_release == "random":
+            return frng.random() < fast_hazard
+        r = ret_h[i]
+        if not np.isfinite(r):
+            return False
+        s = _sgn(r)
+        # opposite: a pullback OPPOSITE the entry side; same (inverted): with it.
+        return s == (-pend_entry if fast_release == "opposite" else pend_entry)
+
+    def _release_exit(i, side):
+        """Release a pending stop-exit of a `side` position at bar i (next-open)."""
+        if fast_release == "fixed":
+            return (i - pend_exit_arm) >= int(fast_fixed_delay)
+        if fast_release == "random":
+            return frng.random() < fast_hazard
+        r = ret_h[i]
+        if not np.isfinite(r):
+            return False
+        s = _sgn(r)
+        # opposite: a FAVOURABLE bounce for the position; same (inverted): adverse.
+        return s == (side if fast_release == "opposite" else -side)
 
     def fill(i):
         if fill_mode == "signal_close":
@@ -370,6 +432,39 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
                 if _lo <= c <= _up:
                     reset_observed = True
 
+        # ---- HYP-0034 fast overlay: resolve a pending stop-EXIT ----------------
+        # Once the stop has triggered we are committed to exiting; we only wait for
+        # a favourable fast bounce (or the EOD flat). While pending, no other logic
+        # runs on this bar. Release strictly after the arming bar.
+        if fast_overlay and fast_exit and pos != 0 and pend_exit:
+            if i > pend_exit_arm and _release_exit(i, pos):
+                if fast_audit is not None:
+                    fast_audit.append(dict(kind="exit", side=int(pos),
+                                           delay=int(m - pend_exit_arm_mfo),
+                                           dropped=False))
+                stopped_side, reset_observed = pos, False
+                close_trade(i, pend_exit_reason)
+                pend_exit = False
+            continue
+
+        # ---- HYP-0034 fast overlay: resolve a pending ENTRY --------------------
+        # After a breakout is confirmed we wait for a micro-pullback before
+        # entering. While pending, fresh breakout signals are ignored until this
+        # resolves or is dropped at the daily flat. Release strictly after arming.
+        if fast_overlay and fast_entry and pos == 0 and pend_entry != 0:
+            if i > pend_entry_arm and _release_entry(i):
+                px, pmfo = fill(i)
+                if px is not None:
+                    if fast_audit is not None:
+                        fast_audit.append(dict(kind="entry", side=int(pend_entry),
+                                               delay=int(m - pend_entry_arm_mfo),
+                                               dropped=False))
+                    open_pos(pend_entry, px, pmfo, ref_m=m, ref_i=i)
+                    pend_entry = 0
+                else:
+                    pend_entry = 0
+            continue
+
         # ---- desired entry direction ----
         want = 0
         if entry_mode == "clock":
@@ -512,14 +607,30 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
                           or (the_date, int(m), int(pos)) in stop_gate)
             if (hit and check_here and stop_armed) or flip:
                 stop_reason = "istop" if (hit and istop_binds and not flip) else "stop"
-                if not flip:
-                    # ---- HYP-0031 step 2: a STOP exit arms the same-side lock ----
-                    stopped_side, reset_observed = pos, False
-                if (close_trade(i, "flip" if flip else stop_reason) and flip
-                        and gate_ok(m, want)):
-                    px, pmfo = fill(i)
-                    if px is not None:
-                        open_pos(want, px, pmfo, ref_m=m, ref_i=i)
+                if flip:
+                    # A flip is a reversal, not a stop: close now (baseline), then
+                    # the NEW-side entry is delayed by the fast overlay (if on), so
+                    # entries are timed symmetrically with plain entries.
+                    if close_trade(i, "flip") and gate_ok(m, want):
+                        if fast_overlay and fast_entry:
+                            pend_entry, pend_entry_arm = want, i
+                            pend_entry_arm_mfo, pend_entry_ref_m = m, m
+                        else:
+                            px, pmfo = fill(i)
+                            if px is not None:
+                                open_pos(want, px, pmfo, ref_m=m, ref_i=i)
+                    continue
+                # ---- non-flip stop ----
+                if fast_overlay and fast_exit:
+                    # arm the pending exit; the actual liquidation waits for a fast
+                    # bounce (resolved at the top of a later bar). The stop RULE is
+                    # unchanged -- only its timing is refined (paper s.4).
+                    pend_exit, pend_exit_arm = True, i
+                    pend_exit_arm_mfo, pend_exit_reason = m, stop_reason
+                    continue
+                # ---- HYP-0031 step 2: a STOP exit arms the same-side lock ----
+                stopped_side, reset_observed = pos, False
+                close_trade(i, stop_reason)
                 continue
             # ---- partial take-profit: bank tp_frac at the next open once price has run
             #      tp_atr in favour (momentum-confirmed close + next-open fill = honest,
@@ -551,7 +662,11 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
                                       blocked=bool(reset_block)))
             can_enter = ((is_decision if entry_mode == "clock" else True)
                          and gate_ok(m, want) and not reset_block)
-            if can_enter:
+            if can_enter and fast_overlay and fast_entry:
+                # Delay the entry: arm a pending entry and wait for a fast pullback.
+                pend_entry, pend_entry_arm = want, i
+                pend_entry_arm_mfo, pend_entry_ref_m = m, m
+            elif can_enter:
                 px, pmfo = fill(i)
                 if px is not None:
                     open_pos(want, px, pmfo, ref_m=m, ref_i=i)
@@ -574,10 +689,20 @@ def simulate_session(bars: pd.DataFrame, band: pd.DataFrame,
 
     if pos != 0:
         runner = (last_close - entry_px) * pos
+        # a pending exit that never got its bounce is force-flattened at EOD.
+        reason = pend_exit_reason if (fast_overlay and fast_exit and pend_exit) else "eod"
+        if fast_audit is not None and fast_overlay and fast_exit and pend_exit:
+            fast_audit.append(dict(kind="exit", side=int(pos),
+                                   delay=int(mfo[flat_i] - pend_exit_arm_mfo),
+                                   dropped=True))
         trades.append(dict(sdate=the_date, side=pos, entry_mfo=entry_mfo,
                            exit_mfo=int(mfo[flat_i]), entry_px=entry_px,
                            exit_px=last_close, points=banked + (1.0 - taken_frac) * runner,
-                           reason="eod", tp_frac=taken_frac, hard_risk=hard_risk, mae=mae, mfe=mfe))
+                           reason=reason, tp_frac=taken_frac, hard_risk=hard_risk, mae=mae, mfe=mfe))
+    if fast_audit is not None and fast_overlay and fast_entry and pend_entry != 0:
+        # a breakout whose pullback never came: no trade taken that session.
+        fast_audit.append(dict(kind="entry", side=int(pend_entry),
+                               delay=int(mfo[flat_i] - pend_entry_arm_mfo), dropped=True))
     return trades
 
 
@@ -595,7 +720,10 @@ def run(bars: pd.DataFrame, bands: pd.DataFrame, decision_mfos,
         reentry="later_decision", reset_check="decision",
         audit_out=None, reset_hazard=None, reset_seed=0,
         hard_stop_buf_atr=None, hard_stop_trigger="touch",
-        hard_stop_atr_col=None, track_excursion=False) -> pd.DataFrame:
+        hard_stop_atr_col=None, track_excursion=False,
+        fast_overlay=False, fast_release="opposite", fast_horizon=5,
+        fast_entry=True, fast_exit=True, fast_fixed_delay=5,
+        fast_hazard=None, fast_seed=0, fast_audit=None) -> pd.DataFrame:
     band_by = {d: g for d, g in bands.groupby("sdate", sort=False)}
     exit_band_by = ({d: g for d, g in exit_bands.groupby("sdate", sort=False)}
                     if exit_bands is not None else None)
@@ -606,7 +734,7 @@ def run(bars: pd.DataFrame, bands: pd.DataFrame, decision_mfos,
         cond_by = {d: set(gg.loc[gg["hivol"], "mfo"].astype(int))
                    for d, gg in cond_regime.groupby("sdate", sort=False)}
     out: list[dict] = []
-    for d, g in bars.groupby("sdate", sort=False):
+    for si, (d, g) in enumerate(bars.groupby("sdate", sort=False)):
         bd = band_by.get(d)
         if bd is None or bd.empty:
             continue
@@ -630,7 +758,14 @@ def run(bars: pd.DataFrame, bands: pd.DataFrame, decision_mfos,
                                     hard_stop_buf_atr=hard_stop_buf_atr,
                                     hard_stop_trigger=hard_stop_trigger,
                                     hard_stop_atr_col=hard_stop_atr_col,
-                                    track_excursion=track_excursion))
+                                    track_excursion=track_excursion,
+                                    fast_overlay=fast_overlay,
+                                    fast_release=fast_release,
+                                    fast_horizon=fast_horizon,
+                                    fast_entry=fast_entry, fast_exit=fast_exit,
+                                    fast_fixed_delay=fast_fixed_delay,
+                                    fast_hazard=fast_hazard,
+                                    fast_seed=fast_seed + si, fast_audit=fast_audit))
     df = pd.DataFrame(out)
     if not df.empty:
         df = df.rename(columns={"sdate": "date"})

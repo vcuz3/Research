@@ -56,7 +56,11 @@ class PublicHttpClient:
                         response.headers.get("content-type", "").lower(),
                         str(response.url),
                     )
-            except (httpx.TransportError, httpx.HTTPStatusError):
+            except httpx.HTTPStatusError:
+                # Retrying permanent 4xx responses wastes minutes when many
+                # publisher landing pages reject automated access.
+                raise
+            except httpx.TransportError:
                 if attempt + 1 == retries:
                     raise
                 time.sleep(delay)

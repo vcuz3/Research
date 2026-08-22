@@ -1,0 +1,4 @@
+== EURUSD == JOINT disp_sig b=+0.0219(t=+1.7)  count b=-0.0675(t=-5.3)  meanfold=+0.097pip
+   signflip null 200: meanfold real=+0.097 null=+0.001+-0.010 p=0.0050 | count_t real=-8.3 null=+0.12+-1.46 p=0.0050 | disp_t real=+3.0 p=0.9701
+== GBPUSD == JOINT disp_sig b=-0.0114(t=-0.9)  count b=-0.0333(t=-2.6)  meanfold=+0.103pip
+   signflip null 200: meanfold real=+0.103 null=-0.001+-0.010 p=0.0050 | count_t real=-3.9 null=-0.02+-1.40 p=0.0050 | disp_t real=-1.5 p=0.1542

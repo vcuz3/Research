@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import html
 import os
 from email.message import EmailMessage
 from pathlib import Path
@@ -32,26 +33,50 @@ def gmail_service(client_secret_file: str, token_file: str):
     return build("gmail", "v1", credentials=credentials, cache_discovery=False)
 
 
-def send_digest(day: str, items: list[AcceptedItem], recipient: str, top_n: int,
+def send_digest(day: str, items: list[AcceptedItem], recipients: list[str] | str, top_n: int,
                 warnings: list[str] | None = None) -> str:
     client_file = os.getenv("GMAIL_CLIENT_SECRET_FILE", "secrets/gmail_client_secret.json")
     token_file = os.getenv("GMAIL_TOKEN_FILE", "secrets/gmail_token.json")
-    sender = os.getenv("GMAIL_SENDER", "me")
+    # "me" lets Gmail use whichever account completed the OAuth flow.
+    sender = os.getenv("GMAIL_SENDER") or "me"
     if not Path(client_file).exists():
         raise RuntimeError(f"Gmail OAuth client file not found: {client_file}")
     ranked = sorted(items, key=lambda x: x.relevance_score, reverse=True)[:top_n]
     lines = [f"Trading research for {day}: {len(items)} accepted; showing top {len(ranked)}.", ""]
+    html_lines = [
+        f"<p>Trading research for {html.escape(day)}: {len(items)} accepted; "
+        f"showing top {len(ranked)}.</p>"
+    ]
     if warnings:
         lines.append("Pipeline warnings:")
         lines.extend(f"- {warning}" for warning in warnings)
         lines.append("")
+        html_lines.append("<p><strong>Pipeline warnings:</strong></p><ul>")
+        html_lines.extend(f"<li>{html.escape(warning)}</li>" for warning in warnings)
+        html_lines.append("</ul>")
     for index, item in enumerate(ranked, 1):
-        lines.extend([f"{index}. {item.title}", item.canonical_url, f"Source: {item.source} | relevance: {item.relevance_score:.2f}", ""])
+        lines.append(f"{index}. {item.title}")
+        abstract = (getattr(item, "abstract_or_title", "") or "").strip()
+        if abstract and abstract.casefold() != item.title.strip().casefold():
+            lines.append(f"abstract: {abstract}")
+        pdf_status = "saved to Google Drive" if getattr(item, "local_pdf_path", None) else "no verified public copy available"
+        lines.append(f"pdf: {pdf_status}")
+        lines.extend([f"link: {item.canonical_url}", ""])
+        html_entry = [f"<p>{index}. <strong>{html.escape(item.title)}</strong><br>"]
+        if abstract and abstract.casefold() != item.title.strip().casefold():
+            html_entry.append(f"abstract: {html.escape(abstract)}<br>")
+        html_entry.append(f"pdf: {html.escape(pdf_status)}<br>")
+        safe_url = html.escape(item.canonical_url, quote=True)
+        html_entry.append(f'link: <a href="{safe_url}">{html.escape(item.canonical_url)}</a></p>')
+        html_lines.extend(html_entry)
     message = EmailMessage()
-    message["To"] = recipient
+    if isinstance(recipients, str):
+        recipients = [recipients]
+    message["To"] = ", ".join(recipients)
     message["From"] = sender
-    message["Subject"] = f"Trading research digest — {day}"
+    message["Subject"] = f"Trading research digest - {day}"
     message.set_content("\n".join(lines))
+    message.add_alternative("\n".join(html_lines), subtype="html")
     encoded = base64.urlsafe_b64encode(message.as_bytes()).decode("ascii")
     result = gmail_service(client_file, token_file).users().messages().send(userId="me", body={"raw": encoded}).execute()
     return str(result.get("id", "sent"))

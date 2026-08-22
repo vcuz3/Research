@@ -1,0 +1,22 @@
+{
+  "inst": "ES",
+  "n_train": 2230,
+  "n_test": 1487,
+  "train_span": [
+    "2011-08-02",
+    "2020-07-23"
+  ],
+  "test_span": [
+    "2020-07-24",
+    "2026-07-14"
+  ],
+  "oos_r2_baseline_priorvol": 0.5396720478428869,
+  "oos_r2_full_plus_earlyrv": 0.6508083075255975,
+  "oos_r2_added_by_earlyrv": 0.11113625968271057,
+  "train_coef_earlyrv": 0.4981812062381757,
+  "train_hac_t_earlyrv": 25.13234080263022,
+  "GATE1_earlyrv_adds_and_significant": true,
+  "placebo_train_hac_t_direction": 1.2212976711074512,
+  "placebo_oos_corr_direction": 0.037669330780926776,
+  "PLACEBO3_no_directional_leak": true
+}

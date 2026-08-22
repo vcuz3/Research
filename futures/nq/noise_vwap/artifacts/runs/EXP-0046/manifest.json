@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0046",
+  "hypothesis_id": "HYP-0034",
+  "status": "completed",
+  "declared_utc": "2026-08-15T13:10:07.317156+00:00",
+  "config_path": "futures/nq/noise_vwap/scripts/hyp_0034_fast_overlay.py",
+  "data_scope": "NQ+ES 1-minute clean Databento RTH 2011-2026; all historical data is consumed research data (no sealed holdout).",
+  "code_ref": "working-tree",
+  "run_command": "python -u -m futures.nq.noise_vwap.scripts.hyp_0034_fast_overlay real NQ",
+  "primary_metric": "zero-trade-day daily net-ATR-R Sharpe uplift (dSharpe) of the overlay over the frozen baseline on the common post-lookback sample, NQ primary / ES transfer.",
+  "builder": "Claude",
+  "outputs": [],
+  "closed_utc": "2026-08-15T14:08:34.814479+00:00",
+  "result_summary": "REJECT/NO-GO. Paper's bundled fast-alpha overlay: NQ dSharpe -0.062 (fails +0.10 gate, netR falls), ES +0.098 (near-miss); siblings disagree in sign. Mechanism is real (beats random/fixed/inverted controls decisively, frac 0.000; gross pt/t +7-11%) but is a quality-not-alpha exposure tradeoff. Leg split (consistent NQ+ES): entry-delay uniformly harmful (~-0.10), exit-delay uniformly positive (NQ +0.025, ES +0.176, gate-clearing on ES). Exit-only overlay retained as a searched lead; combined overlay dead.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

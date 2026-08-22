@@ -1,0 +1,25 @@
+{
+  "inst": "ES",
+  "n_train": 1013,
+  "n_test": 676,
+  "oos_r2": {
+    "yday": 0.5350298517039909,
+    "overnight_rv": 0.5190936147365782,
+    "early_rv": 0.5987844814893171,
+    "HAR": 0.5771005693869904,
+    "HAR+overnight": 0.6435779600676177,
+    "HAR+early": 0.6599191534640954,
+    "HAR+early+overnight": 0.6773398362729502,
+    "full+gap": 0.6756789591313215
+  },
+  "marginal_oos_r2": {
+    "overnight_over_HAR": 0.0664773906806273,
+    "early_over_HAR": 0.08281858407710496,
+    "overnight_over_HAR_early": 0.017420682808854893,
+    "gap_over_HAR_early_on": -0.0016608771416287693
+  },
+  "train_hac_t": {
+    "overnight_given_HAR_early": 5.756464831129751,
+    "early_given_HAR": 16.387603978738845
+  }
+}

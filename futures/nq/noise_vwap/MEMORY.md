@@ -316,6 +316,217 @@ the linked reports, code, and run artifacts.
   reproduce `python -u -m futures.nq.noise_vwap.scripts.hyp_0031_require_reset real NQ`
   and `... real NQ 40 decision decision`.
 
+- `EXP-0046` (HYP-0034, fast-alpha EXECUTION OVERLAY; Zarattini & Pagani 2026,
+  `research_papers/Improving-Performance-with-Fast-Alphas-*.pdf`). Paper's thesis: a
+  fast-decaying 5-min mean-reversion alpha (unprofitable standalone) is *informational*
+  alpha that improves the *execution* of the slow breakout — delay entry to a 5-min
+  fast pullback, delay the stop-exit to a 5-min bounce; they report Sharpe 0.87→0.99.
+  Implemented as a single default-off overlay on `core/engine2.py`
+  (`fast_overlay`/`fast_release`/`fast_horizon`/`fast_entry`/`fast_exit`/
+  `fast_fixed_delay`/`fast_hazard`/`fast_seed`; bit-exact parity asserted under both
+  fill modes; all fills stay next-open). Four release policies share identical wait
+  machinery, differing ONLY in the trigger (EXP-0043 discipline): `opposite` (the
+  paper), `same` (inverted), `fixed` (blind delay = real mean delay 5 bars), `random`
+  (coin-flip release, hazard bisected to the real trade count). **REJECT / NO-GO on the
+  bundled overlay.** NQ (primary): dSharpe **−0.062**, netR −5.04 → **REAL GATE FAILS**
+  (needs +0.10 & netR not fall), so Null C not spent. ES (transfer): dSharpe **+0.098**,
+  netR +6.12 — a near-miss just under the gate, **and the sibling markets DISAGREE in
+  sign** (the standing mechanism-failure signal, cf. `nq-early-flat-close-nullc`); ES
+  recent-era Sharpe also degrades 0.799→0.497. **The mechanism is nonetheless REAL:** on
+  both markets `opposite` decisively beats `same`/`fixed`/`random` (NQ frac(random≥real)
+  **0.000**, random mean −0.259 sd 0.050; ES same pattern) and lifts gross pt/t +7–11%
+  (NQ 3.509→3.884, ES 0.730→0.776). It is a **quality-not-alpha exposure tradeoff**:
+  better fills per trade, ~2.5% fewer trades, nets to a Sharpe LOSS. **KEY finding — the
+  leg decomposition is CONSISTENT across NQ+ES and the two legs pull OPPOSITE ways:**
+  entry-delay uniformly HARMFUL (NQ −0.104 / ES −0.096; no gross-pt gain — waiting to
+  enter a momentum breakout forfeits the move), exit-delay uniformly POSITIVE (NQ +0.025
+  / ES **+0.176**, gate-clearing on ES). Bundling them (as the paper does) hides the
+  harmful entry leg behind the useful exit leg and drags NQ under the gate. Not a fill
+  artifact (NQ negative under both next_open −0.062 and signal_close −0.035) — BUT the ES
+  exit-leg IS partly fill-sensitive (signal_close +0.282 vs next_open +0.098; touch-vs-
+  fill caution). Likely why the paper wins and we don't: **baseline substitution** — the
+  paper stops at the SESSION OPEN (distant fixed stop, room for an exit-timing overlay);
+  our deployed every-bar continuous band/VWAP stop already occupies that room (same
+  substitution logic as EXP-0043/EXP-0031). **OPEN LEAD (SEARCHED, rule 26):** the
+  EXIT-ONLY overlay is positive on both markets and gate-clearing on ES — worth its own
+  preregistered hypothesis with a random-release null, a fill-model/touch-vs-fill check,
+  and Null C before any claim; the combined and entry-only overlays are dead. Overlay
+  kept default-off on `core/engine2.py`. Evidence: `artifacts/runs/EXP-0046/`
+  (`review.md`, `arms_*.csv`, `legs_*.json`, `fill_ablation_*.json`, `coverage_*.json`,
+  `random_null_*.csv`, `verdict_*.json`); reproduce
+  `python -u -m futures.nq.noise_vwap.scripts.hyp_0034_fast_overlay real NQ` (and `real ES`).
+- Fast-alpha exit-leg FOLLOW-UP exploration (2026-08-16, SEARCHED/discovery only,
+  `reports/FAST_EXIT_REVERSION_EXPLORE.md`, `scripts/explore_fast_exit_reversion.py`,
+  `artifacts/explore/fast_exit_reversion/`). Three probes of EXP-0046's exit-only lead:
+  (1) reversion translates NQ↔ES and is a **tail-of-run-length** effect — single
+  adverse candle CONTINUES, a run of ≥5 reverts hard (NQ +0.180×med-move t+12.7 / ES
+  +0.340 t+20.3, monotone in run length; the paper's consecutive-candles claim
+  replicates on both). NQ reversion is more front-loaded (done by min 2). Survives the
+  §6 embargo. (2) exit-only dSharpe is positive at EVERY 1–10 min horizon on both
+  markets, short (1–3 min) ≥ paper's 5 min; the EXP-0046 NQ +0.025 at h=5 was a local
+  dip (real ~+0.08–0.10) → IDEA-0007. (3) institutional-VWAP hypothesis
+  **REJECTED/inverted** — exit uplift smallest under a VWAP stop (NQ −0.068, ES +0.004),
+  largest under the noise-BAND stop (NQ +0.038, ES +0.142); the VWAP stop already
+  trades ~27% fewer (baseline substitution, cf. `EXP-0010`) → IDEA-0008. None of this
+  changes the bundled-overlay NO-GO.
+- `EXP-0047` (HYP-0035, exit-only fast-alpha overlay at a fixed short horizon) —
+  **NO-GO**, closes the EXP-0046 exit-only lead. Preregistered TRAIN/TEST split
+  (TRAIN 2011-2020 selects h*=3, TEST 2020-2026 evaluates). NQ TEST real gate PASSES
+  (dSharpe +0.135, netR +4.88) but FAILS the two decisive controls: a blind fixed
+  4-bar delay scores +0.204 (> real) and the random-release null (200 draws, matched
+  n) gives frac(random≥real)=0.100 — the reversion-timing attribution is not there
+  out-of-era. ES TEST: inverted `same` (+0.092) ties real `opposite` (+0.089), both
+  below gate → the fast sign carries no exit-timing info. The residual Sharpe lift is
+  a generic exit-DELAY / looser effective stop (exposure/variance amplifier, cf.
+  `EXP-0010`, `EXP-0046`, FX random-exit equivalence), not alpha. The EXP-0046
+  full-sample "beats random frac 0.000" was era-pooled and did not replicate on recent
+  data. Null C correctly skipped (gate rule). Evidence: `artifacts/runs/EXP-0047/`
+  (`review.md`, `arms_test_*.csv`, `fill_ablation_test_*.json`, `random_null_test_NQ.csv`,
+  `horizon_select_NQ.csv`, `verdict_*.json`); reproduce
+  `python -u -m futures.nq.noise_vwap.scripts.hyp_0035_exit_overlay NQ`. IDEA-0008
+  (run-length conditioning) remains open but lower-prior after this.
+- **Post-stop reversion mechanism study (2026-08-16) — overlay NO-GO stands for a
+  SELECTION reason; reversion is REAL (corrected same day).** `reports/POST_STOP_REVERSION.md`,
+  `scripts/study_post_stop_reversion.py`, `artifacts/explore/post_stop_reversion/`.
+  A critique argued EXP-0047 over-reached (structured fixed-delay +0.204 ≫ random +0.075
+  looked like un-refuted post-stop reversion). First pass measured post-stop reversion in
+  R units (scale-free — raw points were Rule-19-confounded by NQ's ~10× scale drift) and
+  wrongly concluded "no material reversion / target does not exist." **That over-stated it
+  and contradicted the paper AND `FAST_EXIT_REVERSION_EXPLORE.md`.** Two errors: bucketed
+  reversion by MAE *depth* not adverse-*run length* (the paper's axis), and read "small in
+  R" as "nonexistent." CORRECTED via run-length re-analysis + matched all-bars R measurement:
+  (1) reversion is REAL and MONOTONE in run length on all bars (ES run≥5 +0.0039 R, t 6.2;
+  NQ runs 2–4 t 3–5.5) — paper replicates; (2) but TINY in tradable units — the earlier
+  "+0.180×med_move, t 12.7" is only 0.0018 R (NQ) / 0.0025 R (ES); the huge t was sample
+  size + median-move units, and ~0.003 R gross is sub-cost standalone (hence a fill-timing
+  overlay only); (3) at OUR stops the run-length monotonicity is GONE (NQ run≥5 rev5 ≈ 0;
+  ES insignificant) — SELECTION strips out the run-length STRUCTURE (a run strong enough
+  to break the band+VWAP stop is a continuation case). **SECOND CORRECTION (same day) —
+  the blind-wait uplift is REVERSION (mean), NOT exposure.** The first draft here (and
+  EXP-0047's review) called the blind fixed-delay +0.204 dSharpe an "exposure/variance
+  amplifier." A Shapley decomposition DISPROVES that: **+117% MEAN / −17% variance** (std
+  rises). The blind 4-bar delay captures a small, real, cost-surviving post-stop reversion
+  (+0.0041 R/trade net, +6.6 R over TEST) — MORE than the paper's sign rule (+0.0030). The
+  pooled bounce is flat (short-run stops dominate, NQ run=1 rev5 +0.0066) so no structure
+  to key on, but a dumb delay harvests it. **Split into two claims:** (1) the paper's
+  fast-alpha SIGN mechanism = NO-GO (a blind delay dominates it on Sharpe/Sortino/netR/
+  worst-day; ES `same`≈`opposite`) — the real EXP-0047 result; (2) a blind fixed short
+  stop-delay = a small REAL reversion capture, but it weakens the stop (win rate 27%→38%,
+  maxDD +22% 4.70→5.73 R, fatter per-trade tail) — Sharpe/Sortino like it, a
+  drawdown-constrained prop objective likely doesn't → an OPEN, drawdown-gated lead
+  needing its own preregistered test with a DRAWDOWN-AWARE metric (Calmar/prop trailing-DD,
+  not Sharpe), NOT a closed NO-GO. [[IDEA-0008]] run-length-*conditioned* exit is weak on
+  the STOP population; the flat pooled bounce is the live lead. Method keepers: reversion
+  from the exit fill = §6 paired embargo for free; express a reversion effect in tradable
+  R units before judging it (a median-move-unit t on 600k bars looks decisive at ~0.002 R);
+  condition on the axis the mechanism names (run length), not a proxy (depth); **before
+  calling a Sharpe uplift "exposure not signal," DECOMPOSE mean vs variance — don't assert
+  it**; and read maxDD + per-trade tail (not just Sharpe/Sortino) when a change lifts win
+  rate by loosening a stop (rule 22).
+
+- `EXP-0048` (HYP-0036, entry confirmation-depth gate) — **NO-GO both markets.** SEARCHED
+  from `diag_nonstationarity.py` (NQ 2026 fade = a HIT-RATE / follow-through collapse to
+  win% 20.8%, below the ~23% geometric break-even; NOT signal scarcity — trd/sess ROSE to
+  1.35 — NOT winner shrinkage nor variance) + `sweep_entry_buffer.py` (anticipatory-entry
+  sweep: per-trade net edge MONOTONE in break depth; entering EARLIER strictly destroys
+  edge, market pays for confirmation not anticipation). Preregistered test: gate decision-bar
+  signals on `ext_atr >= k` (causal signed break depth from `scripts/wfo.py::candidate_signals`,
+  ATR units), via the audited `entry_gate` path, k=0 bit-exact baseline; TRAIN first 60% /
+  TEST last 40%; select k* = argmax TRAIN dSharpe subject to a **retain>=0.50 exposure floor**
+  (forbids the degenerate tiny-exposure cell). NQ TRAIN loved it — k*=0.10 dSharpe **+0.186**,
+  retain 0.56, per-trade gross 2.05→3.29→3.80 monotone in k (real per-trade quality) — but the
+  Sharpe uplift is IN-SAMPLE ONLY and collapses to −0.65 once the floor is breached (k>=0.20).
+  **NQ TEST kill test FAILS:** dSharpe **−0.016** (below +0.10 gate), netR −3.84, and the
+  decisive matched-count random-drop null (keep 9571/12811, 200 draws) gives **frac(random>=real)
+  0.210** — depth filtering is indistinguishable from randomly thinning the book. **ES TEST worse:**
+  dSharpe **−0.312**, frac 0.905 (siblings disagree = standing mechanism-failure signal). Null C
+  NOT spent (gate rule). The classic quality-not-alpha turnover lever (Hurst/VEI/gap/RVOL/
+  percentile-momentum). **Reconciles the earlier "buffer lifts recent-era Sharpe" read:** that
+  came from `threshold` (first-crossing) entry scored against the threshold buf=0 arm (Sharpe
+  +0.771), a book that over-fires (6807 TEST signals vs the clock's 1732); the buffer climbed
+  out of that over-firing hole toward — but never reaching — the deployed 30-min clock book
+  (+1.322). Against the correct deployed baseline, split TRAIN/TEST, depth adds nothing
+  risk-adjusted; "deeper earns more per trade" is real & era-stable, "deeper lifts Sharpe
+  recently" was the weaker-reference + in-sample artifact. Retain the unconditioned
+  continuous-stop baseline; no core engine change. Evidence: `artifacts/runs/EXP-0048/`
+  (`review.md`, `train_sweep_NQ.csv`, `random_null_test_{NQ,ES}.csv`, `verdict_NQ.json`);
+  reproduce `python -u -m futures.nq.noise_vwap.scripts.hyp_0036_confirm_depth NQ` and `... ES 0.1`.
+- `EXP-0049` (HYP-0037, smarter depth entry gate: side-asymmetric / always-fire / band-relative)
+  — **NO-GO all three arms, both markets.** SEARCHED user refinements of EXP-0048; none clears
+  the NQ TEST +0.10 gate so no null spent. (A) side-asymmetric `k_long`/`k_short`: TRAIN grids
+  MILDLY support the proposed asymmetry (short break wants to be deeper than long) — NQ
+  kl0.10/ks0.15 +0.217, ES kl0.05/ks0.20 +0.414 — but TEST fails (NQ −0.011 netR−4.03; ES −0.268
+  netR−9.93); in-sample only. (B) always-fire deeper first-crossing threshold vs the DEPLOYED
+  clock book: loses at every buffer & era on both markets (deeper buffer raises per-trade pts
+  only by shedding ~4× churn); only a cherry-picked NQ recent-20% slice "wins". (C) band-relative
+  per-slot depth `ext_sigma`: diagnostic CONFIRMS the fixed-ATR cut was a mild time-of-day
+  selector (per-slot fire-rate CV NQ 0.088→0.036, ES 0.115→0.050, sigma flatter) but correcting
+  it does NOT change the verdict (NQ k_sig0.2 −0.007 netR−3.57; ES −0.405 netR−12.24). **The depth
+  entry gate is a turnover/capacity lever in ATR OR band units.** Confirmation-depth entry family
+  now CLOSED (EXP-0048 symmetric + EXP-0049). Evidence: `artifacts/runs/EXP-0049/` (`review.md`,
+  `armA_train_{NQ,ES}.csv`, `armB_{NQ,ES}.csv`, `armC_fire_cv_{NQ,ES}.csv`, `verdict_{NQ,ES}.json`);
+  reproduce `python -u -m futures.nq.noise_vwap.scripts.hyp_0037_depth_variants NQ` / `... ES`.
+
+- `EXP-0050` (HYP-0039, first-30-min realised vol → day-ahead vol-target SIZING) — **NO-GO for
+  deployment; one CONFIRMED forecast sub-result.** Transfer of the fast-alpha concept as an INPUT to
+  a slower decision (IDEA-0011). **Kill test 1 (forecast) PASS:** first-30-min realised vol (log
+  returns, causal — known at close of mfo 29, before the mfo-30 first entry) forecasts rest-of-session
+  realised vol, adding **+0.119 (NQ) / +0.111 (ES) OOS R² over prior-session vol** and **+0.087 /
+  +0.087 over the best daily baseline (HAR)**, TRAIN Newey-West HAC t ≈ 24/25, and **no directional
+  leak** (placebo: early_rv does not predict session sign — a magnitude read, honouring the
+  sizing-only constraint). Baseline horse-race finding: **a single trailing average does NOT beat
+  yesterday** (ma5/ma22/EWMA all worse than the naive 1-day); only the HAR {1d,5d,22d} mix beats it
+  (+0.046/+0.036). **Kill test 2 (sizing) NO-GO:** vol-targeting (daily-HAR or intraday) **loses to
+  flat 1-contract on TRAIN both markets** — flat wins Sharpe AND Calmar decisively (NQ 1.27/12.5 vs
+  ≤1.03/9.7; ES 0.48/2.99 vs ≤0.20/0.94); on TEST intraday only *ties* flat Sharpe (NQ 1.335 vs
+  1.322; ES 1.048 vs 1.070) while improving Calmar via lower maxDD. **Mechanism REAFFIRMS
+  `nq-noise-vwap-regime-coverage` (3rd independent confirmation the vol edge is not SIZEABLE):** net-R
+  already ÷ 14-day ATR so vol-target re-normalises what ATR handled, and it DOWN-sizes the high-vol
+  expansion days where this breakout-momentum edge concentrates. Narrow confirmed: intraday > daily-HAR
+  at matched exposure on TEST both markets (NQ Calmar +1.49/Sharpe +0.125; ES +2.07/+0.115) but flips
+  negative on ES TRAIN = not era-consistent → forward-watch only. No null spent (fails TRAIN-selectability).
+  Evidence: `artifacts/runs/HYP-0039-gate/`, `artifacts/runs/HYP-0039-sizing/`; reproduce
+  `python -u -m futures.nq.noise_vwap.scripts.hyp_0039_vol_gate NQ` / `hyp_0039_vol_baselines NQ` /
+  `hyp_0039_sizing NQ` (+ ES).
+
+- `EXP-0051` (HYP-0038, post-adverse-spike passive-fill SCHEDULER = EXECUTION alpha, not
+  signal alpha) — **NO-GO.** Transfer of the fast-alpha post-stop reversion (EXP-0046/0047,
+  DIAG-fast-reversion) OUT of a directional overlay and INTO a fill-scheduling decision: the
+  retrace is real/tiny/untimeable-for-direction but informative about the local PATH, so feed
+  it to a decision that consumes path (execution). A post-processing layer (NO core/engine2.py
+  change) re-prices the deployed clock book's ALREADY-DECIDED fills against the 1s tape — post a
+  passive limit at `ref ± δ·σ_slot` leaning into the retrace, credit a fill only if the 1s path
+  trades THROUGH by a vol-scaled guard `g·σ_slot` (RULES A4), else CHASE at the window-end 1s
+  price. σ_slot = trailing-20-session mean of the 1m (high−low) range at that mfo slot. Reported
+  as the LEARNINGS §6 triad: touch ceiling (g=0, non-capturable) / guarded book (deployable
+  g≥0.10σ) / time-exit floor (always chase). EXITS = the thesis (aligned with the post-spike
+  reversion); ENTRIES = a built-in PLACEBO (a passive entry adversely selects — misses the deep
+  breaks that run away, which ARE the edge). Confirmatory a priori δ=0.25σ, g=0.10σ, K=5;
+  TRAIN first 60% / TEST last 40%; per-DAY cluster-robust SE. **Kill 1 FAIL:** guarded EXIT
+  improvement **−2.869 tick / −0.00346 R, day-t −3.02** (significantly NEGATIVE) on TEST — the
+  deployable passive exit LOSES ~2.9 ticks/trade vs crossing. **Kill 2 FAIL (the decisive one):**
+  the apparent saving lives ONLY at the non-capturable touch ceiling (+1.091 tick, itself day-t
+  −0.35 = not even significant) and INVERTS under any real trade-through guard — **textbook
+  touch-vs-fill (LEARNINGS §6) reproduced on a fresh instrument/context.** The retrace level is a
+  reversal point, so a touch is not a fill; requiring price to trade THROUGH selects exactly the
+  fills where it kept going (we'd have done better crossing). **Kill 3 PASS:** entry placebo
+  −9.006 tick is worse than the exit −2.869, so the (negative) exit result is not generic spread
+  capture; the entry arm's larger loss is the expected adverse selection. **Discovery sweep
+  confirms the artifact is UNIFORM (TRAIN):** every guarded (g>0) EXIT config is ≤ +0.276 tick
+  (t≈0) across all δ/g/K, and the touch-ceiling (g=0) configs are small positives (best +0.842
+  tick) that all vanish or invert under any guard. 1s coverage EXCELLENT (TEST median 299 sec per
+  5-min window, frac≥30s 1.000, frac==0 0.000) → NOT a fine-bar coverage artifact. The floor arm
+  (+5.163 tick but day-t +0.06) shows the reversion is real but untimeable and huge-variance, and
+  waiting reintroduces the position risk the framing was meant to avoid. **Third and cleanest
+  death of the fast-alpha post-stop reversion** (EXP-0046 bundled overlay Sharpe-fail; EXP-0047
+  exit-only overlay; now execution scheduling) — the reversion monetizes as neither direction nor
+  execution. VERDICT FAIL → per the gated plan the ES 1s clean build (kill test 5, transfer) was
+  NOT spent (rule 25 / gate-nullc). No Null C (real fails primary). No look-ahead (limit/fill use
+  only the 1s path AFTER the exit bar; chase is an actually-traded 1s price). No core engine
+  change. Evidence: `artifacts/runs/HYP-0038/` (`FINDINGS.md`, `confirm_NQ.json`,
+  `discovery_NQ.csv`); reproduce
+  `python -u -m futures.nq.noise_vwap.scripts.hyp_0038_passive_fill NQ`.
+
 ## Provisional hypotheses
 
 - None currently promoted.

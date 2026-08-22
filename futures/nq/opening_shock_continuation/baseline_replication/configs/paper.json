@@ -1,0 +1,29 @@
+{
+  "instruments": ["NQ", "ES"],
+  "paper_overlap_start": "2011-08-02",
+  "paper_overlap_end": "2013-12-31",
+  "persistence_start": "2014-01-01",
+  "persistence_end": "2026-07-14",
+  "post_jfe_publication_start": "2019-01-01",
+  "r1_signal_available_time_et": "10:00:00",
+  "r1_r12_signal_available_time_et": "15:30:00",
+  "r1_entry_order_active_time_et": "15:30:00",
+  "r1_r12_entry_order_active_time_et": "15:30:01",
+  "scheduled_exit_order_active_time_et": "15:59:59",
+  "r1_entry_column": "entry_153000",
+  "r1_r12_entry_column": "entry_153001",
+  "exit_column": "exit_155959",
+  "primary_cost": {
+    "slippage_ticks_per_side": 1.0,
+    "round_trip_fees_usd": 4.5
+  },
+  "cost_stress_ticks_per_side": [0.5, 1.0, 2.0],
+  "hac_lags": 5,
+  "mde_multiplier": 2.49,
+  "test_alpha": 0.05,
+  "null_draws": 4999,
+  "null_seed": 20260820,
+  "null_statistic": "ES_r1_2014_2026_primary_cost_zero_filled_HAC_lag5_t",
+  "positive_control_target_zero_filled_net_sharpe": 0.5,
+  "positive_control_null_seed": 20260821
+}

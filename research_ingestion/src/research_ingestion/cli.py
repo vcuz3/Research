@@ -7,7 +7,10 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from .config import PROJECT_ROOT, load_config
+from .backfill import resolve_accepted_pdfs
+from .drive import authorize_drive
 from .pipeline import run_day
+from .pdf_import import import_pdf_inbox
 from .storage import Storage
 
 
@@ -36,14 +39,54 @@ def build_parser() -> argparse.ArgumentParser:
     group.add_argument("--catch-up", action="store_true")
     run.add_argument("--to", dest="to_date", type=_date)
     run.add_argument("--no-email", action="store_true")
+    run.add_argument("--no-drive", action="store_true")
     run.add_argument("--force", action="store_true")
+    resolve = sub.add_parser("resolve-pdfs", help="Resolve public PDFs for already-accepted records")
+    resolve.add_argument("--from", dest="from_date", type=_date, required=True)
+    resolve.add_argument("--to", dest="to_date", type=_date)
+    resolve.add_argument("--no-drive", action="store_true")
+    resolve.add_argument(
+        "--resolver-only",
+        action="store_true",
+        help="Retry only OpenAlex/Unpaywall; do not revisit publisher landing pages",
+    )
+    sub.add_parser("authorize-drive", help="Authorize the configured Google Drive account")
+    import_pdfs = sub.add_parser("import-pdfs", help="Match inbox PDFs to accepted items and upload them")
+    import_pdfs.add_argument("--inbox", type=Path, help="Override the configured PDF inbox")
+    import_pdfs.add_argument("--no-drive", action="store_true")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     config = load_config(args.config)
+    if args.command == "authorize-drive":
+        print(json.dumps(authorize_drive(config["drive"]), indent=2))
+        return 0
+    if args.command == "import-pdfs":
+        report = import_pdf_inbox(
+            PROJECT_ROOT,
+            config,
+            inbox=args.inbox,
+            sync_drive=not args.no_drive,
+        )
+        print(json.dumps(report, indent=2, ensure_ascii=False))
+        return 0 if report.get("status") == "completed" else 1
     project_root = PROJECT_ROOT
+    if args.command == "resolve-pdfs":
+        end = args.to_date or args.from_date
+        reports = []
+        for day in _days(args.from_date, end):
+            report = resolve_accepted_pdfs(
+                project_root,
+                config,
+                day.isoformat(),
+                sync_drive=not args.no_drive,
+                resolver_only=args.resolver_only,
+            )
+            reports.append(report)
+            print(json.dumps(report, indent=2, ensure_ascii=False))
+        return 0 if all(report.get("status") == "completed" for report in reports) else 1
     local_now = dt.datetime.now(ZoneInfo(config["timezone"]))
     today = local_now.date()
     scheduled = bool(args.catch_up)
@@ -69,7 +112,14 @@ def main(argv: list[str] | None = None) -> int:
 
     reports = []
     for day in _days(start, end):
-        report = run_day(project_root, config, day, send_email=not args.no_email, force=args.force)
+        report = run_day(
+            project_root,
+            config,
+            day,
+            send_email=not args.no_email,
+            sync_drive=not args.no_drive,
+            force=args.force,
+        )
         reports.append(report)
         print(json.dumps(report, indent=2, ensure_ascii=False))
         if scheduled and report.get("status") in {"completed", "already_completed"}:

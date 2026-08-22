@@ -1,0 +1,11 @@
+{
+  "inst": "ES",
+  "TEST_calmar_intraday": 7.44179569969629,
+  "TEST_calmar_dailyHAR": 5.371493869523324,
+  "TEST_calmar_flat": 7.022650308227496,
+  "TEST_calmar_delta_intraday_vs_daily": 2.0703018301729665,
+  "TEST_vol_intraday": 0.27356982720324347,
+  "TEST_vol_dailyHAR": 0.2785713725664605,
+  "TEST_sharpe_intraday": 1.0478601024527312,
+  "TEST_sharpe_dailyHAR": 0.9327074570929653
+}

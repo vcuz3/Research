@@ -1,0 +1,11 @@
+{
+  "inst": "NQ",
+  "TEST_calmar_intraday": 9.77550113849715,
+  "TEST_calmar_dailyHAR": 8.282473597018233,
+  "TEST_calmar_flat": 7.608229384061974,
+  "TEST_calmar_delta_intraday_vs_daily": 1.4930275414789165,
+  "TEST_vol_intraday": 0.23435905190505207,
+  "TEST_vol_dailyHAR": 0.24435200738673737,
+  "TEST_sharpe_intraday": 1.3353219270993846,
+  "TEST_sharpe_dailyHAR": 1.2105558523181628
+}

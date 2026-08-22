@@ -1,0 +1,51 @@
+{
+  "manifest_version": 1,
+  "frozen_date": "2026-08-20",
+  "status": "bounded best-effort post-hoc reconstruction of an informal discovery screen; not exhaustive",
+  "discovery_dates": ["2011-08-02", "2018-12-31"],
+  "execution": {
+    "entry": "first one-second trade at or after 10:00:01 ET",
+    "exit": "first one-second trade at or after prescheduled 15:59:59 and strictly before 16:00:00 ET; a missing record hard-fails the run",
+    "cost": "one tick adverse per side plus USD 4.50 round trip"
+  },
+  "normalization": {
+    "rule": "value divided by trailing 60-session median shifted one session",
+    "minimum_history": 40,
+    "nan_rule": "gate fails"
+  },
+  "threshold_rule": {
+    "target": "number of confirmed_gap trades in discovery",
+    "fit": "kth-largest finite normalized discovery value",
+    "ties": "include all values equal to the threshold"
+  },
+  "selection_rule": {
+    "metric": "NQ discovery primary-cost zero-filled daily Sharpe",
+    "order": ["highest metric", "lower trade count", "candidate_id ascending"],
+    "caveat": "This deterministic rule was frozen after informal discovery and is diagnostic, not a contemporaneous selective-inference record."
+  },
+  "candidates": [
+    {"candidate_id": "C001", "name": "opening_ungated", "side": "sign(m)", "gate": "none"},
+    {"candidate_id": "C002", "name": "total_r1_direction", "side": "sign(g+m)", "gate": "none"},
+    {"candidate_id": "C003", "name": "overnight_only", "side": "sign(g)", "gate": "none"},
+    {"candidate_id": "C004", "name": "confirmed_gap", "side": "sign(m)", "gate": "g*m>0"},
+    {"candidate_id": "C005", "name": "mirror_gap_opposition", "side": "sign(m)", "gate": "g*m<0"},
+    {"candidate_id": "C006", "name": "opening_magnitude_gate", "side": "sign(m)", "gate": "magnitude_rel>=threshold"},
+    {"candidate_id": "C007", "name": "gap_magnitude_gate", "side": "sign(m)", "gate": "gap_magnitude_rel>=threshold"},
+    {"candidate_id": "C008", "name": "total_r1_magnitude_gate", "side": "sign(m)", "gate": "total_r1_magnitude_rel>=threshold"},
+    {"candidate_id": "C009", "name": "min_component_gate", "side": "sign(m)", "gate": "min_component_rel>=threshold"},
+    {"candidate_id": "C010", "name": "rv_gate", "side": "sign(m)", "gate": "rv_rel>=threshold"},
+    {"candidate_id": "C011", "name": "volume_gate", "side": "sign(m)", "gate": "volume_rel>=threshold"},
+    {"candidate_id": "C012", "name": "efficiency_gate", "side": "sign(m)", "gate": "efficiency_rel>=threshold"},
+    {"candidate_id": "C013", "name": "clv_gate", "side": "sign(m)", "gate": "clv_rel>=threshold"},
+    {"candidate_id": "C014", "name": "gap_plus_opening_magnitude", "side": "sign(m)", "gate": "g*m>0 and magnitude_rel>=threshold"},
+    {"candidate_id": "C015", "name": "gap_plus_gap_magnitude", "side": "sign(m)", "gate": "g*m>0 and gap_magnitude_rel>=threshold"},
+    {"candidate_id": "C016", "name": "gap_plus_total_r1_magnitude", "side": "sign(m)", "gate": "g*m>0 and total_r1_magnitude_rel>=threshold"},
+    {"candidate_id": "C017", "name": "gap_plus_min_component", "side": "sign(m)", "gate": "g*m>0 and min_component_rel>=threshold"},
+    {"candidate_id": "C018", "name": "gap_plus_rv", "side": "sign(m)", "gate": "g*m>0 and rv_rel>=threshold"},
+    {"candidate_id": "C019", "name": "gap_plus_volume", "side": "sign(m)", "gate": "g*m>0 and volume_rel>=threshold"},
+    {"candidate_id": "C020", "name": "gap_plus_efficiency", "side": "sign(m)", "gate": "g*m>0 and efficiency_rel>=threshold"},
+    {"candidate_id": "C021", "name": "gap_plus_clv", "side": "sign(m)", "gate": "g*m>0 and clv_rel>=threshold"},
+    {"candidate_id": "C022", "name": "es_opening_confirmation", "side": "sign(m_NQ)", "gate": "sign(m_NQ)=sign(m_ES)!=0"},
+    {"candidate_id": "C023", "name": "gap_plus_es_confirmation", "side": "sign(m_NQ)", "gate": "g_NQ*m_NQ>0 and sign(m_NQ)=sign(m_ES)"}
+  ]
+}

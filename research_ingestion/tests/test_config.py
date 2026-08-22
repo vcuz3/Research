@@ -20,7 +20,8 @@ def test_dotenv_fills_missing_values_without_overriding_process_environment(tmp_
     monkeypatch.delenv("DOTENV_ONLY", raising=False)
     monkeypatch.setenv("DOTENV_PRECEDENCE", "from-process")
 
-    load_config(config_path, env_path=env_path)
+    config = load_config(config_path, env_path=env_path)
 
     assert os.environ["DOTENV_ONLY"] == "from-file"
     assert os.environ["DOTENV_PRECEDENCE"] == "from-process"
+    assert config["email_recipients"] == ["reader@example.test"]

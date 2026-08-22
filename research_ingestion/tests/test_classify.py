@@ -80,4 +80,5 @@ def test_ai_requests_non_streaming_json_response(monkeypatch):
     result = ZeroCostOmniRoute(config).classify(candidate("Trade execution"), "order book")
 
     assert request_body["stream"] is False
+    assert request_body["response_format"] == {"type": "json_object"}
     assert result.status == "classified"

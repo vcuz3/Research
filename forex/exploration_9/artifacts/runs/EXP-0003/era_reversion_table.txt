@@ -1,0 +1,16 @@
+
+== EURUSD ==
+  FULL   2011-2026: fold=+0.097pip cl-t=+10.2  signflip null=+0.001+-0.010 p=0.0050   | joint: count t=-5.3 disp t=+1.7  n=457586 G=3890
+  RECENT 2020-2026: fold=+0.055pip cl-t=+4.1  signflip null=+0.001+-0.016 p=0.0050   | joint: count t=-0.4 disp t=-1.6  n=200278 G=1698
+
+== GBPUSD ==
+  FULL   2011-2026: fold=+0.103pip cl-t=+10.1  signflip null=+0.000+-0.010 p=0.0050   | joint: count t=-2.6 disp t=-0.9  n=459509 G=3890
+  RECENT 2020-2026: fold=+0.059pip cl-t=+3.6  signflip null=+0.000+-0.015 p=0.0050   | joint: count t=+0.1 disp t=-1.4  n=200910 G=1698
+
+== AUDUSD ==
+  FULL   2011-2026: fold=+0.117pip cl-t=+10.7  signflip null=+0.001+-0.011 p=0.0050   | joint: count t=+0.1 disp t=-3.9  n=456980 G=3890
+  RECENT 2020-2026: fold=+0.073pip cl-t=+4.0  signflip null=+0.002+-0.018 p=0.0050   | joint: count t=-0.3 disp t=-1.2  n=200107 G=1698
+
+== NZDUSD ==
+  FULL   2011-2026: fold=+0.108pip cl-t=+9.3  signflip null=-0.001+-0.012 p=0.0050   | joint: count t=+2.0 disp t=-5.7  n=444929 G=3789
+  RECENT 2020-2026: fold=+0.059pip cl-t=+3.2  signflip null=+0.001+-0.019 p=0.0050   | joint: count t=+0.2 disp t=-1.4  n=200031 G=1698

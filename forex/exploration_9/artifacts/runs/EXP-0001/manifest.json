@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0001",
+  "hypothesis_id": "HYP-0001",
+  "status": "completed",
+  "declared_utc": "2026-08-17T05:02:25.166135+00:00",
+  "config_path": "run_reversion_core.py",
+  "data_scope": "EURUSD,GBPUSD 5m 2011-2026, Frankfurt-open->NY-noon",
+  "code_ref": "run_reversion_core.py",
+  "run_command": "python run_reversion_core.py; python run_persistence.py",
+  "primary_metric": "folded 15m reversion + count/dsig horse-race t; signflip null p",
+  "builder": "Claude",
+  "outputs": [],
+  "closed_utc": "2026-08-17T05:03:32.325000+00:00",
+  "result_summary": "Reversion real & null-validated (+0.097/+0.103 pip, ~10sigma vs signflip, p=0.005). Magnitude-proxy REJECTED: count/max-bar-share survive causal joint regression, dsig collapses. Persistence/concentration signal, not magnitude. Exploratory, not holdout-validated.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0047",
+  "hypothesis_id": "HYP-0035",
+  "status": "completed",
+  "declared_utc": "2026-08-15T17:11:42.238347+00:00",
+  "config_path": "scripts/hyp_0035_exit_overlay.py",
+  "data_scope": "NQ+ES 1-minute clean Databento RTH 2011-2026; TRAIN = first 60% of common sessions, TEST = last 40%; all historical data is consumed research data (no sealed holdout), so TEST is a temporal validation split, not a clean holdout \u2014 the null battery + fill ablation carry the confirmatory weight and only future shadow data is a clean holdout.",
+  "code_ref": "working-tree",
+  "run_command": "python -u -m futures.nq.noise_vwap.scripts.hyp_0035_exit_overlay NQ",
+  "primary_metric": "zero-trade-day daily net-ATR-R Sharpe uplift (dSharpe) of the",
+  "builder": "Claude (Opus 4.8)",
+  "outputs": [],
+  "closed_utc": "2026-08-15T17:44:40.598102+00:00",
+  "result_summary": "NO-GO. Exit-only fast-alpha overlay, h* selected on TRAIN (2011-2020), evaluated on held-out TEST (2020-2026). NQ real gate passes (dSharpe +0.135) but FAILS beats_fixed (blind delay +0.204 > real) and beats_random (frac 0.100); ES inverted same (+0.092) ties real (+0.089) = no exit-timing info. Residual lift is a generic exit-delay/looser-stop exposure amplifier, not fast-alpha reversion timing. Null C correctly skipped. Closes the EXP-0046 exit-only lead.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

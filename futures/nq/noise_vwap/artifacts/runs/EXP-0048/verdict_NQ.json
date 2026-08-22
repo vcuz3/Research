@@ -1,0 +1,10 @@
+{
+  "inst": "NQ",
+  "kstar": 0.1,
+  "test_dSharpe": -0.015869659560252103,
+  "test_dNetR": -3.839916436805204,
+  "test_retain": 0.5577367205542725,
+  "real_gate": false,
+  "rand_frac": 0.21,
+  "verdict": "NO-GO"
+}

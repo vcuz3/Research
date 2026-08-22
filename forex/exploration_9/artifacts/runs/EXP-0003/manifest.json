@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0003",
+  "hypothesis_id": "HYP-0001",
+  "status": "completed",
+  "declared_utc": "2026-08-17T05:55:06.906021+00:00",
+  "config_path": "run_eras.py",
+  "data_scope": "EURUSD,GBPUSD,AUDUSD,NZDUSD 5m; eras FULL 2011-2026 & RECENT 2020-2026",
+  "code_ref": "run_eras.py",
+  "run_command": "python run_eras.py",
+  "primary_metric": "unconditional fold cl-t + signflip p; joint count/disp cl-t, per era",
+  "builder": "Claude",
+  "outputs": [],
+  "closed_utc": "2026-08-17T05:56:25.144842+00:00",
+  "result_summary": "ONLY the unconditional fold (fade the run, unweighted) is significant in BOTH full and recent eras on ALL 4 pairs (recent cl-t +3.2..+4.1, signflip p=0.005; ~half full-sample size). BOTH conditioners die post-2020: concentration (EUR/GBP) AND displacement magnitude (AUD/NZD) all drop to |t|<1.6. Conditioner significance is entirely pre-2020.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

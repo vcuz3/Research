@@ -1,0 +1,61 @@
+{
+  "primary_instrument": "NQ",
+  "sibling_instrument": "ES",
+  "discovery_start": "2011-08-02",
+  "discovery_end": "2018-12-31",
+  "validation_start": "2019-01-01",
+  "validation_end": "2022-12-31",
+  "validation_b_start": "2023-01-01",
+  "validation_b_end": "2026-07-14",
+  "signal_available_time_et": "10:00:00",
+  "latency_seconds": 1,
+  "entry_order_active_time_et": "10:00:01",
+  "delayed_entry_order_active_time_et": "10:01:00",
+  "scheduled_exit_order_active_time_et": "15:59:59",
+  "entry_column": "entry_100001",
+  "delayed_entry_column": "entry_100100",
+  "exit_column": "exit_155959",
+  "entry_sensitivities": {
+    "10:00:00": "entry_100000",
+    "10:00:02": "entry_100002",
+    "10:00:05": "entry_100005",
+    "10:00:30": "entry_100030",
+    "10:01:00": "entry_100100"
+  },
+  "exit_sensitivities": {
+    "15:59:58": "exit_155958",
+    "16:00:00": "exit_160000"
+  },
+  "primary_exit_timestamp_interval_et": ["15:59:59", "16:00:00"],
+  "primary_eligibility": "NQ causal endpoint panel known by 10:00:01; missing required exit is a run failure",
+  "strict_390_bar_cohort_is_secondary": true,
+  "primary_cost": {
+    "slippage_ticks_per_side": 1.0,
+    "round_trip_fees_usd": 4.5
+  },
+  "cost_stress_ticks_per_side": [0.5, 1.0, 2.0],
+  "rolling_control_window": 60,
+  "rolling_control_min_periods": 40,
+  "hac_lags": 5,
+  "stationary_bootstrap_expected_block": 20,
+  "stationary_bootstrap_draws": 4999,
+  "conditional_permutation_null_draws": 4999,
+  "circular_shift_null_draws": 4999,
+  "family_selection_statistic": "primary_cost_zero_day_daily_sharpe",
+  "selective_null_statistic": "combined_2019_2026_NQ_primary_cost_zero_filled_daily_sharpe",
+  "positive_control_target_zero_filled_net_sharpe": 0.5,
+  "power_outer_draws": 200,
+  "power_inner_null_draws": 499,
+  "power_required_rejections": 160,
+  "power_full_conditional_seed": 20260821,
+  "power_full_circular_seed": 20260822,
+  "power_outer_seed": 20260823,
+  "power_trial_seed_derivation": "numpy.random.SeedSequence([power_outer_seed, one_based_trial_number, stream_id])",
+  "power_trial_stream_ids": {
+    "donor": 0,
+    "conditional": 1,
+    "circular": 2
+  },
+  "hierarchical_short_circuit_after_primary_economic_rejection": true,
+  "random_seed": 20260820
+}

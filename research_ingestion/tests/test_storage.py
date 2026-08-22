@@ -20,5 +20,12 @@ def test_storage_deduplicates_and_writes_reading_manifest(tmp_path):
     _, reading = storage.write_manifests("2026-08-13", [item])
     payload = json.loads(reading.read_text(encoding="utf-8"))
     assert payload["items"][0]["abstract_or_title"] == "Abstract"
+    rejected = storage.write_rejected_manifest("2026-08-13", [{
+        "rejection_stage": "deterministic_quality",
+        "title": "Rejected paper",
+        "rejection_reason": "Score below minimum.",
+    }])
+    rejected_payload = json.loads(rejected.read_text(encoding="utf-8"))
+    assert rejected_payload["rejected_count"] == 1
+    assert rejected_payload["items"][0]["rejection_stage"] == "deterministic_quality"
     storage.close()
-

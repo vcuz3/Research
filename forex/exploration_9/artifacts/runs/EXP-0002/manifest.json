@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0002",
+  "hypothesis_id": "HYP-0001",
+  "status": "completed",
+  "declared_utc": "2026-08-17T05:17:28.343558+00:00",
+  "config_path": "run_stability.py",
+  "data_scope": "EURUSD,GBPUSD,AUDUSD,NZDUSD 5m 2011-2026, Frankfurt-open->NY-noon",
+  "code_ref": "run_stability.py",
+  "run_command": "python run_stability.py",
+  "primary_metric": "per-year & per-NY-hour fold + count-coef cluster-t; cross-pair signflip null",
+  "builder": "Claude",
+  "outputs": [],
+  "closed_utc": "2026-08-17T05:18:33.779578+00:00",
+  "result_summary": "QUALIFIES HYP-0001. Raw fold reversion is durable (EUR 15/16, GBP 16/16 yrs positive; broad across NY hours) and TRANSFERS (AUD/NZD fold p=0.005). BUT the concentration/count mechanism is (a) ERA-DECAYED on EUR/GBP: strong 2011-2015 (t=-3.8..-2.1), ~0 post-2020; (b) does NOT transfer: on AUD/NZD displacement/MAGNITUDE reverts (t=-3.9/-5.7) and count is dead/wrong-signed (null p=0.56/0.98). Count effect peaks NY 08h (14h Berlin).",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

@@ -8,12 +8,14 @@ from dataclasses import dataclass, field
 import httpx
 
 from .models import Candidate
+from .redact import redact_sensitive
 
 
 TOPIC_TERMS: dict[str, tuple[str, ...]] = {
-    "market_microstructure": ("microstructure", "order book", "bid ask", "liquidity", "market impact", "execution"),
+    "market_microstructure": ("microstructure", "order book", "limit order", "bid ask", "liquidity", "market impact", "execution", "market making", "market maker"),
     "momentum_trend": ("momentum", "trend following", "time-series momentum", "breakout"),
     "mean_reversion": ("mean reversion", "reversal", "pairs trading", "statistical arbitrage", "cointegration"),
+    "strategy": ("sharpe", "Sharpe", "trading", "intraday", "annualized return", "trending", "Alpha", "alpha"),
     "volatility_derivatives": ("volatility", "option", "derivative", "variance risk", "implied volatility"),
     "portfolio_risk": ("portfolio", "asset allocation", "risk parity", "drawdown", "position sizing"),
     "machine_learning": ("machine learning", "neural network", "deep learning", "reinforcement learning", "transformer"),
@@ -21,6 +23,8 @@ TOPIC_TERMS: dict[str, tuple[str, ...]] = {
     "macro_events": ("monetary policy", "macroeconomic", "central bank", "inflation", "interest rate", "event study"),
     "digital_assets": ("bitcoin", "crypto", "digital asset", "blockchain", "defi"),
     "research_methods": ("backtest", "data snooping", "overfitting", "transaction cost", "survivorship", "look-ahead"),
+    "event_driven": ("event driven", "earnings announcement", "merger arbitrage", "post-earnings", "market reaction"),
+    "alternative_data": ("alternative data", "news sentiment", "textual analysis", "satellite data", "web traffic"),
 }
 
 GENERIC_TRADING_TERMS = (
@@ -88,8 +92,9 @@ class ZeroCostOmniRoute:
         prompt = {
             "task": "Assess whether this is useful for trading research or systematic backtesting.",
             "rules": [
-                "Accept methods, empirical findings, market structure, portfolio/risk, execution, or data relevant to tradable markets.",
-                "Reject generic finance, unrelated routing/optimization, and marketing without research substance.",
+                "Accept only if the work offers a plausible tradable signal, execution method, portfolio/risk method, market mechanism, forecast, dataset, or backtesting lesson.",
+                "Reject generic corporate finance, banking performance, institutional policy, regulation, investor surveys, and broad literature reviews unless they provide a concrete systematic-trading use.",
+                "Reject unrelated routing/optimization, non-financial uses of trading language, and marketing without research substance.",
                 "Return JSON only with accepted, relevance_score 0..1, topics, and reason.",
             ],
             "title": candidate.title,
@@ -107,6 +112,7 @@ class ZeroCostOmniRoute:
             ],
             "temperature": 0,
             "max_tokens": self.config["max_output_tokens"],
+            "response_format": {"type": "json_object"},
             # OmniRoute can proxy providers that otherwise choose a streaming
             # response. The pipeline expects one OpenAI-compatible JSON object.
             "stream": False,
@@ -130,7 +136,7 @@ class ZeroCostOmniRoute:
                 reason=str(parsed.get("reason", "")),
             )
         except (httpx.HTTPError, KeyError, ValueError, json.JSONDecodeError) as exc:
-            message = str(exc)
+            message = redact_sensitive(exc)
             if isinstance(exc, httpx.TransportError):
                 self.stopped_reason = f"OmniRoute is unreachable; AI stopped for this run: {message}"
                 return AIResult("stopped", warning=self.stopped_reason)

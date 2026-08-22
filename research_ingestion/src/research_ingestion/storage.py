@@ -30,7 +30,10 @@ class Storage:
     def __init__(self, root: Path) -> None:
         self.root = root
         self.data = root / "data"
-        for part in ("accepted", "reading", "runs", "raw", "state", "catalogue"):
+        for part in (
+            "accepted", "reading", "rejected", "runs", "pdf_resolution",
+            "pdf_imports", "raw", "state", "catalogue",
+        ):
             (self.data / part).mkdir(parents=True, exist_ok=True)
         self.db = sqlite3.connect(self.data / "catalogue" / "research.sqlite")
         self.db.executescript(SCHEMA)
@@ -90,12 +93,32 @@ class Storage:
         reading_path.write_text(json.dumps(reading_payload, indent=2, ensure_ascii=False), encoding="utf-8")
         return accepted_path, reading_path
 
+    def write_rejected_manifest(self, day: str, items: list[dict]) -> Path:
+        path = self.data / "rejected" / f"{day}.json"
+        payload = {
+            "date": day,
+            "rejected_count": len(items),
+            "items": items,
+        }
+        path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+        return path
+
     def write_run_report(self, day: str, report: dict) -> Path:
         path = self.data / "runs" / f"{day}.json"
+        path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+        return path
+
+    def write_pdf_resolution_report(self, day: str, report: dict) -> Path:
+        path = self.data / "pdf_resolution" / f"{day}.json"
+        path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+        return path
+
+    def write_pdf_import_report(self, report: dict) -> Path:
+        stamp = report["started_at"].replace(":", "").replace("+", "-")
+        path = self.data / "pdf_imports" / f"{stamp}.json"
         path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
         return path
 
     @property
     def state_path(self) -> Path:
         return self.data / "state" / "last_successful_date.txt"
-

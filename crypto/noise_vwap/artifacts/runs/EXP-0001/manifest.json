@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0001",
+  "hypothesis_id": "HYP-0001",
+  "status": "completed",
+  "declared_utc": "2026-08-16T06:49:13.989408+00:00",
+  "config_path": "baseline_replication/bitcoin_noise_vwap.ipynb",
+  "data_scope": "Binance Spot BTCUSDT 1m; load 2019-01-01; IS 2019-06-01:2022-12-31; temporal OOS 2023-01-01:2026-08-12",
+  "code_ref": "baseline_replication/bitcoin_noise_vwap.ipynb",
+  "run_command": "python crypto/noise_vwap/backtest_engine/run_notebook.py",
+  "primary_metric": "Temporal-OOS net daily Sharpe",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-08-16T06:51:41.773137+00:00",
+  "result_summary": "Narrow screen survival: OOS net Sharpe 0.230; gross 11.835 bps/trade versus 10 bps cost; IS Sharpe -0.223; not deployment-ready",
+  "reviewer": "pending",
+  "review_status": "not-reviewed"
+}

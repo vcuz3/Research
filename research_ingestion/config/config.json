@@ -1,11 +1,28 @@
 {
   "timezone": "Australia/Sydney",
   "schedule_time": "22:00",
-  "email_recipient": "vd373094@gmail.com",
+  "email_recipients": ["vd373094@gmail.com", "antrading37@gmail.com"],
   "email_top_n": 25,
+  "drive": {
+    "enabled": true,
+    "account": "antrading37@gmail.com",
+    "root_folder_name": "Trading Research Library"
+  },
   "candidate_limit_per_source": 100,
+  "max_candidates_for_deep_review": 120,
   "download_max_bytes": 26214400,
-  "quality_threshold": 0.62,
+  "pdf_import": {
+    "enabled": true,
+    "folder": "pdf_downloads"
+  },
+  "public_pdf_resolution": {
+    "enabled": true,
+    "openalex_enabled": true,
+    "openalex_api_key_env": "OPENALEX_API_KEY",
+    "unpaywall_enabled": true,
+    "unpaywall_email": "vd373094@gmail.com"
+  },
+  "quality_threshold": 0.75,
   "deterministic_min_score": 2,
   "ai": {
     "enabled": true,
@@ -13,16 +30,21 @@
     "api_key_env": "OMNIROUTE_API_KEY",
     "model_env": "OMNIROUTE_MODEL",
     "required_model_name_fragment": "free",
-    "max_calls_per_run": 40,
+    "max_calls_per_run": 120,
     "max_input_tokens_per_run": 180000,
     "max_chars_per_document": 24000,
-    "max_output_tokens": 500
+    "max_output_tokens": 750
   },
   "sources": {
     "arxiv": {"enabled": true},
     "crossref": {"enabled": true, "mailto": "vd373094@gmail.com"},
+    "ssrn": {"enabled": true, "mailto": "vd373094@gmail.com", "doi_prefix": "10.2139"},
     "openalex": {"enabled": true, "api_key_env": "OPENALEX_API_KEY"},
-    "sciencedirect": {"enabled": true, "api_key_env": "ELSEVIER_API_KEY"},
+    "sciencedirect": {
+      "enabled": false,
+      "api_key_env": "ELSEVIER_API_KEY",
+      "note": "Disabled 2026-08-19 after repeated Article Metadata API HTTP 401 responses."
+    },
     "feeds": [
       {"name": "Aligrithm", "url": "https://aligrithm.com/rss/", "enabled": true, "exclude_terms": ["premium"], "exclude_page_terms": ["paying subscribers only"]},
       {"name": "Concretum Research", "url": "https://concretumgroup.substack.com/feed", "enabled": true, "exclude_terms": ["paid subscriber"], "exclude_page_terms": ["paid subscribers only", "paying subscribers only"]},
