@@ -1,0 +1,38 @@
+{
+  "created_utc": "2026-08-24T10:45:51.238969+00:00",
+  "interpretation": "unfiltered leg; vol estimated from prior gross leg returns; all history consumed",
+  "config": {
+    "trade_candidates": "futures/nq/globex_to_rth_open/artifacts/runs/EXP-0003/trade_candidates.parquet",
+    "output_dir": "futures/nq/globex_to_rth_open/artifacts/runs/EXP-0004",
+    "vol_target": {
+      "target_annual_vol": 0.1,
+      "lookback_days": 60,
+      "annualization_days": 252,
+      "lag_days": 1,
+      "leverage_cap": 3.0,
+      "cost_bps_per_side": 0.5,
+      "cost_cap_points_per_side": 0.25
+    }
+  },
+  "inputs": {
+    "trade_candidates": {
+      "path": "C:\\Users\\VuDoa\\Research\\futures\\nq\\globex_to_rth_open\\artifacts\\runs\\EXP-0003\\trade_candidates.parquet",
+      "sha256": "7c62f3192f4e0257819ecd5f270bc46eda684dde4e9992aa7c7854790c509069"
+    }
+  },
+  "code": {
+    "config_sha256": "097a2cac234bbffa62118d5567925c606a31f7e2f035a53bc64e79f737ef2715",
+    "runner_sha256": "0b7a3386bbacfb0ef13a32e440dbd6d91b2da7020757076b62249f76b8b27e60",
+    "vol_target_sha256": "3271b36f17a7fa9ff90d894a58e7becfd91915cc938ea07308d68c8dfd5cc91d"
+  },
+  "outputs": [
+    "daily_returns.parquet",
+    "yearly_performance.csv",
+    "summary.json"
+  ],
+  "status": "completed",
+  "closed_utc": "2026-08-24T10:48:29.549105+00:00",
+  "result_summary": "10% vol-target leg: 8.12% annualized net return, 11.06% realized vol, Sharpe 0.762, -23.82% max drawdown; yearly series produced.",
+  "reviewer": "unassigned",
+  "review_status": "not-reviewed"
+}

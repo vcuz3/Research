@@ -1,0 +1,26 @@
+{
+  "assets": ["EURUSD", "GBPUSD", "AUDUSD", "NZDUSD"],
+  "data_pattern": "../data/clean/{asset}_1m_clean.parquet",
+  "holdout_start": {
+    "EURUSD": "2024-07-18T00:00:00",
+    "GBPUSD": "2024-07-18T00:00:00",
+    "AUDUSD": "2024-07-18T00:00:00",
+    "NZDUSD": "2024-07-18T00:00:00"
+  },
+  "walk_forward_start": "2012-01-01T00:00:00",
+  "train_years": 5,
+  "validation_years": 1,
+  "allow_final_partial_validation": true,
+  "minimum_training_trades": 200,
+  "selection_cost_pips": 0.5,
+  "timeframe": ["15min", "30min", "60min"],
+  "atr_period": [7, 14, 28],
+  "atr_percentile": [0.10, 0.15, 0.20],
+  "stop_atr": [1.0, 1.5, 2.0],
+  "target_atr": [1.0, 1.5, 2.0],
+  "percentile_lookback": 100,
+  "breakout_lookback": 10,
+  "max_holding_hours": 12.0,
+  "require_complete_candles": true,
+  "pip_size": 0.0001
+}

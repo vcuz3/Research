@@ -17,7 +17,7 @@
 
 ## Confirmed findings
 
-- Twenty-eight local tests pass for configuration loading, classification, fail-closed AI routing, structured responses, RSS/paywall parsing, arXiv pacing, thematic/Crossref/SSRN/ScienceDirect metadata discovery, acceptance-gated OpenAlex/Unpaywall lookup, historical PDF repair, public-PDF fallback resolution, manual PDF inbox matching/import, credential redaction, email formatting, Google Drive dated-library upload/deduplication, manifests, and abstract reconstruction.
+- Thirty-one local tests pass for configuration loading, classification, fail-closed AI routing, structured responses, RSS/paywall parsing, arXiv pacing, thematic/Crossref/SSRN/ScienceDirect metadata discovery, acceptance-gated OpenAlex/Unpaywall lookup, historical PDF repair, public-PDF fallback resolution, manual PDF inbox matching/import, credential redaction, email formatting, SMTP app-password delivery, delivery-only retry, Google Drive API and desktop-sync dated-library deduplication, manifests, and abstract reconstruction.
 - The corrected 2026-08-13 live smoke run discovered 3 candidates, accepted 2 by deterministic fallback, rejected 1, and downloaded/extracted 1 public PDF.
 - Page-level access checking excluded the premium Aligrithm RSS item found by the first run.
 - Project `.env` values load automatically without overriding explicit process environment variables.
@@ -43,6 +43,8 @@
 - Email now labels each entry `pdf: saved to Google Drive` or `pdf: no verified public copy available`. Scheduled resolver-only retries run at ages 1, 3, 7, and 14 days to accommodate OA-index lag without repeatedly accessing blocked SSRN/publisher landing pages.
 - The scheduled pipeline now scans `pdf_downloads/` after daily ingestion. It validates each PDF, requires a unique accepted-item identifier plus exact normalized title (or a unique exact normalized title), preserves the inbox file, stores and hashes a byte-identical dated library copy, updates the catalogue/accepted/reading manifests, and uploads to the corresponding dated Drive folder. Ambiguous and invalid files fail closed and every scan is audited under `data/pdf_imports/`.
 - Four manually downloaded SSRN PDFs were matched to the 2026-08-20 accepted manifest, copied into `data/raw/2026/08/20/ssrn/`, and uploaded successfully to `Trading Research Library/2026/2026-08-20`. Evidence: `data/pdf_imports/2026-08-20T141030-0000.json`.
+- Scheduled discovery continued through 2026-08-24, but Gmail delivery failed for 2026-08-22 through 2026-08-24 with Google OAuth `invalid_grant` (expired or revoked refresh token); Drive failed for the same reason on 2026-08-24. The Windows task itself remained healthy and advanced `last_successful_date.txt` because delivery failures are currently warnings rather than run failures. Accepted counts awaiting email recovery are 6, 2, and 6 respectively. Evidence: `data/runs/2026-08-22.json` through `2026-08-24.json` and Windows Scheduled Task history checked 2026-08-25.
+- Superseding the prior delivery failure: Gmail now uses SMTP/TLS with a dedicated app password, and Drive uses the signed-in Google Drive for desktop mount at `G:\My Drive`. Delivery-only recovery resent all three August 22-24 digests successfully without AI calls and copied the August 24 PDF into the desktop-synced library. Run reports now record `smtp_sent`; scheduled delivery retries cover the prior 30 days and return a task failure if still incomplete. Verified 2026-08-25.
 
 ## Provisional hypotheses
 
@@ -55,7 +57,7 @@
 - Schedule: 22:00 Australia/Sydney with catch-up after missed runs.
 - Accepted items only in the main manifest; a second compact JSON is optimized for skimming.
 - Download only public PDFs. Public pages without PDFs are represented by title and canonical link.
-- Gmail delivery uses OAuth and sends at most 25 titles/links.
+- Gmail delivery uses SMTP/TLS with a dedicated app password and sends at most 25 accepted items.
 - AI calls go only to a self-hosted OmniRoute free-only route. Quota, payment, or token-limit conditions stop AI and emit warnings; there is no paid fallback.
 - Retention is indefinite and manually managed.
 
@@ -64,6 +66,7 @@
 - Feed-only sources may not expose all items after a long offline interval.
 - ScienceDirect is disabled because its metadata-only Article Metadata endpoint consistently returned HTTP 401 `AUTHORIZATION_ERROR`; Crossref/OpenAlex may still supply overlapping metadata.
 - arXiv may still rate-limit requests despite the configured three-second pacing; HTTP 429 remains non-fatal and reduces that run's coverage.
+- Google app passwords can be revoked by an account-password change or manually; Drive for desktop must be running and its `G:` mount available for prompt cloud synchronization. Delivery retries preserve failed work without rerunning AI.
 
 ## Next actions
 

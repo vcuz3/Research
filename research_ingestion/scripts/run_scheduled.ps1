@@ -59,6 +59,14 @@ try {
         exit $pipelineExitCode
     }
 
+    Write-Output "Retrying failed email and Drive deliveries from saved manifests."
+    & $PythonExe -m research_ingestion.cli retry-delivery --days 30
+    $deliveryRetryFailed = $false
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Delivery retry remains incomplete with exit code $LASTEXITCODE."
+        $deliveryRetryFailed = $true
+    }
+
     Write-Output "Importing manually downloaded PDFs from the configured inbox."
     & $PythonExe -m research_ingestion.cli import-pdfs
     if ($LASTEXITCODE -ne 0) {
@@ -79,6 +87,9 @@ try {
         if ($LASTEXITCODE -ne 0) {
             Write-Warning "Public PDF retry failed for $retryDate with exit code $LASTEXITCODE."
         }
+    }
+    if ($deliveryRetryFailed) {
+        exit 1
     }
     exit 0
 }

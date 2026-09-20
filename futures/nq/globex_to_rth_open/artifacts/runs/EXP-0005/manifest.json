@@ -1,0 +1,48 @@
+{
+  "created_utc": "2026-08-24T11:39:00.381175+00:00",
+  "config": {
+    "lse_files": [
+      "futures/nq/data/lse/futures_NQ.F_1m (1).parquet",
+      "futures/nq/data/lse/futures_NQ.F_1m.parquet"
+    ],
+    "output_dir": "futures/nq/globex_to_rth_open/artifacts/runs/EXP-0005",
+    "sma_days": 200,
+    "max_feature_staleness_days": 4,
+    "expected_full_sample_sharpe": 0.99,
+    "expected_sharpe_tolerance": 0.1,
+    "vol_target": {
+      "target_annual_vol": 0.1,
+      "lookback_days": 60,
+      "annualization_days": 252,
+      "lag_days": 1,
+      "leverage_cap": 3.0,
+      "cost_bps_per_side": 0.5,
+      "cost_cap_points_per_side": 0.25
+    }
+  },
+  "inputs": {
+    "C:\\Users\\VuDoa\\Research\\futures\\nq\\data\\lse\\futures_NQ.F_1m (1).parquet": "ace128cfe79788e5ad31fc9fa0bded5ef2e30086cb3eb4729c3fcf4c3c8aff72",
+    "C:\\Users\\VuDoa\\Research\\futures\\nq\\data\\lse\\futures_NQ.F_1m.parquet": "9be970cbc30ee9ad9492077d02de82e4b86b66af7e9a63d4fc9aae03dd51b367"
+  },
+  "code": {
+    "config_sha256": "25b6201eb6058807021be6613a71a5490c64351db82b326d7272b19d7c592833",
+    "runner_sha256": "74fe8f5673c7fb90328747f31d80da99484ba0bb362502c07469c77ba8d25d40",
+    "lse_sha256": "00a4e53ee46d1b94f0fb82155456fd11ce71a41d144dae54c345adbb138c6769",
+    "vol_target_sha256": "037721a1244dd8f6c09fb9dfa2b8e8dd6d4dae1efe7fd7721640ce2c4b85b8ca"
+  },
+  "outputs": [
+    "daily_returns.parquet",
+    "yearly_performance.csv",
+    "diagnostics.csv",
+    "daily_features.parquet",
+    "coverage_by_minute.csv",
+    "data_quality.json",
+    "summary.json"
+  ],
+  "holdout": "consumed: expected Sharpe 0.99 supplied before run",
+  "status": "completed",
+  "closed_utc": "2026-08-24T11:41:16.004580+00:00",
+  "result_summary": "LSE SMA200 reproduction Sharpe 1.014 versus expected 0.99 (+0.024, inside tolerance); 9.79% annualized net return, 9.67% vol, -15.36% drawdown.",
+  "reviewer": "unassigned",
+  "review_status": "not-reviewed"
+}

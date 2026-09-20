@@ -1,0 +1,105 @@
+{
+  "created_utc": "2026-08-23T15:07:36.324787+00:00",
+  "config_path": "C:\\Users\\VuDoa\\Research\\futures\\nq\\globex_to_rth_open\\experiments\\configs\\study_v3.json",
+  "config": {
+    "nq_data": "futures/nq/data/NQ_1m_clean.parquet",
+    "vix_data": "futures/data/vix/CBOE_DLY_VIX, 1D_021cd.csv",
+    "output_dir": "futures/nq/globex_to_rth_open/artifacts/runs/EXP-0003",
+    "ma_windows": [
+      5,
+      10,
+      20,
+      50,
+      100,
+      200
+    ],
+    "vix_lower_bounds": [
+      0,
+      10,
+      15,
+      20,
+      25,
+      30,
+      40
+    ],
+    "vix_upper_bounds": [
+      15,
+      20,
+      25,
+      30,
+      40,
+      null
+    ],
+    "max_feature_staleness_days": 4,
+    "sizing_modes": [
+      "equal_contract",
+      "inverse_atr14",
+      "inverse_vix",
+      "inverse_prev_atr"
+    ],
+    "sizing": {
+      "reference_lookback": 252,
+      "reference_min_obs": 60,
+      "minimum_units": 0.25,
+      "maximum_units": 4.0,
+      "integer_contracts": false
+    },
+    "costs": {
+      "multiplier": 20.0,
+      "tick_size": 0.25,
+      "slippage_ticks_per_side": 1.0,
+      "commission_per_side": 2.5
+    },
+    "eras": [
+      {
+        "name": "2011-2015",
+        "start": "2011-01-01",
+        "end": "2015-12-31"
+      },
+      {
+        "name": "2016-2019",
+        "start": "2016-01-01",
+        "end": "2019-12-31"
+      },
+      {
+        "name": "2020-2022",
+        "start": "2020-01-01",
+        "end": "2022-12-31"
+      },
+      {
+        "name": "2023-2026",
+        "start": "2023-01-01",
+        "end": "2026-12-31"
+      }
+    ]
+  },
+  "inputs": {
+    "nq": {
+      "path": "C:\\Users\\VuDoa\\Research\\futures\\nq\\data\\NQ_1m_clean.parquet",
+      "sha256": "131b88a7f59b61fcbd9a6fca84ce988a5054e2524c22f43d74ac1149f73811b7"
+    },
+    "vix": {
+      "path": "C:\\Users\\VuDoa\\Research\\futures\\data\\vix\\CBOE_DLY_VIX, 1D_021cd.csv",
+      "sha256": "07ab7c8388199b19168e248c6bee589db8ea92ec1e0c0af270b10ed51273a93f"
+    }
+  },
+  "code": {
+    "config_sha256": "a32079fea45350b9424969ec95280a87ad9ec6c05d7a59a8f0611a1ea7838f5f",
+    "runner_sha256": "dbe7760a072d1a3cb583c1144601e52d32b37043d4174ef4716c042435fcc54e",
+    "features_sha256": "fc155d1909cdbd27761938677fa41d1d4077369d4d49502099cb7f700b5116d6",
+    "engine_sha256": "dcd983a244b3d2c869ac0ff56693f48d75b88eaba184c6be9f3ed3aec82ca758"
+  },
+  "outputs": [
+    "summary.csv",
+    "era_summary.csv",
+    "trade_candidates.parquet",
+    "coverage_by_minute.csv",
+    "data_quality.json"
+  ],
+  "interpretation": "discovery sweep; historical data consumed; no sealed holdout",
+  "status": "completed",
+  "closed_utc": "2026-08-23T15:11:04.666880+00:00",
+  "result_summary": "Positive baseline; exploratory SMA200 and VIX>=25 leads; no inverse-vol rule dominates equal contract; WATCH pending selection-aware null and review.",
+  "reviewer": "unassigned",
+  "review_status": "not-reviewed"
+}

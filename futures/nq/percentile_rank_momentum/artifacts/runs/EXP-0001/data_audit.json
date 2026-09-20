@@ -1,0 +1,63 @@
+{
+  "experiment_id": "EXP-0001",
+  "gate_verdict": "PASS",
+  "gate_pass": true,
+  "declared_5m_audit": {
+    "path": "C:/Users/VuDoa/Research/futures/nq/data/nq_5m_clean.parquet",
+    "sha256": "be94c9b678387f475ce871612538a169016f70b9553c94d2abd472cd09442c31",
+    "rows": 1017752,
+    "columns": [
+      "dt",
+      "open",
+      "high",
+      "low",
+      "close",
+      "volume"
+    ],
+    "timestamp_dtype": "datetime64[ns]",
+    "timezone": null,
+    "timezone_aware": false,
+    "first_timestamp": "2012-01-04 04:40:00",
+    "last_timestamp": "2026-06-19 11:30:00",
+    "duplicate_timestamps": 0,
+    "out_of_order_transitions": 0,
+    "contract_pass": false,
+    "contract_failure": "HYP-0001 declares this timestamp UTC, but the parquet column is timezone-naive."
+  },
+  "canonical_5m_audit": {
+    "instrument": "NQ",
+    "source_path": "C:/Users/VuDoa/Research/futures/nq/data/NQ_1m_clean.parquet",
+    "source_timestamp_dtype": "datetime64[ns, UTC]",
+    "source_timezone_aware": true,
+    "raw_rows": 5094910,
+    "raw_duplicate_timestamps": 0,
+    "raw_out_of_order_transitions": 0,
+    "rth_sessions_before_completeness_filter": 3839,
+    "rth_sessions_excluded_below_minimum": 121,
+    "minimum_1m_bars_per_session": 350,
+    "eligible_sessions": 3718,
+    "eligible_start": "2011-08-01",
+    "eligible_end": "2026-07-14",
+    "rth_one_minute_gap_transitions": 11,
+    "rth_roll_rows": 0,
+    "rth_multi_symbol_sessions": 0,
+    "five_minute_rows": 289997,
+    "five_minute_duplicate_date_slots": 0,
+    "five_minute_out_of_order_transitions": 0,
+    "five_minute_missing_expected_slots": 7,
+    "five_minute_min_bars_per_session": 76,
+    "five_minute_max_bars_per_session": 78,
+    "source_sha256": "131b88a7f59b61fcbd9a6fca84ce988a5054e2524c22f43d74ac1149f73811b7"
+  },
+  "decision_start_et": "10:00",
+  "windows": [
+    60,
+    90,
+    120,
+    252
+  ],
+  "same_sign_coverage_fraction": 0.4,
+  "run_command": "python -m futures.nq.percentile_rank_momentum.validation.coverage_report --experiment-id EXP-0001",
+  "pnl_run": false,
+  "reason": "Amended 40% same-sign coverage is feasible on the audited canonical resample."
+}

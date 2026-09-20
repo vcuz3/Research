@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0002",
+  "hypothesis_id": "HYP-0001",
+  "status": "completed",
+  "declared_utc": "2026-08-25T15:10:48.071561+00:00",
+  "config_path": "paper/PAPER_SPEC.md",
+  "data_scope": "NQ 1-minute Databento archive futures/nq/data/NQ_1m_clean.parquet, 2011-08-01 to 2026-07-15, 3,842 Asia sessions; the article's own 2021-12-01 to 2025-08-31 window reported as a separate row. All historical data is inspected by this project \u2014 only future observations are clean holdout.",
+  "code_ref": "scripts/run_exp0002.py",
+  "run_command": "python futures\\nq\\asia_expansion\\scripts\\run_exp0002.py",
+  "primary_metric": "per-signal mean gross forward return in index points with a trade-date cluster-robust t (Rule 12); net reported on a five-rung cost ladder (0.000 / 0.335 / 1.100 / 1.350 / 2.000 points round trip).",
+  "builder": "Claude",
+  "outputs": [],
+  "closed_utc": "2026-08-25T15:11:02.052797+00:00",
+  "result_summary": "The article's T=-10.96 is a COST statistic, not a signal statistic. Coin-flip direction on identical bars/fills/charge (400 draws) prints net t -15.18 [-17.33,-13.05] on the article window -- MORE negative than -10.96. Continuation gross t +0.50 on the same sample. Confirms the source's trading conclusion while rejecting its stated directional mechanism.",
+  "reviewer": "unassigned",
+  "review_status": "pending"
+}

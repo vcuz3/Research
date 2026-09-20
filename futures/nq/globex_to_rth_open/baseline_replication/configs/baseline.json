@@ -1,0 +1,14 @@
+{
+  "entry_time_new_york": "18:00",
+  "exit_time_new_york": "09:30 next calendar day",
+  "direction": "long",
+  "entry_fill": "exact 18:00 one-minute bar open",
+  "exit_fill": "exact 09:30 one-minute bar open",
+  "position": "one NQ contract",
+  "multiplier": 20.0,
+  "tick_size": 0.25,
+  "slippage_ticks_per_side": 1.0,
+  "commission_per_side": 2.5,
+  "exclude_contract_change_inside_trade": true
+}
+

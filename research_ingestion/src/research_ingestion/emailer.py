@@ -3,6 +3,7 @@ from __future__ import annotations
 import base64
 import html
 import os
+import smtplib
 from email.message import EmailMessage
 from pathlib import Path
 
@@ -33,14 +34,14 @@ def gmail_service(client_secret_file: str, token_file: str):
     return build("gmail", "v1", credentials=credentials, cache_discovery=False)
 
 
-def send_digest(day: str, items: list[AcceptedItem], recipients: list[str] | str, top_n: int,
-                warnings: list[str] | None = None) -> str:
-    client_file = os.getenv("GMAIL_CLIENT_SECRET_FILE", "secrets/gmail_client_secret.json")
-    token_file = os.getenv("GMAIL_TOKEN_FILE", "secrets/gmail_token.json")
-    # "me" lets Gmail use whichever account completed the OAuth flow.
-    sender = os.getenv("GMAIL_SENDER") or "me"
-    if not Path(client_file).exists():
-        raise RuntimeError(f"Gmail OAuth client file not found: {client_file}")
+def _digest_message(
+    day: str,
+    items: list[AcceptedItem],
+    recipients: list[str] | str,
+    top_n: int,
+    warnings: list[str] | None,
+    sender: str,
+) -> tuple[EmailMessage, list[str]]:
     ranked = sorted(items, key=lambda x: x.relevance_score, reverse=True)[:top_n]
     lines = [f"Trading research for {day}: {len(items)} accepted; showing top {len(ranked)}.", ""]
     html_lines = [
@@ -77,6 +78,36 @@ def send_digest(day: str, items: list[AcceptedItem], recipients: list[str] | str
     message["Subject"] = f"Trading research digest - {day}"
     message.set_content("\n".join(lines))
     message.add_alternative("\n".join(html_lines), subtype="html")
+    return message, recipients
+
+
+def send_digest(day: str, items: list[AcceptedItem], recipients: list[str] | str, top_n: int,
+                warnings: list[str] | None = None, config: dict | None = None) -> str:
+    config = config or {}
+    transport = config.get("transport", "gmail_oauth")
+    sender = os.getenv("GMAIL_SENDER") or "me"
+    message, recipients = _digest_message(day, items, recipients, top_n, warnings, sender)
+
+    if transport == "smtp_app_password":
+        if sender == "me" or "@" not in sender:
+            raise RuntimeError("GMAIL_SENDER must be the full Gmail address for SMTP delivery")
+        password_env = config.get("app_password_env", "GMAIL_APP_PASSWORD")
+        password = (os.getenv(password_env) or "").replace(" ", "")
+        if not password:
+            raise RuntimeError(f"Missing Gmail SMTP app password environment variable: {password_env}")
+        host = config.get("smtp_host", "smtp.gmail.com")
+        port = int(config.get("smtp_port", 465))
+        with smtplib.SMTP_SSL(host, port, timeout=30) as smtp:
+            smtp.login(sender, password)
+            smtp.send_message(message, from_addr=sender, to_addrs=recipients)
+        return "smtp_sent"
+
+    if transport != "gmail_oauth":
+        raise RuntimeError(f"Unsupported email transport: {transport}")
+    client_file = os.getenv("GMAIL_CLIENT_SECRET_FILE", "secrets/gmail_client_secret.json")
+    token_file = os.getenv("GMAIL_TOKEN_FILE", "secrets/gmail_token.json")
+    if not Path(client_file).exists():
+        raise RuntimeError(f"Gmail OAuth client file not found: {client_file}")
     encoded = base64.urlsafe_b64encode(message.as_bytes()).decode("ascii")
     result = gmail_service(client_file, token_file).users().messages().send(userId="me", body={"raw": encoded}).execute()
     return str(result.get("id", "sent"))

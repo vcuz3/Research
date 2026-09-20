@@ -9,6 +9,7 @@ from zoneinfo import ZoneInfo
 from .config import PROJECT_ROOT, load_config
 from .backfill import resolve_accepted_pdfs
 from .drive import authorize_drive
+from .delivery import retry_failed_deliveries
 from .pipeline import run_day
 from .pdf_import import import_pdf_inbox
 from .storage import Storage
@@ -54,6 +55,8 @@ def build_parser() -> argparse.ArgumentParser:
     import_pdfs = sub.add_parser("import-pdfs", help="Match inbox PDFs to accepted items and upload them")
     import_pdfs.add_argument("--inbox", type=Path, help="Override the configured PDF inbox")
     import_pdfs.add_argument("--no-drive", action="store_true")
+    retry_delivery = sub.add_parser("retry-delivery", help="Retry failed email and Drive delivery from saved manifests")
+    retry_delivery.add_argument("--days", type=int, default=30)
     return parser
 
 
@@ -70,6 +73,10 @@ def main(argv: list[str] | None = None) -> int:
             inbox=args.inbox,
             sync_drive=not args.no_drive,
         )
+        print(json.dumps(report, indent=2, ensure_ascii=False))
+        return 0 if report.get("status") == "completed" else 1
+    if args.command == "retry-delivery":
+        report = retry_failed_deliveries(PROJECT_ROOT, config, days=args.days)
         print(json.dumps(report, indent=2, ensure_ascii=False))
         return 0 if report.get("status") == "completed" else 1
     project_root = PROJECT_ROOT

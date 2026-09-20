@@ -1,0 +1,21 @@
+{
+  "lse_files": [
+    "futures/nq/data/lse/futures_NQ.F_1m (1).parquet",
+    "futures/nq/data/lse/futures_NQ.F_1m.parquet"
+  ],
+  "output_dir": "futures/nq/globex_to_rth_open/artifacts/runs/EXP-0005",
+  "sma_days": 200,
+  "max_feature_staleness_days": 4,
+  "expected_full_sample_sharpe": 0.99,
+  "expected_sharpe_tolerance": 0.10,
+  "vol_target": {
+    "target_annual_vol": 0.10,
+    "lookback_days": 60,
+    "annualization_days": 252,
+    "lag_days": 1,
+    "leverage_cap": 3.0,
+    "cost_bps_per_side": 0.5,
+    "cost_cap_points_per_side": 0.25
+  }
+}
+

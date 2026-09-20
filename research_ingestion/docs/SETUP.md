@@ -63,35 +63,28 @@ The pipeline has no alternate model or endpoint. Its local call/input-token caps
 are in `config/config.json`. HTTP 402/429 or quota/payment messages stop AI for
 the run and appear in the run report.
 
-## 4. Gmail OAuth
+## 4. Gmail unattended SMTP
 
-1. Create a Google Cloud project and enable the Gmail API.
-2. Configure the OAuth consent screen for personal use.
-3. Create an OAuth client of type **Desktop app**.
-4. Download the client JSON to `secrets/gmail_client_secret.json`.
-5. Optionally set `GMAIL_SENDER` to the sending Gmail address. If it is blank,
-   Gmail uses the account selected during OAuth.
-6. Run a one-day command without `--no-email`. A browser opens once for consent;
-   the refresh token is saved to ignored `secrets/gmail_token.json`.
+1. Enable 2-Step Verification on the sender Google account.
+2. Create a dedicated Google app password for this pipeline.
+3. Set `GMAIL_SENDER` to the full sender address and store the app password in
+   the ignored `.env` variable configured by `email.app_password_env` (currently
+   `APP_PASSWORD`). Never use the account's normal password.
 
-Only the narrow `gmail.send` scope is requested. The pipeline cannot read,
-delete, or modify mailbox contents.
+The pipeline connects only to `smtp.gmail.com:465` over TLS and sends mail; it
+does not request mailbox read/delete access. Google may revoke an app password
+after an account-password change or an explicit revocation.
 
 ## 5. Google Drive PDF library
 
-1. Enable the Google Drive API in the Google Cloud project that owns the OAuth
-   desktop client.
-2. While the OAuth app is in Testing, add the configured Drive account as a
-   test user.
-3. Run `python -m research_ingestion.cli authorize-drive` and select the exact
-   account configured under `drive.account`.
-4. After authorization succeeds, set `drive.enabled` to `true` in
-   `config/config.json`.
+1. Install Google Drive for desktop and sign into the configured library account.
+2. Set `drive.mode` to `desktop_sync` and `drive.sync_root` to the mounted My
+   Drive path, for example `G:\\My Drive` in JSON.
+3. Keep Drive for desktop running so it can synchronize local copies.
 
-Drive uses the narrow `drive.file` scope and a separate ignored token at
-`secrets/drive_token.json`. It can manage only files and folders created or
-explicitly opened through this application. Accepted local PDFs are uploaded to
-`Trading Research Library/YYYY/YYYY-MM-DD/` and deduplicated by SHA-256 hash.
+Accepted local PDFs are copied to `Trading Research Library/YYYY/YYYY-MM-DD/`,
+verified by SHA-256, and deduplicated by content hash. Drive for desktop handles
+cloud authorization and synchronization.
 Items without a public local PDF remain in the JSON/email but are not uploaded.
 The daily HTML email renders each title in bold, followed by `abstract:` (if one
 exists), `pdf:` availability, and `link:`. A labeled plain-text fallback is included. Rejected items

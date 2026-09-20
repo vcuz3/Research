@@ -1,0 +1,66 @@
+{
+  "created_utc": "2026-08-24T14:33:25.492223+00:00",
+  "config": {
+    "databento_candidates": "futures/nq/globex_to_rth_open/artifacts/runs/EXP-0003/trade_candidates.parquet",
+    "databento_unfiltered_yearly": "futures/nq/globex_to_rth_open/artifacts/runs/EXP-0004/yearly_performance.csv",
+    "lse_daily_returns": "futures/nq/globex_to_rth_open/artifacts/runs/EXP-0005/daily_returns.parquet",
+    "output_dir": "futures/nq/globex_to_rth_open/artifacts/runs/EXP-0006",
+    "sma_days": 200,
+    "roll_mismatch_diagnostic_threshold_bps": 50.0,
+    "vol_target": {
+      "target_annual_vol": 0.1,
+      "lookback_days": 60,
+      "annualization_days": 252,
+      "lag_days": 1,
+      "leverage_cap": 3.0,
+      "cost_bps_per_side": 0.5,
+      "cost_cap_points_per_side": 0.25
+    }
+  },
+  "inputs": {
+    "databento_candidates": "7c62f3192f4e0257819ecd5f270bc46eda684dde4e9992aa7c7854790c509069",
+    "databento_unfiltered_yearly": "4c7b83d3ff4165dd00b915321f254d6c885645aa4bcd7134806664aaae9fb33d",
+    "lse_daily_returns": "6057045a4be39f9ca00db0245c83c1d0cef8a8eeea1f4b16d6db53c50457cae9"
+  },
+  "code": {
+    "runner_sha256": "f4a14be792552bd58a8e79bc1612cbaadd88d966b889d3ad4d1b1a891e7a5969",
+    "vol_target_sha256": "037721a1244dd8f6c09fb9dfa2b8e8dd6d4dae1efe7fd7721640ce2c4b85b8ca",
+    "config_sha256": "04369f6e4e3b26affe268a6e5202f568b790418a67eb29796c2602e15db46b71"
+  },
+  "outputs": [
+    "databento_sma200_daily_returns.parquet",
+    "common_date_reconciliation.parquet",
+    "yearly_side_by_side.csv",
+    "common_date_yearly_attribution.csv",
+    "common_date_diagnostics.csv",
+    "roll_mismatch_suspects.csv",
+    "coverage_by_year.csv",
+    "summary.json"
+  ],
+  "databento_vol_target_quality": {
+    "input_trades": 3761,
+    "output_trades": 3701,
+    "warmup_removed": 60,
+    "first_sized_trade": "2011-10-26",
+    "last_sized_trade": "2026-07-14",
+    "vol_window": "gross leg returns shift(1).rolling(60, min_periods=60).std(ddof=1)*sqrt(252)",
+    "cap_bind_count": 11,
+    "entry_cost_tick_cap_count": 2412,
+    "exit_cost_tick_cap_count": 2412,
+    "spec": {
+      "target_annual_vol": 0.1,
+      "lookback_days": 60,
+      "annualization_days": 252,
+      "lag_days": 1,
+      "leverage_cap": 3.0,
+      "cost_bps_per_side": 0.5,
+      "cost_cap_points_per_side": 0.25
+    }
+  },
+  "holdout": "consumed: diagnostic comparison of already-consumed histories",
+  "status": "completed",
+  "closed_utc": "2026-08-24T14:35:49.098559+00:00",
+  "result_summary": "Matched SMA200 comparison completed: gates agree on all 2,357 common dates; 2022 matched returns are -3.40% LSE and -3.35% Databento; large 2023-25 gaps concentrate in quarterly LSE continuous-contract splices. After excluding 15 >=50-bp mismatch dates diagnostically, common-date Sharpes are 0.851 LSE and 0.819 Databento.",
+  "reviewer": "unassigned",
+  "review_status": "not-reviewed"
+}

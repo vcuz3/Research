@@ -1,0 +1,42 @@
+{
+  "overall": {
+    "trades": 3701,
+    "first_trade": "2011-10-26",
+    "last_trade": "2026-07-14",
+    "gross_compound_return": 3.297941711718167,
+    "net_compound_return": 2.146839126816662,
+    "compound_cost_drag": 1.1511025849015049,
+    "annualized_net_vol": 0.11055293862957184,
+    "net_sharpe": 0.7617038355217114,
+    "max_drawdown": -0.23824236431751356,
+    "hit_rate_net": 0.5576871115914618,
+    "average_leverage": 1.1943210722990416,
+    "median_leverage": 1.1434339696521205,
+    "maximum_leverage": 3.0,
+    "cap_bind_days": 11,
+    "average_annualized_vol_estimate": 0.10191667971835199,
+    "worst_day": -0.07275423641599948,
+    "best_day": 0.03706617185601644,
+    "annualized_compound_return": 0.08118529645601602
+  },
+  "quality": {
+    "input_trades": 3761,
+    "output_trades": 3701,
+    "warmup_removed": 60,
+    "first_sized_trade": "2011-10-26",
+    "last_sized_trade": "2026-07-14",
+    "vol_window": "gross leg returns shift(1).rolling(60, min_periods=60).std(ddof=1)*sqrt(252)",
+    "cap_bind_count": 11,
+    "entry_cost_tick_cap_count": 2412,
+    "exit_cost_tick_cap_count": 2412,
+    "spec": {
+      "target_annual_vol": 0.1,
+      "lookback_days": 60,
+      "annualization_days": 252,
+      "lag_days": 1,
+      "leverage_cap": 3.0,
+      "cost_bps_per_side": 0.5,
+      "cost_cap_points_per_side": 0.25
+    }
+  }
+}

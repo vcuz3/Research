@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import os
 import re
+import shutil
 from pathlib import Path
 
 from .models import AcceptedItem
@@ -77,6 +78,11 @@ def _ensure_folder(service, name: str, parent_id: str | None = None) -> str:
 
 
 def authorize_drive(config: dict) -> dict:
+    if config.get("mode") == "desktop_sync":
+        sync_root = Path(config["sync_root"])
+        if not sync_root.is_dir():
+            raise RuntimeError(f"Google Drive desktop sync root not found: {sync_root}")
+        return {"status": "desktop_sync_ready", "sync_root": str(sync_root)}
     client_file = os.getenv("GDRIVE_CLIENT_SECRET_FILE") or os.getenv(
         "GMAIL_CLIENT_SECRET_FILE", "secrets/gmail_client_secret.json"
     )
@@ -92,6 +98,42 @@ def upload_accepted_pdfs(day: str, items: list[AcceptedItem], config: dict) -> d
     pdf_items = [item for item in items if item.local_pdf_path and Path(item.local_pdf_path).is_file()]
     if not pdf_items:
         return {"status": "no_pdfs", "uploaded": 0, "already_present": 0}
+
+    if config.get("mode") == "desktop_sync":
+        sync_root = Path(config["sync_root"])
+        if not sync_root.is_dir():
+            raise RuntimeError(f"Google Drive desktop sync root not found: {sync_root}")
+        root_name = config.get("root_folder_name", "Trading Research Library")
+        day_path = sync_root / root_name / day[:4] / day
+        day_path.mkdir(parents=True, exist_ok=True)
+        existing_hashes = {
+            hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in day_path.glob("*.pdf") if path.is_file()
+        }
+        uploaded = 0
+        already_present = 0
+        for item in pdf_items:
+            source = Path(item.local_pdf_path)
+            content_hash = item.content_sha256 or hashlib.sha256(source.read_bytes()).hexdigest()
+            if content_hash in existing_hashes:
+                already_present += 1
+                continue
+            target = day_path / safe_drive_filename(item.title)
+            if target.exists():
+                target = day_path / safe_drive_filename(f"{item.title} {content_hash[:8]}")
+            shutil.copy2(source, target)
+            if hashlib.sha256(target.read_bytes()).hexdigest() != content_hash:
+                target.unlink(missing_ok=True)
+                raise RuntimeError(f"Hash verification failed after Drive desktop copy: {target.name}")
+            existing_hashes.add(content_hash)
+            uploaded += 1
+        return {
+            "status": "completed",
+            "mode": "desktop_sync",
+            "uploaded": uploaded,
+            "already_present": already_present,
+            "folder_path": str(day_path),
+        }
 
     client_file = os.getenv("GDRIVE_CLIENT_SECRET_FILE") or os.getenv(
         "GMAIL_CLIENT_SECRET_FILE", "secrets/gmail_client_secret.json"

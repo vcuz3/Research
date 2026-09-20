@@ -56,3 +56,26 @@ def test_drive_upload_creates_dated_library_and_deduplicates(monkeypatch, tmp_pa
     }
     assert created_files[0]["name"] == "Useful Trading Study.pdf"
     assert created_files[0]["appProperties"]["sha256"] == "abc123"
+
+
+def test_drive_desktop_sync_copies_and_hash_deduplicates(tmp_path):
+    pdf = tmp_path / "paper.pdf"
+    pdf.write_bytes(b"%PDF-1.4 desktop sync")
+    sync_root = tmp_path / "My Drive"
+    sync_root.mkdir()
+    item = SimpleNamespace(
+        local_pdf_path=str(pdf), content_sha256=None, title="Desktop Study",
+        canonical_url="https://example.test", source="test",
+    )
+    config = {
+        "mode": "desktop_sync", "sync_root": str(sync_root),
+        "root_folder_name": "Trading Research Library",
+    }
+
+    first = upload_accepted_pdfs("2026-08-24", [item], config)
+    second = upload_accepted_pdfs("2026-08-24", [item], config)
+
+    target = sync_root / "Trading Research Library/2026/2026-08-24/Desktop Study.pdf"
+    assert target.read_bytes() == pdf.read_bytes()
+    assert first["uploaded"] == 1
+    assert second["already_present"] == 1

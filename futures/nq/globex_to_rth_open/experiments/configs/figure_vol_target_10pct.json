@@ -1,0 +1,14 @@
+{
+  "trade_candidates": "futures/nq/globex_to_rth_open/artifacts/runs/EXP-0003/trade_candidates.parquet",
+  "output_dir": "futures/nq/globex_to_rth_open/artifacts/runs/EXP-0004",
+  "vol_target": {
+    "target_annual_vol": 0.10,
+    "lookback_days": 60,
+    "annualization_days": 252,
+    "lag_days": 1,
+    "leverage_cap": 3.0,
+    "cost_bps_per_side": 0.5,
+    "cost_cap_points_per_side": 0.25
+  }
+}
+

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0001",
+  "hypothesis_id": "HYP-0001",
+  "status": "completed",
+  "declared_utc": "2026-09-19T09:25:24.145348+00:00",
+  "config_path": "baseline_replication/configs/baseline.json",
+  "data_scope": "Four clean FX 1-minute archives, full available history.",
+  "code_ref": "working-tree",
+  "run_command": "python run_backtest.py --config baseline_replication/configs/baseline.json --output artifacts/runs/EXP-0001",
+  "primary_metric": "Pooled gross mean R per trade; date-cluster bootstrap CI.",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-09-19T09:31:06.547666+00:00",
+  "result_summary": "Gross hurdle passed: 13,757 trades, +0.0413 R (+0.479 pip) pooled, cluster-bootstrap 95% CI [+0.0234,+0.0592], 4/4 pairs positive; pooled net becomes -0.0036 R at 0.5 pip round trip. WATCH, not deploy.",
+  "reviewer": "unassigned",
+  "review_status": "not-reviewed"
+}

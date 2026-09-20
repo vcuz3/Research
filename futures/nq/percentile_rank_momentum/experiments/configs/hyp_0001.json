@@ -1,0 +1,50 @@
+{
+  "declared_5m_path": "futures/nq/data/nq_5m_clean.parquet",
+  "effective_data_source": "canonical_1m_resampled_to_5m",
+  "canonical_1m_paths": {
+    "NQ": "futures/nq/data/NQ_1m_clean.parquet",
+    "ES": "futures/nq/data/ES_1m_clean.parquet"
+  },
+  "session_timezone": "America/New_York",
+  "session_start_minute": 570,
+  "session_end_minute": 960,
+  "decision_start_minute": 600,
+  "bar_minutes": 5,
+  "minimum_1m_bars_per_session": 350,
+  "vol_blend_alphas": [0.3, 0.5, 0.7],
+  "primary_vol_blend_alpha": 0.5,
+  "momentum_horizons_minutes": [15, 30, 60],
+  "horizon_weights": [0.5, 0.3, 0.2],
+  "rank_windows_sessions": [60, 90, 120, 252],
+  "primary_rank_window_sessions": 90,
+  "same_sign_coverage_fraction": 0.4,
+  "entry_threshold": 0.85,
+  "exit_threshold": 0.55,
+  "forward_horizon_minutes": 30,
+  "forward_bin_count": 10,
+  "model": {
+    "type": "multinomial_logistic",
+    "retrain": "annual",
+    "trailing_training_years": 5,
+    "minimum_training_rows": 5000,
+    "regularization_c": 0.1,
+    "random_state": 17,
+    "target_price_window": "next_5m_open_to_open_after_H"
+  },
+  "matched_count_threshold_grid": {
+    "start": 0.5,
+    "stop_inclusive": 0.95,
+    "step": 0.01
+  },
+  "costs": {
+    "slippage_ticks_per_side": 0.5,
+    "fee_usd_per_side": 2.25
+  },
+  "max_hold": "none_beyond_RTH_flatten",
+  "eras": [
+    {"name": "2011-2014", "start": "2011-01-01", "end": "2014-12-31"},
+    {"name": "2015-2019", "start": "2015-01-01", "end": "2019-12-31"},
+    {"name": "2020-2022", "start": "2020-01-01", "end": "2022-12-31"},
+    {"name": "2023+", "start": "2023-01-01", "end": "2099-12-31"}
+  ]
+}

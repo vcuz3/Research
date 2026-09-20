@@ -1,0 +1,112 @@
+{
+  "source": {
+    "files": [
+      {
+        "path": "C:\\Users\\VuDoa\\Research\\futures\\nq\\data\\lse\\futures_NQ.F_1m (1).parquet",
+        "rows": 1558269,
+        "first": "2016-05-29 22:01:00+00:00",
+        "last": "2020-12-11 21:59:00+00:00",
+        "duplicates": 0,
+        "out_of_order": 0
+      },
+      {
+        "path": "C:\\Users\\VuDoa\\Research\\futures\\nq\\data\\lse\\futures_NQ.F_1m.parquet",
+        "rows": 1998133,
+        "first": "2020-12-13 23:00:00+00:00",
+        "last": "2026-08-12 23:59:00+00:00",
+        "duplicates": 0,
+        "out_of_order": 0
+      }
+    ],
+    "combined_duplicate_rows": 0,
+    "conflicting_duplicate_timestamps": 0,
+    "rows_after_deduplication": 3556402,
+    "large_open_to_prior_close_links_gt_5pct": 1,
+    "largest_abs_open_to_prior_close_link": 0.05571013972414196,
+    "roll_identifiers_available": false,
+    "minute_audit": {
+      "rows": 3556402,
+      "first_ts_utc": "2016-05-29 22:01:00+00:00",
+      "last_ts_utc": "2026-08-12 23:59:00+00:00",
+      "duplicate_timestamps": 0,
+      "out_of_order_timestamps": 0,
+      "gaps_over_one_minute": 20182,
+      "largest_gap_minutes": 4606.0,
+      "invalid_ohlc_rows": 0,
+      "roll_boundaries": 0,
+      "contracts": 1,
+      "rows_by_year": {
+        "2016": 189928,
+        "2017": 341619,
+        "2018": 349097,
+        "2019": 349813,
+        "2020": 345347,
+        "2021": 352244,
+        "2022": 351613,
+        "2023": 353395,
+        "2024": 355014,
+        "2025": 351049,
+        "2026": 217283
+      },
+      "entry_clock_rows": 2587,
+      "exit_clock_rows": 2620
+    }
+  },
+  "candidates": {
+    "entry_anchors": 2587,
+    "exit_anchors": 2620,
+    "matched_candidates": 2576,
+    "wrong_holding_duration": 0,
+    "valid_candidates": 2576,
+    "sma_warmup_unavailable": 159,
+    "sma_available_candidates": 2417,
+    "sma_gate_entry_active": 1991,
+    "sma_gate_close_active": 1990,
+    "pairs_with_internal_missing_minutes": 756,
+    "median_holding_window_rows": 931.0,
+    "feature_staleness_counts": {
+      "0": 2056,
+      "2": 490,
+      "3": 20,
+      "1": 10
+    },
+    "roll_exclusion": "unavailable: LSE source carries only constant symbol NQ.F",
+    "daily_quality": {
+      "sessions": 2629,
+      "first_session": "2016-05-30",
+      "last_session": "2026-08-12",
+      "median_rth_rows": 390.0,
+      "sessions_missing_0930": 9,
+      "sessions_missing_1559": 93,
+      "sessions_under_390_rows": 138,
+      "sessions_with_rth_roll": 0,
+      "underpopulated_windows": {
+        "atr14": 14,
+        "atr14_ref": 74,
+        "prev_day_tr_ref": 61,
+        "sma_200": 199
+      },
+      "window_policy": "strict full lookback for indicators; sizing reference is shifted one session"
+    }
+  },
+  "vol_target": {
+    "input_trades": 2576,
+    "output_trades": 2516,
+    "warmup_removed": 60,
+    "first_sized_trade": "2016-09-30",
+    "last_sized_trade": "2026-08-12",
+    "vol_window": "gross leg returns shift(1).rolling(60, min_periods=60).std(ddof=1)*sqrt(252)",
+    "cap_bind_count": 6,
+    "entry_cost_tick_cap_count": 2455,
+    "exit_cost_tick_cap_count": 2455,
+    "spec": {
+      "target_annual_vol": 0.1,
+      "lookback_days": 60,
+      "annualization_days": 252,
+      "lag_days": 1,
+      "leverage_cap": 3.0,
+      "cost_bps_per_side": 0.5,
+      "cost_cap_points_per_side": 0.25
+    }
+  }
+}

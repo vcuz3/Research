@@ -1,0 +1,76 @@
+{
+  "created_utc": "2026-08-23T15:04:18.965064+00:00",
+  "config_path": "C:\\Users\\VuDoa\\Research\\futures\\nq\\globex_to_rth_open\\experiments\\configs\\study_v1.json",
+  "config": {
+    "nq_data": "futures/nq/data/NQ_1m_clean.parquet",
+    "vix_data": "futures/data/vix/CBOE_DLY_VIX, 1D_021cd.csv",
+    "output_dir": "futures/nq/globex_to_rth_open/artifacts/runs/EXP-0001",
+    "ma_windows": [
+      5,
+      10,
+      20,
+      50,
+      100,
+      200
+    ],
+    "vix_lower_bounds": [
+      0,
+      10,
+      15,
+      20,
+      25,
+      30,
+      40
+    ],
+    "vix_upper_bounds": [
+      15,
+      20,
+      25,
+      30,
+      40,
+      null
+    ],
+    "max_feature_staleness_days": 4,
+    "sizing_modes": [
+      "equal_contract",
+      "inverse_atr14",
+      "inverse_vix",
+      "inverse_prev_atr"
+    ],
+    "sizing": {
+      "reference_lookback": 252,
+      "reference_min_obs": 60,
+      "minimum_units": 0.25,
+      "maximum_units": 4.0,
+      "integer_contracts": false
+    },
+    "costs": {
+      "multiplier": 20.0,
+      "tick_size": 0.25,
+      "slippage_ticks_per_side": 1.0,
+      "commission_per_side": 2.5
+    }
+  },
+  "inputs": {
+    "nq": {
+      "path": "C:\\Users\\VuDoa\\Research\\futures\\nq\\data\\NQ_1m_clean.parquet",
+      "sha256": "131b88a7f59b61fcbd9a6fca84ce988a5054e2524c22f43d74ac1149f73811b7"
+    },
+    "vix": {
+      "path": "C:\\Users\\VuDoa\\Research\\futures\\data\\vix\\CBOE_DLY_VIX, 1D_021cd.csv",
+      "sha256": "07ab7c8388199b19168e248c6bee589db8ea92ec1e0c0af270b10ed51273a93f"
+    }
+  },
+  "outputs": [
+    "summary.csv",
+    "trade_candidates.parquet",
+    "coverage_by_minute.csv",
+    "data_quality.json"
+  ],
+  "interpretation": "discovery sweep; historical data consumed; no sealed holdout",
+  "status": "completed",
+  "closed_utc": "2026-08-23T15:12:08.720479+00:00",
+  "result_summary": "Baseline reproduced: 3,761 trades, $60.61 net/trade, Sharpe 0.531; superseded by era and normalized reporting.",
+  "reviewer": "unassigned",
+  "review_status": "not-reviewed"
+}

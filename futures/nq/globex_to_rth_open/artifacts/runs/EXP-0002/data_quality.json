@@ -1,0 +1,97 @@
+{
+  "nq_minutes": {
+    "rows": 5094910,
+    "first_ts_utc": "2011-08-01 00:00:00+00:00",
+    "last_ts_utc": "2026-07-14 23:59:00+00:00",
+    "duplicate_timestamps": 0,
+    "out_of_order_timestamps": 0,
+    "gaps_over_one_minute": 109146,
+    "largest_gap_minutes": 5806.0,
+    "invalid_ohlc_rows": 0,
+    "roll_boundaries": 61,
+    "contracts": 61,
+    "rows_by_year": {
+      "2011": 140226,
+      "2012": 319311,
+      "2013": 310946,
+      "2014": 311633,
+      "2015": 329967,
+      "2016": 336245,
+      "2017": 341471,
+      "2018": 349178,
+      "2019": 349846,
+      "2020": 348930,
+      "2021": 353393,
+      "2022": 354112,
+      "2023": 353358,
+      "2024": 354954,
+      "2025": 352509,
+      "2026": 188831
+    },
+    "entry_clock_rows": 3831,
+    "exit_clock_rows": 3839
+  },
+  "rth_daily": {
+    "sessions": 3839,
+    "first_session": "2011-08-01",
+    "last_session": "2026-07-14",
+    "median_rth_rows": 390.0,
+    "sessions_missing_0930": 0,
+    "sessions_missing_1559": 121,
+    "sessions_under_390_rows": 128,
+    "sessions_with_rth_roll": 0,
+    "underpopulated_windows": {
+      "atr14": 14,
+      "atr14_ref": 74,
+      "prev_day_tr_ref": 61,
+      "sma_5": 4,
+      "sma_10": 9,
+      "sma_20": 19,
+      "sma_50": 49,
+      "sma_100": 99,
+      "sma_200": 199
+    },
+    "window_policy": "strict full lookback for indicators; sizing reference is shifted one session"
+  },
+  "vix_daily": {
+    "rows_raw": 4261,
+    "rows": 4261,
+    "first_date": "2009-10-14",
+    "last_date": "2026-08-21",
+    "duplicate_dates": 0,
+    "out_of_order_dates": 0,
+    "invalid_ohlc_rows": 0,
+    "nonpositive_close": 0,
+    "reference_underpopulated": 60,
+    "reference_policy": "shift(1), rolling median 252, min_obs 60"
+  },
+  "trade_construction": {
+    "entry_anchors": 3831,
+    "exit_anchors": 3839,
+    "matched_anchor_pairs": 3821,
+    "same_contract_pairs": 3761,
+    "pairs_with_roll_inside": 60,
+    "pairs_wrong_holding_hours": 0,
+    "pairs_missing_nq_daily_feature": 0,
+    "pairs_missing_vix": 0,
+    "pairs_with_internal_missing_minutes": 2008,
+    "median_holding_window_rows": 930.0,
+    "max_internal_missing_minutes": 762,
+    "valid_execution_pairs": 3761,
+    "excluded_execution_pairs": 60,
+    "feature_staleness_counts": {
+      "0": 3030,
+      "2": 741,
+      "3": 34,
+      "1": 14,
+      "4": 2
+    },
+    "vix_staleness_counts": {
+      "0": 2971,
+      "2": 736,
+      "3": 85,
+      "1": 28,
+      "4": 1
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0002",
+  "hypothesis_id": "HYP-0002",
+  "status": "completed",
+  "declared_utc": "2026-09-19T09:34:06.471877+00:00",
+  "config_path": "experiments/configs/walk_forward_grid.json",
+  "data_scope": "Only timestamps before 2024-07-18 UTC; reserved interval not loaded or scored.",
+  "code_ref": "working-tree",
+  "run_command": "python run_walk_forward.py --config experiments/configs/walk_forward_grid.json --output artifacts/runs/EXP-0002",
+  "primary_metric": "Stitched walk-forward validation daily Sharpe of net R at 0.5 pip.",
+  "builder": "Codex",
+  "outputs": [],
+  "closed_utc": "2026-09-19T09:50:59.473464+00:00",
+  "result_summary": "NO-GO: stitched pre-holdout walk-forward selected 4,824 trades, -0.0195 net R/trade and -0.442 daily Sharpe at 0.5 pip, versus static baseline -0.292 Sharpe; all 4 assets negative. Holdout from 2024-07-18 was not loaded or tested.",
+  "reviewer": "unassigned",
+  "review_status": "not-reviewed"
+}

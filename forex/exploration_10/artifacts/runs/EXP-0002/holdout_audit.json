@@ -1,0 +1,30 @@
+{
+  "EURUSD": {
+    "holdout_start": "2024-07-18 00:00:00",
+    "maximum_loaded_timestamp": "2024-07-17 23:59:00",
+    "loaded_rows": 4799338,
+    "assertion": "maximum_loaded_timestamp < holdout_start",
+    "holdout_outcomes_evaluated": false
+  },
+  "GBPUSD": {
+    "holdout_start": "2024-07-18 00:00:00",
+    "maximum_loaded_timestamp": "2024-07-17 23:59:00",
+    "loaded_rows": 4799120,
+    "assertion": "maximum_loaded_timestamp < holdout_start",
+    "holdout_outcomes_evaluated": false
+  },
+  "AUDUSD": {
+    "holdout_start": "2024-07-18 00:00:00",
+    "maximum_loaded_timestamp": "2024-07-17 23:59:00",
+    "loaded_rows": 4799295,
+    "assertion": "maximum_loaded_timestamp < holdout_start",
+    "holdout_outcomes_evaluated": false
+  },
+  "NZDUSD": {
+    "holdout_start": "2024-07-18 00:00:00",
+    "maximum_loaded_timestamp": "2024-07-17 23:59:00",
+    "loaded_rows": 4694721,
+    "assertion": "maximum_loaded_timestamp < holdout_start",
+    "holdout_outcomes_evaluated": false
+  }
+}

@@ -222,7 +222,8 @@ def run_day(project_root: Path, config: dict[str, Any], day: dt.date, *, send_em
         if send_email:
             try:
                 email_status = send_digest(
-                    day_text, accepted, config["email_recipients"], config["email_top_n"], warnings
+                    day_text, accepted, config["email_recipients"], config["email_top_n"], warnings,
+                    config.get("email"),
                 )
             except Exception as exc:
                 email_status = f"failed: {redact_sensitive(exc)}"

@@ -1,0 +1,57 @@
+{
+  "holdout_evaluated": false,
+  "parameters": {
+    "EURUSD": {
+      "timeframe": "60min",
+      "atr_period": 28,
+      "atr_percentile": 0.15,
+      "stop_atr": 2.0,
+      "target_atr": 2.0,
+      "config_id": "tf60min_a28_p0.15_s2.0_t2.0",
+      "training_daily_sharpe": 0.43953886773993905,
+      "training_mean_net_r": 0.034390166405438315,
+      "training_trades": 684,
+      "holdout_start": "2024-07-18T00:00:00",
+      "holdout_evaluated": false
+    },
+    "GBPUSD": {
+      "timeframe": "60min",
+      "atr_period": 28,
+      "atr_percentile": 0.2,
+      "stop_atr": 1.0,
+      "target_atr": 2.0,
+      "config_id": "tf60min_a28_p0.20_s1.0_t2.0",
+      "training_daily_sharpe": 0.8100400713251038,
+      "training_mean_net_r": 0.07506597379434671,
+      "training_trades": 1117,
+      "holdout_start": "2024-07-18T00:00:00",
+      "holdout_evaluated": false
+    },
+    "AUDUSD": {
+      "timeframe": "60min",
+      "atr_period": 14,
+      "atr_percentile": 0.15,
+      "stop_atr": 1.0,
+      "target_atr": 1.5,
+      "config_id": "tf60min_a14_p0.15_s1.0_t1.5",
+      "training_daily_sharpe": 0.7180134395034838,
+      "training_mean_net_r": 0.07104928818428755,
+      "training_trades": 697,
+      "holdout_start": "2024-07-18T00:00:00",
+      "holdout_evaluated": false
+    },
+    "NZDUSD": {
+      "timeframe": "60min",
+      "atr_period": 14,
+      "atr_percentile": 0.15,
+      "stop_atr": 1.5,
+      "target_atr": 1.0,
+      "config_id": "tf60min_a14_p0.15_s1.5_t1.0",
+      "training_daily_sharpe": 1.011070865510568,
+      "training_mean_net_r": 0.06723337428281327,
+      "training_trades": 673,
+      "holdout_start": "2024-07-18T00:00:00",
+      "holdout_evaluated": false
+    }
+  }
+}

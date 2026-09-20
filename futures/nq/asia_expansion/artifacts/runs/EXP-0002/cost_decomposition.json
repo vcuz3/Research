@@ -1,0 +1,88 @@
+{
+  "article_window": {
+    "n_signals": 12423,
+    "sessions": 968,
+    "arms": [
+      {
+        "arm": "continuation (the article's rule)",
+        "n": 12423,
+        "gross_pts": 0.06747565000402479,
+        "gross_t": 0.4978141893176477,
+        "net_pts": -1.9325243499959752,
+        "net_t": -14.2575587278148
+      },
+      {
+        "arm": "fade (mirror)",
+        "n": 12423,
+        "gross_pts": -0.06747565000402479,
+        "gross_t": -0.4978141893176477,
+        "net_pts": -2.067475650004025,
+        "net_t": -15.253187106450095
+      }
+    ],
+    "coinflip_gross_t": {
+      "mean": -0.0407991933370161,
+      "p05": -1.6091511370401248,
+      "p95": 1.5481148387697437
+    },
+    "coinflip_net_t_at_2pt": {
+      "mean": -15.18476782088916,
+      "p05": -17.33050327981325,
+      "p95": -13.054497948882023,
+      "min": -18.939024010731305,
+      "max": -11.667029584635923
+    },
+    "zero_edge_net_t_at_2pt": NaN,
+    "article_reported_T": -10.96,
+    "article_T_inside_coinflip_95ci": false,
+    "breakeven_gross_needed_pts": {
+      "nq_spread1": 0.33499999999999996,
+      "mnq_spread1": 1.1,
+      "mnq_spread2": 1.35,
+      "article": 2.0
+    }
+  },
+  "full_archive": {
+    "n_signals": 56844,
+    "sessions": 3841,
+    "arms": [
+      {
+        "arm": "continuation (the article's rule)",
+        "n": 56844,
+        "gross_pts": 0.06546425304341708,
+        "gross_t": 1.454788149323995,
+        "net_pts": -1.934535746956583,
+        "net_t": -42.99048027401395
+      },
+      {
+        "arm": "fade (mirror)",
+        "n": 56844,
+        "gross_pts": -0.06546425304341708,
+        "gross_t": -1.454788149323995,
+        "net_pts": -2.065464253043417,
+        "net_t": -45.90005657266193
+      }
+    ],
+    "coinflip_gross_t": {
+      "mean": -0.16310919804130972,
+      "p05": -1.7290784263798322,
+      "p95": 1.3730991919602014
+    },
+    "coinflip_net_t_at_2pt": {
+      "mean": -47.0582708367436,
+      "p05": -50.49360754558645,
+      "p95": -43.846110098072046,
+      "min": -52.49793203059111,
+      "max": -41.509693918985036
+    },
+    "zero_edge_net_t_at_2pt": NaN,
+    "article_reported_T": -10.96,
+    "article_T_inside_coinflip_95ci": false,
+    "breakeven_gross_needed_pts": {
+      "nq_spread1": 0.33499999999999996,
+      "mnq_spread1": 1.1,
+      "mnq_spread2": 1.35,
+      "article": 2.0
+    }
+  }
+}

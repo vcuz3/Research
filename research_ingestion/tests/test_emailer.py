@@ -62,3 +62,36 @@ def test_digest_supports_multiple_recipients_and_abstract_below_title(monkeypatc
     assert "https://example.test/paper" in body
     assert "test-source" not in body
     assert "0.91" not in body
+
+
+def test_digest_sends_with_smtp_app_password(monkeypatch):
+    sent = {}
+    monkeypatch.setenv("GMAIL_SENDER", "sender@example.test")
+    monkeypatch.setenv("APP_PASSWORD", "abcd efgh ijkl mnop")
+
+    class SMTP:
+        def __init__(self, host, port, timeout):
+            sent.update(host=host, port=port, timeout=timeout)
+        def __enter__(self):
+            return self
+        def __exit__(self, *_args):
+            return None
+        def login(self, sender, password):
+            sent.update(sender=sender, password=password)
+        def send_message(self, message, from_addr, to_addrs):
+            sent.update(message=message, from_addr=from_addr, to_addrs=to_addrs)
+
+    monkeypatch.setattr("research_ingestion.emailer.smtplib.SMTP_SSL", SMTP)
+    item = SimpleNamespace(
+        title="Paper", abstract_or_title="Abstract", canonical_url="https://example.test",
+        local_pdf_path=None, relevance_score=0.9,
+    )
+    result = send_digest(
+        "2026-08-24", [item], ["reader@example.test"], 25, config={
+            "transport": "smtp_app_password", "app_password_env": "APP_PASSWORD",
+        },
+    )
+
+    assert result == "smtp_sent"
+    assert sent["password"] == "abcdefghijklmnop"
+    assert sent["to_addrs"] == ["reader@example.test"]

@@ -372,8 +372,24 @@ Evidence: `futures/forex/vwap_exploration` (EXP-0003 §E/§F, EXP-0007 §H/§K).
 - **Bootstrap the DIFFERENCE against a degenerate no-theory benchmark, not the
   statistic against zero** (second-project confirmed → standard). A percentile CI
   that doesn't bracket its own point estimate is biased — read as "no evidence."
+- **A t-stat on P&L NET of a fixed per-trade charge is a statement about the CHARGE,
+  not about signal direction** (`confirmed`; arithmetic mechanism). Net t ≈
+  `(μ−c)·√N/sd`, so once `c ≫ μ` the `−c` term sets the whole statistic and *any*
+  signal prints a large negative t at realistic N. Calibrate with a **coin-flip
+  direction control** — identical firing bars, fills, sample, clustering and charge,
+  direction replaced by a fair coin, which has zero directional information by
+  construction. A published "T = −10.96, the signal is worse than useless" was
+  *less* negative than its own coin-flip null (−15.18 [−17.33, −13.05]) — i.e. weak
+  evidence the signal was slightly BETTER than random, reported as proof it was
+  backwards. Rule 20 restated as a reading habit: **print gross first, and never let
+  a net t-stat carry a directional claim on its own.** Corollary for micro contracts:
+  on MNQ, fixed fees ($1.70 RT ÷ $2/pt = 0.85 pt) dominate the spread (0.25 pt), and
+  the same fee is 10× cheaper *in points* on the full contract — so a "no edge beats
+  costs" ceiling can be three-quarters a contract-size choice rather than a market
+  fact. Check the full-size contract before accepting any cost-based NO-GO.
 
-Evidence: `futures/panel/trend_closedform` FINDINGS §A–H.
+Evidence: `futures/panel/trend_closedform` FINDINGS §A–H;
+`futures/nq/asia_expansion` EXP-0002 + FINDINGS §D/§F.
 
 ---
 

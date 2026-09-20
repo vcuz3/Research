@@ -14,8 +14,8 @@ not validated trading evidence.
 | Source adapters | `src/research_ingestion/connectors.py` |
 | Filtering and AI classification | `src/research_ingestion/classify.py` |
 | Storage and manifests | `src/research_ingestion/storage.py` |
-| Gmail delivery | `src/research_ingestion/emailer.py` |
-| Google Drive PDF library | `src/research_ingestion/drive.py` |
+| Gmail SMTP delivery | `src/research_ingestion/emailer.py` |
+| Google Drive desktop-sync library | `src/research_ingestion/drive.py` |
 | Scheduling | `scripts/install_scheduled_task.ps1` |
 | Tests | `tests/` |
 | Durable status | `MEMORY.md` |
@@ -31,6 +31,7 @@ python -m research_ingestion.cli run --catch-up
 python -m research_ingestion.cli authorize-drive
 python -m research_ingestion.cli resolve-pdfs --from 2026-08-15 --to 2026-08-19
 python -m research_ingestion.cli import-pdfs
+python -m research_ingestion.cli retry-delivery --days 30
 ```
 
 ## Operating conventions
@@ -46,9 +47,11 @@ python -m research_ingestion.cli import-pdfs
   with its rejection stage/reason and the deterministic or AI scores available
   at that stage. This supports false-negative review and threshold tuning.
 - Secrets are environment variables or ignored files under `secrets/`.
-- Google Drive uses a separate `drive.file` OAuth token and uploads accepted
-  PDFs to `Trading Research Library/YYYY/YYYY-MM-DD/`, deduplicated by content
-  hash. It does not upload title/link-only items.
+- Google Drive for desktop is signed into the library account. The pipeline
+  copies accepted PDFs into its local `My Drive/Trading Research Library/YYYY/
+  YYYY-MM-DD/` tree, verifies the copied hash, and deduplicates by content hash.
+  Drive for desktop performs cloud synchronization; title/link-only items are
+  not copied.
 - Academic API discovery uses separate queries for market microstructure,
   momentum/trend, mean reversion, volatility/derivatives, portfolio/risk,
   financial machine learning, asset-pricing factors, macro trading, digital
@@ -70,6 +73,10 @@ python -m research_ingestion.cli import-pdfs
 - Digest emails are multipart plain text/HTML. HTML titles are bold, followed
   by `abstract:` when available, an explicit `pdf:` availability line, and
   `link:` before the canonical URL.
+- Gmail delivery uses SMTP over TLS with a dedicated Google app password stored
+  only in the ignored project environment. This avoids Testing-mode OAuth's
+  seven-day refresh-token expiry. Changing the Google account password or
+  revoking the app password requires creating a replacement.
 - The scheduled wrapper checks localhost port 20128, starts OmniRoute as a
   hidden background daemon when needed, waits up to 90 seconds for readiness,
   and then invokes catch-up. Failure preserves deterministic fallback.
@@ -95,6 +102,9 @@ python -m research_ingestion.cli import-pdfs
   uploads to that article date's Drive folder. Invalid, ambiguous, unmatched,
   and already-backed items remain untouched and are audited in
   `data/pdf_imports/`.
+- Each scheduled run retries failed email and Drive deliveries from the prior
+  30 days using saved accepted manifests. This does not rerun discovery, AI, or
+  ranking. A still-failed retry makes the Windows task return a nonzero result.
 
 ## Zero-cost AI boundary
 

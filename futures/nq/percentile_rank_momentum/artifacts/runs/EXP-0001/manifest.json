@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "experiment_id": "EXP-0001",
+  "hypothesis_id": "HYP-0001",
+  "status": "completed",
+  "declared_utc": "2026-08-22T03:45:39.553091+00:00",
+  "config_path": "experiments/configs/hyp_0001.json",
+  "data_scope": "Full local NQ RTH archive for research, with ES reserved for untuned sibling transfer; all inspected history is consumed and only future observations are a clean holdout.",
+  "code_ref": "working-tree",
+  "run_command": "python -m futures.nq.percentile_rank_momentum.validation.coverage_report --experiment-id EXP-0001",
+  "primary_metric": "Per-trade net expectancy in NQ ticks with session-cluster-robust t-statistic, after reading gross expectancy first; also report zero-day, trade-day-only, and causal vol-targeted daily Sharpes.",
+  "builder": "codex",
+  "outputs": [
+    "DATA_QUALITY.md",
+    "data_audit.json",
+    "feature_summary.csv",
+    "bar_coverage_by_era_slot.csv",
+    "decision_coverage_by_window_era_slot.csv",
+    "sign_counts_by_window_horizon_era_slot.csv",
+    "review.md"
+  ],
+  "closed_utc": "2026-08-22T03:51:45.486930+00:00",
+  "result_summary": "Rule-9a gate passed after pre-P&L amendment to 40% same-sign floor: 85.5%-89.9% eligible coverage; coverage-matched max era firing CV 0.18-0.19; no P&L run.",
+  "reviewer": "unassigned",
+  "review_status": "not-reviewed"
+}

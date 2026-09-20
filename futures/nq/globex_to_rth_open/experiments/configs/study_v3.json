@@ -1,0 +1,34 @@
+{
+  "nq_data": "futures/nq/data/NQ_1m_clean.parquet",
+  "vix_data": "futures/data/vix/CBOE_DLY_VIX, 1D_021cd.csv",
+  "output_dir": "futures/nq/globex_to_rth_open/artifacts/runs/EXP-0003",
+  "ma_windows": [5, 10, 20, 50, 100, 200],
+  "vix_lower_bounds": [0, 10, 15, 20, 25, 30, 40],
+  "vix_upper_bounds": [15, 20, 25, 30, 40, null],
+  "max_feature_staleness_days": 4,
+  "sizing_modes": [
+    "equal_contract",
+    "inverse_atr14",
+    "inverse_vix",
+    "inverse_prev_atr"
+  ],
+  "sizing": {
+    "reference_lookback": 252,
+    "reference_min_obs": 60,
+    "minimum_units": 0.25,
+    "maximum_units": 4.0,
+    "integer_contracts": false
+  },
+  "costs": {
+    "multiplier": 20.0,
+    "tick_size": 0.25,
+    "slippage_ticks_per_side": 1.0,
+    "commission_per_side": 2.5
+  },
+  "eras": [
+    {"name": "2011-2015", "start": "2011-01-01", "end": "2015-12-31"},
+    {"name": "2016-2019", "start": "2016-01-01", "end": "2019-12-31"},
+    {"name": "2020-2022", "start": "2020-01-01", "end": "2022-12-31"},
+    {"name": "2023-2026", "start": "2023-01-01", "end": "2026-12-31"}
+  ]
+}

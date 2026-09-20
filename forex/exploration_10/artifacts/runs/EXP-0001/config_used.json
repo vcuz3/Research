@@ -1,0 +1,25 @@
+{
+  "assets": [
+    "EURUSD",
+    "GBPUSD",
+    "AUDUSD",
+    "NZDUSD"
+  ],
+  "data_pattern": "../data/clean/{asset}_1m_clean.parquet",
+  "timeframe": "30min",
+  "atr_period": 14,
+  "atr_percentile": 0.15,
+  "percentile_lookback": 100,
+  "breakout_lookback": 10,
+  "stop_atr": 1.5,
+  "target_atr": 1.5,
+  "max_holding_hours": 12.0,
+  "require_complete_candles": true,
+  "round_trip_cost_pips": [
+    0.0,
+    0.2,
+    0.5,
+    1.0
+  ],
+  "pip_size": 0.0001
+}
